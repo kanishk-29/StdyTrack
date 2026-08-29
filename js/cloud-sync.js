@@ -45,6 +45,14 @@ const FIREBASE_CONFIG = null;
 //   appId: "1:1234567890:web:abcdef"
 // };
 
+// Optional gate on account creation. Leave it as '' to let ANYONE create an
+// account (open-source friendly — ideal for letting people try the app).
+// Set it to a secret word and visitors must enter that word when signing up.
+// Honest note: it's frontend-only, so it deters casual signups and bots by
+// friction — it is NOT real security. The Firestore rules are the real
+// protection for data, and this just keeps your user list from being spammed.
+const SIGNUP_INVITE_CODE = '';
+
 const CLOUD_COLLECTION = 'studyTracker'; // one document per signed-in user (doc id = auth uid)
 
 let cloudApp = null;
@@ -53,6 +61,10 @@ let cloudReadyPromise = null;
 
 function cloudIsConfigured(){
   return !!FIREBASE_CONFIG && typeof firebase !== 'undefined';
+}
+
+function cloudInviteCodeRequired(){
+  return cloudIsConfigured() && SIGNUP_INVITE_CODE.trim() !== '';
 }
 
 function initCloudSync(){

@@ -69,6 +69,7 @@ function resetLoginForm(){
   const cloud = cloudIsConfigured();
   const btn = document.getElementById('loginModeBtn');
   const emailField = document.getElementById('loginEmailField');
+  const codeField = document.getElementById('loginCodeField');
   const forget = document.getElementById('loginForgetBtn');
   const label = document.getElementById('loginSubmitLabel');
   const arrow = document.getElementById('loginSubmitArrow');
@@ -77,6 +78,7 @@ function resetLoginForm(){
   const err = document.getElementById('loginError');
   const name = document.getElementById('loginNameInput');
   const email = document.getElementById('loginEmailInput');
+  const code = document.getElementById('loginCodeInput');
   const pass = document.getElementById('loginPasswordInput');
   const footnote = document.getElementById('loginFootnote');
   if(footnote) footnote.textContent = cloud
@@ -85,6 +87,7 @@ function resetLoginForm(){
   if(btn) btn.textContent = "New here? Create an account";
   if(btn) btn.style.display = cloud ? '' : 'none';
   if(emailField) emailField.style.display = cloud ? '' : 'none';
+  if(codeField) codeField.style.display = 'none';
   if(forget) forget.style.display = cloud ? '' : 'none';
   if(label) label.textContent = "Let's go";
   if(arrow) arrow.textContent = '→';
@@ -92,6 +95,7 @@ function resetLoginForm(){
   if(greeting) greeting.textContent = "I'm Rei. Tell me your name — and don't waste my time.";
   if(name) name.value = '';
   if(email) email.value = '';
+  if(code) code.value = '';
   if(pass) pass.value = '';
   if(err){ err.textContent = ''; err.classList.remove('show', 'success'); }
   const resetPanel = document.getElementById('loginResetPanel');
@@ -116,6 +120,8 @@ function toggleLoginMode(){
   if(greeting) greeting.textContent = signup
     ? "New identity check, then. Name, email, password."
     : "I'm Rei. Tell me your name — and don't waste my time.";
+  const codeField = document.getElementById('loginCodeField');
+  if(codeField) codeField.style.display = (signup && cloudInviteCodeRequired()) ? '' : 'none';
   const name = document.getElementById('loginNameInput');
   if(name) name.focus();
 }
@@ -275,6 +281,13 @@ async function attemptLogin(){
         if(!name){ showLoginError("I need a name for the account."); if(btn) btn.disabled = false; nameInput.focus(); return; }
         if(!isValidEmail(email)){ showLoginError("That email doesn't look right."); if(btn) btn.disabled = false; emailInput.focus(); return; }
         if(pass.length < 6){ showLoginError("Password needs at least 6 characters."); if(btn) btn.disabled = false; passInput.focus(); return; }
+        if(cloudInviteCodeRequired()){
+          const codeInput = document.getElementById('loginCodeInput');
+          const code = codeInput ? codeInput.value.trim() : '';
+          const expected = (typeof SIGNUP_INVITE_CODE !== 'undefined') ? String(SIGNUP_INVITE_CODE).trim() : '';
+          if(!code){ showLoginError("This one needs a join code — ask the owner."); if(btn) btn.disabled = false; if(codeInput) codeInput.focus(); return; }
+          if(code !== expected){ showLoginError("That's not the right join code."); if(btn) btn.disabled = false; if(codeInput){ codeInput.value=''; codeInput.focus(); } return; }
+        }
         await cloudSignUp(email, pass, name);
       } else {
         if(!isValidEmail(email)){ showLoginError("That email doesn't look right."); if(btn) btn.disabled = false; emailInput.focus(); return; }
