@@ -2,7 +2,7 @@
 // All real data lives in localStorage, not in this cache â€” this only
 // lets the app shell (html/css/js/icons) load when there's no connection.
 
-const CACHE_NAME = 'study-tracker-shell-v16';
+const CACHE_NAME = 'study-tracker-shell-v17';
 const APP_SHELL = [
   './',
   './index.html',
@@ -51,7 +51,7 @@ const APP_SHELL = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
+      .then((cache) => Promise.allSettled(APP_SHELL.map((url) => cache.add(url))))
       .then(() => self.skipWaiting())
   );
 });
