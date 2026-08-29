@@ -199,6 +199,38 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <!-- filled by JS: 4 cards -->
     </div>
 
+    <div class="today-panel">
+      <div class="today-left">
+        <span class="eyebrow">TODAY</span>
+        <div class="today-total" id="todayTotal">0m</div>
+        <div class="stat-row" id="todaySubjects"></div>
+        <div class="yesterday-line" id="yesterdayLine"></div>
+      </div>
+      <div class="today-right">
+        <div class="cal-terminal" id="calTerminal">
+          <div class="cal-term-bar">
+            <span class="cal-term-dot dot-r"></span><span class="cal-term-dot dot-y"></span><span class="cal-term-dot dot-g"></span>
+            <span class="cal-term-path">~/study-log --last 5w</span>
+          </div>
+          <div class="cal-term-body">
+            <div class="cal-week-labels">
+              <span class="cal-week-spacer"></span>
+              <div class="cal-week-cols" id="calWeekLabels"></div>
+            </div>
+            <div class="cal-wrap">
+              <div class="cal-weekday-labels">
+                <span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span>Sun</span>
+              </div>
+              <div class="cal-grid" id="calendarGrid"></div>
+            </div>
+            <div class="cal-legend"><span>less</span><i class="cal-swatch level-0"></i><i class="cal-swatch level-1"></i><i class="cal-swatch level-2"></i><i class="cal-swatch level-3"></i><i class="cal-swatch level-4"></i><span>more</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cal-tooltip" id="calTooltip"></div>
+    <div class="cal-plan-popover" id="calPlanPopover"></div>
+
     <div class="replica-subjects-head">
       <div class="rs-title"><span class="rs-icon">📖</span> Your Subjects</div>
       <div class="rs-tabs" id="rsTabs">
@@ -233,40 +265,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         <div class="last-saved" id="lastSaved"></div>
       </div>
     </header>
-
-    <!-- legacy search kept for compatibility but now lives in topbar; this dup removed -->
-
-    <div class="today-panel">
-      <div class="today-left">
-        <span class="eyebrow">TODAY</span>
-        <div class="today-total" id="todayTotal">0m</div>
-        <div class="stat-row" id="todaySubjects"></div>
-        <div class="yesterday-line" id="yesterdayLine"></div>
-      </div>
-      <div class="today-right">
-        <div class="cal-terminal" id="calTerminal">
-          <div class="cal-term-bar">
-            <span class="cal-term-dot dot-r"></span><span class="cal-term-dot dot-y"></span><span class="cal-term-dot dot-g"></span>
-            <span class="cal-term-path">~/study-log --last 5w</span>
-          </div>
-          <div class="cal-term-body">
-            <div class="cal-week-labels">
-              <span class="cal-week-spacer"></span>
-              <div class="cal-week-cols" id="calWeekLabels"></div>
-            </div>
-            <div class="cal-wrap">
-              <div class="cal-weekday-labels">
-                <span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span>Sun</span>
-              </div>
-              <div class="cal-grid" id="calendarGrid"></div>
-            </div>
-            <div class="cal-legend"><span>less</span><i class="cal-swatch level-0"></i><i class="cal-swatch level-1"></i><i class="cal-swatch level-2"></i><i class="cal-swatch level-3"></i><i class="cal-swatch level-4"></i><span>more</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="cal-tooltip" id="calTooltip"></div>
-    <div class="cal-plan-popover" id="calPlanPopover"></div>
 
     <div class="dashboard-section">
       <div class="running-timer-banner" id="runningTimerBanner" style="display:none"></div>
