@@ -1,11 +1,121 @@
 // Dashboard
 // ---------------- DASHBOARD ----------------
+let replicaFilter = 'all';
+let replicaClockHandle = null;
+function setReplicaFilter(filter, btn){
+  replicaFilter = filter;
+  document.querySelectorAll('.rs-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderDashCourses();
+}
+function toggleReplicaFilterMenu(e){
+  if(e) e.stopPropagation();
+  // simple sort toggle: tap filter to cycle All -> Progress -> Completed
+  const order = ['all','progress','completed'];
+  const idx = order.indexOf(replicaFilter);
+  const next = order[(idx+1)%order.length];
+  const btn = document.querySelector(`.rs-tab[data-filter="${next}"]`);
+  setReplicaFilter(next, btn);
+  showToast(next==='all' ? 'Showing all subjects' : next==='progress' ? 'In Progress filter' : 'Completed filter');
+}
+
+function replicaGreetingText(){
+  const h = new Date().getHours();
+  if(h < 12) return 'Good morning';
+  if(h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+function renderReplicaGreeting(){
+  const el = document.getElementById('replicaGreeting');
+  if(!el) return;
+  let name = 'Deepansu';
+  try{
+    const stored = localStorage.getItem('studyUserName');
+    if(stored && stored.trim()) name = stored.trim();
+    else if(data && data.userName && data.userName.trim()) name = data.userName.trim();
+    else if(typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser && firebase.auth().currentUser.displayName) name = firebase.auth().currentUser.displayName;
+  }catch(e){}
+  // keep first name only
+  name = name.split(' ')[0];
+  el.innerHTML = `${replicaGreetingText()}, ${escapeHtml(name)}! <span class="rg-wave">👋</span>`;
+}
+function renderReplicaClock(){
+  const dayEl = document.getElementById('rcDay');
+  const dateEl = document.getElementById('rcDate');
+  const segsEl = document.getElementById('rcTimeSegs');
+  if(!dayEl || !dateEl || !segsEl) return;
+  const now = new Date();
+  const dayName = now.toLocaleDateString(undefined,{weekday:'long'});
+  const dateStr = now.toLocaleDateString(undefined,{day:'2-digit', month:'short', year:'numeric'});
+  dayEl.textContent = dayName;
+  dateEl.textContent = dateStr;
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+  segsEl.innerHTML = `<span class="rc-seg">${hh}</span><span class="rc-colon">:</span><span class="rc-seg">${mm}</span><span class="rc-colon">:</span><span class="rc-seg">${ss}</span>`;
+}
+function startReplicaClock(){
+  renderReplicaClock();
+  renderReplicaGreeting();
+  if(replicaClockHandle) clearInterval(replicaClockHandle);
+  replicaClockHandle = setInterval(()=>{ renderReplicaClock(); }, 1000);
+  // refresh greeting every minute in case hour flips
+  setInterval(()=>renderReplicaGreeting(), 60000);
+}
+function renderReplicaStats(){
+  const wrap = document.getElementById('replicaStats');
+  if(!wrap) return;
+  let total=0, done=0;
+  data.subjects.forEach(s=>{ const c = countLectures(s); total+=c.total; done+=c.done; });
+  const pct = total ? Math.round((done/total)*100) : 0;
+  const totalSec = data.subjects.reduce((a,s)=>a+subjectSeconds(s), 0);
+  const streak = typeof computeCurrentStreak === 'function' ? computeCurrentStreak() : 0;
+
+  // ring for overall progress
+  const ringSize=64, ringStroke=7, r=(ringSize-ringStroke)/2, C=2*Math.PI*r, off=C - (pct/100)*C;
+  const ringHtml = `<div class="rs-ring-wrap"><svg width="${ringSize}" height="${ringSize}" viewBox="0 0 ${ringSize} ${ringSize}"><circle cx="${ringSize/2}" cy="${ringSize/2}" r="${r}" fill="none" stroke="#eeeaff" stroke-width="${ringStroke}"/><circle cx="${ringSize/2}" cy="${ringSize/2}" r="${r}" fill="none" stroke="#7c5cff" stroke-width="${ringStroke}" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 ${ringSize/2} ${ringSize/2})" style="transition:stroke-dashoffset .9s ease"/></svg><div class="rs-ring-label">${pct}%</div></div>`;
+
+  // bar chart for topics completed (spark bars)
+  const barLevels = [3,7,4,9,5,2,8,6];
+  const barsHtml = `<div class="rs-bars">${barLevels.map((h,i)=>`<div class="rs-bar ${i<4?'active':''}" style="height:${6+h*3}px"></div>`).join('')}</div>`;
+
+  // wavy line svg for total studied
+  const waveSvg = `<div class="rs-wave"><svg viewBox="0 0 100 18" preserveAspectRatio="none"><path d="M0 12 Q10 4 20 12 T40 9 T60 14 T80 6 T100 12" fill="none" stroke="#9b7fe0" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/></svg></div>`;
+
+  // dots for streak
+  const dotsHtml = `<div class="rs-dots">${Array.from({length:7}).map(()=>`<span class="rs-dot"></span>`).join('')}</div>`;
+
+  wrap.innerHTML = `
+    <div class="rs-card" onclick="openProgressSlide()" title="View analytics" style="cursor:pointer;">
+      <div class="rs-top"><span class="rs-ic">◯</span> Overall Progress</div>
+      <div class="rs-main">${ringHtml}<div class="rs-sub">Keep it up! 🚀</div></div>
+    </div>
+    <div class="rs-card" onclick="openProgressSlide()" title="View analytics" style="cursor:pointer;">
+      <div class="rs-top"><span class="rs-ic">🕒</span> Total Studied</div>
+      <div class="rs-main"><div class="rs-value">${formatHuman(totalSec)}</div><div class="rs-sub">This semester</div>${waveSvg}</div>
+    </div>
+    <div class="rs-card" onclick="openProgressSlide()" title="View analytics" style="cursor:pointer;">
+      <div class="rs-top"><span class="rs-ic">✓</span> Topics Completed</div>
+      <div class="rs-main"><div class="rs-value">${done} <small>/ ${total||0}</small></div><div class="rs-sub">Across all subjects</div>${barsHtml}</div>
+    </div>
+    <div class="rs-card" onclick="openProgressSlide()" title="View analytics" style="cursor:pointer;">
+      <div class="rs-top"><span class="rs-ic">🔥</span> Study Streak</div>
+      <div class="rs-main"><div class="rs-value">${streak}</div><div class="rs-sub">Days in a row</div>${dotsHtml}</div>
+    </div>
+  `;
+  // update legacy hidden badge too if exists
+  const pctEl = document.getElementById('percentBadge');
+  if(pctEl) pctEl.textContent = pct+'%';
+}
+
 function renderDashboard(){
   renderRunningBanner();
   renderDashQuickGrid();
   renderDashPriority();
   renderDashCourses();
   renderDashDeadlines();
+  renderReplicaStats();
+  renderReplicaGreeting();
 }
 
 function renderRunningBanner(){
@@ -155,49 +265,78 @@ function renderDashCourses(){
   const el = document.getElementById('dashCourses');
   if(!el) return;
   if(!data.subjects.length){
-    el.innerHTML = `<div class="dash-courses-empty">Add a subject to see it here.</div>`;
+    el.innerHTML = `<div class="rsc-empty">No subjects yet — tap <b>+ New Subject</b> to create your first course.</div>`;
     return;
   }
-  // Most recently studied subject first, so "Ongoing Subjects" tracks what
-  // you're actually working through right now instead of creation order.
-  const ordered = subjectsByRecency();
-  el.innerHTML = ordered.map((s)=>{
+  const PALETTE = [
+    {bar:'#7c5cff', pillBg:'#ece8ff', pillColor:'#7c5cff', arrowBg:'#f2eeff', arrowColor:'#7c5cff'},
+    {bar:'#ff8c2e', pillBg:'#fff1e6', pillColor:'#ff8c2e', arrowBg:'#fff4eb', arrowColor:'#ff8c2e'},
+    {bar:'#14b8a6', pillBg:'#e6f6f3', pillColor:'#14b8a6', arrowBg:'#e9f6f4', arrowColor:'#14b8a6'},
+    {bar:'#22c55e', pillBg:'#eaf7ec', pillColor:'#22c55e', arrowBg:'#eef8f0', arrowColor:'#22c55e'},
+  ];
+  let ordered = subjectsByRecency();
+  // filter via top tabs
+  if(replicaFilter==='completed') ordered = ordered.filter(s=>{ const c=countLectures(s); const pct=c.total?Math.round((c.done/c.total)*100):0; return c.total>0 && pct===100; });
+  else if(replicaFilter==='progress') ordered = ordered.filter(s=>{ const c=countLectures(s); const pct=c.total?Math.round((c.done/c.total)*100):0; return pct<100; });
+  if(!ordered.length){
+    el.innerHTML = `<div class="rsc-empty">No subjects in this filter.</div>`;
+    return;
+  }
+  el.innerHTML = ordered.map((s, i)=>{
     const globalIdx = Math.max(0, data.subjects.findIndex(x=>x.id===s.id));
-    const color = SUBJECT_GRAPH_COLORS[globalIdx % SUBJECT_GRAPH_COLORS.length];
+    const pal = PALETTE[globalIdx % PALETTE.length];
     const c = countLectures(s);
     const pct = c.total ? Math.round((c.done/c.total)*100) : 0;
-    let nextLecture = null;
-    for(const u of s.units){
-      const l = u.lectures.find(x=>!x.completed);
-      if(l){ nextLecture = l; break; }
-    }
-    const nextLabel = nextLecture ? `Next: ${escapeHtml(nextLecture.title)}` : (c.total ? 'All done! 🎉' : 'No lectures yet');
+    const time = formatHuman(subjectSeconds(s));
+    let nextTitle = null;
+    for(const u of s.units){ const l = u.lectures.find(x=>!x.completed); if(l){ nextTitle = l.title; break; } }
+    const nextLabel = nextTitle ? escapeHtml(nextTitle) : (c.total ? 'All done! 🎉' : 'No topics yet');
+    const folder = (typeof getFolder==='function' && s.folderId) ? getFolder(s.folderId) : null;
+    let pillText = folder ? folder.name : 'SEM III';
+    if(pillText.toLowerCase().includes('semester')) pillText = 'SEM III';
+    else pillText = pillText.toUpperCase().slice(0,12);
     const thumbStyle = s.image
       ? `background-image:url('${s.image}'); background-size:cover; background-position:center;`
-      : `background:linear-gradient(135deg, ${color}, ${color}99);`;
-    return `<div class="dash-course-card" onclick="selectAndScroll('${s.id}')">
-      <div class="dash-course-thumb" style="${thumbStyle}">
-        <div class="dash-course-thumb-overlay"></div>
+      : `background:linear-gradient(135deg, ${pal.bar} 0%, ${pal.bar}cc 100%);`;
+    const thumbInner = s.image ? '' : `<span style="font-size:28px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));">${escapeHtml((s.name||'')[0]||'📘')}</span>`;
+    return `<div class="rsc-card" onclick="selectAndScroll('${s.id}')" style="animation-delay:${i*0.05}s">
+      <div class="rsc-thumb" style="${thumbStyle}">${thumbInner}
         <input type="file" accept="image/*" id="subjectImgInput-${s.id}" style="display:none" onchange="handleSubjectImage(event,'${s.id}')">
-        <div class="dash-course-edit-wrap">
-          <button class="dash-course-edit-btn" title="Edit cover image" onclick="event.stopPropagation(); toggleCoverMenu('${s.id}')">✎</button>
+        <div class="dash-course-edit-wrap" style="position:absolute; top:8px; left:8px; z-index:2;">
+          <button class="dash-course-edit-btn" title="Edit cover" onclick="event.stopPropagation(); toggleCoverMenu('${s.id}')">✎</button>
           <div class="dash-course-edit-menu" id="coverMenu-${s.id}">
+            <button onclick="event.stopPropagation(); closeCoverMenus(); openEditSubject('${s.id}')">✎ Rename subject</button>
             <button onclick="event.stopPropagation(); closeCoverMenus(); document.getElementById('subjectImgInput-${s.id}').click()">🖼️ ${s.image?'Change image':'Add image'}</button>
             ${s.image ? `<button class="danger" onclick="event.stopPropagation(); closeCoverMenus(); removeSubjectImage('${s.id}')">🗑️ Remove image</button>` : ''}
           </div>
         </div>
-        <span class="dash-course-pct">${pct}% Complete</span>
-        <span class="dash-course-thumb-label">${escapeHtml(s.name)}</span>
       </div>
-      <div class="dash-course-body">
-        <div class="dash-course-name">${escapeHtml(s.name)}</div>
-        <div class="dash-course-meta">${c.done}/${c.total} lectures · ${formatHuman(subjectSeconds(s))}</div>
-        <div class="dash-course-progress-track"><div class="dash-course-progress-fill" style="width:${pct}%; background:${color};"></div></div>
-        <div class="dash-course-footer">
-          <span class="dash-course-next">🕒 ${nextLabel}</span>
-          <button class="dash-resume-btn" onclick="event.stopPropagation(); resumeSubject('${s.id}')">▶ Resume</button>
+      <div class="rsc-body">
+        <div class="rsc-top">
+          <span class="rsc-pill" style="background:${pal.pillBg}; color:${pal.pillColor};">${escapeHtml(pillText)}</span>
+          <div class="ds-menu-wrap" onclick="event.stopPropagation()" style="margin-left:auto;">
+            <button class="rsc-menu" title="Options" onclick="toggleSubjectMenu('${s.id}')">⋮</button>
+            <div class="ds-subject-menu" id="subjectMenu-${s.id}">
+              <button type="button" onclick="closeSubjectMenus(); openEditSubject('${s.id}')">✎ Rename subject</button>
+              <button type="button" class="danger" onclick="closeSubjectMenus(); deleteSubject('${s.id}')">✕ Delete subject</button>
+            </div>
+          </div>
         </div>
+        <div class="rsc-name" title="${escapeAttr(s.name)}">${escapeHtml(s.name)}</div>
+        <div class="rsc-stats">
+          <span class="rsc-stat"><span>≡</span> ${c.total} Topics</span>
+          <span class="rsc-sep">|</span>
+          <span class="rsc-stat"><span>✓</span> ${c.done} / ${c.total} Studied</span>
+          <span class="rsc-sep">|</span>
+          <span class="rsc-stat"><span>◷</span> ${time} Time</span>
+        </div>
+        <div class="rsc-bar-row">
+          <div class="rsc-bar"><div class="rsc-bar-fill" style="width:${pct}%; background:${pal.bar};"></div></div>
+          <span class="rsc-pct">${pct}%</span>
+        </div>
+        <div class="rsc-next">🎓 Next: ${nextLabel}</div>
       </div>
+      <button class="rsc-arrow" style="background:${pal.arrowBg}; color:${pal.arrowColor}; border-color:${pal.arrowBg};" onclick="event.stopPropagation(); selectAndScroll('${s.id}')">→</button>
     </div>`;
   }).join('');
 }
@@ -567,3 +706,6 @@ document.addEventListener('click', (e)=>{
     hideCalTooltip();
   }
 });
+// replica live clock — start once DOM is ready
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', ()=>{ try{ startReplicaClock(); }catch(e){} });
+else try{ startReplicaClock(); }catch(e){}
