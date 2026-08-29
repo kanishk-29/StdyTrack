@@ -28,18 +28,21 @@
   pointer-events:none;
 }
 
-/* hide legacy elements visually but keep for JS hooks — calendar stays visible */
+/* hide legacy elements visually but keep for JS hooks */
 #studyView > header.scorecard,
+#studyView .today-panel,
+#studyView .cal-tooltip,
+#studyView .cal-plan-popover,
 #studyView .dashboard-section .dash-quick-grid,
 #studyView .dashboard-section #dashPriorityBlock,
 #studyView .dashboard-section .dash-deadlines,
-#studyView .dashboard-section .dash-block-header{
+#studyView .dashboard-section .dash-block-header,
+#studyView .layout{
   display:none !important;
 }
 .dashboard-section{ margin-top:0 !important; }
-#studyView .layout{ display:block !important; }
+#studyView .layout{ display:block !important; } /* keep subject detail visible */
 #studyView .revision-panel{ display:block !important; }
-#studyView .cal-tooltip, #studyView .cal-plan-popover{ /* keep tooltips but not hidden layout */ }
 
 /* keep backup-row hidden but expose lastSaved? hide */
 .storage-banner{ display:none !important; }
@@ -267,35 +270,6 @@
 .rs-dot{ width:8px; height:8px; border-radius:50%; background:#ffb86a; }
 .rs-dot:nth-child(4),.rs-dot:nth-child(5){ background:#ff6b6b; }
 .rs-dot:nth-child(6),.rs-dot:nth-child(7){ background:#e78acb; }
-
-/* ------- Today + Calendar — restored glass card ------- */
-.today-panel{
-  display:flex !important;
-  gap:16px;
-  background:rgba(255,255,255,0.68) !important;
-  backdrop-filter:blur(18px) saturate(160%) !important;
-  -webkit-backdrop-filter:blur(18px) saturate(160%) !important;
-  border:1px solid rgba(255,255,255,0.9) !important;
-  border-radius:22px !important;
-  padding:16px !important;
-  box-shadow:0 10px 28px rgba(124,92,255,0.08), 0 2px 8px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.9) !important;
-  margin-bottom:18px;
-  position:relative; overflow:hidden;
-}
-.today-panel::before{
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(180deg, rgba(255,255,255,0.5), transparent 60%);
-  pointer-events:none;
-}
-.today-panel > *{ position:relative; z-index:1; }
-.today-left{ min-width:160px; flex:0 0 180px; }
-.today-right{ flex:1; min-width:260px; }
-.cal-terminal{ background:rgba(255,255,255,0.55) !important; border:1px solid rgba(255,255,255,0.8) !important; }
-@media (max-width:720px){
-  .today-panel{ flex-direction:column; }
-  .today-left{ flex:1; min-width:0; }
-  .today-right{ min-width:0; }
-}
 
 /* ------- Your Subjects head ------- */
 .replica-subjects-head{
