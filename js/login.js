@@ -408,6 +408,6 @@ function updateAccountInfo(){
 // Silently no-ops inside Claude's sandboxed artifact preview — that's expected.
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => { /* not deployed standalone yet */ });
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => { /* not deployed standalone yet */ });
   });
 }
