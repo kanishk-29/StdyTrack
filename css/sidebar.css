@@ -62,7 +62,7 @@
   .subjects-drawer-overlay.show{ display:block; }
   .subjects-drawer{
     position:fixed; top:0; left:0; bottom:0;
-    width:100%; max-width:50vw;
+    width:100%; max-width:min(50vw,680px);
     background:var(--paper);
     box-shadow:10px 0 40px rgba(0,0,0,0.25);
     padding:20px;
@@ -859,7 +859,7 @@
      INSIDE-FOLDER VIEW — glass replication of reference design
      ================================================================ */
   .subjects-drawer.wide{
-    max-width:50vw;
+    max-width:min(50vw,680px);
     background:#fcfbff;
     overflow-x:hidden;
   }
@@ -1304,6 +1304,6 @@
     transform:translateY(-1px); box-shadow:0 8px 20px rgba(124,92,255,0.12);
   }
 
-  @media (max-width:420px){
-    .subjects-drawer{ max-width:100%; }
+  @media (max-width:720px){
+    .subjects-drawer, .subjects-drawer.wide{ max-width:100%; }
   }
