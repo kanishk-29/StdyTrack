@@ -101,6 +101,17 @@ function reassignSubjectFolder(subjectId, folderId, selectEl){
   renderSidebar();
   renderFolderCard();
 }
+function renameFolder(folderId){
+  const f = getFolder(folderId);
+  if(!f) return;
+  const name = prompt('Rename this folder', f.name);
+  if(!name || !name.trim() || name.trim()===f.name) return;
+  f.name = name.trim();
+  saveData();
+  renderSidebar();
+  renderFolderCard();
+  showToast('Folder renamed ✎');
+}
 // "Departments" card on the Today page — a quick jump-off point into
 // whichever bucket of subjects (college semester, personal projects, self
 // learning, research, ...) you actually want to look at right now, instead
@@ -118,6 +129,7 @@ function folderTileInnerHtml(folder){
       <input type="file" accept="image/*" id="folderImgInput-${folder.id}" style="display:none" onchange="handleFolderImage(event,'${folder.id}')">
       <button type="button" class="pp-folder-tile-edit" title="${folder.image?'Change image':'Add image'}" onclick="event.stopPropagation(); toggleFolderCoverMenu('${folder.id}')">✎</button>
       <div class="pp-folder-tile-edit-menu" id="folderCoverMenu-${folder.id}">
+        <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); renameFolder('${folder.id}')">✎ Rename folder</button>
         <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); document.getElementById('folderImgInput-${folder.id}').click()">🖼️ ${folder.image?'Change image':'Add image'}</button>
         ${folder.image ? `<button type="button" class="danger" onclick="event.stopPropagation(); closeFolderCoverMenus(); removeFolderImage('${folder.id}')">🗑️ Remove image</button>` : ''}
       </div>
