@@ -230,6 +230,13 @@ function mascotImageFor(key){
   return MASCOT_IMAGES[key] || MASCOT_IMAGES.hmph;
 }
 
+document.addEventListener('error', (e)=>{
+  const img = e.target;
+  if(img && img.tagName === 'IMG' && img.src.indexOf('assets/mascot') !== -1){
+    img.src = MASCOT_IMAGES.flustered || MASCOT_IMAGES.hmph;
+  }
+}, true);
+
 const MASCOT_PALETTE = {
   hairBack:  '#8a5a35',
   hairFront: '#c48a52',
