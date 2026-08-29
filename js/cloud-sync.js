@@ -34,16 +34,15 @@
 // Firebase SDK scripts are already loaded from the CDN in index.html, so no
 // bundling is needed. Auth state is remembered per browser automatically.
 
-const FIREBASE_CONFIG = null;
-// Example of what it should look like once you paste your real one:
-// const FIREBASE_CONFIG = {
-//   apiKey: "AIza...",
-//   authDomain: "your-project.firebaseapp.com",
-//   projectId: "your-project",
-//   storageBucket: "your-project.appspot.com",
-//   messagingSenderId: "1234567890",
-//   appId: "1:1234567890:web:abcdef"
-// };
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDp5EbhoQty1XV_hRXq013bZd-dgFM_gUc",
+  authDomain: "stdytrackr.firebaseapp.com",
+  projectId: "stdytrackr",
+  storageBucket: "stdytrackr.firebasestorage.app",
+  messagingSenderId: "797785116897",
+  appId: "1:797785116897:web:ae836446135e93191e27a0",
+  measurementId: "G-2XSKTM03C5"
+};
 
 // Optional gate on account creation. Leave it as '' to let ANYONE create an
 // account (open-source friendly — ideal for letting people try the app).
