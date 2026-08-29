@@ -56,7 +56,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <link rel="stylesheet" href="css/login.css">
 <link rel="stylesheet" href="css/mascot.css">
 <link rel="stylesheet" href="css/dark-mode.css">
-<link rel="stylesheet" href="css/replica.css">
 </head>
 <body>
 
@@ -165,54 +164,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </div>
 
   <div id="studyView" class="view-page">
-    <!-- Replica glass design — top bar + greeting + stats + subjects -->
-    <div class="replica-topbar">
-      <div class="rt-logo">Tracker</div>
-      <div class="rt-search-wrap">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search anything..." oninput="handleSearch()" onfocus="handleSearch()">
-        <button type="button" class="rt-search-btn" aria-label="Search" onclick="document.getElementById('searchInput').focus()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20L14.5 14.5"/></svg></button>
-        <div class="search-results" id="searchResults"></div>
-      </div>
-      <button type="button" class="rt-bell" id="rtBell" title="Notifications" onclick="showToast('No new notifications 🔔')"><span class="rt-bell-ic">🔔</span><span class="rt-bell-badge">3</span></button>
-      <button type="button" class="rt-bell" title="Settings" onclick="openSettings()" style="width:38px; height:38px;">⚙️</button>
-    </div>
-
-    <div class="replica-greeting-row">
-      <div class="replica-greeting-text">
-        <h2 id="replicaGreeting">Good evening, Deepansu! <span class="rg-wave">👋</span></h2>
-        <p>Keep learning, keep growing.</p>
-      </div>
-      <div class="replica-clock" id="replicaClock">
-        <div class="rc-date-col">
-          <div class="rc-ic">🗓️</div>
-          <div>
-            <div class="rc-day" id="rcDay">Thursday</div>
-            <div class="rc-date" id="rcDate">29 May 2025</div>
-          </div>
-        </div>
-        <div class="rc-time-segs" id="rcTimeSegs"><span class="rc-seg">08</span><span class="rc-colon">:</span><span class="rc-seg">45</span><span class="rc-colon">:</span><span class="rc-seg">32</span></div>
-        <div class="rc-labels"><span>HRS</span><span>MIN</span><span>SEC</span></div>
-      </div>
-    </div>
-
-    <div class="replica-stats" id="replicaStats">
-      <!-- filled by JS: 4 cards -->
-    </div>
-
-    <div class="replica-subjects-head">
-      <div class="rs-title"><span class="rs-icon">📖</span> Your Subjects</div>
-      <div class="rs-tabs" id="rsTabs">
-        <button type="button" class="rs-tab active" data-filter="all" onclick="setReplicaFilter('all', this)">All</button>
-        <button type="button" class="rs-tab" data-filter="progress" onclick="setReplicaFilter('progress', this)">In Progress</button>
-        <button type="button" class="rs-tab" data-filter="completed" onclick="setReplicaFilter('completed', this)">Completed</button>
-      </div>
-      <button type="button" class="rs-filter-btn" title="Filter / Sort" onclick="toggleReplicaFilterMenu(event)">▽</button>
-    </div>
-
-    <!-- New subject list replaces the old dashboard scroll — keeps same id for JS compat -->
-    <div class="replica-subjects-list" id="dashCourses"></div>
-
-    <!-- Legacy blocks kept in DOM for JS hooks but hidden visually via replica.css -->
     <header class="scorecard">
       <div>
         <span class="eyebrow">PROGRESS REPORT</span>
@@ -234,7 +185,10 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
     </header>
 
-    <!-- legacy search kept for compatibility but now lives in topbar; this dup removed -->
+    <div class="search-wrap">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search lectures, tests, units..." oninput="handleSearch()" onfocus="handleSearch()">
+      <div class="search-results" id="searchResults"></div>
+    </div>
 
     <div class="today-panel">
       <div class="today-left">
@@ -280,11 +234,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         <div class="dash-priority-list" id="dashPriority"></div>
       </div>
 
-      <div class="dash-block" style="display:none">
+      <div class="dash-block">
         <div class="dash-block-header">
-          <h3>Ongoing Subjects (legacy hidden)</h3>
+          <h3>Ongoing Subjects</h3>
         </div>
-        <div class="dash-courses-scroll" id="dashCoursesLegacy" style="display:none"></div>
+        <div class="dash-courses-scroll" id="dashCourses"></div>
       </div>
 
       <div class="dash-block">
