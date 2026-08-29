@@ -1,0 +1,75 @@
+/* "Plan a day" calendar popover + planned-lecture badge */
+  /* ---------- CALENDAR "PLAN A DAY" POPOVER ---------- */
+  .cal-plan-popover{
+    position:fixed;
+    z-index:501;
+    background:#161b22;
+    color:#e6edf3;
+    border:1px solid rgba(88,166,255,0.35);
+    border-radius:10px;
+    padding:12px 13px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    width:220px;
+    box-shadow:0 14px 34px rgba(0,0,0,0.5);
+    opacity:0;
+    transform:translateY(4px) scale(.96);
+    transition:opacity .12s ease, transform .12s ease;
+    pointer-events:none;
+  }
+  .cal-plan-popover.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .cpp-date{
+    font-weight:700; font-size:12px; color:#e6edf3; margin-bottom:8px;
+  }
+  .cpp-date::before{ content:"📅 "; }
+  .cpp-list{ display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+  .cpp-empty{ color:#7d8590; font-style:italic; font-size:11px; }
+  .cpp-item{
+    display:flex; align-items:center; gap:6px;
+    background:rgba(88,166,255,0.14); border:1px solid rgba(88,166,255,0.3);
+    border-radius:7px; padding:5px 6px 5px 8px;
+  }
+  .cpp-item.done{ opacity:0.55; }
+  .cpp-item-text{
+    flex:1; min-width:0; font-family:'Inter',sans-serif; font-size:11px; color:#dfe6ee;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .cpp-item.done .cpp-item-text{ text-decoration:line-through; }
+  .cpp-item-remove{
+    flex-shrink:0; width:16px; height:16px; border:none; background:none;
+    color:#9aa4b2; font-size:10px; cursor:pointer; border-radius:4px; line-height:1;
+  }
+  .cpp-item-remove:hover{ background:rgba(255,255,255,0.15); color:#fff; }
+  .cpp-add-toggle{
+    width:100%; padding:6px; border:1.5px dashed rgba(88,166,255,0.4); border-radius:7px;
+    background:transparent; color:#58a6ff; font-weight:700; font-size:10.5px;
+    font-family:'Inter',sans-serif; cursor:pointer; transition:all .15s ease;
+  }
+  .cpp-add-toggle:hover{ border-color:#58a6ff; background:rgba(88,166,255,0.1); }
+  .cpp-picker{ display:none; flex-direction:column; gap:6px; margin-top:8px; }
+  .cpp-picker select{
+    padding:6px 7px; border:1px solid rgba(255,255,255,0.15); border-radius:6px;
+    font-family:'Inter',sans-serif; font-size:11px; color:#e6edf3; background:#0d1117;
+  }
+  .cpp-picker button{
+    padding:6px; border:none; border-radius:6px;
+    background:#58a6ff; color:#06101f; font-weight:700; font-size:11px;
+    font-family:'Inter',sans-serif; cursor:pointer;
+  }
+  .cpp-picker button:hover{ background:#7cb9ff; }
+
+  /* ---------- PLANNED-LECTURE BADGE (subject page) ---------- */
+  .lecture-planned-flag{ font-size:12px; flex-shrink:0; }
+  .lecture-notes-flag{ font-size:12px; flex-shrink:0; cursor:pointer; opacity:0.75; transition:opacity .12s ease, transform .12s ease; }
+  .lecture-notes-flag:hover{ opacity:1; transform:scale(1.15); }
+  .lecture-planned-badge{
+    font-family:'Inter',sans-serif; font-size:10.5px; font-weight:800;
+    color:var(--sd-blue); background:var(--sd-blue-soft);
+    padding:4px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0;
+    letter-spacing:0.2px;
+  }
+
+  /* ================================================
+     DASHBOARD — Quick Access, Ongoing Subjects, Deadlines
+  ================================================ */
+  .dashboard-section{ margin-top:20px; }

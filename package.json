@@ -1,0 +1,10 @@
+{
+  "name": "study-tracker",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Study Tracker — static PWA, no build step required.",
+  "scripts": {
+    "dev": "npx serve . -l 3000",
+    "start": "npx serve . -l 3000"
+  }
+}

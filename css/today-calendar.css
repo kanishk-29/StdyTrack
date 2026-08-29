@@ -1,0 +1,266 @@
+/* Today page layout + terminal-style commit graph */
+  /* ---------- TODAY + CALENDAR ---------- */
+  .today-panel{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:20px 26px;
+    margin-top:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .today-left{ min-width:180px; }
+  .today-total{
+    font-family:'JetBrains Mono',monospace;
+    font-size:30px;
+    font-weight:700;
+    line-height:1;
+    margin:6px 0 8px;
+    background:linear-gradient(135deg, var(--green) 0%, var(--teal) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .today-empty{
+    font-size:12px;
+    color:var(--ink-faint);
+    font-style:italic;
+  }
+  .yesterday-line{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed var(--paper-line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .yesterday-line .yd-value{ font-weight:700; color:var(--ink); }
+  .yesterday-line .yd-trend{
+    font-size:11px;
+    padding:1px 7px;
+    border-radius:10px;
+    font-weight:700;
+  }
+  .yd-trend.up{ background:var(--green-soft); color:var(--green); }
+  .yd-trend.down{ background:#fbeee2; color:var(--pencil); }
+  .yd-trend.same{ background:#eeead9; color:var(--ink-soft); }
+  .today-right{ flex:1; min-width:280px; }
+
+  /* ---------- TERMINAL-STYLE COMMIT GRAPH ---------- */
+  .cal-terminal{
+    background:#0d1117;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 10px 28px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.04);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .cal-term-bar{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:9px 12px;
+    background:#161b22;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .cal-term-dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .dot-r{ background:#ff5f56; }
+  .dot-y{ background:#ffbd2e; }
+  .dot-g{ background:#27c93f; }
+  .cal-term-path{
+    margin-left:6px;
+    font-size:11px;
+    color:#7d8590;
+    letter-spacing:0.2px;
+  }
+  .cal-term-body{ padding:14px 16px 12px; }
+  .cal-week-labels{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin-bottom:6px;
+  }
+  .cal-week-spacer{ width:22px; flex-shrink:0; }
+  .cal-week-cols{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:5px;
+    max-width:250px;
+    flex:1;
+  }
+  .cal-week-cols span{
+    font-size:8.5px;
+    color:#5c6570;
+    text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .cal-week-cols span.is-current{ color:#39d353; font-weight:700; }
+  .cal-wrap{ display:flex; align-items:stretch; gap:9px; }
+  .cal-weekday-labels{
+    display:grid;
+    grid-template-rows:repeat(7, 1fr);
+    gap:5px;
+    width:22px;
+    flex-shrink:0;
+    height:auto;
+    align-self:stretch;
+  }
+  .cal-weekday-labels span{
+    font-size:9px;
+    color:#5c6570;
+    line-height:1;
+    height:100%;
+    display:flex;
+    align-items:center;
+  }
+  .cal-grid{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    grid-template-rows:repeat(7, 1fr);
+    grid-auto-flow:column;
+    gap:5px;
+    max-width:250px;
+    flex:1;
+  }
+  .cal-cell{
+    aspect-ratio:1;
+    border-radius:3px;
+    background:#161b22;
+    border:1px solid rgba(255,255,255,0.055);
+    transition:transform .14s cubic-bezier(.34,1.56,.64,1), box-shadow .14s ease, filter .14s ease;
+    cursor:pointer;
+    position:relative;
+    opacity:0;
+    transform:scale(.4);
+    animation:calPop .35s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  .cal-cell.is-future{
+    background:rgba(255,255,255,0.02) !important;
+    border:1px dashed rgba(255,255,255,0.12);
+    cursor:pointer;
+    animation:none;
+    opacity:1;
+  }
+  .cal-cell.is-future:hover{
+    border-color:rgba(88,166,255,0.55);
+    background:rgba(88,166,255,0.08) !important;
+  }
+  .cal-cell.is-future.has-plan{
+    background:rgba(88,166,255,0.22) !important;
+    border:1px solid #58a6ff;
+  }
+  .cal-cell.is-future.has-plan:hover{ background:rgba(88,166,255,0.32) !important; }
+  .cal-cell.is-future .cpp-count{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; color:#bcdcff;
+    pointer-events:none;
+  }
+  @keyframes calPop{
+    from{ opacity:0; transform:scale(.4); }
+    to{ opacity:1; transform:scale(1); }
+  }
+  .cal-cell:hover{
+    transform:scale(1.28);
+    z-index:2;
+    border-color:rgba(255,255,255,0.35);
+  }
+  .cal-cell.is-today{ box-shadow:0 0 0 2px #58a6ff, 0 0 10px rgba(88,166,255,0.5); }
+  .cal-cell.is-today:hover{ box-shadow:0 0 0 2px #58a6ff, 0 0 14px rgba(88,166,255,0.7); }
+  .cal-cell.is-running{
+    box-shadow:0 0 0 2px #ffb648, 0 0 4px rgba(255,182,72,0.4);
+    animation:calPop .35s cubic-bezier(.34,1.56,.64,1) forwards, calRunGlow 1.8s ease-in-out infinite .35s;
+  }
+  @keyframes calRunGlow{
+    0%, 100%{ box-shadow:0 0 0 2px #ffb648, 0 0 3px rgba(255,182,72,0.35); }
+    50%{ box-shadow:0 0 0 2px #ffd60a, 0 0 16px rgba(255,214,10,1); }
+  }
+  .cal-cell.level-0{ background:#161b22; }
+  .cal-cell.level-1{ background:#0e4429; border-color:rgba(255,255,255,0.04); }
+  .cal-cell.level-2{ background:#006d32; }
+  .cal-cell.level-3{ background:#26a641; }
+  .cal-cell.level-4{ background:#39d353; }
+  .cal-cell.level-1:hover{ box-shadow:0 0 8px rgba(14,68,41,0.7); }
+  .cal-cell.level-2:hover{ box-shadow:0 0 9px rgba(0,109,50,0.75); }
+  .cal-cell.level-3:hover{ box-shadow:0 0 10px rgba(38,166,65,0.8); }
+  .cal-cell.level-4:hover{ box-shadow:0 0 14px rgba(57,211,83,0.85); filter:brightness(1.08); }
+  .cal-legend{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    margin-top:10px;
+    font-size:9.5px;
+    color:#5c6570;
+    justify-content:flex-end;
+    max-width:250px;
+    margin-left:auto;
+  }
+  .cal-legend .cal-swatch{
+    width:10px; height:10px; border-radius:3px; display:inline-block;
+    border:1px solid rgba(255,255,255,0.06);
+  }
+  .cal-legend .cal-swatch.level-0{ background:#161b22; }
+  .cal-legend .cal-swatch.level-1{ background:#0e4429; }
+  .cal-legend .cal-swatch.level-2{ background:#006d32; }
+  .cal-legend .cal-swatch.level-3{ background:#26a641; }
+  .cal-legend .cal-swatch.level-4{ background:#39d353; }
+  .cal-tooltip{
+    position:fixed;
+    z-index:500;
+    background:#161b22;
+    color:#e6edf3;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:8px;
+    padding:10px 12px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    min-width:150px;
+    max-width:220px;
+    box-shadow:0 12px 32px rgba(0,0,0,0.45);
+    pointer-events:none;
+    opacity:0;
+    transform:translateY(4px) scale(.96);
+    transition:opacity .12s ease, transform .12s ease;
+  }
+  .cal-tooltip.show{ opacity:1; transform:translateY(0) scale(1); }
+  .cal-tooltip .ct-date{
+    font-weight:700;
+    font-size:12px;
+    color:#e6edf3;
+    margin-bottom:2px;
+  }
+  .cal-tooltip .ct-date::before{ content:"$ "; color:#39d353; }
+  .cal-tooltip .ct-total{
+    color:#39d353;
+    font-size:11px;
+    margin-bottom:6px;
+  }
+  .cal-tooltip .ct-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:4px;
+  }
+  .cal-tooltip .ct-dot{
+    width:7px; height:7px; border-radius:50%; flex-shrink:0;
+  }
+  .cal-tooltip .ct-name{
+    flex:1;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    color:#adbac7;
+  }
+  .cal-tooltip .ct-time{
+    color:#7d8590;
+    font-size:10px;
+    flex-shrink:0;
+  }
+  .cal-tooltip .ct-empty{ color:#7d8590; font-style:italic; }
