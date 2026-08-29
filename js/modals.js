@@ -26,11 +26,32 @@ function openAddSubject(){
   setTimeout(()=>document.getElementById('subjectNameInput').focus(), 50);
 }
 
+function openEditSubject(subjectId){
+  const s = data.subjects.find(x=>x.id===subjectId);
+  if(!s) return;
+  editState = {subjectId, unitId:null, lectureId:null, mode:'edit-subject'};
+  document.getElementById('subjectModalTitle').textContent = 'Edit Subject';
+  document.getElementById('subjectNameInput').value = s.name;
+  foldersEnsure();
+  populateFolderSelect(document.getElementById('subjectFolderInput'), s.folderId || activeFolderFilter || '');
+  openModal('subjectOverlay');
+  setTimeout(()=>document.getElementById('subjectNameInput').select(), 50);
+}
+
 async function saveSubject(){
   const name = document.getElementById('subjectNameInput').value.trim();
   if(!name) return;
   const folderSel = document.getElementById('subjectFolderInput');
   const folderId = (folderSel && folderSel.value && folderSel.value !== '__new__') ? folderSel.value : null;
+  if(editState && editState.mode==='edit-subject' && editState.subjectId){
+    const s = data.subjects.find(x=>x.id===editState.subjectId);
+    if(s){ s.name = name; s.folderId = folderId; }
+    closeModal('subjectOverlay');
+    renderAll();
+    saveData();
+    showToast('Subject updated ✎');
+    return;
+  }
   const newSubject = {
     id: uid(), name, folderId,
     units: [1,2,3,4,5].map(n=>({id:uid(), name:'Unit '+n, open:false, lectures:[]}))

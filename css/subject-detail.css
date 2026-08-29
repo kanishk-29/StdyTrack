@@ -25,6 +25,15 @@
     margin-bottom:18px;
   }
   .sd-title-block{ min-width:180px; animation:sdFadeUp .5s ease both; }
+  .sd-title-row{ display:flex; align-items:center; gap:10px; }
+  .sd-rename-btn{
+    width:30px; height:30px; border-radius:10px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--sd-purple-soft); color:var(--sd-purple);
+    border:1px solid transparent; cursor:pointer;
+    font-size:14px; transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .sd-rename-btn:hover{ transform:translateY(-2px) scale(1.06); box-shadow:0 6px 16px rgba(124,92,255,0.28); }
   .sd-title{
     display:flex; align-items:center; gap:8px;
     font-family:'Neuton',serif;
@@ -99,3 +108,27 @@
   .sd-stat-icon.blue{ background:var(--sd-blue-soft); }
   .sd-stat-label{ display:block; font-size:10px; color:var(--sd-ink-soft); font-weight:600; }
   .sd-stat-value{ display:block; font-size:14.5px; color:var(--sd-ink); font-weight:700; font-family:'JetBrains Mono',monospace; }
+
+  /* ---- Phone: declutter the subject detail panel ---- */
+  @media (max-width:560px){
+    .main{ padding:14px 14px 20px; border-radius:16px; min-height:0; }
+    .sd-header{ gap:10px; margin-bottom:12px; }
+    .sd-title{ font-size:21px; }
+    .sd-title-block{ min-width:0; flex:1; }
+    .sd-subtitle{ font-size:12px; margin-top:2px; }
+    .sd-streak-badge{ padding:6px 12px; }
+    .sd-streak-value{ font-size:12.5px; }
+    .sd-ring-wrap svg{ width:78px; height:78px; }
+    .sd-ring-caption{ font-size:9.5px; }
+    .sd-stat-grid{ grid-template-columns:repeat(2, 1fr); gap:6px; min-width:0; }
+    .sd-stat-card{ padding:7px 9px; border-radius:11px; gap:7px; }
+    .sd-stat-icon{ width:26px; height:26px; border-radius:8px; font-size:12.5px; }
+    .sd-stat-label{ font-size:9px; }
+    .sd-stat-value{ font-size:13px; }
+    .sd-exam-card{ padding:10px 12px; border-radius:13px; margin-bottom:12px; }
+    .sd-exam-icon{ width:34px; height:34px; border-radius:10px; font-size:14px; }
+  }
+  @media (max-width:370px){
+    .sd-ring-wrap{ display:none; }
+    .sd-stat-grid{ grid-template-columns:1fr 1fr; }
+  }

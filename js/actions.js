@@ -156,6 +156,18 @@ function impactFlash(originEl){
   }
 }
 
+function toggleSubjectMenu(subjectId){
+  document.querySelectorAll('.ds-subject-menu.show').forEach(m=>{ if(m.id!=='subjectMenu-'+subjectId) m.classList.remove('show'); });
+  const m = document.getElementById('subjectMenu-'+subjectId);
+  if(m) m.classList.toggle('show');
+}
+function closeSubjectMenus(){
+  document.querySelectorAll('.ds-subject-menu.show').forEach(m=>m.classList.remove('show'));
+}
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.ds-menu-wrap')) closeSubjectMenus();
+});
+
 function deleteSubject(subjectId){
   const s = data.subjects.find(x=>x.id===subjectId);
   askConfirm(`Delete "${s.name}" and everything in it?`, async ()=>{

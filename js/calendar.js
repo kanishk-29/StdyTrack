@@ -197,6 +197,7 @@ function subjectCardHtml(s, i){
       <div class="dash-course-edit-wrap">
         <button class="dash-course-edit-btn" title="Edit cover image" onclick="event.stopPropagation(); toggleCoverMenu('${s.id}')">✎</button>
         <div class="dash-course-edit-menu" id="coverMenu-${s.id}">
+          <button onclick="event.stopPropagation(); closeCoverMenus(); openEditSubject('${s.id}')">✎ Rename subject</button>
           <button onclick="event.stopPropagation(); closeCoverMenus(); document.getElementById('subjectImgInput-${s.id}').click()">🖼️ ${s.image?'Change image':'Add image'}</button>
           ${s.image ? `<button class="danger" onclick="event.stopPropagation(); closeCoverMenus(); removeSubjectImage('${s.id}')">🗑️ Remove image</button>` : ''}
         </div>
@@ -318,7 +319,13 @@ function drawerSubjectCardHtml(s, i){
     <div class="ds-body">
       <div class="ds-top">
         <span class="ds-pill" style="background:${pal.pillBg}; color:${pal.pillColor};">${escapeHtml(pillText)}</span>
-        <button class="ds-menu" title="Options" onclick="event.stopPropagation();">⋮</button>
+        <div class="ds-menu-wrap" onclick="event.stopPropagation()">
+          <button class="ds-menu" title="Options" onclick="toggleSubjectMenu('${s.id}')">⋮</button>
+          <div class="ds-subject-menu" id="subjectMenu-${s.id}">
+            <button type="button" onclick="closeSubjectMenus(); openEditSubject('${s.id}')">✎ Rename subject</button>
+            <button type="button" class="danger" onclick="closeSubjectMenus(); deleteSubject('${s.id}')">✕ Delete subject</button>
+          </div>
+        </div>
       </div>
       <div class="ds-name" title="${escapeAttr(s.name)}">${escapeHtml(s.name)}</div>
       <div class="ds-stats">
@@ -734,7 +741,10 @@ function renderMain(){
   let html = `
     <div class="sd-header">
       <div class="sd-title-block">
-        <h2 class="sd-title">${escapeHtml(subject.name)} <span class="sd-sparkle">✨</span></h2>
+        <div class="sd-title-row">
+          <h2 class="sd-title">${escapeHtml(subject.name)} <span class="sd-sparkle">✨</span></h2>
+          <button type="button" class="sd-rename-btn" title="Rename subject" onclick="openEditSubject('${subject.id}')">✎</button>
+        </div>
         <div class="sd-subtitle">Master concepts. Ace every exam.</div>
       </div>
       <div class="sd-streak-badge">

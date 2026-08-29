@@ -1205,6 +1205,25 @@
     transition:all .15s ease;
   }
   .ds-menu:hover{ background:rgba(124,92,255,0.08); color:#6b7280; }
+  .ds-menu-wrap{ position:relative; flex-shrink:0; }
+  .ds-subject-menu{
+    position:absolute; right:0; top:calc(100% + 4px); z-index:40;
+    min-width:170px; display:none; flex-direction:column; gap:2px;
+    background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+    padding:5px; box-shadow:0 12px 32px rgba(15,15,35,0.16), 0 2px 8px rgba(15,15,35,0.08);
+    animation:sdPopIn .15s ease both;
+  }
+  .ds-subject-menu.show{ display:flex; }
+  .ds-subject-menu button{
+    display:flex; align-items:center; gap:8px; width:100%;
+    padding:8px 10px; border:none; border-radius:8px; cursor:pointer;
+    background:transparent; color:#1a1a2e;
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; text-align:left;
+    transition:background .12s ease;
+  }
+  .ds-subject-menu button:hover{ background:#f3efff; color:#5b3df5; }
+  .ds-subject-menu button.danger{ color:#d9534f; }
+  .ds-subject-menu button.danger:hover{ background:#fdecea; color:#d9534f; }
   .ds-name{
     font-family:'Inter',system-ui,sans-serif;
     font-weight:750;
