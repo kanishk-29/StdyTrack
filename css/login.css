@@ -5,7 +5,8 @@
     position:fixed; inset:0; z-index:9998;
     display:flex; align-items:center; justify-content:center;
     background:#0a0b16;
-    overflow:hidden;
+    overflow-x:hidden; overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
     opacity:0; pointer-events:none;
     transition:opacity .4s ease;
   }

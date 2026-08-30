@@ -3,6 +3,25 @@
 function openModal(id){ document.getElementById(id).classList.add('show'); }
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
 
+// Lock background scrolling while any full-screen overlay is open so the page
+// underneath doesn't scroll/glide on touch devices (mobile UX). Watches class
+// changes instead of every opener, so any future overlay works automatically.
+(function(){
+  var overlays = '.overlay.show, .slide-overlay.show, .subjects-drawer-overlay.show, .focus-overlay.show, .login-screen.show';
+  var locked = null;
+  function refreshLock(){
+    var has = !!document.querySelector(overlays);
+    if(has === locked) return;
+    locked = has;
+    document.body.style.overflowY = has ? 'hidden' : '';
+  }
+  if(window.MutationObserver){
+    var mo = new MutationObserver(refreshLock);
+    mo.observe(document.body, { subtree:true, attributes:true, attributeFilter:['class'] });
+    refreshLock();
+  }
+})();
+
 function askConfirm(message, onYes, confirmLabel){
   document.getElementById('confirmMessage').textContent = message;
   const yesBtn = document.getElementById('confirmYesBtn');

@@ -7,7 +7,11 @@
     display:none;
     align-items:center;
     justify-content:center;
-    padding:24px;
+    padding:
+      max(24px, env(safe-area-inset-top))
+      max(24px, env(safe-area-inset-right))
+      max(24px, env(safe-area-inset-bottom))
+      max(24px, env(safe-area-inset-left));
   }
   .focus-overlay.show{ display:flex; animation:cardIn .25s ease; }
   .focus-panel{
@@ -16,7 +20,10 @@
     width:100%;
     max-width:820px;
     max-height:92vh;
+    max-height:92dvh;
     overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-y:contain;
     padding:22px 26px 26px;
     box-shadow:0 20px 60px rgba(0,0,0,0.4);
   }
@@ -80,12 +87,24 @@
      MOBILE — tighten things up for small phone widths
   ================================================ */
   @media (max-width:480px){
-    body{ padding:16px 12px 50px; }
+    body{
+      padding:
+        max(16px, env(safe-area-inset-top))
+        max(12px, env(safe-area-inset-right))
+        calc(50px + env(safe-area-inset-bottom))
+        max(12px, env(safe-area-inset-left));
+    }
     .sd-title{ font-size:20px; }
     .today-panel{ padding:16px 16px; gap:16px; }
     .today-total{ font-size:25px; }
     .today-right{ min-width:0; width:100%; }
-    .focus-overlay{ padding:14px; }
+    .focus-overlay{
+      padding:
+        max(14px, env(safe-area-inset-top))
+        max(14px, env(safe-area-inset-right))
+        max(14px, env(safe-area-inset-bottom))
+        max(14px, env(safe-area-inset-left));
+    }
     .focus-panel{ padding:18px 16px 20px; }
     .focus-controls{ padding:12px 14px; }
     .lecture{ gap:8px; padding:10px 2px; }

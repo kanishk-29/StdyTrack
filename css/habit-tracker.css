@@ -27,7 +27,7 @@
   .habit-check.done{color:var(--green); font-weight:700;}
   .habit-check.reading.done{color:var(--violet);}
   .habit-check.disabled{color:var(--ink-faint);}
-  .habit-chart-wrap{width:100%; overflow-x:auto;}
+  .habit-chart-wrap{width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; padding-bottom:2px;}
   .habit-chart-wrap svg{width:100%; min-width:480px; height:auto;}
   .habit-chart-gridline{stroke:var(--paper-line); stroke-width:1;}
   .habit-chart-line{fill:none; stroke:var(--teal); stroke-width:3; stroke-linecap:round; stroke-linejoin:round;}

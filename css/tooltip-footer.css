@@ -9,6 +9,8 @@
     opacity:0; transform:translateY(4px);
     transition:opacity .15s ease, transform .15s ease;
     pointer-events:none; white-space:nowrap;
+    max-width:calc(100vw - 24px);
+    overflow:hidden; text-overflow:ellipsis;
   }
   .lecture-date-tip.show{ opacity:1; transform:translateY(0); }
   .lecture-date-tip .ldt-icon{ margin-right:4px; }
@@ -248,6 +250,14 @@
   @media (max-width:560px){
     .sd-footer-quote{ flex-wrap:wrap; }
     .sd-footer-cta{ width:100%; }
+  }
+  @media (max-width:480px){
+    .test-item{ padding:10px 10px; }
+    .test-row{ gap:8px; }
+    .test-stats-row{ gap:6px; }
+    .test-stat{ padding:7px 2px; }
+    .test-stat span{ font-size:8.5px; }
+    .tests-avg-badge{ padding:5px 9px; font-size:10px; }
   }
 
   /* ================================================

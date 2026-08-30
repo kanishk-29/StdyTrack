@@ -52,7 +52,12 @@
   .accent-4{ --accent:var(--green); --accent-deep:#2e5c44; }
   .accent-5{ --accent:var(--pencil); --accent-deep:#9c3d21; }
 
-  *{box-sizing:border-box;}
+  html{
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  button, [role="button"], input, select, textarea{ touch-action:manipulation; }
   html,body{margin:0;padding:0;}
   body{
     background:
@@ -61,9 +66,23 @@
     color:var(--ink);
     font-family:'Inter',sans-serif;
     min-height:100vh;
-    padding:28px 20px 60px;
+    min-height:100dvh;
+    padding:
+      max(28px, env(safe-area-inset-top))
+      max(20px, env(safe-area-inset-right))
+      calc(60px + env(safe-area-inset-bottom))
+      max(20px, env(safe-area-inset-left));
     position:relative;
     overflow-x:hidden;
+  }
+  @media (max-width:480px){
+    body{
+      padding:
+        max(16px, env(safe-area-inset-top))
+        max(12px, env(safe-area-inset-right))
+        calc(50px + env(safe-area-inset-bottom))
+        max(12px, env(safe-area-inset-left));
+    }
   }
 
   .app{max-width:1100px;margin:0 auto; position:relative; z-index:1;}

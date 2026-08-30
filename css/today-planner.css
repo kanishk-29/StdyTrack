@@ -13,6 +13,8 @@
   .pp-datestrip{
     flex:1; min-width:0; display:flex; gap:7px; overflow-x:auto; padding:2px 2px 8px;
     scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;
   }
   .pp-datestrip::-webkit-scrollbar{ height:4px; }
   .pp-datestrip::-webkit-scrollbar-thumb{ background:var(--border); border-radius:4px; }
