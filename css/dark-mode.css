@@ -95,7 +95,12 @@
 [data-theme="dark"] .drawer-header .slide-close:hover{ background:#363e54; }
 [data-theme="dark"] .ms-hero{ background:#1b2130; }
 [data-theme="dark"] .ms-hero::before{ background:radial-gradient(ellipse at 50% 50%, #262133 0%, transparent 70%); }
-[data-theme="dark"] .ms-hero-bust-inner{ background:#26233a; }
+[data-theme="dark"] .ms-hero-bust-inner{
+  background:
+    linear-gradient(180deg, rgba(38,35,58,0.55), transparent),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="55" x="50" text-anchor="middle" font-size="70">🗿</text></svg>') center 10px / 90px no-repeat,
+    #26233a;
+}
 [data-theme="dark"] .ms-title-block h2{ color:#e8ebf3; }
 [data-theme="dark"] .ms-title-block p{ color:#8a7e8e; }
 [data-theme="dark"] .ms-divider span{ background:linear-gradient(90deg, transparent, #3a3450, transparent); }
@@ -265,9 +270,11 @@
 [data-theme="dark"] .running-timer-banner.tier-warn{ background:#3a2c14; color:#f0d5a0; }
 [data-theme="dark"] .running-timer-banner.tier-alert{ background:#3a1d1d; color:#f0c0b0; }
 [data-theme="dark"] .running-timer-banner{ background:linear-gradient(135deg, #3a2418, #381f2b); }
-[data-theme="dark"] .rtb-btn.view{ background:#10141d; }
-[data-theme="dark"] .rtb-btn.view:hover{ background:#1d2434; }
 [data-theme="dark"] .timer-pill.running{ background:linear-gradient(135deg, #2b1f2b, #241f38); }
+
+/* ---- Yesterday trend chips (today header) ---- */
+[data-theme="dark"] .yd-trend.down{ background:rgba(193,80,46,0.18); color:#f0a891; }
+[data-theme="dark"] .yd-trend.same{ background:rgba(255,255,255,0.07); color:#9ca3af; }
 
 /* ---- Today planner ---- */
 [data-theme="dark"] .pp-focus-card,
@@ -281,6 +288,11 @@
 [data-theme="dark"] .habit-metric,
 [data-theme="dark"] .habit-day-card{ background:#1a2030; }
 [data-theme="dark"] .habit-note{ background:#10141d; color:var(--ink); border-color:var(--border); }
+
+/* ---- Today planner next-up tag + wide drawer add-subject ---- */
+[data-theme="dark"] .pp-nextup-tag{ background:rgba(255,255,255,0.09); color:#c3b8ff; }
+[data-theme="dark"] .subjects-drawer.wide .add-subject-btn{ background:rgba(35,42,63,0.85); color:#a08cff; box-shadow:none; }
+[data-theme="dark"] .subjects-drawer.wide .add-subject-btn:hover{ background:#232a3f; border-color:#7c5cff; border-style:solid; box-shadow:0 8px 20px rgba(0,0,0,0.35); color:#c3b8ff; }
 
 /* ---- Focus mode ---- */
 [data-theme="dark"] .focus-controls{ background:#171d2b; }

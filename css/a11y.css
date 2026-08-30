@@ -1,0 +1,36 @@
+/* Accessibility: keyboard focus rings + reduced-motion overrides.
+   Loaded LAST in index.html so these rules win over earlier files. */
+
+  /* ---------- KEYBOARD FOCUS VISIBILITY ---------- */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline:2px solid var(--violet, #7c5cbf);
+    outline-offset:2px;
+  }
+
+  /* ---------- REDUCED MOTION ---------- */
+  /* Users who prefer reduced motion (or low-power devices set to it):
+     kill the ongoing/looping ambient animations, keep one-shot fades. */
+  @media (prefers-reduced-motion: reduce){
+    *,
+    *::before,
+    *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+    /* Decorative petals/orbs fully hide so they don't linger frozen on screen */
+    .unit-petals span,
+    .login-petals span{ opacity:0 !important; display:none; }
+    .login-orb{ display:none; }
+    .login-scan-line,
+    .login-eyebrow-dot{ display:none; }
+    .login-card{ animation:none !important; }
+    .mascot-avatar-btn,
+    .login-mascot{ animation:none !important; }
+  }

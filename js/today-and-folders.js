@@ -1412,7 +1412,8 @@ function youTubeThumb(url){
   return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
 }
 
-function uid(){ return Math.random().toString(36).slice(2,10); }
+let uidCounter = 0;
+function uid(){ return (uidCounter++) + '-' + Math.random().toString(36).slice(2,10); }
 
 let ringIdCounter = 0;
 function ringSVG(pct, size, strokeW){

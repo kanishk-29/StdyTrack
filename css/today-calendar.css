@@ -132,6 +132,7 @@
   }
   .cal-cell{
     aspect-ratio:1;
+    min-height:34px;
     border-radius:3px;
     background:#161b22;
     border:1px solid rgba(255,255,255,0.055);

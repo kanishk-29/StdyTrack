@@ -12,6 +12,7 @@ sw.js                 # offline cache (app shell only — your data stays in
                        #   the browser's localStorage, never cached here)
 icon-192.png
 apple-touch-icon.png
+icon-512.png
 
 css/                   # loaded top-to-bottom in index.html — order matters
   base.css              # design tokens (colors/vars), reset, body, app shell
@@ -31,6 +32,8 @@ css/                   # loaded top-to-bottom in index.html — order matters
   focus-mode.css             # focus mode overlay
   login.css                    # login / checkpoint screen
   mascot.css                    # study mascot
+  dark-mode.css                 # dark-theme overrides (loaded last)
+  a11y.css                      # focus rings + reduced-motion (loaded very last)
 
 js/                    # loaded top-to-bottom in index.html — order matters,
                        # everything is a plain global script (no bundler,

@@ -788,10 +788,9 @@ function testRow(subjectId, unitId, t, idx){
     </div>`;
 }
 
+const HTML_ESCAPE_MAP = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
 function escapeHtml(str){
-  const d = document.createElement('div');
-  d.textContent = str || '';
-  return d.innerHTML;
+  return (str === null || str === undefined ? '' : String(str)).replace(/[&<>"']/g, (ch) => HTML_ESCAPE_MAP[ch]);
 }
 function ekgLine(uid){
   const d = 'M0,12 L8,12 L11,9 L14,15 L17,12 L23,12 L26,3 L29,21 L32,12 L38,12 L41,9 L44,15 L47,12 L60,12 '

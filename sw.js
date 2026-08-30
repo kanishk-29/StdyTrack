@@ -2,12 +2,13 @@
 // All real data lives in localStorage, not in this cache ???????? this only
 // lets the app shell (html/css/js/icons) load when there's no connection.
 
-const CACHE_NAME = 'study-tracker-shell-v23';
+const CACHE_NAME = 'study-tracker-shell-v24';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
+  './icon-512.png',
   './apple-touch-icon.png',
   './css/base.css',
   './css/habit-tracker.css',
@@ -27,6 +28,7 @@ const APP_SHELL = [
   './css/login.css',
   './css/mascot.css',
   './css/dark-mode.css',
+  './css/a11y.css',
   './js/data.js',
   './js/today-and-folders.js',
   './js/cloud-sync.js',
@@ -67,7 +69,8 @@ self.addEventListener('activate', (event) => {
 });
 
 // Network-first for app files so updates show up promptly; falls back to
-// cache when offline.
+// cache when offline. Images never fall back to index.html (that would
+// serve HTML bytes for a broken <img>); they just use the cache or fail.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
@@ -78,6 +81,13 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => {});
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match('./index.html')))
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached) return cached;
+        if (event.request.destination !== 'image' && event.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+        return Response.error();
+      })
   );
 });

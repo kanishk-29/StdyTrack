@@ -598,6 +598,7 @@ let folderClockTimer = null;
 function startFolderClock(){
   stopFolderClock();
   const tick = () => {
+    if(document.hidden) return;
     const hEl = document.getElementById('folderClockH');
     if(!hEl){ stopFolderClock(); return; }
     const now = new Date();
