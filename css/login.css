@@ -233,6 +233,28 @@
     box-shadow:0 10px 24px -8px rgba(47,191,135,0.55);
   }
 
+  .login-google-sep{
+    display:flex; align-items:center; gap:10px;
+    margin:14px 0 2px; color:#5e6083;
+    font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
+    text-transform:uppercase; letter-spacing:1.2px;
+  }
+  .login-google-sep::before, .login-google-sep::after{
+    content:""; flex:1; height:1px; background:rgba(255,255,255,0.09);
+  }
+  .login-google{
+    width:100%; margin-top:2px; padding:12px 14px; border-radius:13px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; letter-spacing:0.2px;
+    color:#14142a; background:#fff;
+    border:1px solid rgba(255,255,255,0.25); cursor:pointer;
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease, filter .2s ease;
+  }
+  .login-google .lg-icon{ width:18px; height:18px; flex:none; }
+  .login-google:hover{ transform:translateY(-2px); box-shadow:0 10px 22px -10px rgba(255,255,255,0.35); filter:brightness(0.97); }
+  .login-google:active{ transform:translateY(0) scale(0.98); }
+  .login-google:disabled{ opacity:0.55; cursor:default; transform:none; }
+
   .login-footnote{
     margin-top:16px; font-size:10.5px; color:#5e6083;
     display:flex; align-items:center; justify-content:center; gap:5px;

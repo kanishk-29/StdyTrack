@@ -86,6 +86,10 @@ function resetLoginForm(){
     : '🔒 Your data stays on this device';
   if(btn) btn.textContent = "New here? Create an account";
   if(btn) btn.style.display = cloud ? '' : 'none';
+  const googleBtn = document.getElementById('loginGoogleBtn');
+  const googleSep = document.getElementById('loginGoogleSep');
+  if(googleBtn) googleBtn.style.display = cloud ? '' : 'none';
+  if(googleSep) googleSep.style.display = cloud ? '' : 'none';
   if(emailField) emailField.style.display = cloud ? '' : 'none';
   if(codeField) codeField.style.display = 'none';
   if(forget) forget.style.display = cloud ? '' : 'none';
@@ -235,8 +239,32 @@ function authFriendlyError(err){
     'auth/network-request-failed': "Network error — check your connection.",
     'auth/too-many-requests': "Too many attempts. Wait a bit, then retry.",
     'auth/popup-closed-by-user': "Sign-in was cancelled.",
+    'auth/popup-blocked': "Pop-up was blocked — allow pop-ups for this site, then try again.",
+    'auth/unauthorized-domain': "Google sign-in isn't enabled for this domain yet.",
+    'auth/account-exists-with-different-credential': "That email already has a password account — sign in with your password instead.",
+    'auth/cancelled-popup-request': "Sign-in was cancelled.",
   };
   return map[code] || (err && err.message ? err.message : "Something went wrong. Try again.");
+}
+
+async function googleSignIn(){
+  if(!cloudIsConfigured()) return;
+  const btn = document.getElementById('loginGoogleBtn');
+  if(btn) btn.disabled = true;
+  try{
+    const ready = await initCloudSync();
+    if(!ready) throw new Error('Cloud is unavailable');
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await firebase.auth().signInWithPopup(provider);
+    // Google accounts are already email-verified, so they sail straight past
+    // the verification gate; the auth listener starts the app for them.
+    const user = firebase.auth().currentUser;
+    if(user && user.displayName) applyUserName(user.displayName);
+  }catch(err){
+    showLoginError(authFriendlyError(err));
+  }
+  if(btn) btn.disabled = false;
 }
 
 function applyUserName(name){
