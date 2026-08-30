@@ -1,0 +1,7 @@
+{
+  "name": "study-tracker-api",
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^13.1.0"
+  }
+}

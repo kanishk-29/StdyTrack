@@ -28,6 +28,11 @@
 //               && request.auth.uid == docId
 //               && request.auth.token.email_verified == true;
 //         }
+//         // One-time verification codes — only the server (Admin SDK) touches
+//         // these; clients can neither read nor write them.
+//         match /otp/{email} {
+//           allow read, write: if false;
+//         }
 //       }
 //     }
 //
@@ -154,6 +159,32 @@ async function cloudSendEmailVerification(){
   const user = firebase.auth().currentUser;
   if(!user) throw new Error('No signed-in user');
   return user.sendEmailVerification();
+}
+
+// ---- OTP (6-digit code) verification via Vercel serverless functions ----
+// Codes are generated, emailed, stored and checked on the server, so a fake
+// email can never self-verify itself from the browser.
+function otpApiHeaders(){ return { 'Content-Type': 'application/json' }; }
+
+async function otpRequest(path, body){
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: otpApiHeaders(),
+    body: JSON.stringify(body)
+  });
+  const data = await res.json().catch(() => ({}));
+  if(!res.ok) throw new Error((data && data.error) || 'Something went wrong.');
+  return data;
+}
+
+// type: 'signup' | 'verify' | 'reset'
+async function otpSendCode(type, email){
+  return otpRequest('/api/send-code', { type, email: String(email || '').trim() });
+}
+
+// Verify a code and finish its action (create account / mark verified / reset password).
+async function otpVerify(type, payload){
+  return otpRequest('/api/verify-code', Object.assign({ type }, payload));
 }
 
 async function cloudPull(){

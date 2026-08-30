@@ -212,6 +212,11 @@
   }
   .login-back:hover{ color:#8b6fff; }
 
+  #loginOtpInput, #loginResetCodeInput{
+    text-align:center; letter-spacing:.35em;
+    font-family:'JetBrains Mono',monospace; font-weight:700;
+  }
+
   .login-error.success{ color:#2f8f8a; }
 
   .login-submit{

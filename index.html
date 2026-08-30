@@ -38,24 +38,24 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
       media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
-<link rel="stylesheet" href="css/base.css?v=20">
-<link rel="stylesheet" href="css/habit-tracker.css?v=20">
-<link rel="stylesheet" href="css/header-search.css?v=20">
-<link rel="stylesheet" href="css/today-calendar.css?v=20">
-<link rel="stylesheet" href="css/calendar-popover.css?v=20">
-<link rel="stylesheet" href="css/timer.css?v=20">
-<link rel="stylesheet" href="css/sidebar.css?v=20">
-<link rel="stylesheet" href="css/subject-detail.css?v=20">
-<link rel="stylesheet" href="css/exam-pacing.css?v=20">
-<link rel="stylesheet" href="css/tooltip-footer.css?v=20">
-<link rel="stylesheet" href="css/modal.css?v=20">
-<link rel="stylesheet" href="css/today-planner.css?v=20">
-<link rel="stylesheet" href="css/lecture-notes.css?v=20">
-<link rel="stylesheet" href="css/analytics.css?v=20">
-<link rel="stylesheet" href="css/focus-mode.css?v=20">
-<link rel="stylesheet" href="css/login.css?v=20">
-<link rel="stylesheet" href="css/mascot.css?v=20">
-<link rel="stylesheet" href="css/dark-mode.css?v=20">
+<link rel="stylesheet" href="css/base.css?v=21">
+<link rel="stylesheet" href="css/habit-tracker.css?v=21">
+<link rel="stylesheet" href="css/header-search.css?v=21">
+<link rel="stylesheet" href="css/today-calendar.css?v=21">
+<link rel="stylesheet" href="css/calendar-popover.css?v=21">
+<link rel="stylesheet" href="css/timer.css?v=21">
+<link rel="stylesheet" href="css/sidebar.css?v=21">
+<link rel="stylesheet" href="css/subject-detail.css?v=21">
+<link rel="stylesheet" href="css/exam-pacing.css?v=21">
+<link rel="stylesheet" href="css/tooltip-footer.css?v=21">
+<link rel="stylesheet" href="css/modal.css?v=21">
+<link rel="stylesheet" href="css/today-planner.css?v=21">
+<link rel="stylesheet" href="css/lecture-notes.css?v=21">
+<link rel="stylesheet" href="css/analytics.css?v=21">
+<link rel="stylesheet" href="css/focus-mode.css?v=21">
+<link rel="stylesheet" href="css/login.css?v=21">
+<link rel="stylesheet" href="css/mascot.css?v=21">
+<link rel="stylesheet" href="css/dark-mode.css?v=21">
 </head>
 <body>
 
@@ -114,7 +114,6 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         <button type="button" class="login-forget-toggle" id="loginForgetBtn" onclick="enterForgotPassword()" style="display:none">Forgot password?</button>
         <button type="button" class="login-mode-toggle" id="loginModeBtn" onclick="toggleLoginMode()" style="display:none">New here? Create an account</button>
         <div class="login-error" id="loginError"></div>
-        <button type="button" class="login-resend" id="loginResendBtn" onclick="resendVerificationEmail()" style="display:none">Resend verification email</button>
         <button class="login-submit" id="loginSubmitBtn" onclick="attemptLogin()">
           <span id="loginSubmitLabel">Let's go</span> <span class="ls-arrow" id="loginSubmitArrow">→</span>
         </button>
@@ -125,21 +124,60 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         </button>
         <div class="login-footnote" id="loginFootnote">🔒 Your data stays on this device</div>
       </div>
-      <div class="login-reset-panel" id="loginResetPanel" style="display:none">
-        <div class="login-reset-title">Reset password</div>
-        <p class="login-reset-desc">Enter your email and I'll send a reset link.</p>
+      <div class="login-reset-panel" id="loginCodePanel" style="display:none">
+        <div class="login-reset-title" id="loginCodeTitle">Check your inbox</div>
+        <p class="login-reset-desc" id="loginCodeDesc">We sent a 6-digit code. Enter it to continue.</p>
         <div class="login-field">
           <div class="login-input-wrap">
-            <span class="li-icon">✉️</span>
-            <input type="email" id="loginResetEmailInput" placeholder="Email address" autocomplete="email"
-              onkeydown="if(event.key==='Enter'){ event.preventDefault(); submitPasswordReset(); }">
+            <span class="li-icon">🔑</span>
+            <input type="text" id="loginOtpInput" inputmode="numeric" maxlength="6" placeholder="6-digit code" autocomplete="one-time-code"
+              onkeydown="if(event.key==='Enter'){ event.preventDefault(); submitLoginCode(); }">
           </div>
         </div>
-        <button type="button" class="login-submit" id="loginResetBtn" onclick="submitPasswordReset()">
-          <span id="loginResetBtnLabel">Send reset link</span>
+        <button type="button" class="login-submit" id="loginCodeBtn" onclick="submitLoginCode()">
+          <span id="loginCodeBtnLabel">Verify code</span>
         </button>
-        <button type="button" class="login-back" onclick="exitForgotPassword()">← Back to sign in</button>
-        <div class="login-error" id="loginResetError"></div>
+        <button type="button" class="login-resend" id="loginCodeResendBtn" onclick="resendOtpHeld()">Resend code (60s)</button>
+        <button type="button" class="login-back" onclick="exitCodePanel()">← Back</button>
+        <div class="login-error" id="loginCodeError"></div>
+      </div>
+      <div class="login-reset-panel" id="loginResetPanel" style="display:none">
+        <div class="login-reset-title">Reset password</div>
+        <div id="loginResetStage1">
+          <p class="login-reset-desc">Enter your email and I'll send a 6-digit code.</p>
+          <div class="login-field">
+            <div class="login-input-wrap">
+              <span class="li-icon">✉️</span>
+              <input type="email" id="loginResetEmailInput" placeholder="Email address" autocomplete="email"
+                onkeydown="if(event.key==='Enter'){ event.preventDefault(); submitPasswordReset(); }">
+            </div>
+          </div>
+          <button type="button" class="login-submit" id="loginResetBtn" onclick="submitPasswordReset()">
+            <span id="loginResetBtnLabel">Send code</span>
+          </button>
+          <button type="button" class="login-back" onclick="exitForgotPassword()">← Back to sign in</button>
+          <div class="login-error" id="loginResetError"></div>
+        </div>
+        <div id="loginResetStage2" style="display:none">
+          <p class="login-reset-desc">Enter the 6-digit code and a new password for <b id="loginResetStageEmail"></b>.</p>
+          <div class="login-field">
+            <div class="login-input-wrap">
+              <span class="li-icon">🔑</span>
+              <input type="text" id="loginResetCodeInput" inputmode="numeric" maxlength="6" placeholder="6-digit code" autocomplete="one-time-code"
+                onkeydown="if(event.key==='Enter'){ event.preventDefault(); submitResetCode(); }">
+            </div>
+          </div>
+          <div class="login-field">
+            <div class="login-input-wrap">
+              <span class="li-icon">🔒</span>
+              <input type="password" id="loginResetPassInput" placeholder="New password (min 6)" autocomplete="new-password"
+                onkeydown="if(event.key==='Enter'){ event.preventDefault(); submitResetCode(); }">
+            </div>
+          </div>
+          <button type="button" class="login-submit login-reset-code-btn" id="loginResetCodeBtn" onclick="submitResetCode()">Reset password</button>
+          <button type="button" class="login-back" onclick="exitForgotPassword()">← Back to sign in</button>
+          <div class="login-error" id="loginResetCodeError"></div>
+        </div>
       </div>
      </div>
     </div>
@@ -801,27 +839,27 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 
 <div class="toast" id="toast"></div>
 
-<script src="js/data.js?v=20"></script>
-<script src="js/today-and-folders.js?v=20"></script>
+<script src="js/data.js?v=21"></script>
+<script src="js/today-and-folders.js?v=21"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="js/cloud-sync.js?v=20"></script>
-<script src="js/storage.js?v=20"></script>
-<script src="js/settings.js?v=20"></script>
-<script src="js/time-tracking.js?v=20"></script>
-<script src="js/exam-scores.js?v=20"></script>
-<script src="js/render.js?v=20"></script>
-<script src="js/dashboard.js?v=20"></script>
-<script src="js/calendar.js?v=20"></script>
-<script src="js/tooltip.js?v=20"></script>
-<script src="js/lecture-notes.js?v=20"></script>
-<script src="js/actions.js?v=20"></script>
-<script src="js/test-score-actions.js?v=20"></script>
-<script src="js/modals.js?v=20"></script>
-<script src="js/exam-date.js?v=20"></script>
-<script src="js/init.js?v=20"></script>
-<script src="js/mascot.js?v=20"></script>
-<script src="js/login.js?v=20"></script>
+<script src="js/cloud-sync.js?v=21"></script>
+<script src="js/storage.js?v=21"></script>
+<script src="js/settings.js?v=21"></script>
+<script src="js/time-tracking.js?v=21"></script>
+<script src="js/exam-scores.js?v=21"></script>
+<script src="js/render.js?v=21"></script>
+<script src="js/dashboard.js?v=21"></script>
+<script src="js/calendar.js?v=21"></script>
+<script src="js/tooltip.js?v=21"></script>
+<script src="js/lecture-notes.js?v=21"></script>
+<script src="js/actions.js?v=21"></script>
+<script src="js/test-score-actions.js?v=21"></script>
+<script src="js/modals.js?v=21"></script>
+<script src="js/exam-date.js?v=21"></script>
+<script src="js/init.js?v=21"></script>
+<script src="js/mascot.js?v=21"></script>
+<script src="js/login.js?v=21"></script>
 </body>
 </html>

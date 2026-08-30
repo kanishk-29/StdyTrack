@@ -102,11 +102,21 @@ function resetLoginForm(){
   if(code) code.value = '';
   if(pass) pass.value = '';
   if(err){ err.textContent = ''; err.classList.remove('show', 'success'); }
-  hideResendVerify();
+  resetOtpHeld();
+  const codePanel = document.getElementById('loginCodePanel');
+  if(codePanel) codePanel.style.display = 'none';
   const resetPanel = document.getElementById('loginResetPanel');
   const resetFields = document.getElementById('loginFields');
   if(resetPanel) resetPanel.style.display = 'none';
   if(resetFields) resetFields.style.display = '';
+  const s1 = document.getElementById('loginResetStage1');
+  const s2 = document.getElementById('loginResetStage2');
+  if(s1) s1.style.display = '';
+  if(s2) s2.style.display = 'none';
+  const codeStage = document.getElementById('loginResetCodeInput');
+  const passStage = document.getElementById('loginResetPassInput');
+  if(codeStage) codeStage.value = '';
+  if(passStage) passStage.value = '';
   const resetErr = document.getElementById('loginResetError');
   if(resetErr){ resetErr.textContent = ''; resetErr.classList.remove('show', 'success'); }
 }
@@ -158,9 +168,18 @@ function exitForgotPassword(silent){
   const resetBtn = document.getElementById('loginResetBtn');
   const resetLabel = document.getElementById('loginResetBtnLabel');
   if(resetBtn){ resetBtn.disabled = false; }
-  if(resetLabel) resetLabel.textContent = 'Send reset link';
+  if(resetLabel) resetLabel.textContent = 'Send code';
   if(panel) panel.style.display = 'none';
   if(fields) fields.style.display = '';
+  const s1 = document.getElementById('loginResetStage1');
+  const s2 = document.getElementById('loginResetStage2');
+  if(s1) s1.style.display = '';
+  if(s2) s2.style.display = 'none';
+  const codeStage = document.getElementById('loginResetCodeInput');
+  const passStage = document.getElementById('loginResetPassInput');
+  if(codeStage) codeStage.value = '';
+  if(passStage) passStage.value = '';
+  resetOtpHeld();
   if(!silent){
     const name = document.getElementById('loginNameInput');
     if(name) name.focus();
@@ -186,45 +205,151 @@ async function submitPasswordReset(){
   if(btn) btn.disabled = true;
   if(label) label.textContent = 'Sending…';
   try{
-    await cloudSendPasswordReset(email);
-    // Firebase always "succeeds" to avoid leaking which emails have accounts.
-    showLoginResetMessage('Reset link sent — check your inbox.', 'success');
-    if(resetEmail) resetEmail.value = '';
-    setTimeout(()=>{ exitForgotPassword(); }, 2600);
+    await otpSendCode('reset', email);
+    window.__otpPending = { purpose: 'reset', email: email.trim().toLowerCase() };
+    showResetStage2(email.trim());
+    showLoginResetMessage('Code sent — enter it below.', 'success');
   }catch(err){
     showLoginResetMessage(authFriendlyError(err), 'error');
     if(btn) btn.disabled = false;
-    if(label) label.textContent = 'Send reset link';
+    if(label) label.textContent = 'Send code';
     if(resetEmail) resetEmail.focus();
   }
 }
 
-function isValidEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
-
-// Email-verification gate: fake emails can't be confirmed, so unverified
-// sign-ins are bounced back to the gate with a one-tap "resend" affordance.
-function showResendVerify(){
-  const btn = document.getElementById('loginResendBtn');
-  if(btn) btn.style.display = '';
-}
-function hideResendVerify(){
-  const btn = document.getElementById('loginResendBtn');
-  if(btn) btn.style.display = 'none';
-}
-async function resendVerificationEmail(){
-  const btn = document.getElementById('loginResendBtn');
+async function submitResetCode(){
+  const code = document.getElementById('loginResetCodeInput');
+  const pass = document.getElementById('loginResetPassInput');
+  const err = document.getElementById('loginResetCodeError');
+  const pending = window.__otpPending;
+  if(!pending || pending.purpose !== 'reset'){ exitForgotPassword(); return; }
+  if(!code || !code.value.trim()){ if(err){ err.textContent = '⚠ Enter the 6-digit code.'; err.classList.add('show'); } if(code) code.focus(); return; }
+  if(!pass || pass.value.length < 6){ if(err){ err.textContent = '⚠ Password needs at least 6 characters.'; err.classList.add('show'); } if(pass) pass.focus(); return; }
+  const btn = document.getElementById('loginResetCodeBtn');
   if(btn) btn.disabled = true;
   try{
-    await cloudSendEmailVerification();
-    showLoginError('Verification email sent — check your inbox (and spam). Once you click the link, reload the app.');
-  }catch(err){
-    showLoginError(authFriendlyError(err));
+    await otpVerify('reset', {
+      email: pending.email,
+      code: code.value.trim(),
+      newPassword: pass.value
+    });
+    window.__otpPending = null;
+    if(err){ err.textContent = '✓ Password reset! Sign in with your new password.'; err.classList.add('success'); err.classList.add('show'); }
+    setTimeout(()=>{ exitForgotPassword(); }, 2400);
+  }catch(e){
+    if(err){ err.textContent = '⚠ ' + authFriendlyError(e); err.classList.add('show'); }
+    if(pass) pass.value = '';
+    if(code){ code.value = ''; code.focus(); }
+    if(btn) btn.disabled = false;
   }
-  if(btn) btn.disabled = false;
 }
-function gateForUnverifiedUser(msg){
-  showLoginError(msg);
-  showResendVerify();
+
+function showResetStage2(email){
+  const s1 = document.getElementById('loginResetStage1');
+  const s2 = document.getElementById('loginResetStage2');
+  const badge = document.getElementById('loginResetStageEmail');
+  if(s1) s1.style.display = 'none';
+  if(s2) s2.style.display = '';
+  if(badge) badge.textContent = email;
+}
+
+function isValidEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+let otpResendTimer = null;
+function resetOtpHeld(){
+  window.__otpPending = null;
+  if(otpResendTimer){ clearTimeout(otpResendTimer); otpResendTimer = null; }
+}
+function showLoginCodePanel(purpose, email){
+  const panel = document.getElementById('loginCodePanel');
+  const fields = document.getElementById('loginFields');
+  const title = document.getElementById('loginCodeTitle');
+  const desc = document.getElementById('loginCodeDesc');
+  const err = document.getElementById('loginCodeError');
+  if(panel) panel.style.display = '';
+  if(fields) fields.style.display = 'none';
+  if(title) title.textContent = purpose === 'reset' ? 'Reset your password' : 'Check your inbox';
+  if(desc) desc.textContent = 'We sent a 6-digit code to ' + email;
+  setOtpResendCooldown(60);
+  if(err){ err.textContent = ''; err.classList.remove('show', 'success'); }
+  const input = document.getElementById('loginOtpInput');
+  if(input){ input.value = ''; setTimeout(()=>input.focus(), 60); }
+}
+function exitCodePanel(){
+  const panel = document.getElementById('loginCodePanel');
+  const fields = document.getElementById('loginFields');
+  resetOtpHeld();
+  if(panel) panel.style.display = 'none';
+  if(fields) fields.style.display = '';
+}
+function setOtpResendCooldown(seconds){
+  const btn = document.getElementById('loginCodeResendBtn');
+  if(!btn) return;
+  btn.disabled = true;
+  let left = seconds;
+  const tick = ()=>{
+    btn.textContent = 'Resend code (' + left + 's)';
+    if(--left <= 0){
+      btn.disabled = false;
+      btn.textContent = 'Resend code';
+    } else {
+      otpResendTimer = setTimeout(tick, 1000);
+    }
+  };
+  tick();
+}
+function showLoginCodeError(msg, kind){
+  const err = document.getElementById('loginCodeError');
+  if(!err) return;
+  err.textContent = (kind === 'success' ? '✓ ' : '⚠ ') + msg;
+  err.classList.remove('success');
+  if(kind === 'success') err.classList.add('success');
+  err.classList.add('show');
+}
+async function resendOtpHeld(){
+  const pending = window.__otpPending;
+  if(!pending) return;
+  try{
+    await otpSendCode(pending.purpose, pending.email);
+    showLoginCodeError('Code sent again.', 'success');
+    setOtpResendCooldown(60);
+  }catch(err){
+    showLoginCodeError(authFriendlyError(err));
+  }
+}
+async function submitLoginCode(){
+  const input = document.getElementById('loginOtpInput');
+  const pending = window.__otpPending;
+  const code = input ? input.value.trim() : '';
+  if(!pending || !code){ if(input) input.focus(); return; }
+  const btn = document.getElementById('loginCodeBtn');
+  if(btn) btn.disabled = true;
+  try{
+    if(pending.purpose === 'signup'){
+      await otpVerify('signup', {
+        email: pending.email,
+        name: pending.name,
+        password: pending.pass,
+        code: code
+      });
+      // Account exists server-side now — sign in normally to boot the app.
+      await firebase.auth().signInWithEmailAndPassword(pending.email, pending.pass);
+      resetOtpHeld();
+      // auth listener starts the app (verified account).
+    } else if(pending.purpose === 'verify'){
+      await otpVerify('verify', { email: pending.email, code: code });
+      resetOtpHeld();
+      // Session is already signed in; refresh user state and restart cleanly.
+      try{ await firebase.auth().currentUser.reload(); }catch(e){}
+      location.reload();
+    } else {
+      resetOtpHeld();
+      exitCodePanel();
+    }
+  }catch(err){
+    showLoginCodeError(authFriendlyError(err));
+    if(btn) btn.disabled = false;
+    if(input){ input.value = ''; input.focus(); }
+  }
 }
 
 function authFriendlyError(err){
@@ -343,23 +468,12 @@ async function attemptLogin(){
           if(!code){ showLoginError("This one needs a join code — ask the owner."); if(btn) btn.disabled = false; if(codeInput) codeInput.focus(); return; }
           if(code !== expected){ showLoginError("That's not the right join code."); if(btn) btn.disabled = false; if(codeInput){ codeInput.value=''; codeInput.focus(); } return; }
         }
-        await cloudSignUp(email, pass, name);
-        // Fresh accounts must verify their email before they can use the app.
-        if(cloudEmailVerificationRequired()){
-          window.__verifyGateShown = true;
-          let verifyErr = null;
-          try{ if(typeof cloudSendEmailVerification === 'function') await cloudSendEmailVerification(); }catch(e){ verifyErr = e; }
-          gateForUnverifiedUser(verifyErr
-            ? 'Account created, but the verification email failed to send (' + (verifyErr.code || 'error') + '). Tap resend below to try again.'
-            : 'Account created! Check your inbox for the verification email (also check Spam), then sign in. Once you click the link, reload the app.');
-          loginMode = 'signin';
-          const modeBtn = document.getElementById('loginModeBtn');
-          if(modeBtn) modeBtn.textContent = "New here? Create an account";
-          const btn2 = document.getElementById('loginSubmitBtn');
-          if(btn2) btn2.disabled = false;
-          passInput.value = '';
-          return;
-        }
+        await otpSendCode('signup', email);
+        // Hold the signup details, then ask for the emailed code.
+        window.__otpPending = { purpose: 'signup', email: email.trim().toLowerCase(), name: name, pass: pass };
+        if(btn) btn.disabled = false;
+        showLoginCodePanel('signup', email.trim());
+        return;
       } else {
         if(!isValidEmail(email)){ showLoginError("That email doesn't look right."); if(btn) btn.disabled = false; emailInput.focus(); return; }
         if(!pass){ showLoginError("I need the password too."); if(btn) btn.disabled = false; passInput.focus(); return; }
@@ -373,17 +487,19 @@ async function attemptLogin(){
       passInput.focus();
       return;
     }
-    // Email-verification gate: an unverified account (e.g. signed up before
-    // verification was required) is bounced back — the session is kept alive
-    // only so the "resend" button can fire another verification email.
+    // Email-verification gate: a legacy (pre-OTP) account that's still
+    // unverified gets a code sent to its inbox. The user stays signed in so
+    // the verify call can mark the account verified, then we reload cleanly.
     if(cloudEmailVerificationRequired() && loginMode === 'signin'){
       const cu = firebase.auth().currentUser;
       if(cu && !cu.emailVerified){
         window.__verifyGateShown = true;
-        gateForUnverifiedUser('Email not verified yet. Tap "Resend verification email" below for a fresh link — check Gmail (and Spam), click it, then reload the app.');
         const gateBtn = document.getElementById('loginSubmitBtn');
         if(gateBtn) gateBtn.disabled = false;
         passInput.value = '';
+        window.__otpPending = { purpose: 'verify', email: cu.email };
+        showLoginCodePanel('verify', cu.email);
+        try{ await otpSendCode('verify', cu.email); }catch(err){ showLoginCodeError(authFriendlyError(err)); }
         return;
       }
     }
@@ -453,15 +569,15 @@ function updateAccountInfo(){
         if(user){
           // Unverified session (fake email, or account created pre-verification):
           // never start the app — bounce to the gate and offer a resend link.
-          if(typeof cloudEmailVerificationRequired === 'function' && cloudEmailVerificationRequired() && !user.emailVerified){
+if(typeof cloudEmailVerificationRequired === 'function' && cloudEmailVerificationRequired() && !user.emailVerified){
             if(loader && loader.parentNode) loader.remove();
             const gateScreen = document.getElementById('loginScreen');
             if(gateScreen && !gateScreen.classList.contains('show')) showLoginScreen();
             if(!window.__verifyGateShown){
               window.__verifyGateShown = true;
-              gateForUnverifiedUser('Email not verified yet. Tap "Resend verification email" below for a fresh link — check Gmail (and Spam), click it, then reload the app.');
+              showLoginError('This account isn\u2019t verified yet — sign in again and we\u2019ll send a code.');
             }
-            return;
+return;
           }
           if(loader && loader.parentNode) loader.remove();
           try{ const saved = localStorage.getItem('studyUserName'); if(saved) MASCOT_NAME = saved; }catch(e){}
