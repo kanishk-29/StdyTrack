@@ -722,7 +722,7 @@ function openFocusMode(subjectId, unitId, lectureId){
   if(ytId){
     vidWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0" title="${escapeAttr(l.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
   } else if(l.link){
-    vidWrap.innerHTML = `<div class="focus-no-video">This resource isn't a YouTube link.<br><a class="btn primary focus-open-btn" href="${escapeAttr(l.link)}" target="_blank" rel="noopener">Open Resource ↗</a></div>`;
+    vidWrap.innerHTML = `<div class="focus-no-video">This resource isn't a YouTube link.<br><a class="btn primary focus-open-btn" href="${escapeAttr(safeHref(l.link))}" target="_blank" rel="noopener">Open Resource ↗</a></div>`;
   } else {
     vidWrap.innerHTML = `<div class="focus-no-video">No link attached to this lecture yet.</div>`;
   }
@@ -809,4 +809,8 @@ function ekgLine(uid){
 }
 function escapeAttr(str){
   return (str||'').replace(/"/g,'&quot;');
+}
+function safeHref(url){
+  const s = String(url || '').trim();
+  return /^(https?:\/\/|mailto:|#|\/)/i.test(s) && !/javascript:/i.test(s) ? s : '';
 }

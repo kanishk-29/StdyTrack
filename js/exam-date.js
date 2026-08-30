@@ -73,7 +73,7 @@ async function saveLecture(){
 
   if(editState.mode==='edit'){
     const l = u.lectures.find(x=>x.id===editState.lectureId);
-    l.title = title; l.link = link; l.notes = notes;
+    l.title = title; l.link = safeHref(link); l.notes = notes;
 
     // Time-logged correction — lets you fix a runaway/forgotten timer
     // (e.g. left running overnight) instead of being stuck with it.

@@ -316,12 +316,12 @@ function renderHabitsPage(){
             <input type="checkbox" onchange="toggleHabit('${key}','gym', this.checked)" ${entry.gym ? 'checked' : ''} ${disabledAttr}>
             <span>Gym</span>
           </label>
-          <textarea class="habit-note" placeholder="Gym note" ${disabledAttr ? 'disabled' : ''} oninput="saveHabitNote('${key}','gym', this.value)">${entry.gymNote || ''}</textarea>
+          <textarea class="habit-note" placeholder="Gym note" ${disabledAttr ? 'disabled' : ''} oninput="saveHabitNote('${key}','gym', this.value)">${escapeHtml(entry.gymNote || '')}</textarea>
           <label class="habit-check reading${readingDoneClass}${disabledClass}">
             <input type="checkbox" onchange="toggleHabit('${key}','reading', this.checked)" ${entry.reading ? 'checked' : ''} ${disabledAttr}>
             <span>Reading</span>
           </label>
-          <textarea class="habit-note" placeholder="Reading note" ${disabledAttr ? 'disabled' : ''} oninput="saveHabitNote('${key}','reading', this.value)">${entry.readingNote || ''}</textarea>
+          <textarea class="habit-note" placeholder="Reading note" ${disabledAttr ? 'disabled' : ''} oninput="saveHabitNote('${key}','reading', this.value)">${escapeHtml(entry.readingNote || '')}</textarea>
         </div>
       </div>`;
   }).join('');

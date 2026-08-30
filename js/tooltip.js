@@ -86,11 +86,11 @@ function lecturePetalsHtml(seedIdx){
 }
 
 function lectureRow(subjectId, unitId, l, idx){
-  const linkHtml = l.link ? `<a class="lecture-link" href="${escapeAttr(l.link)}" target="_blank" rel="noopener">watch / open ↗</a>` : '';
+  const linkHtml = l.link ? `<a class="lecture-link" href="${escapeAttr(safeHref(l.link))}" target="_blank" rel="noopener">watch / open ↗</a>` : '';
   const notesHtml = l.notes ? `<div class="lecture-notes">${escapeHtml(l.notes)}</div>` : '';
   const thumbUrl = youTubeThumb(l.link);
   const thumbHtml = thumbUrl ? `
-    <a class="lecture-thumb-wrap" href="${escapeAttr(l.link)}" target="_blank" rel="noopener" title="Watch on YouTube">
+    <a class="lecture-thumb-wrap" href="${escapeAttr(safeHref(l.link))}" target="_blank" rel="noopener" title="Watch on YouTube">
       <img src="${thumbUrl}" alt="" loading="lazy" onerror="this.style.display='none'">
       <span class="thumb-label">YouTube</span>
       <span class="thumb-play"></span>

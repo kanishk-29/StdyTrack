@@ -180,18 +180,10 @@ function importData(event){
   const reader = new FileReader();
   reader.onload = () => {
     try{
-      const parsed = JSON.parse(reader.result);
-      if(!parsed.subjects || !Array.isArray(parsed.subjects)) throw new Error('Not a valid backup file');
+      const parsed = sanitizeBackup(JSON.parse(reader.result));
       askConfirm('Restore this backup? It will replace your current data.', async ()=>{
         if(runningRef){ await stopTimer(); }
         data = parsed;
-        if(!data.dailyLog) data.dailyLog = {};
-        data.subjects.forEach(s=>{
-          s.units.forEach(u=>{
-            if(!u.tests) u.tests = [];
-            if(!u.lectures) u.lectures = [];
-          });
-        });
         activeSubjectId = data.subjects.length ? data.subjects[0].id : null;
         prevDone = null; prevTotal = null;
         renderAll();
@@ -204,4 +196,80 @@ function importData(event){
     event.target.value = '';
   };
   reader.readAsText(file);
+}
+
+// Imported backups are untrusted input — a hand-crafted file could carry
+// markup that later runs as HTML/JS (builder strings are interpolated into
+// innerHTML and inline onclick). Coerce every user-string to a plain safe
+// value before it is ever merged into data.
+function sanitizeId(id){
+  return String(id || '').replace(/['"<>&`]/g,'') || uid();
+}
+function sanitizeBackup(d){
+  if(!d || typeof d !== 'object' || !Array.isArray(d.subjects)) throw new Error('Not a valid backup file');
+
+  d.subjects.forEach(s=>{
+    if(!s || typeof s !== 'object') return;
+    s.id = sanitizeId(s.id);
+    s.name = String(s.name || '').slice(0,200);
+    s.icon = String(s.icon || '').slice(0,8).replace(/[<>&"'`]/g,'');
+    s.color = /^#[0-9a-fA-F]{3,8}$/.test(s.color || '') ? s.color : '';
+    if(!Array.isArray(s.units)) s.units = [];
+    s.units.forEach(u=>{
+      if(!u || typeof u !== 'object') return;
+      u.id = sanitizeId(u.id);
+      u.name = String(u.name || '').slice(0,200);
+      if(!Array.isArray(u.lectures)) u.lectures = [];
+      u.lectures.forEach(l=>{
+        if(!l || typeof l !== 'object') return;
+        l.id = sanitizeId(l.id);
+        l.title = String(l.title || '').slice(0,300);
+        l.notes = String(l.notes || '').slice(0,5000);
+        l.richNotes = String(l.richNotes || '').slice(0,50000);
+        if(l.richNotes) l.richNotes = sanitizeNotesHtml(l.richNotes);
+        l.link = safeHref(l.link);
+      });
+      if(!Array.isArray(u.tests)) u.tests = [];
+      u.tests.forEach(t=>{
+        if(!t || typeof t !== 'object') return;
+        t.id = sanitizeId(t.id);
+        if(typeof t.score !== 'number') t.score = 0;
+        if(typeof t.outOf !== 'number') t.outOf = 0;
+        t.date = String(t.date || '').slice(0,32);
+      });
+    });
+  });
+
+  if(d.folders && Array.isArray(d.folders)){
+    d.folders.forEach(f=>{
+      if(!f || typeof f !== 'object') return;
+      f.id = sanitizeId(f.id);
+      f.name = String(f.name || '').slice(0,100);
+      f.icon = String(f.icon || '').slice(0,8).replace(/[<>&"'`]/g,'');
+      const img = String(f.image || '');
+      f.image = /^(https?:\/\/|data:image\/)/i.test(img) && img.length <= 200000 ? img : '';
+    });
+  }
+
+  if(!d.dailyLog || typeof d.dailyLog !== 'object') d.dailyLog = {};
+  for(const k in d.dailyLog){
+    const e = d.dailyLog[k];
+    if(!e || typeof e !== 'object'){ d.dailyLog[k] = { total:0, bySubject:{} }; continue; }
+    if(typeof e.total !== 'number') e.total = 0;
+    if(!e.bySubject || typeof e.bySubject !== 'object') e.bySubject = {};
+    for(const sk in e.bySubject){
+      if(typeof e.bySubject[sk] !== 'number' || !isFinite(e.bySubject[sk])) e.bySubject[sk] = 0;
+    }
+  }
+
+  if(!d.habits || typeof d.habits !== 'object') d.habits = { entries: {} };
+  if(!d.habits.entries || typeof d.habits.entries !== 'object') d.habits.entries = {};
+  for(const k in d.habits.entries){
+    const h = d.habits.entries[k];
+    if(!h || typeof h !== 'object'){ delete d.habits.entries[k]; continue; }
+    if(typeof h.gymNote !== 'string') h.gymNote = '';
+    if(typeof h.readingNote !== 'string') h.readingNote = '';
+  }
+
+  return d;
 }
