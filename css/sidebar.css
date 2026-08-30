@@ -62,7 +62,7 @@
   .subjects-drawer-overlay.show{ display:block; }
   .subjects-drawer{
     position:fixed; top:0; left:0; bottom:0;
-    width:100%; max-width:min(50vw,680px);
+    width:100%; max-width:100%;
     background:var(--paper);
     box-shadow:10px 0 40px rgba(0,0,0,0.25);
     padding:
@@ -865,7 +865,7 @@
      INSIDE-FOLDER VIEW — glass replication of reference design
      ================================================================ */
   .subjects-drawer.wide{
-    max-width:min(50vw,680px);
+    max-width:100%;
     background:#fcfbff;
     overflow-x:hidden;
   }
