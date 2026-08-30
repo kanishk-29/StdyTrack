@@ -347,8 +347,11 @@ async function attemptLogin(){
         // Fresh accounts must verify their email before they can use the app.
         if(cloudEmailVerificationRequired()){
           window.__verifyGateShown = true;
-          try{ if(typeof cloudSendEmailVerification === 'function') await cloudSendEmailVerification(); }catch(e){}
-          gateForUnverifiedUser('Account created! Check your inbox for the verification email, then sign in. Once you click the link, reload the app.');
+          let verifyErr = null;
+          try{ if(typeof cloudSendEmailVerification === 'function') await cloudSendEmailVerification(); }catch(e){ verifyErr = e; }
+          gateForUnverifiedUser(verifyErr
+            ? 'Account created, but the verification email failed to send (' + (verifyErr.code || 'error') + '). Tap resend below to try again.'
+            : 'Account created! Check your inbox for the verification email (also check Spam), then sign in. Once you click the link, reload the app.');
           loginMode = 'signin';
           const modeBtn = document.getElementById('loginModeBtn');
           if(modeBtn) modeBtn.textContent = "New here? Create an account";
@@ -377,7 +380,7 @@ async function attemptLogin(){
       const cu = firebase.auth().currentUser;
       if(cu && !cu.emailVerified){
         window.__verifyGateShown = true;
-        gateForUnverifiedUser('Email not verified yet — check your inbox (and spam). Once you click the link, reload the app.');
+        gateForUnverifiedUser('Email not verified yet. Tap "Resend verification email" below for a fresh link — check Gmail (and Spam), click it, then reload the app.');
         const gateBtn = document.getElementById('loginSubmitBtn');
         if(gateBtn) gateBtn.disabled = false;
         passInput.value = '';
@@ -456,7 +459,7 @@ function updateAccountInfo(){
             if(gateScreen && !gateScreen.classList.contains('show')) showLoginScreen();
             if(!window.__verifyGateShown){
               window.__verifyGateShown = true;
-              gateForUnverifiedUser('Email not verified yet — check your inbox (and spam). Once you click the link, reload the app.');
+              gateForUnverifiedUser('Email not verified yet. Tap "Resend verification email" below for a fresh link — check Gmail (and Spam), click it, then reload the app.');
             }
             return;
           }
