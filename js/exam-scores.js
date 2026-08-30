@@ -103,7 +103,13 @@ async function checkpoint(){
       l.seconds = (l.seconds||0) + elapsed;
       addToDailyLog(subjectId, elapsed);
       l.timerStart = now;
-      renderAll();
+      // Targeted refresh — only what a time-commit actually changes. A full
+      // renderAll() here would rebuild the subject panel, drawer, habits and
+      // mascot every 30s while a timer runs.
+      renderScorecard();
+      renderToday();
+      renderCalendar();
+      renderDashboard();
       saveData();
     }
   }
@@ -122,6 +128,7 @@ function stopTicking(){
 }
 function updateLiveTick(){
   if(!runningRef) return;
+  if(document.hidden) return; // background tab: skip DOM writes, checkpoint still runs
   const l = getLecture(runningRef.subjectId, runningRef.unitId, runningRef.lectureId);
   if(!l || !l.timerStart) return;
   const el = document.getElementById('timer-'+runningRef.lectureId);

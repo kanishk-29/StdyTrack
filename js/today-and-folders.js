@@ -883,7 +883,7 @@ function renderPriorityPage(){
 
 // Live-refresh the Next Up countdown / ongoing status once a minute while
 // this tab is open, without needing the person to touch anything.
-setInterval(()=>{ if(currentView==='priority') renderPriorityPage(); }, 60000);
+setInterval(()=>{ if(currentView==='priority' && !document.hidden) renderPriorityPage(); }, 60000);
 
 function setChartRange(days, btn){
   chartRange = days;

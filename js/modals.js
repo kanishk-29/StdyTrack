@@ -1,7 +1,53 @@
 // Modals
 // ---------------- MODALS ----------------
-function openModal(id){ document.getElementById(id).classList.add('show'); }
-function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function openModal(id){
+  rememberOpener(id);
+  document.getElementById(id).classList.add('show');
+}
+function closeModal(id){ document.getElementById(id).classList.remove('show'); restoreOpener(id); }
+
+// Remember who opened each overlay so closing returns focus to them (desktop
+// keyboard/screen-reader nicety). Safe no-op when called before modals load.
+var __openerFocus = {};
+function rememberOpener(id){
+  var el = document.activeElement;
+  __openerFocus[id] = (el && el !== document.body && el !== document.documentElement) ? el : null;
+}
+function restoreOpener(id){
+  var el = __openerFocus[id];
+  delete __openerFocus[id];
+  if(el && document.contains(el) && typeof el.focus === 'function'){
+    try{ el.focus({ preventScroll:true }); }catch(e){ }
+  }
+}
+
+// Desktop keyboard UX: Escape closes the top-most overlay, Tab is trapped
+// inside an open overlay so keyboard focus can't wander behind it.
+document.addEventListener('keydown', (e)=>{
+  if(e.defaultPrevented) return; // notes editor, pen tool, etc. handle their own keys
+  if(e.key === 'Escape'){
+    const focusOv = document.getElementById('focusOverlay');
+    if(focusOv && focusOv.classList.contains('show')){ closeFocusMode(); return; }
+    const progOv = document.getElementById('progressOverlay');
+    if(progOv && progOv.classList.contains('show')){ closeProgressSlide(); return; }
+    const drawer = document.getElementById('subjectsDrawerOverlay');
+    if(drawer && drawer.classList.contains('show')){ closeSubjectsDrawer(); return; }
+    const openOverlays = document.querySelectorAll('.overlay.show');
+    if(openOverlays.length) closeModal(openOverlays[openOverlays.length-1].id);
+    return;
+  }
+  if(e.key === 'Tab'){
+    const top = document.querySelector('.overlay.show, .slide-overlay.show, .subjects-drawer-overlay.show, .focus-overlay.show');
+    if(!top) return;
+    const focusables = Array.from(top.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+      .filter(el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+    if(!focusables.length) return;
+    const first = focusables[0], last = focusables[focusables.length-1];
+    const active = document.activeElement;
+    if(e.shiftKey && (active === first || !top.contains(active))){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && (active === last || !top.contains(active))){ e.preventDefault(); first.focus(); }
+  }
+});
 
 // Lock background scrolling while any full-screen overlay is open so the page
 // underneath doesn't scroll/glide on touch devices (mobile UX). Watches class

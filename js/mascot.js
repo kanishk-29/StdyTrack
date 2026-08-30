@@ -1039,6 +1039,7 @@ function mascotInitPosition(){
 }
 function mascotWander(){
   if(mascotDragging || mascotMinimized) return;
+  if(document.hidden) return; // window is hidden, pointless + innerWidth is stale
   if(Date.now() - mascotLastInteraction < 15000) return; // give her a rest after you move her
   const margin = 60;
   const x = margin + Math.random() * Math.max(40, window.innerWidth - margin*2 - 90);
@@ -1105,9 +1106,13 @@ function mascotSetupTilt(){
 // Gentle continuous sway so she still reads as three-dimensional even when
 // nobody's cursor is near her — a slow figure-eight-ish drift in rotateX/Y,
 // paused the instant cursor-tilt or dragging takes over so they never fight.
+// Half-rate on purpose: the drift is ~0.5Hz, so 30fps is far more than enough
+// and keeps the rAF cost near-zero on laptops.
+let swaySkipFrame = false;
 function mascotIdleSway(){
+  swaySkipFrame = !swaySkipFrame;
   const t = performance.now() / 1000;
-  if(!mascotTiltActive && !mascotDragging && !mascotMinimized){
+  if(swaySkipFrame && !document.hidden && !mascotTiltActive && !mascotDragging && !mascotMinimized){
     const rotY = Math.sin(t * 0.5) * 5;
     const rotX = Math.cos(t * 0.35) * 2.6;
     const shadowX = -rotY * 1.3;
@@ -1196,6 +1201,7 @@ async function startApp(){
   // Unified brain tick: ambient mood + periodic milestone/end-of-day events +
   // focus-guardian breather, so intelligence and personality both keep running.
   function mascotRunBrainTick(){
+    if(document.hidden) return; // skip re-render/mood cycles while the tab is hidden
     renderMascot();
     mascotPeriodicBrain();
     mascotFocusBreather();

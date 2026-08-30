@@ -58,6 +58,7 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   button, [role="button"], input, select, textarea{ touch-action:manipulation; }
+  button:not(:disabled){ cursor:pointer; user-select:none; }
   html,body{margin:0;padding:0;}
   body{
     background:
@@ -90,6 +91,16 @@
     max-width:1100px; margin:36px auto 0;
     text-align:center; font-size:12px; letter-spacing:0.4px;
     color:var(--ink-faint); font-family:'Inter',sans-serif;
+  }
+  /* Laptop / desktop: let the content breathe on wide screens instead of
+     leaving huge empty gutters around a fixed 1100px column. */
+  @media (min-width:1400px){
+    .app{ max-width:1240px; }
+    .site-credit{ max-width:1240px; }
+  }
+  @media (min-width:1800px){
+    .app{ max-width:1320px; }
+    .site-credit{ max-width:1320px; }
   }
   .site-credit b{ color:var(--ink-soft); font-weight:700; }
   @media (max-width:480px){ .site-credit{ font-size:11px; margin-top:28px; } }

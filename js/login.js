@@ -26,6 +26,7 @@ function loginPetalsHtml(){
 // scoped to just the login screen and cleaned up once it's dismissed.
 let mascotLoginTiltHandler = null;
 function setupLoginCardTilt(){
+  if(mascotLoginTiltHandler) return; // already listening — don't stack duplicates
   const stage = document.getElementById('loginStage');
   const card = document.getElementById('loginCard');
   if(!stage || !card) return;

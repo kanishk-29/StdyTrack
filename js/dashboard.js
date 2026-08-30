@@ -8,19 +8,30 @@ function renderDashboard(){
   renderDashDeadlines();
 }
 
-function renderRunningBanner(){
+let lastBannerKey = null;
+function renderRunningBanner(force){
   const el = document.getElementById('runningTimerBanner');
   if(!el) return;
-  if(!runningRef){ el.style.display = 'none'; el.innerHTML = ''; return; }
+  if(!runningRef){ el.style.display = 'none'; el.innerHTML = ''; lastBannerKey = null; return; }
   const l = getLecture(runningRef.subjectId, runningRef.unitId, runningRef.lectureId);
   const s = data.subjects.find(x=>x.id===runningRef.subjectId);
-  if(!l || !s){ el.style.display = 'none'; return; }
+  if(!l || !s){ el.style.display = 'none'; lastBannerKey = null; return; }
 
   const seconds = liveLectureSeconds(l);
   let tier = 'normal', headline = '⏱ Timer running';
   if(seconds >= 4*3600){ tier = 'alert'; headline = '🚨 Still running — did you forget to stop it?'; }
   else if(seconds >= 2*3600){ tier = 'warn'; headline = '⚠️ Still running for a while — check if you forgot to stop it'; }
 
+  // The 1s live tick calls this every second; rebuilding the banner's DOM each
+  // tick is wasteful, so if the target/tier didn't change, just refresh the
+  // timer text node in place instead of reparsing innerHTML.
+  const key = runningRef.subjectId + '|' + runningRef.unitId + '|' + runningRef.lectureId + '|' + tier;
+  if(!force && lastBannerKey === key){
+    const t = document.getElementById('rtbTime');
+    if(t) t.textContent = formatCompactLive(seconds);
+    return;
+  }
+  lastBannerKey = key;
   el.style.display = 'flex';
   el.className = 'running-timer-banner tier-' + tier;
   el.innerHTML = `

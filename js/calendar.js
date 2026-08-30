@@ -655,12 +655,14 @@ function sortDrawerFolders(){
 }
 
 function openSubjectsDrawer(keepFolderFilter){
+  rememberOpener('subjectsDrawerOverlay');
   if(!keepFolderFilter){ activeFolderFilter = null; renderSidebar(); }
   document.getElementById('subjectsDrawerOverlay').classList.add('show');
 }
 function closeSubjectsDrawer(){
   document.getElementById('subjectsDrawerOverlay').classList.remove('show');
   stopFolderClock();
+  restoreOpener('subjectsDrawerOverlay');
 }
 
 const MOTIVATION_QUOTES = [

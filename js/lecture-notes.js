@@ -709,6 +709,7 @@ function toggleLectureMenu(lectureId){
 }
 
 function openFocusMode(subjectId, unitId, lectureId){
+  rememberOpener('focusOverlay');
   const s = data.subjects.find(x=>x.id===subjectId);
   const u = s.units.find(x=>x.id===unitId);
   const l = u.lectures.find(x=>x.id===lectureId);
@@ -752,6 +753,7 @@ function closeFocusMode(){
   document.getElementById('focusOverlay').classList.remove('show');
   document.getElementById('focusVideoWrap').innerHTML = '';
   focusRef = null;
+  restoreOpener('focusOverlay');
   if(typeof mascotOnFocusExit === 'function') mascotOnFocusExit();
 }
 

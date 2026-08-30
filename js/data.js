@@ -32,6 +32,7 @@ function toggleTestExpand(testId){
 }
 
 function openProgressSlide(){
+  rememberOpener('progressOverlay');
   const eyebrowEl = document.getElementById('acEyebrow');
   const titleEl = document.getElementById('acTitle');
   const subEl = document.getElementById('acHeaderSub');
@@ -54,4 +55,5 @@ function openProgressSlide(){
 }
 function closeProgressSlide(){
   document.getElementById('progressOverlay').classList.remove('show');
+  restoreOpener('progressOverlay');
 }

@@ -133,6 +133,7 @@ async function loadData(){
   saveData();
 }
 
+let lastCloudPushAt = 0;
 async function saveData(){
   data.updatedAt = Date.now();
   const payload = JSON.stringify(data);
@@ -147,7 +148,10 @@ async function saveData(){
   }
   // Fire-and-forget cloud push — never blocks the UI, and local storage above
   // already guaranteed the save even if the network/cloud is unavailable.
-  if(cloudIsConfigured()){
+  // Throttled: a running timer commits every 30s, and pushes only need to keep
+  // up with saves, not beat them — the payload always contains the full dataset.
+  if(cloudIsConfigured() && Date.now() - lastCloudPushAt > 5000){
+    lastCloudPushAt = Date.now();
     cloudPush(payload).then(cloudOk => {
       if(stampEl && cloudOk) stampEl.title = 'Synced to cloud ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     });
