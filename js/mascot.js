@@ -982,21 +982,51 @@ function mascotOnTaskCompleted(subjectId, unitId, lectureId){
   mascotFireEvent('happy', { forcedLine: forcedLine || undefined, overrideImageKey: overrideImageKey || undefined });
 }
 
-function mascotTap(){
-  mascotLastInteraction = Date.now();
-  const ctx = mascotComputeMood();
-  mascotState.mood = ctx.mood;
-  mascotState.line = mascotPickLine(ctx.mood, ctx);
-  mascotState.imageKey = mascotPickImageKey(ctx.mood, mascotActiveSubjectName());
+const MASCOT_POKE_LINES = [
+  'six clicks? seriously 😑 I was starting to think you had a study plan',
+  'you know, clicking me won\'t make your studies disappear 😒 now stop bullying the poor girl and go study — I\'m watching 👁️',
+  'I counted every single one of those clicks, you know 📋',
+  'okay, that\'s enough. I\'m telling your future self about this 😤',
+  'do you click on your textbooks this much? didn\'t think so 📚',
+];
+// Poking Rei more than ~5 times in a row flips her into a grumpy scolding
+// (face + bubble) instead of the usual ambient reply — escalating angrier
+// assets the longer you keep clicking.
+function mascotPokeReaction(count){
+  if(count < 6) return null;
+  const idx = (count - 6) % MASCOT_POKE_LINES.length;
+  let pool;
+  if(count >= 15) pool = ['img_bro_really','img_i_cant_believe_you','img_excuse_me'];
+  else if(count >= 10) pool = ['img_im_not_mad','img_why_are_you_like_this'];
+  else pool = ['img_grumpy','img_annoyed'];
+  return { line: MASCOT_POKE_LINES[idx], imageKey: pool[Math.floor(Math.random()*pool.length)], mood: 'grumpy' };
+}
+function mascotPresentLine(line, imageKey){
+  mascotState.line = line;
+  mascotState.imageKey = imageKey;
   const bubble = document.getElementById('mascotBubble');
+  if(bubble){ bubble.textContent = line; bubble.classList.add('show'); }
   const avatarBtn = document.getElementById('mascotAvatarBtn');
-  if(bubble){ bubble.textContent = mascotState.line; bubble.classList.add('show'); }
   if(avatarBtn){
-    avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${mascotImageFor(mascotState.imageKey)}" alt="study buddy" draggable="false"></div>`;
+    avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${mascotImageFor(imageKey)}" alt="study buddy" draggable="false"></div>`;
     avatarBtn.classList.remove('bump');
     void avatarBtn.offsetWidth; // restart animation
     avatarBtn.classList.add('bump');
   }
+}
+function mascotTap(){
+  mascotLastInteraction = Date.now();
+  mascotPokeCount++;
+  if(mascotPokeResetTimer) clearTimeout(mascotPokeResetTimer);
+  mascotPokeResetTimer = setTimeout(()=>{ mascotPokeCount = 0; }, 3500);
+  const poke = mascotPokeReaction(mascotPokeCount);
+  if(poke){
+    mascotPresentLine(poke.line, poke.imageKey);
+    return;
+  }
+  const ctx = mascotComputeMood();
+  mascotState.mood = ctx.mood;
+  mascotPresentLine(mascotPickLine(ctx.mood, ctx), mascotPickImageKey(ctx.mood, mascotActiveSubjectName()));
 }
 
 function toggleMascot(){
