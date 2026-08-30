@@ -16,16 +16,23 @@
 //  1. Firebase Console → create a project → "Add app" → choose the </> Web app.
 //  2. Authentication → Sign-in method → enable "Email/Password".
 //  3. Firestore Database → create a database (production mode is fine).
-//  4. Firestore Rules → publish these so each user can only touch their own doc:
+//  4. Firestore Rules → publish these so each user can only touch their own doc,
+//     AND only after verifying their email. The `email_verified == true` check is
+//     the real (server-side) guard against anyone signing up with a fake email:
 //
 //     rules_version = '2';
 //     service cloud.firestore {
 //       match /databases/{database}/documents {
 //         match /studyTracker/{docId} {
-//           allow read, write: if request.auth != null && request.auth.uid == docId;
+//           allow read, write: if request.auth != null
+//               && request.auth.uid == docId
+//               && request.auth.token.email_verified == true;
 //         }
 //       }
 //     }
+//
+//     Firestore caches deployed rules for up to ~5 minutes, so allow a short
+//     window for the new rules to take effect after publishing them.
 //
 //  5. Paste your web config below. Leave FIREBASE_CONFIG as null to run purely
 //     on local device storage (like the app behaved before this file existed).
@@ -52,6 +59,15 @@ const FIREBASE_CONFIG = {
 // protection for data, and this just keeps your user list from being spammed.
 const SIGNUP_INVITE_CODE = '';
 
+// Require every account to verify its email before it can sign in and touch
+// any Firestore data. This is paired with the Firestore rules check
+// `request.auth.token.email_verified == true`, which is enforced server-side
+// (a fake email can't pass, because Firebase mails a one-time link to the
+// address — and only that address can confirm it). New sign-ups get a
+// verification email automatically; any account that was created before this
+// was turned on just clicks "Resend verification email" once to unlock.
+const REQUIRE_EMAIL_VERIFICATION = true;
+
 const CLOUD_COLLECTION = 'studyTracker'; // one document per signed-in user (doc id = auth uid)
 
 let cloudApp = null;
@@ -64,6 +80,10 @@ function cloudIsConfigured(){
 
 function cloudInviteCodeRequired(){
   return cloudIsConfigured() && SIGNUP_INVITE_CODE.trim() !== '';
+}
+
+function cloudEmailVerificationRequired(){
+  return cloudIsConfigured() && !!REQUIRE_EMAIL_VERIFICATION;
 }
 
 function initCloudSync(){
@@ -125,6 +145,15 @@ async function cloudSendPasswordReset(email){
   const ready = await initCloudSync();
   if(!ready) throw new Error('Cloud is unavailable');
   return firebase.auth().sendPasswordResetEmail(email.trim());
+}
+
+async function cloudSendEmailVerification(){
+  if(!cloudIsConfigured()) throw new Error('Cloud is not configured');
+  const ready = await initCloudSync();
+  if(!ready) throw new Error('Cloud is unavailable');
+  const user = firebase.auth().currentUser;
+  if(!user) throw new Error('No signed-in user');
+  return user.sendEmailVerification();
 }
 
 async function cloudPull(){

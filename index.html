@@ -114,6 +114,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         <button type="button" class="login-forget-toggle" id="loginForgetBtn" onclick="enterForgotPassword()" style="display:none">Forgot password?</button>
         <button type="button" class="login-mode-toggle" id="loginModeBtn" onclick="toggleLoginMode()" style="display:none">New here? Create an account</button>
         <div class="login-error" id="loginError"></div>
+        <button type="button" class="login-resend" id="loginResendBtn" onclick="resendVerificationEmail()" style="display:none">Resend verification email</button>
         <button class="login-submit" id="loginSubmitBtn" onclick="attemptLogin()">
           <span id="loginSubmitLabel">Let's go</span> <span class="ls-arrow" id="loginSubmitArrow">→</span>
         </button>

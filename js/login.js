@@ -98,6 +98,7 @@ function resetLoginForm(){
   if(code) code.value = '';
   if(pass) pass.value = '';
   if(err){ err.textContent = ''; err.classList.remove('show', 'success'); }
+  hideResendVerify();
   const resetPanel = document.getElementById('loginResetPanel');
   const resetFields = document.getElementById('loginFields');
   if(resetPanel) resetPanel.style.display = 'none';
@@ -196,6 +197,32 @@ async function submitPasswordReset(){
 
 function isValidEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 
+// Email-verification gate: fake emails can't be confirmed, so unverified
+// sign-ins are bounced back to the gate with a one-tap "resend" affordance.
+function showResendVerify(){
+  const btn = document.getElementById('loginResendBtn');
+  if(btn) btn.style.display = '';
+}
+function hideResendVerify(){
+  const btn = document.getElementById('loginResendBtn');
+  if(btn) btn.style.display = 'none';
+}
+async function resendVerificationEmail(){
+  const btn = document.getElementById('loginResendBtn');
+  if(btn) btn.disabled = true;
+  try{
+    await cloudSendEmailVerification();
+    showLoginError('Verification email sent — check your inbox (and spam). Once you click the link, reload the app.');
+  }catch(err){
+    showLoginError(authFriendlyError(err));
+  }
+  if(btn) btn.disabled = false;
+}
+function gateForUnverifiedUser(msg){
+  showLoginError(msg);
+  showResendVerify();
+}
+
 function authFriendlyError(err){
   const code = err && err.code;
   const map = {
@@ -289,6 +316,19 @@ async function attemptLogin(){
           if(code !== expected){ showLoginError("That's not the right join code."); if(btn) btn.disabled = false; if(codeInput){ codeInput.value=''; codeInput.focus(); } return; }
         }
         await cloudSignUp(email, pass, name);
+        // Fresh accounts must verify their email before they can use the app.
+        if(cloudEmailVerificationRequired()){
+          window.__verifyGateShown = true;
+          try{ if(typeof cloudSendEmailVerification === 'function') await cloudSendEmailVerification(); }catch(e){}
+          gateForUnverifiedUser('Account created! Check your inbox for the verification email, then sign in. Once you click the link, reload the app.');
+          loginMode = 'signin';
+          const modeBtn = document.getElementById('loginModeBtn');
+          if(modeBtn) modeBtn.textContent = "New here? Create an account";
+          const btn2 = document.getElementById('loginSubmitBtn');
+          if(btn2) btn2.disabled = false;
+          passInput.value = '';
+          return;
+        }
       } else {
         if(!isValidEmail(email)){ showLoginError("That email doesn't look right."); if(btn) btn.disabled = false; emailInput.focus(); return; }
         if(!pass){ showLoginError("I need the password too."); if(btn) btn.disabled = false; passInput.focus(); return; }
@@ -301,6 +341,20 @@ async function attemptLogin(){
       if(btn) btn.disabled = false;
       passInput.focus();
       return;
+    }
+    // Email-verification gate: an unverified account (e.g. signed up before
+    // verification was required) is bounced back — the session is kept alive
+    // only so the "resend" button can fire another verification email.
+    if(cloudEmailVerificationRequired() && loginMode === 'signin'){
+      const cu = firebase.auth().currentUser;
+      if(cu && !cu.emailVerified){
+        window.__verifyGateShown = true;
+        gateForUnverifiedUser('Email not verified yet — check your inbox (and spam). Once you click the link, reload the app.');
+        const gateBtn = document.getElementById('loginSubmitBtn');
+        if(gateBtn) gateBtn.disabled = false;
+        passInput.value = '';
+        return;
+      }
     }
     // Signed in / account created — apply the name she'll call you, then load.
     if(name) applyUserName(name);
@@ -366,6 +420,18 @@ function updateAccountInfo(){
       // can start the app at the exact moment auth resolves, no matter the order.
       firebase.auth().onAuthStateChanged((user)=>{
         if(user){
+          // Unverified session (fake email, or account created pre-verification):
+          // never start the app — bounce to the gate and offer a resend link.
+          if(typeof cloudEmailVerificationRequired === 'function' && cloudEmailVerificationRequired() && !user.emailVerified){
+            if(loader && loader.parentNode) loader.remove();
+            const gateScreen = document.getElementById('loginScreen');
+            if(gateScreen && !gateScreen.classList.contains('show')) showLoginScreen();
+            if(!window.__verifyGateShown){
+              window.__verifyGateShown = true;
+              gateForUnverifiedUser('Email not verified yet — check your inbox (and spam). Once you click the link, reload the app.');
+            }
+            return;
+          }
           if(loader && loader.parentNode) loader.remove();
           try{ const saved = localStorage.getItem('studyUserName'); if(saved) MASCOT_NAME = saved; }catch(e){}
           const screen = document.getElementById('loginScreen');
