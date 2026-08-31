@@ -209,16 +209,17 @@ async function toggleHabit(dateKey, type, checked){
   showToast(type === 'gym' ? 'Gym updated ✓' : 'Reading updated ✓');
 }
 
+// Debounced persistence for habit notes — avoids full JSON.stringify + IDB write
+// on every keystroke while still flushing within 500ms of the last edit.
+let habitNoteSaveTimer = null;
 async function saveHabitNote(dateKey, type, value){
   const today = habitKey(new Date());
-  if(dateKey !== today){
-    renderHabitsPage();
-    return;
-  }
+  if(dateKey !== today) return;
   const entry = setHabitEntry(dateKey);
   if(type === 'gym') entry.gymNote = value;
   else entry.readingNote = value;
-  saveData();
+  clearTimeout(habitNoteSaveTimer);
+  habitNoteSaveTimer = setTimeout(saveData, 500);
 }
 
 function getHabitSeries(days){

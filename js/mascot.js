@@ -853,6 +853,19 @@ function mascotActiveSubjectName(){
   return s ? s.name : '';
 }
 
+// Only rewrite the avatar <img> when the pose actually changed — every
+// renderAll rebuilds the avatar DOM, so caching the last-rendered src skips
+// re-parsing innerHTML + re-decoding the image on every unrelated action.
+let mascotLastRenderedImageSrc = '';
+function mascotSetAvatar(imageKey){
+  const avatarBtn = document.getElementById('mascotAvatarBtn');
+  if(!avatarBtn) return;
+  const src = mascotImageFor(imageKey);
+  if(mascotLastRenderedImageSrc === src) return;
+  mascotLastRenderedImageSrc = src;
+  avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${src}" alt="study buddy" draggable="false"></div>`;
+}
+
 function renderMascot(){
   const wrap = document.getElementById('mascotWrap');
   if(!wrap) return;
@@ -888,10 +901,10 @@ function renderMascot(){
     mascotSetFlag('streak'+ctx.streak);
     mascotState.mood = 'proud';
     mascotState.line = mascotStreakLine(ctx.streak) || mascotPickLine('proud', ctx);
-    mascotState.imageKey = mascotPickImageKey('celebrate', activeSubjectName);
+mascotState.imageKey = mascotPickImageKey('celebrate', activeSubjectName);
     bubble.textContent = mascotState.line;
     bubble.classList.add('show');
-    avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${mascotImageFor(mascotState.imageKey)}" alt="study buddy" draggable="false"></div>`;
+    mascotSetAvatar(mascotState.imageKey);
     return;
   }
 
@@ -908,8 +921,8 @@ function renderMascot(){
     mascotState.imageKey = mascotPickImageKey('ignored', activeSubjectName);
     bubble.textContent = mascotState.line;
     bubble.classList.add('show');
-  }
-  avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${mascotImageFor(mascotState.imageKey)}" alt="study buddy" draggable="false"></div>`;
+}
+  mascotSetAvatar(mascotState.imageKey);
 }
 
 // Instant reaction to something that JUST happened, bypassing the normal
@@ -936,7 +949,7 @@ function mascotFireEvent(mood, extraCtx){
     : mascotPickImageKey(mood, mascotActiveSubjectName());
   bubble.textContent = mascotState.line;
   bubble.classList.add('show');
-  avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${mascotImageFor(mascotState.imageKey)}" alt="study buddy" draggable="false"></div>`;
+  mascotSetAvatar(mascotState.imageKey);
   avatarBtn.classList.remove('bump');
   void avatarBtn.offsetWidth;
   avatarBtn.classList.add('bump');
@@ -1006,9 +1019,9 @@ function mascotPresentLine(line, imageKey){
   mascotState.imageKey = imageKey;
   const bubble = document.getElementById('mascotBubble');
   if(bubble){ bubble.textContent = line; bubble.classList.add('show'); }
+  mascotSetAvatar(imageKey);
   const avatarBtn = document.getElementById('mascotAvatarBtn');
   if(avatarBtn){
-    avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${mascotImageFor(imageKey)}" alt="study buddy" draggable="false"></div>`;
     avatarBtn.classList.remove('bump');
     void avatarBtn.offsetWidth; // restart animation
     avatarBtn.classList.add('bump');
@@ -1099,14 +1112,21 @@ function mascotSetupTilt(){
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(prefersReduced) return;
 
-  const MAX_TILT = 20; // more pronounced perspective than a subtle hover trick
+  const MAX_TILT = 20;
   let raf = null;
+  // Cache the avatar holder rect; only recompute on resize (the holder is
+  // position:fixed + fixed size, so layout never changes between resizes).
+  let tiltRect = null;
+
+  function refreshTiltRect(){ tiltRect = null; }
+  window.addEventListener('resize', refreshTiltRect);
 
   window.addEventListener('mousemove', (e)=>{
     if(mascotDragging || mascotMinimized) return;
     const holder = document.getElementById('mascotAvatarHolder');
     if(!holder) return;
-    const rect = holder.getBoundingClientRect();
+    if(!tiltRect) tiltRect = holder.getBoundingClientRect();
+    const rect = tiltRect;
     const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
     const dx = e.clientX - cx, dy = e.clientY - cy;
     const reach = rect.width * 3.2; // how far the "spotlight" extends before she stops reacting
@@ -1539,10 +1559,10 @@ function mascotUtter(moodKey, ctx, forcedLine){
   mascotRememberMessage(line);
   mascotState.mood = moodKey;
   mascotState.line = line;
-  mascotState.imageKey = mascotPickImageKey(moodKey, ctx ? ctx.session.subjectName : mascotActiveSubjectName());
+mascotState.imageKey = mascotPickImageKey(moodKey, ctx ? ctx.session.subjectName : mascotActiveSubjectName());
   bubble.textContent = line;
   bubble.classList.add('show');
-  avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${mascotImageFor(mascotState.imageKey)}" alt="study buddy" draggable="false"></div>`;
+  mascotSetAvatar(mascotState.imageKey);
   avatarBtn.classList.remove('bump');
   void avatarBtn.offsetWidth;
   avatarBtn.classList.add('bump');

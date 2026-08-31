@@ -608,8 +608,7 @@
     display:flex;
     align-items:stretch;
     gap:0;
-    background:rgba(255,255,255,0.6);
-    backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
+    background:rgba(255,255,255,0.78);
     border:1px solid rgba(255,255,255,0.8);
     border-radius:22px;
     overflow:hidden;
@@ -1104,8 +1103,7 @@
     display:flex;
     align-items:stretch;
     gap:0;
-    background:rgba(255,255,255,0.6);
-    backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
+    background:rgba(255,255,255,0.78);
     border:1px solid rgba(255,255,255,0.8);
     border-radius:22px;
     overflow:hidden;

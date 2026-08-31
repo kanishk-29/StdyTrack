@@ -41,8 +41,17 @@ function renderScorecard(){
   });
   const doneEl = document.getElementById('totalCompleted');
   const totalEl = document.getElementById('totalLectures');
-  animateCount(doneEl, prevDone===null ? done : prevDone, done, 500);
-  animateCount(totalEl, prevTotal===null ? total : prevTotal, total, 500);
+  // Only restart the animated counter when the number actually changed;
+  // on the first paint (prevXxx === null) or unchanged renders just set
+  // textContent directly so we never spin up two 500ms rAF loops for nothing.
+  if(doneEl){
+    if(prevDone !== null && prevDone !== done) animateCount(doneEl, prevDone, done, 500);
+    else doneEl.textContent = done;
+  }
+  if(totalEl){
+    if(prevTotal !== null && prevTotal !== total) animateCount(totalEl, prevTotal, total, 500);
+    else totalEl.textContent = total;
+  }
   prevDone = done; prevTotal = total;
   const pct = total ? Math.round((done/total)*100) : 0;
   document.getElementById('percentBadge').textContent = pct + '%';

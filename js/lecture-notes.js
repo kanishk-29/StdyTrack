@@ -99,7 +99,15 @@ function updateNotesToolbarState(){
     btn.classList.toggle('active', isActive);
   });
 }
-document.addEventListener('selectionchange', updateNotesToolbarState);
+// Throttle the toolbar sync to one call per frame — selectionchange fires on
+// every caret blink/move inside the editor, and each call hits 6 synchronous
+// queryCommandState reads. Coalescing to a single rAF keeps the toolbar
+// responsive without thrashing on every micro-cursor movement.
+let _notesTbRaf = 0;
+document.addEventListener('selectionchange', ()=>{
+  if(_notesTbRaf) return;
+  _notesTbRaf = requestAnimationFrame(()=>{ _notesTbRaf = 0; updateNotesToolbarState(); });
+});
 
 function saveNotesEditor(silent){
   if(!notesEditorTarget) return;
@@ -111,7 +119,11 @@ function saveNotesEditor(silent){
   const editor = document.getElementById('notesEditor');
   l.richNotes = editor ? editor.innerHTML : '';
   saveData();
-  renderMain();
+  // Only rebuild the subject-detail panel on explicit save; the 1.2s autosave
+  // fires while the user is typing — tearing down the live editor mid-stroke
+  // forces a full panel rebuild + re-parse the contenteditable DOM, which
+  // wastes a re-render that has no visible benefit while the overlay stays open.
+  if(!silent) renderMain();
   const status = document.getElementById('notesSaveStatus');
   if(!silent){
     showToast('Notes saved 📝');
