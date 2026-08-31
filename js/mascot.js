@@ -1031,7 +1031,15 @@ function mascotTap(){
   mascotLastInteraction = Date.now();
   mascotPokeCount++;
   if(mascotPokeResetTimer) clearTimeout(mascotPokeResetTimer);
-  mascotPokeResetTimer = setTimeout(()=>{ mascotPokeCount = 0; }, 3500);
+  // Once the rapid-click window lapses with no further pokes, drop the
+  // grumpy act and restore her normal ambient face/line — otherwise she'd
+  // hold the scolding pose indefinitely until the mood next happens to change.
+  mascotPokeResetTimer = setTimeout(()=>{
+    mascotPokeCount = 0;
+    const ctx = mascotComputeMood();
+    mascotState.mood = ctx.mood;
+    mascotPresentLine(mascotPickLine(ctx.mood, ctx), mascotPickImageKey(ctx.mood, mascotActiveSubjectName()));
+  }, 3500);
   const poke = mascotPokeReaction(mascotPokeCount);
   if(poke){
     mascotPresentLine(poke.line, poke.imageKey);
@@ -1316,6 +1324,7 @@ function mascotShowYesterdayMemory(){
       mascotState.imageKey = mascotPickImageKey('neutral', mascotActiveSubjectName());
       const bubble = document.getElementById('mascotBubble');
       if(bubble){ bubble.textContent = line; bubble.classList.add('show'); }
+      mascotSetAvatar(mascotState.imageKey);
     }
   }catch(e){}
 }
