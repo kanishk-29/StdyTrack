@@ -108,6 +108,7 @@ function notesRenderPageBar(){
 }
 function notesGoPage(i){
   if(i < 0 || i >= notesPages.length || i === notesCurrentPage) return;
+  if(notesPen) notesFinishDrawing(false);
   notesSyncCurrent();
   notesSavedRange = null;
   notesCurrentPage = i;
@@ -119,6 +120,7 @@ function notesGoPage(i){
   if(editorEl){ editorEl.scrollTop = 0; editorEl.focus(); }
 }
 function notesAddPage(){
+  if(notesPen) notesFinishDrawing(false);
   notesSyncCurrent();
   notesPages.push('');
   notesCurrentPage = notesPages.length - 1;
@@ -132,6 +134,7 @@ function notesAddPage(){
 }
 function notesDeletePage(){
   if(notesPages.length <= 1) return;
+  if(notesPen) notesFinishDrawing(false);
   const cur = notesCurrentHtml();
   if(cur && cur.replace(/<[^>]*>/g,'').trim()){
     if(!confirm('Delete this page and all its content?')) return;
@@ -317,6 +320,7 @@ function notesAllPagesText(){
 function updateNotesStat(){
   const stat = document.getElementById('notesStat');
   if(!stat) return;
+  notesSyncCurrent();
   const text = notesAllPagesText();
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
   const chars = text.length;
@@ -419,6 +423,7 @@ function notesCollectPageMatches(pageHtml, q){
 function notesFindCollect(query){
   const matches = [];
   if(!query) return matches;
+  notesSyncCurrent();
   notesPages.forEach((p, i) => {
     const pm = notesCollectPageMatches(p, query.toLowerCase());
     for(let k=0;k<pm.length;k++){
@@ -433,7 +438,9 @@ function notesFindSelectMatch(match){
   if(!editor || !match) return;
   // Ensure we're on the right page before touching the live DOM.
   if(match.page !== undefined && match.page !== notesCurrentPage){
+    if(notesPen) notesFinishDrawing(false);
     notesSyncCurrent();
+    notesSavedRange = null;
     notesCurrentPage = match.page;
     editor.innerHTML = (notesPages[match.page] || '');
     notesRenderPageBar();
