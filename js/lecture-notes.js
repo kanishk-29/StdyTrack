@@ -40,6 +40,7 @@ function openNotesEditor(subjectId, unitId, lectureId){
   notesCurrentPage = 0;
   const editor = document.getElementById('notesEditor');
   if(editor) editor.innerHTML = (notesPages[0] || '');
+  notesEnsureWhiteTail();
   try{ document.execCommand('styleWithCSS', false, true); }catch(e){}
   applyNotesPaper();
   notesApplyColorGlyph();
@@ -66,6 +67,43 @@ function handleNotesKeydown(e){
   if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); saveNotesEditor(); return; }
   if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f'){ e.preventDefault(); notesToggleFind(); return; }
   if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); notesInsertLink(); }
+  // Inside a quote box, Enter at the end should drop you onto the normal white page.
+  if(e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.shiftKey){
+    const sel = window.getSelection && window.getSelection();
+    const editor = document.getElementById('notesEditor');
+    if(sel && sel.rangeCount && editor){
+      let node = sel.anchorNode;
+      let bq = node && node.nodeType === 3 ? node.parentElement : node;
+      while(bq && bq !== editor && bq.tagName !== 'BLOCKQUOTE') bq = bq.parentElement;
+      if(bq && bq.tagName === 'BLOCKQUOTE'){
+        const atEnd = sel.isCollapsed && (()=>{ try{ const r = sel.getRangeAt(0); const end = document.createRange(); end.selectNodeContents(bq); end.collapse(false); return r.compareBoundaryPoints(Range.END_TO_END, end) === 0 || bq.textContent.slice(-1) === '' || r.endOffset === (r.endContainer.textContent||'').length; } catch(_){ return false; } })();
+        // If blockquote is the last thing in the editor, ensure a white tail exists.
+        if(!bq.nextElementSibling){
+          const p = document.createElement('p');
+          p.innerHTML = '<br>';
+          bq.parentNode.insertBefore(p, bq.nextSibling);
+        }
+        if(atEnd){
+          e.preventDefault();
+          const p = bq.nextElementSibling;
+          const range = document.createRange();
+          range.setStart(p, 0); range.collapse(true);
+          sel.removeAllRanges(); sel.addRange(range);
+          p.scrollIntoView({ block: 'nearest' });
+        }
+      }
+    }
+  }
+}
+function notesEnsureWhiteTail(){
+  const editor = document.getElementById('notesEditor');
+  if(!editor) return;
+  const last = editor.lastElementChild;
+  if(last && last.tagName === 'BLOCKQUOTE'){
+    const p = document.createElement('p');
+    p.innerHTML = '<br>';
+    editor.appendChild(p);
+  }
 }
 
 // ---- Page management ----
@@ -115,6 +153,7 @@ function notesGoPage(i){
   notesCurrentPage = i;
   const editor = document.getElementById('notesEditor');
   if(editor) editor.innerHTML = (notesPages[i] || '');
+  notesEnsureWhiteTail();
   updateNotesToolbarState();
   notesRenderPageBar();
   const editorEl = document.getElementById('notesEditor');
@@ -145,6 +184,7 @@ function notesDeletePage(){
   notesSavedRange = null;
   const editor = document.getElementById('notesEditor');
   if(editor) editor.innerHTML = (notesPages[notesCurrentPage] || '');
+  notesEnsureWhiteTail();
   notesRenderPageBar();
   saveNotesEditor(true);
 }
@@ -369,6 +409,7 @@ function handleNotesPaste(e){
     document.execCommand('insertText', false, text);
   }
   handleNotesInput();
+  notesEnsureWhiteTail();
 }
 
 // Paste sanitizer: cleans copied HTML the same way as notes, then also drops
@@ -376,6 +417,8 @@ function handleNotesPaste(e){
 // wrapper elements. Without this, pasting a "boxed" answer would paint a
 // full-width coloured block into the note and trap typing inside it. The
 // accents users add themselves with the highlight picker are unaffected.
+// Also unwraps <blockquote> wrappers so pasted quotes sit as normal paragraphs
+// on the white page — you can scroll and type below them, not trapped inside.
 function sanitizeNotesPasteHtml(html){
   const tmp = document.createElement('div');
   tmp.innerHTML = sanitizeNotesHtml(html);
@@ -391,6 +434,12 @@ function sanitizeNotesPasteHtml(html){
     });
   };
   stripBgs(tmp);
+  // Unwrap pasted blockquotes — keep the text, drop the boxed chrome.
+  tmp.querySelectorAll('blockquote').forEach(bq=>{
+    const parent = bq.parentNode;
+    while(bq.firstChild) parent.insertBefore(bq.firstChild, bq);
+    parent.removeChild(bq);
+  });
   return tmp.innerHTML;
 }
 
@@ -533,6 +582,7 @@ function notesFindSelectMatch(match){
     notesSavedRange = null;
     notesCurrentPage = match.page;
     editor.innerHTML = (notesPages[match.page] || '');
+    notesEnsureWhiteTail();
     notesRenderPageBar();
   }
   const inp = document.getElementById('notesFindInput');
