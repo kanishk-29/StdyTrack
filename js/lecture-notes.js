@@ -364,11 +364,34 @@ function handleNotesPaste(e){
   const html = cd.getData('text/html');
   const text = cd.getData('text/plain');
   if(html){
-    document.execCommand('insertHTML', false, sanitizeNotesHtml(html));
+    document.execCommand('insertHTML', false, sanitizeNotesPasteHtml(html));
   } else {
     document.execCommand('insertText', false, text);
   }
   handleNotesInput();
+}
+
+// Paste sanitizer: cleans copied HTML the same way as notes, then also drops
+// box/theme backgrounds the source app (ChatGPT, docs, PDF viewers…) put on
+// wrapper elements. Without this, pasting a "boxed" answer would paint a
+// full-width coloured block into the note and trap typing inside it. The
+// accents users add themselves with the highlight picker are unaffected.
+function sanitizeNotesPasteHtml(html){
+  const tmp = document.createElement('div');
+  tmp.innerHTML = sanitizeNotesHtml(html);
+  const stripBgs = function(node){
+    [...node.children].forEach(child=>{
+      const st = child.getAttribute && child.getAttribute('style');
+      if(st){
+        const kept = st.split(';').map(s=>s.trim()).filter(s => s && !/^(background|background-color)\s*:/i.test(s));
+        if(kept.length) child.setAttribute('style', kept.join(';'));
+        else child.removeAttribute('style');
+      }
+      stripBgs(child);
+    });
+  };
+  stripBgs(tmp);
+  return tmp.innerHTML;
 }
 
 // ---------------- EXTRA NOTE FEATURES ----------------
