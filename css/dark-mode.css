@@ -304,3 +304,6 @@
 [data-theme="dark"] .notes-editor,
 [data-theme="dark"] .notes-toolbar{ background:#10141d; color:var(--ink); border-color:var(--border); }
 [data-theme="dark"] .notes-toolbar button{ color:var(--ink); }
+[data-theme="dark"] .notes-color-menu{ background:#151a26; border-color:#2b3246; }
+[data-theme="dark"] .notes-color-dot{ border-color:#151a26; }
+[data-theme="dark"] .notes-color-dot.notes-color-custom{ background:rgba(123,95,224,0.14); color:#a08cff; border-color:var(--violet); }

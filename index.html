@@ -38,25 +38,25 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
       media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
-<link rel="stylesheet" href="css/base.css?v=32">
-<link rel="stylesheet" href="css/habit-tracker.css?v=32">
-<link rel="stylesheet" href="css/header-search.css?v=32">
-<link rel="stylesheet" href="css/today-calendar.css?v=32">
-<link rel="stylesheet" href="css/calendar-popover.css?v=32">
-<link rel="stylesheet" href="css/timer.css?v=32">
-<link rel="stylesheet" href="css/sidebar.css?v=32">
-<link rel="stylesheet" href="css/subject-detail.css?v=32">
-<link rel="stylesheet" href="css/exam-pacing.css?v=32">
-<link rel="stylesheet" href="css/tooltip-footer.css?v=32">
-<link rel="stylesheet" href="css/modal.css?v=32">
-<link rel="stylesheet" href="css/today-planner.css?v=32">
-<link rel="stylesheet" href="css/lecture-notes.css?v=32">
-<link rel="stylesheet" href="css/analytics.css?v=32">
-<link rel="stylesheet" href="css/focus-mode.css?v=32">
-<link rel="stylesheet" href="css/login.css?v=32">
-<link rel="stylesheet" href="css/mascot.css?v=32">
-<link rel="stylesheet" href="css/dark-mode.css?v=32">
-<link rel="stylesheet" href="css/a11y.css?v=32">
+<link rel="stylesheet" href="css/base.css?v=33">
+<link rel="stylesheet" href="css/habit-tracker.css?v=33">
+<link rel="stylesheet" href="css/header-search.css?v=33">
+<link rel="stylesheet" href="css/today-calendar.css?v=33">
+<link rel="stylesheet" href="css/calendar-popover.css?v=33">
+<link rel="stylesheet" href="css/timer.css?v=33">
+<link rel="stylesheet" href="css/sidebar.css?v=33">
+<link rel="stylesheet" href="css/subject-detail.css?v=33">
+<link rel="stylesheet" href="css/exam-pacing.css?v=33">
+<link rel="stylesheet" href="css/tooltip-footer.css?v=33">
+<link rel="stylesheet" href="css/modal.css?v=33">
+<link rel="stylesheet" href="css/today-planner.css?v=33">
+<link rel="stylesheet" href="css/lecture-notes.css?v=33">
+<link rel="stylesheet" href="css/analytics.css?v=33">
+<link rel="stylesheet" href="css/focus-mode.css?v=33">
+<link rel="stylesheet" href="css/login.css?v=33">
+<link rel="stylesheet" href="css/mascot.css?v=33">
+<link rel="stylesheet" href="css/dark-mode.css?v=33">
+<link rel="stylesheet" href="css/a11y.css?v=33">
 </head>
 <body>
 
@@ -654,15 +654,29 @@ L3 - Normalization | https://youtu.be/..."></textarea>
         <button type="button" onmousedown="event.preventDefault(); notesSaveSelection()" onclick="notesInsertLink()" title="Insert link (Ctrl+K)">🔗</button>
         <button type="button" onmousedown="event.preventDefault(); notesSaveSelection()" onclick="notesInsertTimestamp()" title="Insert date & time">🕐</button>
       </div>
-      <div class="notes-toolbar-group">
-        <label class="notes-color-swatch" title="Text color" onmousedown="notesSaveSelection()">
+      <div class="notes-toolbar-group notes-color-group">
+        <button type="button" class="notes-color-swatch" title="Text color" onmousedown="notesSaveSelection()" onclick="notesToggleColorMenu(event)">
           <span class="notes-color-glyph" id="notesTextColorGlyph">A</span>
-          <input type="color" id="notesTextColor" value="#1a1a2e" onchange="notesExecColor('foreColor', this.value)">
-        </label>
-        <label class="notes-color-swatch highlight" title="Highlight" onmousedown="notesSaveSelection()">
+        </button>
+        <button type="button" class="notes-color-swatch highlight" title="Highlight" onmousedown="notesSaveSelection()" onclick="notesToggleColorMenu(event)">
           <span class="notes-color-glyph" id="notesHighlightGlyph">🖍</span>
-          <input type="color" id="notesHighlightColor" value="#fff176" onchange="notesExecColor('hiliteColor', this.value)">
-        </label>
+        </button>
+        <div class="notes-color-menu" id="notesColorMenu">
+          <div class="notes-color-row">
+            <span class="notes-color-row-label">Text</span>
+            <span class="notes-color-swatches" id="notesTextColorSwatches"></span>
+            <label class="notes-color-dot notes-color-custom" title="Custom color">＋
+              <input type="color" id="notesTextColor" value="#1a1a2e" onchange="notesApplyPresetColor('foreColor', this.value)">
+            </label>
+          </div>
+          <div class="notes-color-row">
+            <span class="notes-color-row-label">Highlight</span>
+            <span class="notes-color-swatches" id="notesHighlightColorSwatches"></span>
+            <label class="notes-color-dot notes-color-custom" title="Custom highlight">＋
+              <input type="color" id="notesHighlightColor" value="#fff176" onchange="notesApplyPresetColor('hiliteColor', this.value)">
+            </label>
+          </div>
+        </div>
       </div>
       <div class="notes-toolbar-group">
         <button type="button" onmousedown="event.preventDefault()" onclick="notesExec('removeFormat')" title="Clear formatting">Clear</button>
@@ -761,27 +775,27 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 
 <div class="toast" id="toast"></div>
 
-<script src="js/data.js?v=32"></script>
-<script src="js/today-and-folders.js?v=32"></script>
+<script src="js/data.js?v=33"></script>
+<script src="js/today-and-folders.js?v=33"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="js/cloud-sync.js?v=32"></script>
-<script src="js/storage.js?v=32"></script>
-<script src="js/settings.js?v=32"></script>
-<script src="js/time-tracking.js?v=32"></script>
-<script src="js/exam-scores.js?v=32"></script>
-<script src="js/render.js?v=32"></script>
-<script src="js/dashboard.js?v=32"></script>
-<script src="js/calendar.js?v=32"></script>
-<script src="js/tooltip.js?v=32"></script>
-<script src="js/lecture-notes.js?v=32"></script>
-<script src="js/actions.js?v=32"></script>
-<script src="js/test-score-actions.js?v=32"></script>
-<script src="js/modals.js?v=32"></script>
-<script src="js/exam-date.js?v=32"></script>
-<script src="js/init.js?v=32"></script>
-<script src="js/mascot.js?v=32"></script>
-<script src="js/login.js?v=32"></script>
+<script src="js/cloud-sync.js?v=33"></script>
+<script src="js/storage.js?v=33"></script>
+<script src="js/settings.js?v=33"></script>
+<script src="js/time-tracking.js?v=33"></script>
+<script src="js/exam-scores.js?v=33"></script>
+<script src="js/render.js?v=33"></script>
+<script src="js/dashboard.js?v=33"></script>
+<script src="js/calendar.js?v=33"></script>
+<script src="js/tooltip.js?v=33"></script>
+<script src="js/lecture-notes.js?v=33"></script>
+<script src="js/actions.js?v=33"></script>
+<script src="js/test-score-actions.js?v=33"></script>
+<script src="js/modals.js?v=33"></script>
+<script src="js/exam-date.js?v=33"></script>
+<script src="js/init.js?v=33"></script>
+<script src="js/mascot.js?v=33"></script>
+<script src="js/login.js?v=33"></script>
 </body>
 </html>

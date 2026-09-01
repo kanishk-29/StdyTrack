@@ -55,15 +55,46 @@
   .notes-toolbar button:hover{ background:var(--violet-soft); color:var(--violet); }
   .notes-toolbar button:active{ transform:scale(0.92); }
   .notes-toolbar button.active{ background:var(--grad-cool); color:#fff; box-shadow:0 3px 8px -3px rgba(124,92,191,0.6); }
-  .notes-color-swatch{
-    position:relative; width:30px; height:30px; border-radius:8px;
+  .notes-color-group{ position:relative; }
+  .notes-toolbar .notes-color-swatch{
+    position:relative; width:30px; height:30px; border-radius:8px; border:none; padding:0;
     background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center;
     font-size:12.5px; font-weight:800; overflow:hidden; transition:background .12s ease;
   }
-  .notes-color-swatch:hover{ background:var(--violet-soft); }
+  .notes-toolbar .notes-color-swatch:hover{ background:var(--violet-soft); }
   .notes-color-glyph{ pointer-events:none; color:var(--ink-soft); }
   .notes-color-swatch.highlight .notes-color-glyph{ font-size:13px; }
-  .notes-color-swatch input[type="color"]{
+  /* ---- Quick color palettes (7 presets + custom per mode) ---- */
+  .notes-color-menu{
+    position:absolute; top:calc(100% + 8px); left:0; z-index:80;
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    box-shadow:var(--shadow-lift); padding:8px 10px; display:none; min-width:246px;
+    animation:notesPopIn .16s cubic-bezier(.34,1.56,.64,1);
+  }
+  .notes-color-menu.show{ display:block; }
+  .notes-color-row{
+    display:flex; align-items:center; gap:6px; padding:4px 0;
+  }
+  .notes-color-row + .notes-color-row{ border-top:1px solid var(--paper-line); margin-top:6px; padding-top:8px; }
+  .notes-color-row-label{
+    font-size:10px; font-weight:800; letter-spacing:0.4px; text-transform:uppercase;
+    color:var(--ink-faint); min-width:54px;
+  }
+  .notes-color-swatches{ display:flex; gap:6px; align-items:center; }
+  .notes-color-menu .notes-color-dot{
+    width:22px; height:22px; min-width:22px; border-radius:50%; border:2px solid #fff; cursor:pointer; padding:0;
+    box-shadow:0 1px 3px rgba(0,0,0,0.25); transition:transform .1s ease;
+  }
+  .notes-color-menu .notes-color-dot:hover{ transform:scale(1.18); }
+  .notes-color-menu .notes-color-dot.active{
+    outline:2px solid var(--violet); outline-offset:1px; transform:scale(1.06);
+  }
+  .notes-color-menu .notes-color-dot.notes-color-custom{
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--violet-soft); border:1px dashed var(--violet);
+    color:var(--violet); font-size:13px; font-weight:800; position:relative; overflow:hidden;
+  }
+  .notes-color-menu .notes-color-dot.notes-color-custom input[type="color"]{
     position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; border:none; padding:0;
   }
   /* ---- Editor: the notebook page itself ---- */

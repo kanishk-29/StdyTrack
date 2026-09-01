@@ -42,6 +42,7 @@ function openNotesEditor(subjectId, unitId, lectureId){
   if(editor) editor.innerHTML = (notesPages[0] || '');
   try{ document.execCommand('styleWithCSS', false, true); }catch(e){}
   applyNotesPaper();
+  notesApplyColorGlyph();
   notesRenderPageBar();
   const status = document.getElementById('notesSaveStatus');
   if(status) status.classList.remove('show');
@@ -183,7 +184,73 @@ function notesExecColor(cmd, value){
     if(cmd === 'foreColor'){ glyph.style.color = value; }
     else{ glyph.style.background = value; glyph.style.borderRadius = '3px'; glyph.style.padding = '0 3px'; }
   }
+  notesRecordColor(cmd, value);
   handleNotesInput();
+}
+// ---- Color palettes: 7 quick presets each for text & highlight ----
+// The last color you used is remembered and shown as the active default, so you
+// can re-apply it with one click instead of re-picking from the colour circle.
+const NOTES_TEXT_COLORS = ['#1a1a2e', '#2f6fed', '#d3382f', '#1f9d55', '#7c3aed', '#b45309', '#0f766e'];
+const NOTES_HILITE_COLORS = ['#fff176', '#a5dcf4', '#b9f6ca', '#ffb3c0', '#ffd8a8', '#d1c4ff', '#c4f0ea'];
+const NOTES_TEXT_COLOR_KEY = 'notesLastTextColor';
+const NOTES_HILITE_COLOR_KEY = 'notesLastHiliteColor';
+let notesLastTextColor = '#1a1a2e';
+let notesLastHiliteColor = '#fff176';
+try{ notesLastTextColor = localStorage.getItem(NOTES_TEXT_COLOR_KEY) || '#1a1a2e'; }catch(e){}
+try{ notesLastHiliteColor = localStorage.getItem(NOTES_HILITE_COLOR_KEY) || '#fff176'; }catch(e){}
+
+function notesRecordColor(cmd, value){
+  const key = cmd === 'foreColor' ? NOTES_TEXT_COLOR_KEY : NOTES_HILITE_COLOR_KEY;
+  if(cmd === 'foreColor') notesLastTextColor = value;
+  else notesLastHiliteColor = value;
+  try{ localStorage.setItem(key, value); }catch(e){}
+}
+
+function notesBuildColorRow(modeId, isText, presets, lastUsed){
+  const row = document.getElementById(modeId);
+  if(!row) return;
+  row.innerHTML = '';
+  presets.forEach(hex => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'notes-color-dot' + (hex.toLowerCase() === lastUsed.toLowerCase() ? ' active' : '');
+    b.style.background = hex;
+    b.title = (isText ? 'Text color' : 'Highlight') + ' ' + hex;
+    b.onclick = ()=> notesApplyPresetColor(isText ? 'foreColor' : 'hiliteColor', hex);
+    row.appendChild(b);
+  });
+}
+
+function notesBuildColorMenu(){
+  notesBuildColorRow('notesTextColorSwatches', true, NOTES_TEXT_COLORS, notesLastTextColor);
+  notesBuildColorRow('notesHighlightColorSwatches', false, NOTES_HILITE_COLORS, notesLastHiliteColor);
+}
+
+function notesToggleColorMenu(e){
+  if(e && e.stopPropagation) e.stopPropagation();
+  const menu = document.getElementById('notesColorMenu');
+  if(!menu) return;
+  const wasOpen = menu.classList.contains('show');
+  notesClosePopovers();
+  if(!wasOpen){
+    notesBuildColorMenu();
+    menu.classList.add('show');
+    document.addEventListener('click', notesClosePopovers, { once:true });
+  }
+}
+
+function notesApplyPresetColor(mode, hex){
+  notesExecColor(mode, hex);
+  notesClosePopovers();
+  const editor = document.getElementById('notesEditor');
+  if(editor) editor.focus();
+}
+
+function notesApplyColorGlyph(){
+  const t = document.getElementById('notesTextColorGlyph');
+  if(t) t.style.color = notesLastTextColor;
+  const h = document.getElementById('notesHighlightGlyph');
+  if(h){ h.style.background = notesLastHiliteColor; h.style.borderRadius = '3px'; h.style.padding = '0 3px'; }
 }
 // Reflects which formats are active at the caret so the toolbar shows what's
 // actually applied, not just what was last clicked.
@@ -644,6 +711,8 @@ function notesClosePopovers(){
   document.querySelectorAll('.notes-paper-menu.show').forEach(m=>m.classList.remove('show'));
   const menu = document.getElementById('notesExportMenu');
   if(menu) menu.classList.remove('show');
+  const colorMenu = document.getElementById('notesColorMenu');
+  if(colorMenu) colorMenu.classList.remove('show');
 }
 function handleNotesPaperClick(e){
   const b = e.target.closest('[data-paper]');
