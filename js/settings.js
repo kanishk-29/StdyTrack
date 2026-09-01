@@ -227,6 +227,13 @@ function sanitizeBackup(d){
         l.notes = String(l.notes || '').slice(0,5000);
         l.richNotes = String(l.richNotes || '').slice(0,50000);
         if(l.richNotes) l.richNotes = sanitizeNotesHtml(l.richNotes);
+        if(Array.isArray(l.notesPages)){
+          l.notesPages = l.notesPages
+            .filter(p => typeof p === 'string')
+            .slice(0, 200)
+            .map(p => sanitizeNotesHtml(String(p || '').slice(0,50000)));
+          if(!l.notesPages.length) delete l.notesPages;
+        }
         l.link = safeHref(l.link);
       });
       if(!Array.isArray(u.tests)) u.tests = [];

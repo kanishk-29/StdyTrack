@@ -7,6 +7,14 @@
 let notesEditorTarget = null;
 let notesSavedRange = null;
 let notesAutosaveTimer = null;
+// ---- Multi-page notes ----
+// One lecture can hold many pages, each its own rich-text editor. We keep a
+// single live #notesEditor DOM element and swap its content on page change.
+// notesPages holds the HTML of every page (index 0 = page 1); page 1 is also
+// mirrored to l.richNotes so the existing "has notes" flag, settings sanitize
+// and tooltip preview keep working against the first page.
+let notesPages = [];
+let notesCurrentPage = 0;
 
 function openNotesEditor(subjectId, unitId, lectureId){
   closeLectureMenus();
@@ -20,10 +28,21 @@ function openNotesEditor(subjectId, unitId, lectureId){
   const titleEl = document.getElementById('notesLectureTitle');
   if(ctx) ctx.textContent = (s.name + ' · ' + u.name).toUpperCase();
   if(titleEl) titleEl.textContent = l.title;
+  // Load the page set: prefer a persisted notesPages array, else fall back to
+  // the legacy single richNotes string (becomes page 1). Page 1 always mirrors
+  // richNotes for backward-compat consumers.
+  if(Array.isArray(l.notesPages) && l.notesPages.length){
+    notesPages = l.notesPages.filter(p => typeof p === 'string');
+    if(!notesPages.length) notesPages = [l.richNotes || ''];
+  } else {
+    notesPages = [(l.richNotes || '')];
+  }
+  notesCurrentPage = 0;
   const editor = document.getElementById('notesEditor');
-  if(editor) editor.innerHTML = l.richNotes || '';
+  if(editor) editor.innerHTML = (notesPages[0] || '');
   try{ document.execCommand('styleWithCSS', false, true); }catch(e){}
   applyNotesPaper();
+  notesRenderPageBar();
   const status = document.getElementById('notesSaveStatus');
   if(status) status.classList.remove('show');
   updateNotesStat();
@@ -47,6 +66,86 @@ function handleNotesKeydown(e){
   if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f'){ e.preventDefault(); notesToggleFind(); return; }
   if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); notesInsertLink(); }
 }
+
+// ---- Page management ----
+function notesCurrentHtml(){
+  const e = document.getElementById('notesEditor');
+  return e ? e.innerHTML : '';
+}
+function notesSyncCurrent(){
+  notesPages[notesCurrentPage] = notesCurrentHtml();
+}
+function notesRenderPageBar(){
+  const bar = document.getElementById('notesPageBar');
+  if(!bar) return;
+  const total = Math.max(1, notesPages.length);
+  const label = document.getElementById('notesPageLabel');
+  if(label) label.textContent = 'Page ' + (notesCurrentPage + 1) + ' of ' + total;
+  const prevBtn = document.getElementById('notesPagePrev');
+  const nextBtn = document.getElementById('notesPageNext');
+  if(prevBtn) prevBtn.disabled = (notesCurrentPage <= 0);
+  if(nextBtn) nextBtn.disabled = (notesCurrentPage >= total - 1);
+  const addBtn = document.getElementById('notesPageAdd');
+  const delBtn = document.getElementById('notesPageDelete');
+  if(delBtn) delBtn.disabled = (total <= 1);
+  if(bar){
+    // Re-render the page-number chits (clickable) with latest count.
+    const chips = document.getElementById('notesPageChips');
+    if(chips){
+      chips.innerHTML = '';
+      for(let i=0;i<total;i++){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'notes-page-chip' + (i===notesCurrentPage ? ' active' : '');
+        b.textContent = (i+1);
+        b.title = 'Go to page ' + (i+1);
+        b.onclick = ()=> notesGoPage(i);
+        chips.appendChild(b);
+      }
+    }
+  }
+  updateNotesStat();
+}
+function notesGoPage(i){
+  if(i < 0 || i >= notesPages.length || i === notesCurrentPage) return;
+  notesSyncCurrent();
+  notesSavedRange = null;
+  notesCurrentPage = i;
+  const editor = document.getElementById('notesEditor');
+  if(editor) editor.innerHTML = (notesPages[i] || '');
+  updateNotesToolbarState();
+  notesRenderPageBar();
+  const editorEl = document.getElementById('notesEditor');
+  if(editorEl){ editorEl.scrollTop = 0; editorEl.focus(); }
+}
+function notesAddPage(){
+  notesSyncCurrent();
+  notesPages.push('');
+  notesCurrentPage = notesPages.length - 1;
+  const editor = document.getElementById('notesEditor');
+  if(editor) editor.innerHTML = '';
+  notesSavedRange = null;
+  notesRenderPageBar();
+  const editorEl = document.getElementById('notesEditor');
+  if(editorEl){ editorEl.focus(); }
+  saveNotesEditor(true);
+}
+function notesDeletePage(){
+  if(notesPages.length <= 1) return;
+  const cur = notesCurrentHtml();
+  if(cur && cur.replace(/<[^>]*>/g,'').trim()){
+    if(!confirm('Delete this page and all its content?')) return;
+  }
+  notesPages.splice(notesCurrentPage, 1);
+  if(notesCurrentPage >= notesPages.length) notesCurrentPage = notesPages.length - 1;
+  notesSavedRange = null;
+  const editor = document.getElementById('notesEditor');
+  if(editor) editor.innerHTML = (notesPages[notesCurrentPage] || '');
+  notesRenderPageBar();
+  saveNotesEditor(true);
+}
+function notesGoPrevPage(){ notesGoPage(notesCurrentPage - 1); }
+function notesGoNextPage(){ notesGoPage(notesCurrentPage + 1); }
 // Toolbar buttons already keep the caret alive via onmousedown preventDefault,
 // so notesExec can just act on the live selection. Color pickers steal focus
 // to open their native dialog, so those go through notesSaveSelection /
@@ -117,7 +216,12 @@ function saveNotesEditor(silent){
   const l = u && u.lectures.find(x=>x.id===lectureId);
   if(!l) return;
   const editor = document.getElementById('notesEditor');
-  l.richNotes = editor ? editor.innerHTML : '';
+  const html = editor ? editor.innerHTML : '';
+  // Persist the multi-page set; clamp page 1's mirror into richNotes so the
+  // "has notes" flag / tooltip / settings sanitize stay in sync with page 1.
+  notesPages[notesCurrentPage] = html;
+  l.notesPages = notesPages.slice();
+  l.richNotes = (notesPages[0] || '');
   saveData();
   // Only rebuild the subject-detail panel on explicit save; the 1.2s autosave
   // fires while the user is typing — tearing down the live editor mid-stroke
@@ -198,16 +302,27 @@ function handleNotesPaste(e){
 }
 
 // ---------------- EXTRA NOTE FEATURES ----------------
-// Live word/char/reading-time stat while typing.
+// Live word/char/reading-time stat, aggregated across the whole multi-page note.
+function notesAllPagesText(){
+  const parts = [];
+  notesPages.forEach((p, i) => {
+    // Build a temp node to read plain text from each page's HTML so the total
+    // stays correct without loading each page into the live editor.
+    const tmp = document.createElement('div');
+    tmp.innerHTML = p || '';
+    parts.push((tmp.innerText || ''));
+  });
+  return parts.join(' ');
+}
 function updateNotesStat(){
-  const editor = document.getElementById('notesEditor');
   const stat = document.getElementById('notesStat');
-  if(!editor || !stat) return;
-  const text = editor.innerText || '';
+  if(!stat) return;
+  const text = notesAllPagesText();
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
   const chars = text.length;
   const mins = words ? Math.max(1, Math.ceil(words / 200)) : 0;
-  stat.textContent = words + ' words · ' + chars.toLocaleString() + ' chars · ~' + mins + ' min read';
+  const pages = Math.max(1, notesPages.length);
+  stat.textContent = pages + ' page' + (pages===1?'':'s') + ' · ' + words + ' words · ' + chars.toLocaleString() + ' chars · ~' + mins + ' min read';
 }
 
 // Restore the caret that toolbar clicks (or prompt dialogs) may have displaced.
@@ -279,12 +394,15 @@ function notesToggleFind(forceClose){
   }
 }
 
-function notesFindCollect(query){
-  const editor = document.getElementById('notesEditor');
+// Aggregate find across the whole multi-page note. Each match records which
+// page it lives on and its occurrence index within that page (text-node refs
+// can't survive a page swap, so we navigate to the right page then re-select).
+function notesCollectPageMatches(pageHtml, q){
   const matches = [];
-  if(!editor || !query) return matches;
-  const q = query.toLowerCase();
-  const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+  if(!pageHtml || !q) return matches;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = pageHtml;
+  const walker = document.createTreeWalker(tmp, NodeFilter.SHOW_TEXT);
   let node;
   while((node = walker.nextNode())){
     const text = node.nodeValue || '';
@@ -298,17 +416,42 @@ function notesFindCollect(query){
   return matches;
 }
 
-function notesFindSelect(match){
+function notesFindCollect(query){
+  const matches = [];
+  if(!query) return matches;
+  notesPages.forEach((p, i) => {
+    const pm = notesCollectPageMatches(p, query.toLowerCase());
+    for(let k=0;k<pm.length;k++){
+      matches.push({ page: i, withinPageIndex: k, count: pm.length });
+    }
+  });
+  return matches;
+}
+
+function notesFindSelectMatch(match){
   const editor = document.getElementById('notesEditor');
   if(!editor || !match) return;
+  // Ensure we're on the right page before touching the live DOM.
+  if(match.page !== undefined && match.page !== notesCurrentPage){
+    notesSyncCurrent();
+    notesCurrentPage = match.page;
+    editor.innerHTML = (notesPages[match.page] || '');
+    notesRenderPageBar();
+  }
+  const inp = document.getElementById('notesFindInput');
+  const q = inp ? inp.value.trim() : '';
+  const liveWin = notesCollectPageMatches((notesPages[notesCurrentPage] || ''), q);
+  if(!liveWin.length) return;
+  const target = liveWin[match.withinPageIndex % liveWin.length];
+  if(!target) return;
   const range = document.createRange();
-  range.setStart(match.node, match.offset);
-  range.setEnd(match.node, match.offset + match.len);
+  range.setStart(target.node, target.offset);
+  range.setEnd(target.node, target.offset + target.len);
   const sel = window.getSelection();
   sel.removeAllRanges();
   sel.addRange(range);
-  if(match.node.parentElement){
-    try{ match.node.parentElement.scrollIntoView({ block:'center' }); }catch(e){}
+  if(target.node.parentElement){
+    try{ target.node.parentElement.scrollIntoView({ block:'center' }); }catch(e){}
   }
   editor.focus();
 }
@@ -321,7 +464,7 @@ function notesFindUpdate(){
   const count = document.getElementById('notesFindCount');
   if(!count) return;
   count.textContent = notesFindMatches.length ? '1 / ' + notesFindMatches.length : (q ? 'No matches' : '');
-  if(q && notesFindMatches.length) notesFindSelect(notesFindMatches[0]);
+  if(q && notesFindMatches.length) notesFindSelectMatch(notesFindMatches[0]);
 }
 
 function notesFindNav(dir){
@@ -329,7 +472,7 @@ function notesFindNav(dir){
   notesFindIndex = (notesFindIndex + dir + notesFindMatches.length) % notesFindMatches.length;
   const count = document.getElementById('notesFindCount');
   if(count) count.textContent = (notesFindIndex + 1) + ' / ' + notesFindMatches.length;
-  notesFindSelect(notesFindMatches[notesFindIndex]);
+  notesFindSelectMatch(notesFindMatches[notesFindIndex]);
 }
 
 function notesFindKeydown(e){
@@ -356,12 +499,23 @@ function notesToggleExport(e){
 function exportNotes(kind){
   const menu = document.getElementById('notesExportMenu');
   if(menu) menu.classList.remove('show');
-  const editor = document.getElementById('notesEditor');
-  if(!editor) return;
   const titleEl = document.getElementById('notesLectureTitle');
   const title = titleEl ? titleEl.textContent : 'lecture-notes';
-  const plain = editor.innerText || '';
   const filename = title.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'notes';
+  // Merge every page into one temp editor so export/plain text cover the whole
+  // note regardless of which page is currently visible.
+  notesSyncCurrent();
+  const merged = document.createElement('div');
+  notesPages.forEach((p, i) => {
+    if(i > 0){
+      const hr = document.createElement('hr');
+      merged.appendChild(hr);
+    }
+    const tmp = document.createElement('div');
+    tmp.innerHTML = p || '';
+    merged.appendChild(tmp);
+  });
+  const plain = merged.innerText || '';
   if(kind === 'copy'){
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(plain).then(()=> showToast('Notes copied to clipboard 📋')).catch(()=> showToast('Could not copy'));
@@ -375,7 +529,7 @@ function exportNotes(kind){
     }
     return;
   }
-  const body = kind === 'markdown' ? htmlToMarkdown(editor) : kind === 'html' ? wrapNotesHtml(editor.innerHTML) : plain;
+  const body = kind === 'markdown' ? htmlToMarkdown(merged) : kind === 'html' ? wrapNotesHtml(merged.innerHTML) : plain;
   const blob = new Blob([body], { type: (kind === 'html' ? 'text/html' : 'text/plain') + ';charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
