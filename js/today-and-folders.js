@@ -1765,7 +1765,12 @@ function fdTickClock(){
   const dl = document.getElementById('dateLabel'), dy = document.getElementById('dayLabel');
   if(hh) hh.textContent = String(now.getHours()).padStart(2,'0');
   if(mm) mm.textContent = String(now.getMinutes()).padStart(2,'0');
-  if(ss){ ss.textContent = String(now.getSeconds()).padStart(2,'0'); ss.classList.remove('tick'); void ss.offsetWidth; ss.classList.add('tick'); }
+  if(ss){ ss.textContent = String(now.getSeconds()).padStart(2,'0');
+    /* flip effect: only force the reflow when the user wants motion */
+    let reduce = false;
+    try{ reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){}
+    if(!reduce){ ss.classList.remove('tick'); void ss.offsetWidth; ss.classList.add('tick'); }
+  }
   if(dl) dl.textContent = now.toLocaleDateString(undefined, {day:'2-digit', month:'short', year:'numeric'});
   if(dy) dy.textContent = now.toLocaleDateString(undefined, {weekday:'long'});
 }
@@ -1933,6 +1938,7 @@ function fdMoveIndicator(btn){
 }
 
 function fdSetFilter(f){
+  if(f === fdFilter) return; // no-op: already showing this filter
   fdRenderSubjects(f);
   const root = document.getElementById('folderDashboard');
   if(root){
