@@ -807,30 +807,31 @@ function renderMain(){
           <span class="sd-streak-value">${streak} day${streak===1?'':'s'}</span>
         </div>
       </div>
-      <div class="sd-stat-grid">
-        <div class="sd-stat-card">
-          <div class="sd-stat-label">Overall Progress</div>
-          ${ringHtml}
-          <div class="sd-stat-sub">Keep it up! 🚀</div>
-        </div>
-        <div class="sd-stat-card">
-          <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#ece8ff;">⏱️</span>Total Studied</div>
-          <div class="sd-stat-value">${formatHuman(subjectSeconds(subject))}</div>
-          <div class="sd-stat-sub">This semester</div>
-          ${sparklineHtml}
-        </div>
-        <div class="sd-stat-card">
-          <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#dcf7ea;">✅</span>Topics Completed</div>
-          <div class="sd-stat-value">${done} <span style="color:#8b8fa3; font-size:1rem;">/ ${total}</span></div>
-          <div class="sd-stat-sub">Across all units</div>
-          ${barsHtml}
-        </div>
-        <div class="sd-stat-card">
-          <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#ffe6d6;">🔥</span>Study Streak</div>
-          <div class="sd-stat-value">${streak}</div>
-          <div class="sd-stat-sub">Day${streak===1?'':'s'} in a row</div>
-          <div class="sd-streak-dots">${streakDots}</div>
-        </div>
+      ${ringHtml}
+    </div>
+    <div class="sd-stat-grid">
+      <div class="sd-stat-card">
+        <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#ece8ff;">⏱️</span>Total Studied</div>
+        <div class="sd-stat-value">${formatHuman(subjectSeconds(subject))}</div>
+        <div class="sd-stat-sub">This semester</div>
+        ${sparklineHtml}
+      </div>
+      <div class="sd-stat-card">
+        <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#dcf7ea;">✅</span>Topics Done</div>
+        <div class="sd-stat-value">${done} <span style="color:#8b8fa3; font-size:1rem;">/ ${total}</span></div>
+        <div class="sd-stat-sub">Across all units</div>
+        ${barsHtml}
+      </div>
+      <div class="sd-stat-card">
+        <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#ffe6d6;">🔥</span>Study Streak</div>
+        <div class="sd-stat-value">${streak}</div>
+        <div class="sd-stat-sub">Day${streak===1?'':'s'} in a row</div>
+        <div class="sd-streak-dots">${streakDots}</div>
+      </div>
+      <div class="sd-stat-card">
+        <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#e9f1ff;">📋</span>Test Average</div>
+        <div class="sd-stat-value">${formatPct(subjectTestAvg(subject))}</div>
+        <div class="sd-stat-sub">Across all tests</div>
       </div>
     </div>
     ${examHtml}

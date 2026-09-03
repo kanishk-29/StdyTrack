@@ -70,17 +70,17 @@ body.subject-page-active .subject-page-inner{
 .sd-back-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(90,70,160,0.25); background:rgba(255,255,255,0.7); }
 .sd-back-btn:active{ transform:scale(0.96); }
 
-/* ---- Header (glass card with title, streak, ring, stats) ---- */
+/* ---- Header (glass card with title, streak, ring) ---- */
 .sd-header{
-  display:flex; align-items:flex-start; justify-content:space-between;
-  flex-wrap:wrap; gap:16px; margin-bottom:22px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:16px; margin-bottom:18px;
   background:rgba(255,255,255,0.38);
   border:1px solid rgba(255,255,255,0.75);
   border-radius:22px;
   backdrop-filter:blur(22px) saturate(180%);
   -webkit-backdrop-filter:blur(22px) saturate(180%);
   box-shadow:0 14px 38px rgba(90,70,160,0.20), inset 1px 1px 1px rgba(255,255,255,0.9);
-  padding:22px 24px;
+  padding:20px 24px;
   animation:sdFadeUp .6s ease both;
 }
 @keyframes sdFadeUp{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
@@ -134,11 +134,11 @@ body.subject-page-active .subject-page-inner{
 .sd-ring-caption{ font-size:10.5px; color:#8b8fa3; margin-top:2px; text-align:center; }
 @keyframes ringFill{ to{ stroke-dashoffset: var(--offset, 100); } }
 
-/* Stat grid (4 cards) */
+/* Stat grid (4 cards — standalone section below header) */
 .sd-stat-grid{
   display:grid;
-  grid-template-columns:repeat(4, minmax(90px,1fr));
-  gap:12px; flex:1; min-width:260px; align-content:flex-start;
+  grid-template-columns:repeat(4, 1fr);
+  gap:14px; margin-bottom:18px;
 }
 .sd-stat-card{
   display:flex; flex-direction:column; align-items:center; gap:8px;
@@ -624,7 +624,7 @@ body.subject-page-active .unit .unit-body{
   .sd-streak-value{ font-size:12.5px; }
   .sd-ring-wrap svg{ width:78px; height:78px; }
   .sd-ring-caption{ font-size:9.5px; }
-  .sd-stat-grid{ grid-template-columns:1fr 1fr; gap:8px; }
+  .sd-stat-grid{ grid-template-columns:1fr 1fr; gap:10px; }
   .fsh-stat-grid{ grid-template-columns:1fr 1fr; gap:10px; }
   .fsh-clock{ flex-direction:column; align-items:flex-start; gap:6px; }
   .ds-card{ flex-direction:column; align-items:stretch; }
