@@ -182,8 +182,8 @@ function subjectCardHtml(s, i){
   const c = countLectures(s);
   const pct = c.total ? Math.round((c.done/c.total)*100) : 0;
   let nextLecture = null;
-  for(const u of s.units){
-    const l = u.lectures.find(x=>!x.completed);
+  for(const u of (Array.isArray(s.units) ? s.units : [])){
+    const l = (u && Array.isArray(u.lectures) ? u.lectures : []).find(x=>x && !x.completed);
     if(l){ nextLecture = l; break; }
   }
   const nextLabel = nextLecture ? `Next: ${escapeHtml(nextLecture.title)}` : (c.total ? 'All done! 🎉' : 'No lectures yet');
