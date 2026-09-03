@@ -32,6 +32,8 @@ document.addEventListener('keydown', (e)=>{
     if(progOv && progOv.classList.contains('show')){ closeProgressSlide(); return; }
     const drawer = document.getElementById('subjectsDrawerOverlay');
     if(drawer && drawer.classList.contains('show')){ closeSubjectsDrawer(); return; }
+    const landing = document.getElementById('subjectsLanding');
+    if(landing && landing.style.display !== 'none'){ closeMySubjectsLanding(); return; }
     const openOverlays = document.querySelectorAll('.overlay.show');
     if(openOverlays.length) closeModal(openOverlays[openOverlays.length-1].id);
     return;

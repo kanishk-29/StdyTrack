@@ -1504,11 +1504,10 @@ function mslFolderDesc(folder){
 }
 function mslFolderCardHtml(folder, idx){
   const subs = subjectsInFolder(folder.id);
-  const total = subs.reduce((a,s)=>a+countLectures(s).total,0);
+  const topicCount = subs.reduce((a,s)=>a+countLectures(s).total,0);
   const pal = MSL_PALETTE[idx % MSL_PALETTE.length];
   const subCount = subs.length;
-  const topicCount = subs.reduce((a,s)=>a+countLectures(s).total,0);
-  const countLabel = (subs.length ? '#'.repeat(0) : '') + (subCount ? String(subCount)+' SUBJECTS' : 'NEW');
+  const countLabel = subCount ? String(subCount)+' SUBJECTS' : 'NEW';
   const accent = folder.accent || pal.accent;
   const fbg = folder.folderBg || pal.bg;
   const orb = folder.orb || pal.orb;
@@ -1662,7 +1661,6 @@ function openFolderCreateLanding(){
   foldersEnsure();
   createFolder(name.trim());
   renderSubjectsLanding();
-  renderFolderCard();
   showToast('Folder created 📁');
 }
 function mslApplySearch(q){
@@ -1693,6 +1691,17 @@ function mslClearSearch(){
   if(e) e.remove();
   mslApplySearch('');
 }
+/* — folder card keyboard activation (Enter/Space) — */
+document.addEventListener('keydown', (e)=>{
+  const t = e.target;
+  const landing = document.getElementById('subjectsLanding');
+  if(!landing || landing.style.display === 'none') return;
+  if(!t || !t.classList || !t.classList.contains('folder')) return;
+  if(!(e.key === 'Enter' || e.key === ' ')) return;
+  if(e.target !== t) return;
+  e.preventDefault();
+  if(typeof t.click === 'function') t.click();
+});
 let mslSortAsc = false;
 function mslToggleSort(){
   mslSortAsc = !mslSortAsc;
