@@ -7,11 +7,12 @@ let unitSortMode = {};
 let unitViewMode = {};
 
 function sortedLectures(u){
-  const mode = unitSortMode[u.id];
+  const lectures = (u && Array.isArray(u.lectures)) ? u.lectures : [];
+  const mode = unitSortMode[u ? u.id : ''];
   if(mode === 'az'){
-    return [...u.lectures].sort((a,b)=> a.title.localeCompare(b.title));
+    return [...lectures].sort((a,b)=> (a.title||'').localeCompare(b.title||''));
   }
-  return u.lectures; // 'order' — as authored
+  return lectures; // 'order' — as authored
 }
 function closeUnitMenus(){
   document.querySelectorAll('.unit-kebab-menu.show').forEach(m=>m.classList.remove('show'));

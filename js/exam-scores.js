@@ -1,16 +1,18 @@
 // Test scores + exam countdown & pacing
 // ---------------- TEST SCORES ----------------
 function testPct(t){
+  if(!t || typeof t !== 'object') return 0;
   return t.total>0 ? (t.obtained/t.total*100) : 0;
 }
 function unitTestAvg(u){
-  if(!u.tests || !u.tests.length) return null;
+  if(!u || !Array.isArray(u.tests) || !u.tests.length) return null;
   const sum = u.tests.reduce((s,t)=>s+testPct(t),0);
   return sum/u.tests.length;
 }
 function subjectTestAvg(s){
+  if(!s || !Array.isArray(s.units)) return null;
   const all = [];
-  s.units.forEach(u=> (u.tests||[]).forEach(t=>all.push(t)));
+  s.units.forEach(u=> (u && (u.tests||[])).forEach(t=>all.push(t)));
   if(!all.length) return null;
   const sum = all.reduce((s2,t)=>s2+testPct(t),0);
   return sum/all.length;

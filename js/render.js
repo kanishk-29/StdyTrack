@@ -92,11 +92,12 @@ function renderToday(){
 
 function getWeakUnits(){
   const results = [];
-  data.subjects.forEach(s=>{
-    s.units.forEach(u=>{
+  (data.subjects||[]).forEach(s=>{
+    (s.units||[]).forEach(u=>{
+      if(!u) return;
       const avg = unitTestAvg(u);
       if(avg !== null){
-        results.push({subjectId:s.id, subjectName:s.name, unitId:u.id, unitName:u.name, avg, count:u.tests.length});
+        results.push({subjectId:s.id, subjectName:s.name, unitId:u.id, unitName:u.name, avg, count:(u.tests?u.tests.length:0)});
       }
     });
   });

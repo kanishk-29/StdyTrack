@@ -1210,7 +1210,7 @@ function renderCompletionRing(){
   if(!el) return;
 
   let total=0, done=0;
-  (data.subjects||[]).forEach(s => s.units.forEach(u => u.lectures.forEach(l => { total++; if(l.completed) done++; })));
+  (data.subjects||[]).forEach(s => (s.units||[]).forEach(u => (u && (u.lectures||[])).forEach(l => { total++; if(l && l.completed) done++; })));
   const pct = total ? Math.round((done/total)*100) : 0;
 
   const size=120, stroke=14, r=(size-stroke)/2, cx=size/2, cy=size/2, C=2*Math.PI*r;

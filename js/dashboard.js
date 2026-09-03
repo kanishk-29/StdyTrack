@@ -190,8 +190,8 @@ function renderDashCourses(){
     const c = countLectures(s);
     const pct = c.total ? Math.round((c.done/c.total)*100) : 0;
     let nextLecture = null;
-    for(const u of s.units){
-      const l = u.lectures.find(x=>!x.completed);
+    for(const u of (Array.isArray(s.units) ? s.units : [])){
+      const l = (u && Array.isArray(u.lectures) ? u.lectures : []).find(x=>x && !x.completed);
       if(l){ nextLecture = l; break; }
     }
     const nextLabel = nextLecture ? `Next: ${escapeHtml(nextLecture.title)}` : (c.total ? 'All done! 🎉' : 'No lectures yet');
@@ -340,11 +340,12 @@ document.addEventListener('click', (e)=>{
 function resumeSubject(subjectId){
   const s = data.subjects.find(x=>x.id===subjectId);
   if(!s) return;
-  for(const u of s.units){
-    const l = u.lectures.find(x=>!x.completed);
+  const units = Array.isArray(s.units) ? s.units : [];
+  for(const u of units){
+    const l = (u && Array.isArray(u.lectures) ? u.lectures : []).find(x=>x && !x.completed);
     if(l){ openFocusMode(subjectId, u.id, l.id); return; }
   }
-  if(s.units.length){
+  if(units.length){
     jumpToUnit(subjectId, s.units[s.units.length-1].id);
     showToast(`${s.name} is fully complete! 🎉`);
   } else {

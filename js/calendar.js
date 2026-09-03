@@ -843,7 +843,8 @@ function renderMain(){
   const UNIT_ACCENTS = ['var(--sd-purple)','var(--sd-blue)','var(--sd-green)','var(--sd-orange)','var(--sd-pink)','var(--teal)'];
   const UNIT_ICONS = ['📘','💾','🧮','📗','🧠','📙'];
   subject.units.forEach((u, i)=>{
-    const t = u.lectures.length, d = u.lectures.filter(l=>l.completed).length;
+    const lectures = (u && Array.isArray(u.lectures)) ? u.lectures : [];
+    const t = lectures.length, d = lectures.filter(l=>l && l.completed).length;
     const left = t - d;
     const pct = t ? (d/t)*100 : 0;
     const accent = UNIT_ACCENTS[i % UNIT_ACCENTS.length];
