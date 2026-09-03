@@ -69,6 +69,8 @@ async function storageSet(key, value){
 
 function normalizeLoadedData(parsed){
   data = parsed;
+  if(!data || typeof data !== 'object') data = {};
+  if(!data.subjects || !Array.isArray(data.subjects)) data.subjects = [];
   if(!data.dailyLog) data.dailyLog = {};
   if(!data.habits) data.habits = { entries: {} };
   if(!data.habits.entries) data.habits.entries = {};
@@ -77,9 +79,12 @@ function normalizeLoadedData(parsed){
   const ppMigrated = ppEnsure();
   foldersEnsure();
   data.subjects.forEach(s=>{
+    if(!s || typeof s !== 'object') return;
+    if(!Array.isArray(s.units)) s.units = [];
     s.units.forEach(u=>{
-      if(!u.tests) u.tests = [];
-      if(!u.lectures) u.lectures = [];
+      if(!u || typeof u !== 'object') return;
+      if(!Array.isArray(u.tests)) u.tests = [];
+      if(!Array.isArray(u.lectures)) u.lectures = [];
     });
   });
   // Persist the one-time planner migration so the legacy {today,tomorrow} keys

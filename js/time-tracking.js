@@ -6,16 +6,18 @@ let uiTickHandle = null;
 let checkpointHandle = null;
 
 function getLecture(subjectId, unitId, lectureId){
-  const s = data.subjects.find(x=>x.id===subjectId); if(!s) return null;
-  const u = s.units.find(x=>x.id===unitId); if(!u) return null;
-  return u.lectures.find(x=>x.id===lectureId) || null;
+  const s = (data.subjects||[]).find(x=>x.id===subjectId); if(!s) return null;
+  const u = (Array.isArray(s.units) ? s.units : []).find(x=>x && x.id===unitId); if(!u) return null;
+  return (Array.isArray(u.lectures) ? u.lectures : []).find(x=>x && x.id===lectureId) || null;
 }
 
 function findRunningLecture(){
-  for(const s of data.subjects){
+  for(const s of (data.subjects||[])){
+    if(!s || !Array.isArray(s.units)) continue;
     for(const u of s.units){
+      if(!u || !Array.isArray(u.lectures)) continue;
       for(const l of u.lectures){
-        if(l.timerStart) return {subjectId:s.id, unitId:u.id, lectureId:l.id};
+        if(l && l.timerStart) return {subjectId:s.id, unitId:u.id, lectureId:l.id};
       }
     }
   }
