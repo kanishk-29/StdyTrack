@@ -20,6 +20,9 @@ function studyDataCacheKey(){
 }
 let data = null;
 let activeSubjectId = null;
+// When true the subject detail is shown as a full-screen glass page instead of
+// the inline panel; exitSubjectPage() flips it back to the dashboard view.
+let subjectPageOpen = false;
 let activeFolderFilter = null; // folder id when sidebar/subjects are being viewed scoped to one folder ('' = unsorted, null = show all)
 let folderSubjectFilter = 'all'; // 'all' | 'progress' | 'completed' — tab filter on the "Your Subjects" folder page
 let folderSubjectSortMode = 'none'; // 'none' | 'asc' | 'desc' — toggled by the folder page's sort/filter button

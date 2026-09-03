@@ -310,3 +310,48 @@
 [data-theme="dark"] .notes-color-menu{ background:#151a26; border-color:#2b3246; }
 [data-theme="dark"] .notes-color-dot{ border-color:#151a26; }
 [data-theme="dark"] .notes-color-dot.notes-color-custom{ background:rgba(123,95,224,0.14); color:#a08cff; border-color:var(--violet); }
+
+/* ---- Full-screen glass subject page (dark) ---- */
+[data-theme="dark"] body.subject-page-active .main{
+  background:
+    radial-gradient(900px 520px at 15% -10%, rgba(139,116,255,0.16), transparent 60%),
+    radial-gradient(760px 480px at 110% 15%, rgba(240,90,166,0.10), transparent 60%),
+    radial-gradient(700px 500px at 60% 120%, rgba(56,232,180,0.08), transparent 60%),
+    #0f1118;
+}
+[data-theme="dark"] body.subject-page-active .sd-header,
+[data-theme="dark"] body.subject-page-active .unit{
+  background:rgba(23,29,43,0.55);
+  border-color:rgba(255,255,255,0.08);
+  box-shadow:0 14px 38px rgba(0,0,0,0.5), inset 1px 1px 1px rgba(255,255,255,0.06);
+}
+[data-theme="dark"] body.subject-page-active .sd-stat-card,
+[data-theme="dark"] body.subject-page-active .sd-streak-badge{
+  background:rgba(23,29,43,0.6);
+  border-color:rgba(255,255,255,0.08);
+  box-shadow:0 4px 14px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] body.subject-page-active .sd-exam-card{
+  background:rgba(23,29,43,0.6);
+  border-color:rgba(255,255,255,0.08);
+  box-shadow:0 8px 22px rgba(0,0,0,0.45);
+}
+[data-theme="dark"] body.subject-page-active .add-unit-btn{
+  background:rgba(23,29,43,0.6);
+  border-color:rgba(139,116,255,0.4);
+}
+[data-theme="dark"] body.subject-page-active .unit .unit-head{
+  background:rgba(255,255,255,0.02);
+}
+[data-theme="dark"] body.subject-page-active .unit .unit-body{
+  background:rgba(255,255,255,0.03);
+  border-top-color:rgba(255,255,255,0.07);
+}
+[data-theme="dark"] body.subject-page-active .sd-back-btn{
+  background:rgba(23,29,43,0.6);
+  border-color:rgba(255,255,255,0.12);
+  color:var(--sd-ink);
+  box-shadow:0 3px 10px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] body.subject-page-active .sd-back-btn:hover{ background:rgba(35,42,63,0.8); }
+[data-theme="dark"] body.subject-page-active .subject-page-blobs .sp-blob{ opacity:0.4; }

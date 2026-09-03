@@ -90,17 +90,29 @@ function selectAndScroll(subjectId){
 
 function jumpToSubject(subjectId){
   activeSubjectId = subjectId;
+  subjectPageOpen = true;
   renderAll();
   if(typeof closeSubjectsDrawer === 'function') closeSubjectsDrawer();
   if(typeof mascotOnSubjectOpen === 'function') mascotOnSubjectOpen(subjectId);
+  document.body.classList.add('subject-page-active');
+  // scroll the full-page shell into view on mobile after it is laid out
   setTimeout(()=>{
     const el = document.querySelector('#main .sd-header');
     if(el){
-      el.scrollIntoView({behavior:'smooth', block:'start'});
       el.classList.add('jump-highlight');
       setTimeout(()=>el.classList.remove('jump-highlight'), 1600);
     }
-  }, 80);
+  }, 120);
+}
+
+// Returns from the full-screen subject page to the dashboard/main app.
+function exitSubjectPage(){
+  subjectPageOpen = false;
+  document.body.classList.remove('subject-page-active');
+  activeSubjectId = null;
+  renderAll();
+  window.scrollTo({top:0, behavior:'auto'});
+  if(typeof closeSubjectsDrawer === 'function') closeSubjectsDrawer();
 }
 
 function renderDashQuickGrid(){
@@ -434,6 +446,8 @@ function renderRevisionPanel(){
 
 function jumpToLecture(subjectId, unitId, lectureId){
   activeSubjectId = subjectId;
+  subjectPageOpen = true;
+  document.body.classList.add('subject-page-active');
   const s = data.subjects.find(x=>x.id===subjectId);
   const u = s.units.find(x=>x.id===unitId);
   if(u) u.open = true;
@@ -451,6 +465,8 @@ function jumpToLecture(subjectId, unitId, lectureId){
 
 function jumpToUnit(subjectId, unitId){
   activeSubjectId = subjectId;
+  subjectPageOpen = true;
+  document.body.classList.add('subject-page-active');
   const s = data.subjects.find(x=>x.id===subjectId);
   const u = s.units.find(x=>x.id===unitId);
   if(u) u.open = true;

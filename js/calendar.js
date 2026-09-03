@@ -190,7 +190,7 @@ function subjectCardHtml(s, i){
   const thumbStyle = s.image
     ? `background-image:url('${s.image}'); background-size:cover; background-position:center;`
     : `background:linear-gradient(135deg, ${color}, ${color}99);`;
-  return `<div class="dash-course-card subject-tile-card${s.id===activeSubjectId?' active':''}" style="animation-delay:${i*0.05}s" onclick="activeSubjectId='${s.id}'; renderAll(); closeSubjectsDrawer(); if(typeof mascotOnSubjectOpen==='function') mascotOnSubjectOpen('${s.id}');">
+  return `<div class="dash-course-card subject-tile-card${s.id===activeSubjectId?' active':''}" style="animation-delay:${i*0.05}s" onclick="jumpToSubject('${s.id}')">
     <div class="dash-course-thumb" style="${thumbStyle}">
       <div class="dash-course-thumb-overlay"></div>
       <input type="file" accept="image/*" id="subjectImgInput-${s.id}" style="display:none" onchange="handleSubjectImage(event,'${s.id}')">
@@ -683,6 +683,9 @@ function renderMain(){
   main.className = 'main' + (idx>=0 ? ' accent-'+((idx%5)+1) : '');
   const subject = data.subjects.find(s=>s.id===activeSubjectId);
   if(!subject){
+    // Full-page mode never runs with no subject selected (exitSubjectPage clears
+    // it), so this branch just restores the inline placeholder on the dashboard.
+    document.body.classList.remove('subject-page-active');
     main.innerHTML = `<div class="empty-state"><div class="glyph">📘</div>Pick a subject on the left — or add a new one — to see its units and lectures.</div>`;
     return;
   }
@@ -744,6 +747,13 @@ function renderMain(){
 
   let html = `
     <div class="sd-header">
+      ${subjectPageOpen ? `
+      <div class="sd-back-row">
+        <button type="button" class="sd-back-btn" title="Back to dashboard" onclick="exitSubjectPage()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+          <span>All Subjects</span>
+        </button>
+      </div>` : ''}
       <div class="sd-title-block">
         <div class="sd-title-row">
           <h2 class="sd-title">${escapeHtml(subject.name)} <span class="sd-sparkle">✨</span></h2>
@@ -869,6 +879,22 @@ function renderMain(){
       <div class="sd-footer-text"><b>${escapeHtml(quote.bold)}</b> ${escapeHtml(quote.text)}</div>
       <button class="sd-footer-cta" onclick="sparkAt(this,'var(--sd-purple)')">Keep Going! 🎉</button>
     </div>`;
+
+  // Full-screen glass subject page: wrap everything in a centred page shell
+  // with the floating colour blobs behind the frosted surfaces.
+  if(subjectPageOpen){
+    html = `
+      <div class="subject-page-blobs" aria-hidden="true">
+        <span class="sp-blob sp-blob1"></span>
+        <span class="sp-blob sp-blob2"></span>
+        <span class="sp-blob sp-blob3"></span>
+        <span class="sp-blob sp-blob4"></span>
+      </div>
+      <div class="subject-page-scroll">
+        <div class="subject-page-inner">${html}</div>
+      </div>`;
+    document.body.classList.add('subject-page-active');
+  }
 
   main.innerHTML = html;
 }

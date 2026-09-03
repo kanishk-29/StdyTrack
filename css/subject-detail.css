@@ -132,3 +132,126 @@
     .sd-ring-wrap{ display:none; }
     .sd-stat-grid{ grid-template-columns:1fr 1fr; }
   }
+
+  /* ============================================================
+     FULL-SCREEN GLASS SUBJECT PAGE
+     Mirrors the glassmorphism reference (study-dashboard.html):
+     frosted .main over drifting colour blobs, back button, and
+     translucent inner cards.
+     ============================================================ */
+  .sd-back-row{ display:flex; margin-bottom:6px; }
+  .sd-back-btn{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:7px 14px; border-radius:999px; border:1px solid var(--glass-border, rgba(255,255,255,0.75));
+    background:rgba(255,255,255,0.45); color:var(--sd-ink);
+    font-size:13px; font-weight:600; cursor:pointer;
+    box-shadow:0 3px 10px rgba(90,70,160,0.15);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .sd-back-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(90,70,160,0.25); background:rgba(255,255,255,0.7); }
+  .sd-back-btn:active{ transform:scale(0.96); }
+
+  /* full-page fixed shell — covers the dashboard while a subject is open */
+  body.subject-page-active{
+    overflow:hidden;
+  }
+  body.subject-page-active .main{
+    position:fixed; inset:0; z-index:45;
+    margin:0; border-radius:0; border:none; padding:0;
+    min-height:0;
+    overflow:hidden;
+    background:linear-gradient(160deg,#eef0ff 0%, #f7edf9 45%, #e9f3ff 100%);
+    box-shadow:none;
+  }
+  body.subject-page-active .subject-page-blobs{
+    position:absolute; inset:0; overflow:hidden; pointer-events:none;
+  }
+  body.subject-page-active .subject-page-blobs .sp-blob{
+    position:absolute; border-radius:50%; filter:blur(10px); opacity:0.6;
+  }
+  body.subject-page-active .sp-blob1{ width:420px; height:420px; left:-120px; top:-100px; background:radial-gradient(circle,#8f6bff,transparent 70%); animation:sdDrift1 22s ease-in-out infinite; }
+  body.subject-page-active .sp-blob2{ width:380px; height:380px; right:-100px; top:60px; background:radial-gradient(circle,#ff9ecb,transparent 70%); animation:sdDrift2 26s ease-in-out infinite; }
+  body.subject-page-active .sp-blob3{ width:360px; height:360px; left:10%; bottom:-160px; background:radial-gradient(circle,#57e0c9,transparent 70%); animation:sdDrift3 30s ease-in-out infinite; }
+  body.subject-page-active .sp-blob4{ width:300px; height:300px; right:12%; bottom:-120px; background:radial-gradient(circle,#ffd166,transparent 70%); animation:sdDrift1 18s ease-in-out infinite reverse; }
+  @keyframes sdDrift1{ 0%,100%{ transform:translate(0,0) scale(1);} 50%{ transform:translate(60px,40px) scale(1.15);} }
+  @keyframes sdDrift2{ 0%,100%{ transform:translate(0,0) scale(1);} 50%{ transform:translate(-50px,60px) scale(0.9);} }
+  @keyframes sdDrift3{ 0%,100%{ transform:translate(0,0) scale(1);} 50%{ transform:translate(40px,-50px) scale(1.1);} }
+
+  /* scrollable content column at the centre */
+  body.subject-page-active .subject-page-scroll{
+    position:relative; z-index:1;
+    height:100%; overflow-y:auto; overflow-x:hidden;
+    padding:max(22px, env(safe-area-inset-top)) 18px max(40px, env(safe-area-inset-bottom));
+    -webkit-overflow-scrolling:touch;
+  }
+  body.subject-page-active .subject-page-inner{
+    position:relative;
+    max-width:820px; margin:0 auto;
+    animation:sdPageIn .5s ease both;
+  }
+  @keyframes sdPageIn{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:translateY(0);} }
+
+  /* frosted surfaces for the header when in page mode */
+  body.subject-page-active .sd-header{
+    background:rgba(255,255,255,0.5);
+    border:1px solid rgba(255,255,255,0.8);
+    border-radius:24px;
+    backdrop-filter:blur(22px) saturate(180%);
+    -webkit-backdrop-filter:blur(22px) saturate(180%);
+    box-shadow:0 14px 38px rgba(90,70,160,0.20), inset 1px 1px 1px rgba(255,255,255,0.9), inset -1px -1px 1px rgba(140,120,220,0.1);
+    padding:22px 24px;
+  }
+
+  /* frosted stat cards */
+  body.subject-page-active .sd-stat-card{
+    background:rgba(255,255,255,0.55);
+    border:1px solid rgba(255,255,255,0.75);
+    backdrop-filter:blur(12px) saturate(160%);
+    -webkit-backdrop-filter:blur(12px) saturate(160%);
+    box-shadow:0 4px 14px rgba(90,70,160,0.12), inset 1px 1px 1px rgba(255,255,255,0.8);
+  }
+  body.subject-page-active .sd-streak-badge{
+    background:rgba(255,255,255,0.55);
+    border:1px solid rgba(255,255,255,0.75);
+    backdrop-filter:blur(12px) saturate(160%);
+    -webkit-backdrop-filter:blur(12px) saturate(160%);
+    box-shadow:0 4px 14px rgba(90,70,160,0.12);
+  }
+
+  body.subject-page-active .sd-exam-card{
+    background:rgba(255,255,255,0.5);
+    border:1px solid rgba(255,255,255,0.75);
+    backdrop-filter:blur(18px) saturate(180%);
+    -webkit-backdrop-filter:blur(18px) saturate(180%);
+    box-shadow:0 8px 22px rgba(90,70,160,0.16), inset 1px 1px 1px rgba(255,255,255,0.8);
+  }
+
+  body.subject-page-active .add-unit-btn{
+    background:rgba(255,255,255,0.5);
+    border:1.5px dashed rgba(124,92,255,0.4);
+    backdrop-filter:blur(14px) saturate(160%);
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+    box-shadow:0 6px 18px rgba(90,70,160,0.12);
+    margin-top:14px;
+  }
+
+  /* the big unit cards themselves — frosted glass */
+  body.subject-page-active .unit{
+    background:rgba(255,255,255,0.55);
+    border:1px solid rgba(255,255,255,0.8);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+    box-shadow:0 12px 30px rgba(90,70,160,0.16), inset 1px 1px 1px rgba(255,255,255,0.8);
+  }
+  body.subject-page-active .unit .unit-head{
+    background:rgba(255,255,255,0.25);
+  }
+  body.subject-page-active .unit .unit-body{
+    background:rgba(255,255,255,0.35);
+    border-top:1px solid rgba(255,255,255,0.7);
+  }
+
+  /* reduced-motion: keep paths but stop the drifting blobs */
+  @media (prefers-reduced-motion: reduce){
+    body.subject-page-active .sp-blob{ animation:none !important; }
+  }
