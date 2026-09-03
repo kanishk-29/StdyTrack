@@ -2,7 +2,7 @@
 // All real data lives in localStorage, not in this cache ???????? this only
 // lets the app shell (html/css/js/icons) load when there's no connection.
 
-const CACHE_NAME = 'study-tracker-shell-v43';
+const CACHE_NAME = 'study-tracker-shell-v44';
 const APP_SHELL = [
   './',
   './index.html',
@@ -35,6 +35,7 @@ const APP_SHELL = [
   './css/dark-mode.css',
   './css/a11y.css',
   './js/data.js',
+  './js/demo.js',
   './js/today-and-folders.js',
   './js/cloud-sync.js',
   './js/storage.js',

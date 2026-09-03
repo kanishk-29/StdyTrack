@@ -86,6 +86,16 @@ function applyUserName(name){
   try{ localStorage.setItem('studyUserName', name); }catch(e){}
 }
 
+// Demo / trial entry — lets a reviewer explore a populated copy with no account.
+// Bypasses the whole login gate: no Google, no cloud, data self-cleans on exit.
+async function startDemo(){
+  if(typeof startDemoMode !== 'function') return;
+  const screen = document.getElementById('loginScreen');
+  if(screen) screen.classList.remove('show');
+  if(typeof hideLoginScreen === 'function'){ try{ hideLoginScreen(); }catch(e){} }
+  await startDemoMode();
+}
+
 function showLoginScreen(){
   const screen = document.getElementById('loginScreen');
   if(!screen) return;
@@ -124,6 +134,10 @@ async function signOutAndShowLogin(){
 
 function updateAccountInfo(){
   const section = document.getElementById('settingsAccountSection');
+  if(DEMO_MODE){
+    if(section) section.style.display = 'none';
+    return;
+  }
   if(!section) return;
   if(cloudIsConfigured()){
     section.style.display = '';

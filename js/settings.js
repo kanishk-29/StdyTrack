@@ -13,6 +13,8 @@ function openSettings(){
     : '<option value="">No subjects yet</option>';
   settingsPopulateUnits();
   if(typeof updateAccountInfo === 'function') updateAccountInfo();
+  const demoSec = document.getElementById('settingsDemoSection');
+  if(demoSec) demoSec.style.display = (typeof DEMO_MODE !== 'undefined' && DEMO_MODE) ? '' : 'none';
   openModal('settingsOverlay');
   updateThemeUI();
 }

@@ -62,6 +62,9 @@
 /* ---- View switcher / storage banner ---- */
 [data-theme="dark"] .view-btn{ background:var(--card); border-color:var(--border); color:var(--ink-soft); }
 [data-theme="dark"] .storage-banner{ background:var(--violet-soft); }
+[data-theme="dark"] .demo-banner{ background:linear-gradient(135deg,#4a3d12,#574712); border-color:#8a7a3a; color:#f5e6b8; }
+[data-theme="dark"] .demo-banner b{ color:#ffe9a8; }
+[data-theme="dark"] .demo-banner button{ background:#e6b73a; color:#1c1a2e; }
 
 /* ---- Modal / form surfaces ---- */
 [data-theme="dark"] .modal{ background:var(--card); color:var(--ink); box-shadow:0 10px 40px rgba(0,0,0,0.5); }

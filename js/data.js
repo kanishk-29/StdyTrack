@@ -1,9 +1,15 @@
 // Core in-memory state and constants
 // ---------------- DATA ----------------
 const STORAGE_KEY = 'study-tracker-data';
+// Demo/trial mode is fully isolated: it uses its own local-only storage key,
+// never touches the cloud, and self-cleans on exit — so a reviewer poking
+// around a demo session can never overwrite or leak a real user's data.
+let DEMO_MODE = false;
+function isDemoMode(){ return DEMO_MODE; }
 // When a user is signed in (Firebase auth), scope the local cache to their
 // account so signing out and back in as someone else never mixes data.
 function studyDataCacheKey(){
+  if(DEMO_MODE) return STORAGE_KEY + ':demo';
   try{
     if(typeof firebase !== 'undefined' && typeof firebase.auth === 'function'){
       const u = firebase.auth().currentUser;

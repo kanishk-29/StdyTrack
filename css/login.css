@@ -151,6 +151,23 @@
   .login-google:active{ transform:translateY(0) scale(0.98); }
   .login-google:disabled{ opacity:0.55; cursor:default; transform:none; }
 
+  .login-demo{
+    width:100%; margin-top:12px; padding:12px 14px; border-radius:13px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; letter-spacing:0.2px;
+    color:#e8e6ff; background:rgba(255,255,255,0.08);
+    border:1px dashed rgba(255,255,255,0.35); cursor:pointer;
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .login-demo .demo-icon{ width:18px; height:18px; flex:none; opacity:.9; }
+  .login-demo:hover{ transform:translateY(-2px); box-shadow:0 10px 22px -10px rgba(255,255,255,0.3); background:rgba(255,255,255,0.14); border-color:rgba(255,255,255,0.6); }
+  .login-demo:active{ transform:translateY(0) scale(0.98); }
+  .login-demo:disabled{ opacity:0.55; cursor:default; transform:none; }
+  .login-demo-hint{
+    margin-top:10px; font-size:10.5px; color:#8a89a8;
+    text-align:center; line-height:1.5;
+  }
+
   .login-footnote{
     margin-top:16px; font-size:10.5px; color:#5e6083;
     display:flex; align-items:center; justify-content:center; gap:5px;

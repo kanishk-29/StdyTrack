@@ -90,6 +90,32 @@ function normalizeLoadedData(parsed){
 }
 
 async function loadData(){
+  // Demo/trial mode: load a local-only, throwaway copy. No cloud pull ever;
+  // if the saved demo copy is missing or older than a day, rebuild it fresh
+  // so a reviewer always sees a convincing, self-consistent dataset.
+  if(DEMO_MODE && typeof buildDemoData === 'function'){
+    let demoRaw = null;
+    let demoAge = Infinity;
+    try{ demoRaw = await storageGet(studyDataCacheKey()); }catch(e){}
+    if(demoRaw){
+      try{
+        const parsed = JSON.parse(demoRaw);
+        demoAge = parsed && parsed.updatedAt ? (Date.now() - parsed.updatedAt) : Infinity;
+      }catch(e){ demoAge = Infinity; }
+    }
+    if(!demoRaw || !isFinite(demoAge) || demoAge > DEMO_EXPIRY_MS){
+      data = buildDemoData();
+      try{ await storageSet(studyDataCacheKey(), JSON.stringify(data)); }catch(e){}
+      return;
+    }
+    try{ data = JSON.parse(demoRaw); normalizeLoadedData(data); foldersEnsure(); return; }
+    catch(e){
+      data = buildDemoData();
+      try{ await storageSet(studyDataCacheKey(), JSON.stringify(data)); }catch(e){}
+      return;
+    }
+  }
+
   let localData = null;
   try{
     const timeout = new Promise((_, reject)=> setTimeout(()=>reject(new Error('storage timeout')), 5000));
@@ -103,7 +129,9 @@ async function loadData(){
   // returns { json, userName } for the signed-in user's own document.
   let cloudData = null;
   let cloudUserName = null;
-  if(cloudIsConfigured()){
+  // Demo/trial mode never reads the cloud — it's a fully isolated, throwaway
+  // dataset that a reviewer can explore without touching real accounts.
+  if(!DEMO_MODE && cloudIsConfigured()){
     try{
       const res = await cloudPull();
       if(res && res.json){
@@ -155,7 +183,8 @@ async function saveData(){
   // free-tier writes low: we (1) skip pushes when the payload hasn't changed
   // since the last one (dedupe), (2) enforce a minimum interval between writes,
   // and (3) schedule a final trailing push so the newest state always syncs.
-  if(cloudIsConfigured()){
+  // DEMO MODE: never pushes — trial data stays local and disappears on exit.
+  if(!DEMO_MODE && cloudIsConfigured()){
     const changed = (payload !== lastCloudPushPayload);
     const now = Date.now();
     const due = (now - lastCloudPushAt) >= CLOUD_PUSH_MIN_INTERVAL;

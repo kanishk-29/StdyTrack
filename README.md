@@ -39,7 +39,8 @@ js/                    # loaded top-to-bottom in index.html — order matters,
                        # everything is a plain global script (no bundler,
                        # no modules) so functions in one file can call
                        # functions/variables defined in another
-  data.js                 # in-memory state + constants
+  data.js                 # in-memory state + constants + storage key scoping
+  demo.js                 # demo/trial mode: pre-filled sample data + exit/cleanup
   today-and-folders.js    # today/priority page + subject folders
   cloud-sync.js           # optional Firebase sync — set FIREBASE_CONFIG here
   storage.js              # load/save/migrate (local device storage + cloud)
@@ -91,6 +92,18 @@ dependencies to install.
 
 MIT — see [LICENSE](./LICENSE). Anyone reusing this code must keep the
 copyright notice and license text, per the terms of the license.
+
+## Demo / trial mode
+
+The login screen's **"Try the demo — no account needed"** lets a reviewer
+explore a fully-populated sample (Math, DBMS, OOP, a study heatmap, habits,
+and a planner) without signing in or touching any real data.
+
+- Demo data lives under its own local-only key (`study-tracker-data:demo`);
+  it is **never** pushed to Firebase and the cloud is **never** pulled.
+- A "🎓 Demo mode" banner shows during the session.
+- "Exit demo" (banner or Settings) wipes the sample copy and returns to the
+  login screen. The sample regenerates fresh after 24h.
 
 ## Deploying to Vercel
 
