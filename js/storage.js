@@ -134,6 +134,9 @@ async function loadData(){
 }
 
 let lastCloudPushAt = 0;
+let lastCloudPushPayload = '';
+let cloudPushTimer = null;
+const CLOUD_PUSH_MIN_INTERVAL = 15000; // don't write to Firebase more than once per 15s
 async function saveData(){
   data.updatedAt = Date.now();
   const payload = JSON.stringify(data);
@@ -148,13 +151,32 @@ async function saveData(){
   }
   // Fire-and-forget cloud push — never blocks the UI, and local storage above
   // already guaranteed the save even if the network/cloud is unavailable.
-  // Throttled: a running timer commits every 30s, and pushes only need to keep
-  // up with saves, not beat them — the payload always contains the full dataset.
-  if(cloudIsConfigured() && Date.now() - lastCloudPushAt > 5000){
-    lastCloudPushAt = Date.now();
-    cloudPush(payload).then(cloudOk => {
-      if(stampEl && cloudOk) stampEl.title = 'Synced to cloud ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    });
+  // Migrates the user's data to the cloud as a backup/mirror. To keep Firebase
+  // free-tier writes low: we (1) skip pushes when the payload hasn't changed
+  // since the last one (dedupe), (2) enforce a minimum interval between writes,
+  // and (3) schedule a final trailing push so the newest state always syncs.
+  if(cloudIsConfigured()){
+    const changed = (payload !== lastCloudPushPayload);
+    const now = Date.now();
+    const due = (now - lastCloudPushAt) >= CLOUD_PUSH_MIN_INTERVAL;
+    if(changed && due){
+      lastCloudPushAt = now;
+      lastCloudPushPayload = payload;
+      cloudPush(payload).then(cloudOk => {
+        if(stampEl && cloudOk) stampEl.title = 'Synced to cloud ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      });
+    } else if(changed && !due){
+      // A change happened, but we pushed too recently — queue one trailing push
+      // so we never drop the newest state (and never hammer the write budget).
+      if(cloudPushTimer){ clearTimeout(cloudPushTimer); }
+      cloudPushTimer = setTimeout(()=>{
+        lastCloudPushAt = Date.now();
+        lastCloudPushPayload = payload;
+        cloudPush(payload).then(cloudOk => {
+          if(stampEl && cloudOk) stampEl.title = 'Synced to cloud ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        });
+      }, CLOUD_PUSH_MIN_INTERVAL);
+    }
   }
 }
 
