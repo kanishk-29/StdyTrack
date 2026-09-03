@@ -3,16 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Struggling to Stay Organized With Your Studies? Solved — Meet Study Tracker</title>
-<meta name="description" content="The problem: scattered notes, forgotten deadlines, no idea where your study time goes. The solution: Study Tracker helps you organize subjects, take rich-text notes, log study time, and track exam scores in one place.">
+<title>Study Tracker App for Students: Organize Notes, Time &amp; Exam Scores</title>
+<meta name="description" content="Study Tracker: a free app for students to organize lecture notes, log study time, and track exam scores — all in one place, no signup required.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://stdytrack.vercel.app/why-study-tracker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Struggling to Stay Organized? Meet Study Tracker">
-<meta property="og:description" content="Scattered notes, forgotten deadlines, no sense of where your time goes. Here's how Study Tracker helps you focus and organize.">
+<meta property="og:title" content="Study Tracker App for Students: Organize Notes, Time &amp; Exam Scores">
+<meta property="og:description" content="Scattered notes, forgotten deadlines, no sense of where your time goes. Here's how a free study tracker app helps you focus and stay organized.">
 <meta property="og:url" content="https://stdytrack.vercel.app/why-study-tracker">
+<meta property="og:image" content="https://stdytrack.vercel.app/icon-512.png">
 <meta property="og:site_name" content="Study Tracker">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Study Tracker App for Students: Organize Notes, Time &amp; Exam Scores">
+<meta name="twitter:description" content="A free study tracker app that organizes your notes, study time, and exam scores in one place.">
+<meta name="twitter:image" content="https://stdytrack.vercel.app/icon-512.png">
+
+<!-- Structured data: Article -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Study Tracker App for Students: Organize Notes, Time & Exam Scores",
+  "description": "Study Tracker is a free study tracker app for students that organizes lecture notes, logs study time, and tracks exam scores in one place.",
+  "image": "https://stdytrack.vercel.app/icon-512.png",
+  "author": { "@type": "Person", "name": "Kanishk" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Study Tracker",
+    "logo": { "@type": "ImageObject", "url": "https://stdytrack.vercel.app/icon-512.png" }
+  },
+  "datePublished": "2026-08-29",
+  "dateModified": "2026-09-03",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://stdytrack.vercel.app/why-study-tracker" }
+}
+</script>
+
+<!-- Structured data: SoftwareApplication (helps rich results for the product itself) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Study Tracker",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any (Web, PWA)",
+  "url": "https://stdytrack.vercel.app/",
+  "description": "A free study tracker app for organizing lecture notes, logging study time, tracking exam scores, and planning daily study goals.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+
+<!-- Structured data: FAQPage (targets featured snippets / People Also Ask) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a study tracker app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A study tracker app is a tool that organizes your subjects, lecture notes, study time, and exam scores in one place, so you can see your progress instead of guessing at it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I stay organized while studying for multiple subjects?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Break each subject into units and lectures, keep notes for each lecture in one searchable place, log how long you actually study each subject, and review a daily plan instead of deciding what to study from scratch every day."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Study Tracker free to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Study Tracker runs free in your browser with no signup required. Your data is saved on your own device, with optional cloud sync if you want it available on more than one device."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the best way to track study hours?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use a timer tied to each subject or lecture rather than estimating at the end of the week. Logged, per-subject time is what reveals which subjects you're avoiding before it becomes a problem near exams."
+      }
+    }
+  ]
+}
+</script>
+
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,'Segoe UI',Roboto,'Inter',sans-serif;background:#faf9ff;color:#26243a;line-height:1.75;font-size:17px}
@@ -36,6 +117,9 @@
   th,td{border:1px solid #e7e3f7;padding:9px 12px;text-align:left}
   th{background:#f0ecff;color:#3a3560}
   a.blog{color:#6d5bb5;text-decoration:underline}
+  .faq-q{font-weight:700;color:#1c1a2e;margin-top:22px}
+  .breadcrumb{font-size:13px;color:#8a87a0;margin-bottom:18px}
+  .breadcrumb a{color:#6d5bb5;text-decoration:none}
   .back{text-align:center;margin-top:50px}
   .back a{color:#6d5bb5;text-decoration:none;font-weight:600;font-size:16px}
   @media(max-width:600px){ h1{font-size:26px} body{font-size:16px} table{font-size:14px} }
@@ -43,52 +127,53 @@
 </head>
 <body>
 <div class="wrap">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="https://stdytrack.vercel.app/">Study Tracker</a> / Why Study Tracker
+  </nav>
+
   <div class="top">
     <a class="site" href="https://stdytrack.vercel.app/">← Back to Study Tracker</a>
-    <div class="eyebrow">About Study Tracker</div>
-    <h1>Scattered Notes, Forgotten Deadlines, Lost Hours? Here&rsquo;s the Solution</h1>
-    <p class="sub">Study Tracker was built to solve one problem: studying is chaotic, and most students are fighting a system that isn&rsquo;t built for how they actually learn.</p>
-    <div class="meta">Updated September 2026 · 6 min read</div>
+    <div class="eyebrow">Study Tracker App</div>
+    <h1>Study Tracker: The Study Tracker App That Organizes Your Notes, Time &amp; Exam Scores</h1>
+    <p class="sub">Scattered notes, forgotten deadlines, no idea where your time goes? Study Tracker is a free study tracker app built to fix exactly that — one place for every subject, every note, every hour, and every score.</p>
+    <div class="meta">Updated September 2026 · 7 min read</div>
   </div>
 
   <h2>The Problem: Every Student Knows This Feeling</h2>
 
   <div class="problem">
-    <p>Have you ever found yourself <strong>the night before an exam</strong>, frantically flipping through a notebook, a phone note, a PDF, and a Google Doc &mdash; because your notes are scattered in five different places? Or sat down to "study" and realize two hours later you&rsquo;ve done almost nothing?</p>
+    <p>Have you ever found yourself <strong>the night before an exam</strong>, frantically flipping through a notebook, a phone note, a PDF, and a Google Doc &mdash; because your notes are scattered in five different places? Or sat down to "study" and realized two hours later you&rsquo;d done almost nothing?</p>
   </div>
 
-  <p>That&rsquo;s not a lack of intelligence. It&rsquo;s a lack of <strong>organisation</strong>. When your study life is scattered, every extra minute you spend looking for a note is a minute not spent learning. The problems are almost always the same:</p>
+  <p>That&rsquo;s not a lack of intelligence. It&rsquo;s a lack of <strong>organization</strong>. When your study life is scattered across five apps, every extra minute spent looking for a note is a minute not spent learning. If you've searched for a study tracker app, a study planner, or a way to organize your study schedule, you've probably run into the same problems every time:</p>
 
   <ul>
-    <li><strong>Notes everywhere.</strong> Handwritten, typed, screenshots, voice memos &mdash; nothing in one place, nothing searchable.</li>
-    <li><strong>No time awareness.</strong> You have no idea how many hours actually went into each subject. Easy subjects get over-studied, hard ones get avoided.</li>
-    <li><strong>Forgotten deadlines.</strong> Exams creep up because nothing is recorded or prioritised.</li>
-    <li><strong>No feedback.</strong> You can&rsquo;t see progress. Without data, you can&rsquo;t tell if your study method is working.</li>
-    <li><strong>Easy to lose focus.</strong> Without a clear plan and structure, distractions win.</li>
+    <li><strong>Notes everywhere.</strong> Handwritten, typed, screenshots, voice memos — nothing in one place, nothing searchable.</li>
+    <li><strong>No time awareness.</strong> You have no idea how many hours actually went into each subject. Easy subjects get over-studied; hard ones get avoided.</li>
+    <li><strong>Forgotten deadlines.</strong> Exams creep up because nothing is recorded or prioritized.</li>
+    <li><strong>No feedback.</strong> You can't see progress. Without data, you can't tell if your study method is working.</li>
+    <li><strong>Lost focus.</strong> Without a clear plan and structure, distractions win.</li>
   </ul>
 
-  <h2>The Solution: One Place for Everything</h2>
+  <h2>The Solution: One Study Tracker App for Everything</h2>
 
-  <div class="solution">
-    <p><a class="blog" href="https://stdytrack.vercel.app/">Study Tracker</a> gives every student a single, organized home for their studies &mdash; so you spend your time <strong>learning</strong>, not searching.</p>
-  </div>
-
-  <p>Here&rsquo;s how it solves each part of the problem:</p>
+  <p>Study Tracker gives every student a single, organized home for their studies — so you spend your time learning, not searching. Here's how this study tracker app solves each part of the problem:</p>
 
   <h3>1. Organize Subjects, Units &amp; Lectures</h3>
-  <p>Structure your work the way your brain does: <strong>subject &rarr; unit &rarr; lecture</strong>. Everything lives in a clear hierarchy, so you always know where a note belongs and what you&rsquo;ve covered.</p>
+  <p>Structure your work the way your brain does: subject → unit → lecture. Everything lives in a clear hierarchy, so you always know where a note belongs and what you've covered.</p>
 
   <h3>2. Rich-Text Notes for Every Lecture</h3>
-  <p>Take notes directly on each lecture &mdash; with bold, lists, headings, highlights, colors, and even drawings. Use multiple pages per note and <strong>search across all of them</strong> at once. No more flipping between a notebook and a phone.</p>
+  <p>Take notes directly on each lecture — with bold, lists, headings, highlights, colors, and even drawings. Use multiple pages per note and search across all of them at once. No more flipping between a notebook and a phone.</p>
 
   <h3>3. A Study Timer That Shows Where Your Time Goes</h3>
-  <p>Log how long you actually study each subject. See a breakdown of your hours so you can catch subjects you&rsquo;ve been quietly avoiding and balance your week. Tracking is the first step to controlling your time.</p>
+  <p>Log how long you actually study each subject. See a breakdown of your hours so you can catch subjects you've been quietly avoiding and balance your week. Tracking your study time is the first step to controlling it.</p>
 
   <h3>4. Track Exam Scores &amp; See Progress</h3>
-  <p>Record your test scores and watch your performance improve subject by subject. Seeing progress on a graph is motivating &mdash; and shows you what&rsquo;s working.</p>
+  <p>Record your test scores and watch your performance improve subject by subject. Seeing progress on a graph is motivating — and it shows you what's actually working.</p>
 
   <h3>5. A Daily View to Stay on Track</h3>
-  <p>Start each day with a clear view of what to study, what&rsquo;s due, and where your focus should be. Less mental noise, more momentum.</p>
+  <p>Start each day with a clear view of what to study, what's due, and where your focus should be. Less mental noise, more momentum.</p>
 
   <div class="box">
     <table>
@@ -96,22 +181,36 @@
       <tr><td>Notes scattered across 5 apps</td><td>All notes in one searchable place per lecture</td></tr>
       <tr><td>No idea how much you study</td><td>Clear time log per subject</td></tr>
       <tr><td>Exams sneak up on you</td><td>Deadlines and structure visible daily</td></tr>
-      <tr><td>Can&rsquo;t tell if you&rsquo;re improving</td><td>Exam scores tracked over time</td></tr>
+      <tr><td>Can't tell if you're improving</td><td>Exam scores tracked over time</td></tr>
       <tr><td>Focus lost to chaos</td><td>A clear plan to follow</td></tr>
     </table>
   </div>
 
   <h2>Why It Works</h2>
-  <p>We&rsquo;re not here to tell you studying is easy. But organisation removes the <strong>friction</strong> that makes studying harder than it needs to be. When your notes are in the right place, your time is tracked, and your plan is visible, the hard part becomes the learning &mdash; not the chaos around it.</p>
+  <p>We're not here to tell you studying is easy. But organization removes the friction that makes studying harder than it needs to be. When your notes are in the right place, your time is tracked, and your plan is visible, the hard part becomes the learning — not the chaos around it.</p>
+
+  <h2>Frequently Asked Questions</h2>
+
+  <p class="faq-q">What is a study tracker app?</p>
+  <p>A study tracker app is a tool that organizes your subjects, lecture notes, study time, and exam scores in one place, so you can see your progress instead of guessing at it.</p>
+
+  <p class="faq-q">How do I stay organized while studying for multiple subjects?</p>
+  <p>Break each subject into units and lectures, keep notes for each lecture in one searchable place, log how long you actually study each subject, and review a daily plan instead of deciding what to study from scratch every day.</p>
+
+  <p class="faq-q">Is Study Tracker free to use?</p>
+  <p>Yes. Study Tracker runs free in your browser with no signup required. Your data is saved on your own device, with optional cloud sync if you want it available on more than one device.</p>
+
+  <p class="faq-q">What is the best way to track study hours?</p>
+  <p>Use a timer tied to each subject or lecture rather than estimating at the end of the week. Logged, per-subject time is what reveals which subjects you're avoiding before it becomes a problem near exams.</p>
 
   <h2>Start Today</h2>
-  <p>Study Tracker works right in your browser, is completely free, and saves your data on your own device &mdash; with optional cloud sync so your work follows you. There&rsquo;s nothing to install.</p>
+  <p>Study Tracker works right in your browser, is completely free, and saves your data on your own device — with optional cloud sync so your work follows you. There's nothing to install.</p>
+  <p>Ready to get organized? <a class="blog" href="https://stdytrack.vercel.app/">Use Study Tracker free right now</a>. Pair it with our guides on <a class="blog" href="https://stdytrack.vercel.app/study-tips">how to study effectively</a> and <a class="blog" href="https://stdytrack.vercel.app/exam-prep">how to prepare for exams</a>.</p>
 
-  <div class="box">
-    <p><strong>Ready to get organized?</strong> Use <a class="blog" href="https://stdytrack.vercel.app/">Study Tracker</a> free right now. Pair it with our guides on <a class="blog" href="https://stdytrack.vercel.app/study-tips">how to study effectively</a> and <a class="blog" href="https://stdytrack.vercel.app/exam-prep">how to prepare for exams</a>.</p>
+  <div class="back">
+    <a href="https://stdytrack.vercel.app/">← Back to Study Tracker home</a>
   </div>
 
-  <div class="back"><a href="https://stdytrack.vercel.app/">← Back to Study Tracker home</a></div>
 </div>
 </body>
 </html>
