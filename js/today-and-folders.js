@@ -55,7 +55,7 @@ function foldersEnsure(){
   };
   renameIfDefault('fld-college', 'College', 'Semester');
   renameIfDefault('fld-projects', 'Personal Projects', 'Projects');
-  data.subjects.forEach(s=>{ if(s.folderId === undefined) s.folderId = null; });
+  (data.subjects||[]).forEach(s=>{ if(s && s.folderId === undefined) s.folderId = null; });
 }
 function getFolder(folderId){
   return data.folders.find(f=>f.id===folderId) || null;
