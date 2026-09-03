@@ -1473,3 +1473,235 @@ function defaultData(){
     updatedAt: Date.now()
   };
 }
+
+/* ============================================================
+   MY SUBJECTS — full-page landing
+   Faithful port of the standalone "Study Space / My Subjects"
+   design, rendered from real app data. Shown at full width as
+   its own page; the slide-in drawer remains the in-folder view.
+   ============================================================ */
+const MSL_FOLDER_ICONS = [
+  '<path class="fill" d="M4 5.5a2 2 0 0 1 2-2h13v14H6a2 2 0 0 0-2 2z"/><path d="M6 4h13v14H6a2 2 0 0 0-2 2V6a2 2 0 0 1 2-2Z"/><path d="M8 7h8M8 10h6"/>',
+  '<path class="fill" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5V5.5A2.5 2.5 0 0 1 6.5 3Z"/><path d="M8 7h8M8 10h6"/>',
+  '<path class="fill" d="m3 9 9-5 9 5-9 5z"/><path d="m3 9 9-5 9 5-9 5zM6 11v5c2.5 2.2 9.5 2.2 12 0v-5M21 9v6"/>',
+  '<path class="fill" d="M9 3h6v3l-2 2v4.2l5.5 7.3H5.5l5.5-7.3V8L9 6z"/><path d="M9 3h6M10 6h4M11 8v4.2L5.5 19.5h13L13 12.2V8M8 16h8"/>',
+  '<path class="fill" d="M5 4h13v15H7a2 2 0 0 1-2-2z"/><path d="M5 4h13v15H7a2 2 0 0 1-2-2V4ZM5 7h10M8 10h7"/>',
+  '<path class="fill" d="M14.5 4.5c2.5-2.5 5.4-2.5 5.4-2.5s0 2.9-2.5 5.4l-3.2 3.2-1.1-3z"/><path d="M14.5 4.5c2.5-2.5 5.4-2.5 5.4-2.5s0 2.9-2.5 5.4l-7.1 7.1-3.3-1.2 1.2-3.3zM9.7 14.3l-1.8 4.1-2.3 1.1 1.1-2.3zM13 11l3 3M17.2 7.8h.01"/>'
+];
+const MSL_PALETTE = [
+  { accent:'#7657f4', bg:'linear-gradient(145deg,#9078ff,#6849e3)', orb:'rgba(118,87,244,.14)' },
+  { accent:'#e68b47', bg:'linear-gradient(145deg,#ffb36b,#e9843d)', orb:'rgba(230,139,71,.13)' },
+  { accent:'#13a99d', bg:'linear-gradient(145deg,#49cabe,#17a69a)', orb:'rgba(19,169,157,.13)' },
+  { accent:'#5f83df', bg:'linear-gradient(145deg,#7aaaff,#5b79db)', orb:'rgba(95,131,223,.12)' }
+];
+function mslFolderIconHtml(idx){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">${MSL_FOLDER_ICONS[idx % MSL_FOLDER_ICONS.length]}</svg>`;
+}
+function mslFolderDesc(folder){
+  const desc = (folder && folder.desc) ? folder.desc : '';
+  if(desc) return escapeHtml(desc);
+  return 'Subjects, notes and topics<br/>kept in this folder.';
+}
+function mslFolderCardHtml(folder, idx){
+  const subs = subjectsInFolder(folder.id);
+  const total = subs.reduce((a,s)=>a+countLectures(s).total,0);
+  const pal = MSL_PALETTE[idx % MSL_PALETTE.length];
+  const subCount = subs.length;
+  const topicCount = subs.reduce((a,s)=>a+countLectures(s).total,0);
+  const countLabel = (subs.length ? '#'.repeat(0) : '') + (subCount ? String(subCount)+' SUBJECTS' : 'NEW');
+  const accent = folder.accent || pal.accent;
+  const fbg = folder.folderBg || pal.bg;
+  const orb = folder.orb || pal.orb;
+  return `<article class="folder" data-name="${escapeHtml(folder.name||'Untitled')}" role="button" tabindex="0"
+    style="--accent:${accent};--folder-bg:${fbg};--orb:${orb};--i:${idx}"
+    onclick="openFolderFromLanding('${folder.id}')">
+    <div class="folder-top"><div class="folder-icon">${mslFolderIconHtml(idx)}</div><span class="count">${countLabel}</span></div>
+    <h4>${escapeHtml(folder.name||'Untitled')}</h4>
+    <p>${mslFolderDesc(folder)}</p>
+    <div class="folder-meta"><span>${subCount} subject${subCount===1?'':'s'}</span><i>·</i><span>${topicCount} topic${topicCount===1?'':'s'}</span></div>
+    <button class="open" aria-label="Open ${escapeHtml(folder.name||'folder')}" onclick="event.stopPropagation(); openFolderFromLanding('${folder.id}')">→</button>
+  </article>`;
+}
+function mslFoldersHtml(){
+  foldersEnsure();
+  let html = '';
+  data.folders.forEach((f,i)=>{ html += mslFolderCardHtml(f, i); });
+  const unsorted = subjectsInFolder(null);
+  if(unsorted.length){
+    const pal = MSL_PALETTE[data.folders.length % MSL_PALETTE.length];
+    html += `<article class="folder" data-name="Unsorted" role="button" tabindex="0"
+      style="--accent:${pal.accent};--folder-bg:${pal.bg};--orb:${pal.orb};--i:${data.folders.length}"
+      onclick="openFolderFromLanding('')">
+      <div class="folder-top"><div class="folder-icon">${mslFolderIconHtml(data.folders.length)}</div><span class="count">${unsorted.length} SUBJECTS</span></div>
+      <h4>Unsorted</h4>
+      <p>Subjects not assigned to a folder,<br/>kept together here.</p>
+      <div class="folder-meta"><span>${unsorted.length} subject${unsorted.length===1?'':'s'}</span><i>·</i><span>${unsorted.reduce((a,s)=>a+countLectures(s).total,0)} topics</span></div>
+      <button class="open" aria-label="Open Unsorted" onclick="event.stopPropagation(); openFolderFromLanding('')">→</button>
+    </article>`;
+  }
+  return html || `<div class="folder" style="grid-column:1/-1;min-height:140px;display:grid;place-items:center;;align-content:center;gap:8px;">
+      <div><span style="font-size:30px">🗂️</span></div><h4 style="margin:0">No folders yet</h4>
+      <p>Create your first folder to organize subjects.</p>
+    </div>`;
+}
+function mslRecentFolders(){
+  let list = [];
+  try{ list = JSON.parse(localStorage.getItem('mslRecent') || '[]'); }catch(e){}
+  return Array.isArray(list) ? list : [];
+}
+function mslRecordRecent(folderId){
+  const name = folderId === '' ? 'Unsorted' : (getFolder(folderId) ? getFolder(folderId).name : folderId);
+  let list = mslRecentFolders().filter(x => x.id !== folderId);
+  list.unshift({ id: folderId, name, time: Date.now() });
+  try{ localStorage.setItem('mslRecent', JSON.stringify(list.slice(0,5))); }catch(e){}
+}
+function mslRecentHtml(){
+  const list = mslRecentFolders();
+  if(!list.length) return `<div class="recent-item"><div class="recent-icon" style="font-size:13px">◨</div><div><strong>Nothing yet</strong><small>Open a folder to see it here</small></div></div>`;
+  let html = '';
+  list.forEach((r,i)=>{
+    const f = r.id === '' ? null : getFolder(r.id);
+    const nm = (f ? f.name : r.name) || r.name || 'Unsorted';
+    const cnt = (r.id === '' ? subjectsInFolder(null) : (f ? subjectsInFolder(f.id) : [])).length;
+    html += `<div class="recent-item" style="cursor:pointer" onclick="openFolderFromLanding('${r.id}')"><div class="recent-icon">${mslFolderIconHtml(i)}</div><div><strong>${escapeHtml(nm)}</strong><small>${cnt} subjects</small></div></div>`;
+  });
+  return html;
+}
+function renderSubjectsLanding(){
+  foldersEnsure();
+  const el = document.getElementById('subjectsLanding');
+  if(!el) return;
+  const totalFolders = data.folders.length;
+  const totalSubjects = data.subjects.length;
+  const totalLectures = data.subjects.reduce((a,s)=>a+countLectures(s).total,0);
+  const doneLectures = data.subjects.reduce((a,s)=>a+countLectures(s).done,0);
+  const overallPct = totalLectures ? Math.round((doneLectures/totalLectures)*100) : 0;
+  const streak = typeof computeCurrentStreak === 'function' ? computeCurrentStreak() : 0;
+  const activeAreas = data.folders.filter(f => subjectsInFolder(f.id).length).length;
+  const user = (typeof MASCOT_NAME !== 'undefined' && MASCOT_NAME) ? MASCOT_NAME : '';
+  el.innerHTML = `
+    <button class="msl-close" onclick="closeMySubjectsLanding()" title="Back to dashboard">✕</button>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">S</div>
+          <div class="brand-text"><h2>Study Space</h2><small>YOUR PERSONAL LEARNING HUB</small></div>
+        </div>
+        <nav aria-label="Primary" class="nav">
+          <button class="active">My Subjects</button>
+          <button onclick="closeMySubjectsLanding()">Planner</button>
+          <button onclick="closeMySubjectsLanding()">Insights</button>
+        </nav>
+        <button class="dark-toggle-landing" onclick="toggleTheme()" type="button" title="Dark mode" aria-label="Switch theme">◐</button>
+        <button class="profile" onclick="closeMySubjectsLanding(); if(typeof openSettings==='function') openSettings()" title="Profile">◯</button>
+      </header>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="crumb"><b>Home</b><span>›</span><span>My Subjects</span></div>
+          <span class="eyebrow">YOUR LEARNING SPACE</span>
+          <h1>My Subjects</h1>
+          <p>One place for every semester, project, idea, and skill you're building. Choose a folder and continue from where you left off.</p>
+          <div class="quick-stats" style="display:flex;gap:7px;flex-wrap:wrap;margin-top:17px">
+            <span style="padding:6px 10px;border-radius:999px;font-size:9px"><b style="font-weight:800">${totalFolders}</b> folders</span>
+            <span style="padding:6px 10px;border-radius:999px;font-size:9px"><b style="font-weight:800">${totalSubjects}</b> subjects</span>
+            <span style="padding:6px 10px;border-radius:999px;font-size:9px"><b style="font-weight:800">${totalLectures}</b> topics tracked</span>
+            <span style="padding:6px 10px;border-radius:999px;font-size:9px"><b style="font-weight:800">${activeAreas}</b> active areas</span>
+          </div>
+        </div>
+        <div class="hero-side">
+          <div class="streak"><div class="streak-top"><span>STUDY STREAK</span><span>✦</span></div><strong>${streak} <span>day${streak===1?'':'s'}</span></strong><div class="mini-progress"><i style="width:${Math.min(100, Math.round(overallPct*0.9))}%"></i></div></div>
+          <button class="primary" onclick="openFolderCreateLanding()">＋ New Folder</button>
+        </div>
+      </section>
+      <div class="toolbar">
+        <div class="heading"><h3>Your Folders</h3><p>Open a folder to enter its study dashboard.</p></div>
+        <div class="tools">
+          <input class="search" id="mslSearch" placeholder="⌕  Search your folders..." type="search" oninput="mslApplySearch(this.value)">
+          <button class="tool sort-btn" id="mslSortBtn" onclick="mslToggleSort()">A–Z ↕</button>
+        </div>
+      </div>
+      <section class="layout">
+        <div class="folders" id="mslFolders">${mslFoldersHtml()}</div>
+        <aside class="side">
+          <div class="side-head"><strong>Recently Opened</strong><span>THIS WEEK</span></div>
+          <div class="recent">${mslRecentHtml()}</div>
+          <div class="side-card"><h4>Overall Progress</h4><p>You're ${overallPct}% through your tracked topics.</p><div class="goal"><i style="width:${overallPct}%"></i></div></div>
+          <button class="add" onclick="openFolderCreateLanding()"><div class="add-plus">+</div><div><strong>Create New Folder</strong><span>Organize learning your way</span></div></button>
+        </aside>
+      </section>
+      <div class="footer">Study Space · Organize less. Learn more.</div>
+    </div>`;
+  el.classList.toggle('dark-mode', typeof currentTheme === 'function' ? currentTheme() === 'dark' : false);
+  el.style.display = '';
+}
+function openMySubjectsLanding(){
+  const drawer = document.getElementById('subjectsDrawerOverlay');
+  if(drawer) drawer.classList.remove('show');
+  stopFolderClock();
+  activeFolderFilter = null;
+  renderSubjectsLanding();
+  rememberOpener('subjectsLanding');
+}
+function closeMySubjectsLanding(){
+  const el = document.getElementById('subjectsLanding');
+  if(el) el.style.display = 'none';
+  stopFolderClock();
+  restoreOpener('subjectsLanding');
+}
+function openFolderFromLanding(folderId){
+  activeFolderFilter = folderId || '';
+  if(typeof closedFolderIds !== 'undefined' && closedFolderIds && closedFolderIds.clear) closedFolderIds.clear();
+  mslRecordRecent(folderId || '');
+  closeMySubjectsLanding();
+  renderSidebar();
+  openSubjectsDrawer(true);
+}
+function openFolderCreateLanding(){
+  const name = prompt('Name this folder (e.g. "Semester 3", "Personal Projects")');
+  if(!name || !name.trim()) return;
+  foldersEnsure();
+  createFolder(name.trim());
+  renderSubjectsLanding();
+  renderFolderCard();
+  showToast('Folder created 📁');
+}
+function mslApplySearch(q){
+  const grid = document.getElementById('mslFolders');
+  if(!grid) return;
+  const qq = (q||'').trim().toLowerCase();
+  let visible = 0;
+  grid.querySelectorAll('.folder').forEach(c=>{
+    const match = !qq || (c.dataset.name + ' ' + c.textContent).toLowerCase().includes(qq);
+    c.style.display = match ? '' : 'none';
+    if(match) visible++;
+  });
+  let empty = document.getElementById('mslSearchEmpty');
+  if(!visible && qq){
+    if(!empty){
+      empty = document.createElement('div'); empty.id='mslSearchEmpty'; empty.className='search-empty';
+      grid.appendChild(empty);
+    }
+    empty.innerHTML = `<div class="empty-icon">⌕</div><strong>No folders found</strong><span>No folder matches “${String(qq).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}”.</span><button type="button" onclick="mslClearSearch()">Create a folder</button>`;
+    const btn = empty.querySelector('button');
+    if(btn) btn.onclick = openFolderCreateLanding;
+  } else if(empty){ empty.remove(); }
+}
+function mslClearSearch(){
+  const s = document.getElementById('mslSearch');
+  if(s) s.value = '';
+  const e = document.getElementById('mslSearchEmpty');
+  if(e) e.remove();
+  mslApplySearch('');
+}
+let mslSortAsc = false;
+function mslToggleSort(){
+  mslSortAsc = !mslSortAsc;
+  const grid = document.getElementById('mslFolders');
+  const btn = document.getElementById('mslSortBtn');
+  if(!grid) return;
+  const cards = [...grid.querySelectorAll('.folder')];
+  const getName = c => (c.dataset.name || '').toLowerCase();
+  cards.sort((a,b)=> mslSortAsc ? getName(a).localeCompare(getName(b)) : getName(b).localeCompare(getName(a)));
+  cards.forEach(c=>grid.appendChild(c));
+  if(btn) btn.textContent = mslSortAsc ? 'Z–A ↕' : 'A–Z ↕';
+}

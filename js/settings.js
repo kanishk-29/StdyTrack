@@ -31,6 +31,8 @@ function applyTheme(theme){
   if(dark) document.documentElement.setAttribute('data-theme','dark');
   else document.documentElement.removeAttribute('data-theme');
   try{ localStorage.setItem('studyTheme', dark ? 'dark' : 'light'); }catch(e){}
+  const landing = document.getElementById('subjectsLanding');
+  if(landing) landing.classList.toggle('dark-mode', dark);
   updateMetaThemeColor(dark);
   updateThemeUI();
   return dark;

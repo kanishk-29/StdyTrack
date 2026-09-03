@@ -460,7 +460,7 @@ function renderSidebar(){
           : `<div class="folder-section-empty">No subjects here yet — use "+ New Subject" below.</div>`);
 
     sb.innerHTML = `
-      <button type="button" class="folder-back-btn" onclick="activeFolderFilter=null; stopFolderClock(); renderSidebar();">← All folders</button>
+      <button type="button" class="folder-back-btn" onclick="closeSubjectsDrawer(); openMySubjectsLanding();">← All folders</button>
       ${folderStatsHeaderHtml(subjects)}
       ${folderSubjectsHeadHtml(name, icon)}
       <div class="ds-list">${cardsHtml}</div>
@@ -671,6 +671,10 @@ function sortDrawerFolders(){
 }
 
 function openSubjectsDrawer(keepFolderFilter){
+  if(!keepFolderFilter){
+    // top-level "My Subjects" → dedicated full-page landing view
+    if(typeof openMySubjectsLanding === 'function'){ openMySubjectsLanding(); return; }
+  }
   rememberOpener('subjectsDrawerOverlay');
   if(!keepFolderFilter){ activeFolderFilter = null; renderSidebar(); }
   document.getElementById('subjectsDrawerOverlay').classList.add('show');
