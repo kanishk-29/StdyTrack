@@ -2037,7 +2037,7 @@ function fdViewStats(){
 
 /* remember open context so Escape/exit can return to the folder dashboard */
 let folderOpenCtx = null;
-function saveFolderOpenContext(){ folderOpenCtx = { filter: fdFilter }; }
+function saveFolderOpenContext(){ folderOpenCtx = { filter: activeFolderFilter }; }
 function clearFolderOpenContext(){ folderOpenCtx = null; }
 
 /* keyboard Enter activates a focused subject card (click already bound) */
