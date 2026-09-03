@@ -118,8 +118,8 @@ function exitSubjectPage(){
 function renderDashQuickGrid(){
   const el = document.getElementById('dashQuickGrid');
   if(!el) return;
-  const subjectCount = data.subjects.length;
-  const testCount = data.subjects.reduce((a,s)=> a + s.units.reduce((b,u)=> b + (u.tests?u.tests.length:0), 0), 0);
+  const subjectCount = (data.subjects||[]).length;
+  const testCount = (data.subjects||[]).reduce((a,s)=> a + (Array.isArray(s.units) ? s.units.reduce((b,u)=> b + ((u && u.tests)?u.tests.length:0), 0) : 0), 0);
   const streak = computeCurrentStreak();
   const planTodayCount = ppList(ppTodayKey()).filter(i=>!i.done).length;
   const planTomorrowCount = ppList(ppTomorrowKey()).filter(i=>!i.done).length;
