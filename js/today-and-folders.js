@@ -110,6 +110,8 @@ function renameFolder(folderId){
   saveData();
   renderSidebar();
   renderFolderCard();
+  const landing = document.getElementById('subjectsLanding');
+  if(landing && landing.style.display !== 'none') renderSubjectsLanding();
   showToast('Folder renamed ✎');
 }
 // "Departments" card on the Today page — a quick jump-off point into
@@ -1617,8 +1619,10 @@ function renderSubjectsLanding(){
         <div class="tools">
           <input class="search" id="mslSearch" placeholder="⌕  Search your folders..." type="search" oninput="mslApplySearch(this.value)">
           <button class="tool sort-btn" id="mslSortBtn" onclick="mslToggleSort()">A–Z ↕</button>
+          <button class="tool sort-btn manage-btn" id="mslManageBtn" onclick="mslOpenManage()">⚙ Manage</button>
         </div>
       </div>
+      <div class="manage-panel" id="mslManagePanel" style="display:none"></div>
       <section class="layout">
         <div class="folders" id="mslFolders">${mslFoldersHtml()}</div>
         <aside class="side">
@@ -1662,6 +1666,51 @@ function openFolderCreateLanding(){
   createFolder(name.trim());
   renderSubjectsLanding();
   showToast('Folder created 📁');
+}
+function mslOpenManage(){
+  const panel = document.getElementById('mslManagePanel');
+  if(!panel) return;
+  mslRenderManage();
+  panel.style.display = '';
+}
+function mslCloseManage(){
+  const panel = document.getElementById('mslManagePanel');
+  if(panel) panel.style.display = 'none';
+}
+function mslManageRename(folderId){
+  renameFolder(folderId);
+  const panel = document.getElementById('mslManagePanel');
+  if(panel){ mslRenderManage(); panel.style.display = ''; }
+}
+function mslRenderManage(){
+  const panel = document.getElementById('mslManagePanel');
+  if(!panel) return;
+  foldersEnsure();
+  const folders = data.folders.map((f,i)=>({ f, i }));
+  const unsorted = subjectsInFolder(null);
+  let rows = '';
+  if(unsorted.length){
+    rows += mslManageRowHtml('', 'Unsorted', '', unsorted.length, true);
+  }
+  folders.forEach(({f,i})=>{
+    rows += mslManageRowHtml(f.id, f.name||'Untitled', mslFolderIconHtml(i), subjectsInFolder(f.id).length);
+  });
+  panel.innerHTML = `
+    <div class="manage-card">
+      <div class="manage-head">
+        <div class="manage-title"><strong>Manage Folders</strong><span>Rename any folder from here.</span></div>
+        <button class="manage-close" type="button" onclick="mslCloseManage()" aria-label="Close manage panel">✕</button>
+      </div>
+      <div class="manage-list">${rows || `<div class="manage-empty">No folders yet. Create one to get started.</div>`}</div>
+      <div class="manage-foot"><button class="tool sort-btn" onclick="mslCloseManage()">Done</button></div>
+    </div>`;
+}
+function mslManageRowHtml(id, name, iconHtml, cnt, isUnsorted){
+  return `<div class="manage-row">
+    <div class="manage-row-icon">${isUnsorted ? '<span style="font-size:18px;">📂</span>' : iconHtml}</div>
+    <div class="manage-row-name"><strong>${escapeHtml(name)}</strong><small>${cnt} subject${cnt===1?'':'s'}</small></div>
+    <button class="manage-rename" type="button" title="Rename ${escapeAttr(name)}" onclick="mslManageRename('${escapeAttr(id)}')">✎ <span>Rename</span></button>
+  </div>`;
 }
 function mslApplySearch(q){
   const grid = document.getElementById('mslFolders');

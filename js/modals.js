@@ -35,7 +35,11 @@ document.addEventListener('keydown', (e)=>{
     const fdash = document.getElementById('folderDashboard');
     if(fdash && fdash.style.display !== 'none'){ if(typeof fdBack==='function') fdBack(); else fdash.style.display='none'; return; }
     const landing = document.getElementById('subjectsLanding');
-    if(landing && landing.style.display !== 'none'){ closeMySubjectsLanding(); return; }
+    if(landing && landing.style.display !== 'none'){
+      const mpanel = document.getElementById('mslManagePanel');
+      if(mpanel && mpanel.style.display !== 'none'){ if(typeof mslCloseManage==='function') mslCloseManage(); return; }
+      closeMySubjectsLanding(); return;
+    }
     const openOverlays = document.querySelectorAll('.overlay.show');
     if(openOverlays.length) closeModal(openOverlays[openOverlays.length-1].id);
     return;
