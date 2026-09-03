@@ -7,9 +7,9 @@
 A Progressive Web App for Lecture Time-Tracking, Test-Score Analytics,
 Daily Habit Building and Exam Preparation
 
-Version 1.0
+Version 1.1
 
-3 September 2026
+4 September 2026
 
 **Prepared by: Kanishk**
 
@@ -24,11 +24,11 @@ Version 1.0
 | Document Title | Software Requirements Specification — Study Tracker |
 | Document ID | ST-SRS-001 |
 | Project | Study Tracker (Web / PWA) |
-| Version | 1.0 |
+| Version | 1.1 |
 | Status | Final — Baseline |
 | Classification | Public — Portfolio Reference |
 | Author / Owner | Kanishk — Sole Developer & Product Owner |
-| Issue Date | 3 September 2026 |
+| Issue Date | 4 September 2026 |
 | Standard Followed | IEEE Std 830-1998 (adapted for a solo-developer project) |
 
 **Revision History**
@@ -38,6 +38,7 @@ Version 1.0
 | 0.1 | 29 Aug 2026 | Initial draft — scope, product perspective and module list outlined from early build. | Kanishk |
 | 0.5 | 01 Sep 2026 | Added full functional requirement tables per module; drafted data model. | Kanishk |
 | 1.0 | 3 September 2026 | Reviewed against shipped source code for accuracy; baselined as v1.0. | Kanishk |
+| 1.1 | 4 September 2026 | Folder-opening now renders a dedicated full-page folder dashboard (design port, css/folder-dashboard.css) instead of the in-drawer list; updated FR-6 and interface tracing, added the dashboard stylesheet to the module references. | Kanishk |
 
 **Approval**
 
@@ -213,8 +214,10 @@ At a high level, the system allows a user to:
 - Track daily habits (e.g. gym, reading) on a calendar-style habit
   tracker, independent of academic subjects.
 
-- Group subjects into folders for organisation, with per-folder progress
-  and streak stats.
+- Group subjects into folders for organisation, and open any folder into a
+  dedicated full-page folder dashboard showing aggregate progress, total
+  study time, per-folder streak, and filterable subject cards (from the
+  mobile-optimised v26 design).
 
 - View an Analytics dashboard: completion rings, per-subject bar/line
   charts, KPI stats, and a commit-graph-style calendar heatmap.
@@ -307,6 +310,13 @@ At a high level, the system allows a user to:
 
 - IR-2: A persistent sidebar/drawer shall list folders and subjects with
   per-subject progress rings and quick stats, collapsible per folder.
+
+- IR-2a: Selecting a folder shall open a dedicated full-page, scrollable
+  folder dashboard overlay (css/folder-dashboard.css) presenting a greeting
+  and live clock, four aggregate stat cards (overall progress ring, total
+  study time, topics completed, group streak), filter tabs (All / In
+  Progress / Completed), per-subject progress cards, and an add-subject
+  control; the overlay shall close via a back control or Escape.
 
 - IR-3: A slide-in Analytics Centre overlay shall present progress
   charts without navigating away from the current view.
@@ -412,13 +422,15 @@ js/today-and-folders.js*
 
 **4.6 Folder Organisation**
 
-*Implemented primarily in: js/today-and-folders.js, js/dashboard.js*
+*Implemented primarily in: js/today-and-folders.js, js/dashboard.js,
+js/calendar.js (drawer folder tiles), css/folder-dashboard.css*
 
 | **ID** | **Requirement** | **Priority** |
 |----|----|----|
 | FR-6.1 | The system shall allow subjects to be grouped into user-created folders, including an implicit "unsorted" group. | Medium |
 | FR-6.2 | The user shall be able to create, rename, and reassign a subject's folder. | Medium |
-| FR-6.3 | The system shall show aggregate progress and a group streak for each folder, and allow filtering/sorting subjects within a folder by status (in-progress/completed) or name. | Medium |
+| FR-6.3 | Opening a folder shall render a dedicated full-page folder dashboard (not the in-drawer list) showing aggregate completion %, total study time, per-folder group streak, and a live clock, with the folder's subjects presented as cards that can be filtered by status (in-progress/completed) or shown all; each card shall display topic counts, progress, next unfinished lecture, and total time, and open the subject on click. | High |
+| FR-6.4 | The folder dashboard shall be reachable from the My Subjects landing, the sidebar/drawer folder tiles, and folder cards, and shall close back to the landing via a back control or the Escape key. | Medium |
 
 **4.7 Habit Tracker**
 

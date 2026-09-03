@@ -22,6 +22,8 @@ css/                   # loaded top-to-bottom in index.html — order matters
   calendar-popover.css   # "plan a day" popover + lecture badge
   timer.css               # running timer banner + alert banner
   sidebar.css              # sidebar, folder picker, progress rings, stat chips
+  my-subjects.css          # full-page "My Subjects" landing
+  folder-dashboard.css     # full-page per-folder dashboard (v26 mobile-optimised design)
   subject-detail.css       # subject detail main panel
   exam-pacing.css          # exam pacing card
   tooltip-footer.css       # "studied on" tooltip + footer quote strip
@@ -41,7 +43,7 @@ js/                    # loaded top-to-bottom in index.html — order matters,
                        # functions/variables defined in another
   data.js                 # in-memory state + constants + storage key scoping
   demo.js                 # demo/trial mode: pre-filled sample data + exit/cleanup
-  today-and-folders.js    # today/priority page + subject folders
+  today-and-folders.js    # today/priority page + subject folders + per-folder dashboard (FD_* / renderFolderDashboard)
   cloud-sync.js           # optional Firebase sync — set FIREBASE_CONFIG here
   storage.js              # load/save/migrate (local device storage + cloud)
   settings.js             # backup/restore + settings
@@ -76,7 +78,7 @@ individual file is unrelated to the reorder.
 ## Documentation
 
 - [Software Requirements Specification](./docs/Study_Tracker_SRS.md)
-  (IEEE 830-1998 adapted, v1.0, 3 Sept 2026) — also available as
+  (IEEE 830-1998 adapted, v1.1, 4 Sept 2026) — also available as
   [`docs/Study_Tracker_SRS.docx`](./docs/Study_Tracker_SRS.docx).
 
 ## Local preview
