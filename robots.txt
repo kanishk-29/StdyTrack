@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://stdytrack.vercel.app/sitemap.xml
