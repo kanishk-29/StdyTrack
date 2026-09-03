@@ -520,6 +520,19 @@ function folderStatsHeaderHtml(subjects){
   const streak = computeGroupStreak(subjects.map(s=>s.id));
   const ring = ringSVG(pct, 84, 9);
 
+  // Streak dots (up to 8)
+  const streakDots = Array.from({length: Math.min(streak,8)}).map((_,i)=>
+    `<span style="animation-delay:${0.5+i*0.08}s;"></span>`
+  ).join('');
+
+  // Sparkline for "Total Studied"
+  const sparklineHtml = `<svg class="sd-sparkline" viewBox="0 0 120 34"><path d="M2,24 Q15,6 28,20 T54,16 T80,22 T118,10"/></svg>`;
+
+  // Mini bar chart for "Topics Done"
+  const barsHtml = `<div class="sd-bars">${Array.from({length:12}).map((_,i)=>
+    `<i style="height:${20+Math.random()*80}%; animation-delay:${i*0.05}s;"></i>`
+  ).join('')}</div>`;
+
   return `
     <div class="fsh-wrap">
       <div class="fsh-greeting-row">
@@ -548,22 +561,25 @@ function folderStatsHeaderHtml(subjects){
           <div class="fsh-stat-note">Keep it up! 🚀</div>
         </div>
         <div class="fsh-stat-card">
-          <div class="fsh-stat-icon" style="background:#ece8ff; color:#7c5cff;">⏱</div>
+          <div class="fsh-stat-icon" style="background:#ece8ff; color:#7c5cff;">⏱️</div>
           <div class="fsh-stat-label">Total Studied</div>
           <div class="fsh-stat-value">${formatHuman(seconds)}</div>
           <div class="fsh-stat-note">This folder</div>
+          ${sparklineHtml}
         </div>
         <div class="fsh-stat-card">
-          <div class="fsh-stat-icon" style="background:#e6f6f3; color:#14b8a6;">✓</div>
+          <div class="fsh-stat-icon" style="background:#dcf7ea; color:#34c78f;">✅</div>
           <div class="fsh-stat-label">Topics Completed</div>
           <div class="fsh-stat-value">${done}<span class="fsh-stat-of"> / ${total}</span></div>
           <div class="fsh-stat-note">Across this folder</div>
+          ${barsHtml}
         </div>
         <div class="fsh-stat-card">
-          <div class="fsh-stat-icon" style="background:#fff1e6; color:#ff8c2e;">🔥</div>
+          <div class="fsh-stat-icon" style="background:#ffe6d6; color:#ff9a52;">🔥</div>
           <div class="fsh-stat-label">Study Streak</div>
           <div class="fsh-stat-value">${streak}</div>
           <div class="fsh-stat-note">Day${streak===1?'':'s'} in a row</div>
+          <div class="sd-streak-dots">${streakDots}</div>
         </div>
       </div>
     </div>`;
@@ -734,16 +750,39 @@ function renderMain(){
   // ---- Header ring (custom, matches the reference — big purple ring) ----
   const ringSize=104, ringStroke=11, ringR=(ringSize-ringStroke)/2, ringCx=ringSize/2, ringCy=ringSize/2, ringC=2*Math.PI*ringR;
   const ringDash = (overallPct/100)*ringC;
+  // SVG ring with gradient + animated fill
   const ringHtml = `
     <div class="sd-ring-wrap">
-      <svg class="ring" width="${ringSize}" height="${ringSize}" viewBox="0 0 ${ringSize} ${ringSize}">
-        <circle cx="${ringCx}" cy="${ringCy}" r="${ringR}" fill="none" stroke="var(--sd-border)" stroke-width="${ringStroke}"/>
-        <circle class="ring-fill" data-pct="${overallPct}" cx="${ringCx}" cy="${ringCy}" r="${ringR}" fill="none" stroke="var(--sd-purple)" stroke-width="${ringStroke}" stroke-linecap="round"
+      <svg width="${ringSize}" height="${ringSize}" viewBox="0 0 ${ringSize} ${ringSize}">
+        <defs>
+          <linearGradient id="sdRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7c5cff"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+        </defs>
+        <circle cx="${ringCx}" cy="${ringCy}" r="${ringR}" fill="none" stroke="rgba(140,120,220,0.15)" stroke-width="${ringStroke}"/>
+        <circle class="ring-fill" data-pct="${overallPct}" cx="${ringCx}" cy="${ringCy}" r="${ringR}" fill="none" stroke="url(#sdRingGrad)" stroke-width="${ringStroke}" stroke-linecap="round"
           stroke-dasharray="${ringC}" stroke-dashoffset="${ringC}" transform="rotate(-90 ${ringCx} ${ringCy})"/>
-        <text x="${ringCx}" y="${ringCy-2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="20" fill="var(--sd-ink)">${Math.round(overallPct)}%</text>
+        <text x="${ringCx}" y="${ringCy-2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="20" fill="#7c5cff">${Math.round(overallPct)}%</text>
       </svg>
       <div class="sd-ring-caption">Overall Progress</div>
     </div>`;
+
+  // ---- Streak dots (up to 8) ----
+  const streakDots = Array.from({length: Math.min(streak,8)}).map((_,i)=>
+    `<span style="animation-delay:${0.5+i*0.08}s;"></span>`
+  ).join('');
+
+  // ---- Sparkline SVG for "Total Studied" card ----
+  const sparklineHtml = `
+    <svg class="sd-sparkline" viewBox="0 0 120 34">
+      <path d="M2,24 Q15,6 28,20 T54,16 T80,22 T118,10"/>
+    </svg>`;
+
+  // ---- Mini bar chart for "Topics Done" card ----
+  const barsHtml = `<div class="sd-bars">${Array.from({length:12}).map((_,i)=>
+    `<i style="height:${20+Math.random()*80}%; animation-delay:${i*0.05}s;"></i>`
+  ).join('')}</div>`;
 
   let html = `
     <div class="sd-header">
@@ -768,13 +807,30 @@ function renderMain(){
           <span class="sd-streak-value">${streak} day${streak===1?'':'s'}</span>
         </div>
       </div>
-      ${ringHtml}
       <div class="sd-stat-grid">
-        <div class="sd-stat-card"><div class="sd-stat-icon violet">📋</div><div><span class="sd-stat-label">Total</span><span class="sd-stat-value">${total}</span></div></div>
-        <div class="sd-stat-card"><div class="sd-stat-icon green">✅</div><div><span class="sd-stat-label">Done</span><span class="sd-stat-value">${done}</span></div></div>
-        <div class="sd-stat-card"><div class="sd-stat-icon orange">⏳</div><div><span class="sd-stat-label">Left</span><span class="sd-stat-value">${left}</span></div></div>
-        <div class="sd-stat-card"><div class="sd-stat-icon blue">⏱️</div><div><span class="sd-stat-label">Total Time</span><span class="sd-stat-value">${formatHuman(subjectSeconds(subject))}</span></div></div>
-        <div class="sd-stat-card"><div class="sd-stat-icon violet">📈</div><div><span class="sd-stat-label">Overall Avg</span><span class="sd-stat-value">${formatPct(subjectTestAvg(subject))}</span></div></div>
+        <div class="sd-stat-card">
+          <div class="sd-stat-label">Overall Progress</div>
+          ${ringHtml}
+          <div class="sd-stat-sub">Keep it up! 🚀</div>
+        </div>
+        <div class="sd-stat-card">
+          <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#ece8ff;">⏱️</span>Total Studied</div>
+          <div class="sd-stat-value">${formatHuman(subjectSeconds(subject))}</div>
+          <div class="sd-stat-sub">This semester</div>
+          ${sparklineHtml}
+        </div>
+        <div class="sd-stat-card">
+          <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#dcf7ea;">✅</span>Topics Completed</div>
+          <div class="sd-stat-value">${done} <span style="color:#8b8fa3; font-size:1rem;">/ ${total}</span></div>
+          <div class="sd-stat-sub">Across all units</div>
+          ${barsHtml}
+        </div>
+        <div class="sd-stat-card">
+          <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#ffe6d6;">🔥</span>Study Streak</div>
+          <div class="sd-stat-value">${streak}</div>
+          <div class="sd-stat-sub">Day${streak===1?'':'s'} in a row</div>
+          <div class="sd-streak-dots">${streakDots}</div>
+        </div>
       </div>
     </div>
     ${examHtml}
@@ -897,6 +953,14 @@ function renderMain(){
   }
 
   main.innerHTML = html;
+
+  // Wire up glass interactions (tilt, ripple, count-up) after DOM update
+  if(subjectPageOpen){
+    requestAnimationFrame(()=>{
+      sdWireInteractions();
+      animateRings();
+    });
+  }
 }
 
 function unitPetalsHtml(seedIdx){
@@ -956,3 +1020,76 @@ function mythicalCheckGlyph(gidSeed){
     <path d="M9.8 16.8 L13.8 20.6 L22.4 11.2" fill="none" stroke="url(#${gid})" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 }
+
+/* ======================================================================
+   GLASS INTERACTIONS — 3D tilt, click ripple, count-up animations
+   ====================================================================== */
+
+// 3D tilt on pointer move (for glass cards)
+function sdAttachTilt(el){
+  const strength = 10;
+  function onMove(e){
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    const rotY = (px - 0.5) * strength;
+    const rotX = (0.5 - py) * strength;
+    el.style.transform = `translateY(-4px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(8px)`;
+  }
+  function onLeave(){ el.style.transform = ''; }
+  el.addEventListener('mousemove', onMove);
+  el.addEventListener('mouseleave', onLeave);
+}
+
+// Click ripple (for .sd-ripple-host)
+function sdAttachRipple(el){
+  el.addEventListener('click', e=>{
+    const r = el.getBoundingClientRect();
+    const size = Math.max(r.width, r.height) * 1.4;
+    const span = document.createElement('span');
+    span.className = 'sd-ripple';
+    span.style.width = span.style.height = size + 'px';
+    span.style.left = (e.clientX - r.left - size/2) + 'px';
+    span.style.top = (e.clientY - r.top - size/2) + 'px';
+    el.appendChild(span);
+    span.addEventListener('animationend', ()=> span.remove());
+  });
+}
+
+// Count-up animation for stat values
+function sdCountUp(el, target, opts={}){
+  const dur = opts.duration || 900;
+  const suffix = opts.suffix || '';
+  const start = performance.now();
+  function step(now){
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(eased * target) + suffix;
+    if(p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// Wire up all glass interactions after renderMain()
+function sdWireInteractions(){
+  if(!document.body.classList.contains('subject-page-active')) return;
+  // Tilt on glass stat cards and header
+  document.querySelectorAll('.sd-stat-card, .fsh-stat-card, .sd-exam-card, .unit').forEach(el=>{
+    if(!el.dataset.sdTiltBound){ sdAttachTilt(el); el.dataset.sdTiltBound = '1'; }
+  });
+  // Ripple on CTA buttons
+  document.querySelectorAll('.sd-ripple-host, .sd-footer-cta, .sd-back-btn').forEach(el=>{
+    if(!el.dataset.sdRippleBound){ sdAttachRipple(el); el.dataset.sdRippleBound = '1'; }
+  });
+  // Count-up on stat values
+  document.querySelectorAll('.sd-stat-value[data-count]').forEach(el=>{
+    const target = parseInt(el.dataset.count, 10);
+    if(!isNaN(target) && !el.dataset.sdCounted){
+      el.dataset.sdCounted = '1';
+      sdCountUp(el, target, {suffix: el.dataset.suffix || ''});
+    }
+  });
+}
+
+// Hook into renderMain — after the DOM is updated, wire interactions
+// (Already handled by requestAnimationFrame(sdWireInteractions) inside renderMain)
