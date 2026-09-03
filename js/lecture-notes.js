@@ -1025,9 +1025,9 @@ function toggleLectureMenu(lectureId){
 
 function openFocusMode(subjectId, unitId, lectureId){
   rememberOpener('focusOverlay');
-  const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
-  const l = u.lectures.find(x=>x.id===lectureId);
+  const s = (data.subjects||[]).find(x=>x.id===subjectId);
+  const u = s ? (Array.isArray(s.units) ? s.units : []).find(x=>x && x.id===unitId) : null;
+  const l = u ? (Array.isArray(u.lectures) ? u.lectures : []).find(x=>x && x.id===lectureId) : null;
   if(!l) return;
   focusRef = {subjectId, unitId, lectureId};
   document.getElementById('focusSubjectUnit').textContent = `${s.name.toUpperCase()} · ${u.name.toUpperCase()}`;
