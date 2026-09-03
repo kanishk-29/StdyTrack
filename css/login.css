@@ -1,115 +1,50 @@
-/* Login / checkpoint screen — transparent liquid-glass design
-   (redesign of the login gate; all auth/demo logic is preserved in login.js) */
+/* Login / checkpoint screen — cardless overlay.
+   Content sits directly over the background (no container / backdrop / glass /
+   box). All auth + demo logic is unchanged and lives in login.js; only the
+   visual treatment lives here.
+   NOTE (kept from prior design): we never center a tall column on a scrollable
+   fixed overlay with align-items:center — that clips the top. Instead the flex
+   item centers itself via auto top/bottom margins and the overlay scrolls. */
 
   .login-screen{
     position:fixed; inset:0; z-index:9998;
-    width:100%; min-height:100vh;
-    overflow:hidden;
+    width:100%; height:100%;
+    box-sizing:border-box;
+    overflow-x:hidden; overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    display:flex; justify-content:flex-end; align-items:center;
+    padding:clamp(24px, 5vw, 64px);
     opacity:0; pointer-events:none;
     transition:opacity .4s ease;
-    width:100%; height:100%; box-sizing:border-box;
-    display:flex; justify-content:flex-end; align-items:center;
-    padding:clamp(20px, 4vw, 58px);
-    background:
-      linear-gradient(90deg, rgba(0,0,0,.03) 0%, rgba(0,0,0,.03) 45%, rgba(0,0,0,.18) 100%),
-      url("../background.png") center center / cover no-repeat;
-    background-color:#17252a;
-    color:var(--text, #fff);
+    color:#fff;
+    /* The background, fully visible — nothing sits over it to obstruct it. */
+    background:url("../background.png") center center / cover no-repeat no-repeat fixed;
+    background-color:#101822;
   }
   .login-screen.show{ opacity:1; pointer-events:auto; }
   .login-screen.hide{ opacity:0; pointer-events:none; }
 
-  /* Very subtle glass atmosphere behind the card. */
-  .login-screen::after{
-    content:"";
-    position:absolute; inset:0;
-    pointer-events:none;
-    background:
-      radial-gradient(circle at 82% 50%, rgba(180,145,255,.12), transparent 26%),
-      linear-gradient(90deg, transparent 48%, rgba(0,0,0,.10));
-  }
-
-  .login-card{
+  /*
+    The column is the ONLY element. No card / panel / box — content floats
+    directly over the background with text shadows for readability.
+  */
+  .login-column{
     position:relative; z-index:2;
-    width:min(430px, 39vw);
-    min-width:330px;
-    margin:0;
-    padding:30px 34px 31px;
-    text-align:center;
-    border:1px solid var(--login-border, rgba(255,255,255,.28));
-    border-radius:30px;
-    font-family:var(--login-font, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
-
-    /* Liquid glass */
-    background:rgba(255,255,255,.105);
-    backdrop-filter:blur(22px) saturate(150%);
-    -webkit-backdrop-filter:blur(22px) saturate(150%);
-
-    box-shadow:
-      0 30px 90px rgba(0,0,0,.25),
-      inset 0 1px 0 rgba(255,255,255,.48),
-      inset 0 -1px 0 rgba(255,255,255,.08),
-      inset 0 0 35px rgba(255,255,255,.035);
-
-    color:var(--login-text, #fff);
-    transition:transform .35s cubic-bezier(.22,.9,.35,1);
-  }
-  /* error shake (kept from original) */
-  .login-card.shake{
-    animation:loginShake .45s ease;
-  }
-  @keyframes loginShake{
-    10%,90%{ transform:translateX(-3px); }
-    20%,80%{ transform:translateX(6px); }
-    30%,50%,70%{ transform:translateX(-10px); }
-    40%,60%{ transform:translateX(10px); }
+    max-width:368px;
+    display:flex; flex-direction:column;
+    text-align:left;
   }
 
-  .login-card > *{ position:relative; z-index:2; }
-
-  .login-card::after{
-    content:"";
-    position:absolute; width:230px; height:230px;
-    top:-110px; right:-90px; border-radius:50%;
-    background:rgba(255,255,255,.10);
-    filter:blur(35px);
-    pointer-events:none;
-  }
-  .login-card::before{
-    content:"";
-    position:absolute; inset:1px;
-    border-radius:29px;
-    pointer-events:none;
-    background:linear-gradient(
-      135deg,
-      rgba(255,255,255,.18),
-      transparent 25%,
-      transparent 70%,
-      rgba(190,150,255,.10)
-    );
-  }
-
-  /* Avatar — full-bleed circle using rei-avatar.png */
+  /* Avatar */
   .avatar-wrap{
     position:relative;
-    width:154px; height:154px;
-    margin:0 auto 21px;
+    width:118px; height:118px;
+    margin:0 0 22px;
     border-radius:50%;
-    padding:6px;
-    background:rgba(255,255,255,.22);
-    border:1px solid rgba(255,255,255,.48);
-    box-shadow:
-      0 0 0 2px rgba(255,255,255,.10),
-      0 0 28px rgba(175,125,255,.50),
-      inset 0 0 18px rgba(255,255,255,.20);
-  }
-  .avatar-wrap::before{
-    content:"";
-    position:absolute; inset:-7px;
-    border-radius:50%;
-    border:2px solid rgba(190,145,255,.58);
-    box-shadow:0 0 22px rgba(170,115,255,.35);
-    pointer-events:none;
+    padding:5px;
+    background:rgba(255,255,255,.18);
+    border:1px solid rgba(255,255,255,.5);
+    box-shadow:0 0 0 2px rgba(255,255,255,.12), 0 14px 34px rgba(0,0,0,.28);
   }
   .avatar, .login-mascot{
     width:100%; height:100%;
@@ -117,188 +52,179 @@
     object-fit:cover;
     object-position:center;
     display:block;
-    background:rgba(255,255,255,.15);
+    background:rgba(255,255,255,.12);
   }
 
+  /* Badge (stylistic tag above the title) */
   .badge{
+    display:inline-flex; align-items:center; gap:6px;
     width:fit-content;
-    margin:0 auto 18px;
-    padding:7px 14px;
+    margin:0 0 14px;
+    padding:6px 12px;
     border-radius:999px;
-    color:#d4c0ff;
-    font-size:12px;
-    font-weight:750;
-    letter-spacing:.11em;
+    color:#efe6ff;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.13em;
     text-transform:uppercase;
-    background:rgba(180,145,255,.14);
-    border:1px solid rgba(220,205,255,.22);
-    box-shadow:inset 0 1px 1px rgba(255,255,255,.16);
+    background:rgba(10,14,24,.35);
+    border:1px solid rgba(255,255,255,.22);
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.12);
+    text-shadow:0 1px 3px rgba(0,0,0,.4);
   }
   .badge .login-eyebrow-dot{
     display:inline-block; width:6px; height:6px;
-    margin-right:8px; border-radius:50%;
-    background:#b994ff;
-    box-shadow:0 0 9px #b994ff;
-    vertical-align:1px;
+    border-radius:50%;
+    background:#c9a4ff;
+    box-shadow:0 0 9px #c9a4ff;
   }
 
+  /* Heading */
   .login-title{
     margin:0;
-    text-align:center;
-    font-size:clamp(32px, 3.1vw, 45px);
-    line-height:1.05;
-    letter-spacing:-.045em;
+    font-size:clamp(34px, 3.4vw, 46px);
+    line-height:1.04;
+    letter-spacing:-.04em;
     font-weight:760;
-    color:var(--login-text, #fff);
-    background:none; -webkit-background-clip:initial; background-clip:initial;
+    color:#fff;
+    text-shadow:0 2px 14px rgba(0,0,0,.45);
   }
-  .login-title .accent{ color:#c8aaff; }
+  .login-title .accent{ color:#cfaaff; }
 
+  /* Subtitle */
   .login-subtitle{
-    margin:16px auto 25px;
-    max-width:330px;
-    text-align:center;
-    color:rgba(255,255,255,.78);
+    margin:14px 0 26px;
+    max-width:340px;
+    color:rgba(255,255,255,.86);
     font-size:15px;
     line-height:1.55;
-    min-height:auto; padding:0;
+    text-shadow:0 1px 4px rgba(0,0,0,.35);
   }
 
-  .login-fields{ margin:0; }
-
+  /* Buttons — outlined / lightly transparent so the background stays readable */
   .btn, .login-google, .login-demo{
     width:100%;
-    min-height:57px;
-    border-radius:17px;
-    border:1px solid rgba(255,255,255,.26);
+    min-height:54px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.4);
     cursor:pointer;
     font:inherit;
-    font-size:16px;
+    font-size:15.5px;
     font-weight:700;
     color:#fff;
     display:flex; align-items:center; justify-content:center;
-    gap:13px;
+    gap:12px;
     font-family:inherit;
-    transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
+    text-shadow:0 1px 3px rgba(0,0,0,.4);
+    transition:transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
   }
   .btn:hover, .login-google:hover, .login-demo:hover{ transform:translateY(-2px); }
   .btn:active, .login-google:active, .login-demo:active{ transform:translateY(0); }
 
+  /* Google — translucent light fill for readability, text shadow for contrast */
   .login-google{
     margin-top:2px;
-    background:rgba(255,255,255,.22);
-    color:#fff;
-    box-shadow:
-      0 10px 28px rgba(0,0,0,.10),
-      inset 0 1px 1px rgba(255,255,255,.38);
+    background:rgba(255,255,255,.16);
+    box-shadow:0 10px 30px rgba(0,0,0,.18);
   }
-  .login-google .lg-icon{ width:21px; height:21px; flex:0 0 21px; }
+  .login-google .lg-icon{ width:19px; height:19px; flex:0 0 19px; }
   .login-google:hover{
-    background:rgba(255,255,255,.30);
-    box-shadow:0 12px 30px rgba(0,0,0,.14), inset 0 1px 1px rgba(255,255,255,.42);
+    background:rgba(255,255,255,.26);
+    box-shadow:0 12px 32px rgba(0,0,0,.22);
   }
   .login-google:disabled{ opacity:0.55; cursor:default; transform:none; }
 
+  /* Demo — outlined, very transparent */
   .login-demo{
     margin-top:13px;
-    background:rgba(255,255,255,.10);
-    color:#fff;
-    box-shadow:
-      inset 0 1px 1px rgba(255,255,255,.18),
-      0 7px 22px rgba(0,0,0,.10);
+    background:rgba(255,255,255,.06);
+    border-style:solid;
   }
-  .login-demo:hover{ background:rgba(255,255,255,.20); }
+  .login-demo:hover{ background:rgba(255,255,255,.16); }
   .login-demo:disabled{ opacity:0.55; cursor:default; transform:none; }
   .login-demo .demo-icon{
     width:18px; height:18px; flex:0 0 18px;
-    color:#c5a8ff; opacity:1;
+    color:#cdb0ff; opacity:1;
   }
 
+  /* Sample / privacy / status text */
   .login-demo-hint{
-    margin:20px auto 0;
-    max-width:330px;
-    color:rgba(255,255,255,.73);
-    text-align:center;
+    margin:18px 0 0;
+    max-width:332px;
+    color:rgba(255,255,255,.8);
     font-size:12.5px;
     line-height:1.65;
+    text-align:left;
+    text-shadow:0 1px 4px rgba(0,0,0,.4);
   }
-
   .login-footnote{
-    display:flex; justify-content:center; gap:8px;
-    margin:22px auto 0;
+    display:flex; align-items:flex-start; gap:8px;
+    margin:18px 0 0;
     max-width:340px;
-    color:rgba(255,255,255,.72);
-    text-align:center;
+    color:rgba(255,255,255,.78);
     font-size:12px;
-    line-height:1.55;
+    line-height:1.6;
+    text-align:left;
+    text-shadow:0 1px 4px rgba(0,0,0,.4);
   }
-  .lock{ color:#c2a0ff; font-size:16px; line-height:1; margin-top:1px; }
+  .lock{ color:#cfaaff; font-size:15px; line-height:1.1; margin-top:1px; }
 
   .login-error{
     min-height:18px;
-    margin-top:11px;
-    margin-bottom:0;
-    color:#dbcaff;
-    text-align:center;
+    margin:2px 0 0;
+    color:#ffe0ea;
     font-size:12px;
     font-weight:700;
     opacity:0; pointer-events:none;
     transition:opacity .15s ease;
-    display:block;
+    text-shadow:0 1px 4px rgba(0,0,0,.5);
   }
   .login-error.show{ opacity:1; pointer-events:auto; }
 
-  /* Small-screen / mobile. NOTE: we avoid aligning the card with
-     `align-items:center` on a scrollable fixed overlay — that classic flexbox
-     combo clips the top of a card taller than the viewport (unreachable above
-     the scroll area). Instead the flex item centers itself vertically with
-     auto top/bottom margins and the fixed overlay scrolls, so the full card
-     is always reachable on short/rotated screens. Horizontal alignment stays
-     with `justify-content` (center on mobile, right on desktop). */
+  /* Shake the whole column on auth error (column replaces the removed card) */
+  .login-column.shake{ animation:loginShake .45s ease; }
+  @keyframes loginShake{
+    10%,90%{ transform:translateX(-3px); }
+    20%,80%{ transform:translateX(6px); }
+    30%,50%,70%{ transform:translateX(-10px); }
+    40%,60%{ transform:translateX(10px); }
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  /* Mobile: center the column, keep the background fully visible, scroll if
+     the content is taller than the viewport. */
   @media (max-width:900px){
     .login-screen{
       justify-content:center;
       align-items:flex-start;
-      padding:22px;
-      min-height:100svh;
-      height:100svh;
-      background-position:42% center;
-      overflow-y:auto;
+      padding:32px 24px 44px;
+      background-attachment:scroll;
     }
-    .login-screen::after{ background:rgba(0,0,0,.18); }
     .login-stage{ margin:auto 0; }
-    .login-card{
-      width:min(430px, 94vw);
-      min-width:0;
-    }
+    .login-column{ text-align:center; max-width:368px; width:100%; }
+    .avatar-wrap{ margin-left:auto; margin-right:auto; }
+    .badge{ margin-left:auto; margin-right:auto; }
+    .login-subtitle{ margin-left:auto; margin-right:auto; }
+    .login-demo-hint,
+    .login-footnote{ text-align:center; margin-left:auto; margin-right:auto; }
+    .login-footnote{ justify-content:center; }
   }
 
   @media (max-width:480px){
-    .login-screen{ padding:13px 13px 30px; }
-    .login-card{
-      padding:25px 21px 25px;
-      border-radius:25px;
-      backdrop-filter:blur(15px) saturate(130%);
-      -webkit-backdrop-filter:blur(15px) saturate(130%);
-    }
-    .avatar-wrap{ width:125px; height:125px; margin-bottom:18px; }
-    .login-title{ font-size:34px; }
-    .login-subtitle{ margin-top:13px; margin-bottom:21px; }
-    .btn, .login-google, .login-demo{ min-height:54px; font-size:15px; }
+    .login-screen{ padding:24px 20px 40px; }
+    .avatar-wrap{ width:106px; height:106px; margin-bottom:18px; }
+    .login-title{ font-size:36px; }
+    .login-subtitle{ margin-top:12px; margin-bottom:22px; }
+    .btn, .login-google, .login-demo{ min-height:52px; font-size:15px; }
   }
 
-  /* On very short desktop windows, allow scrolling so the card never clips.
-     Same guard as mobile: keep the top reachable by centering the flex item
-     with auto top/bottom margins instead of align-items:center. */
+  /* Short windows (desktop landscape / small laptops): keep everything
+     reachable — no clipped top. */
   @media (max-height:700px){
-    .login-screen{
-      align-items:flex-start;
-      overflow-y:auto;
-    }
     .login-stage{ margin:auto 0; }
   }
 
   @media (prefers-reduced-motion: reduce){
     .btn, .login-google, .login-demo{ transition:none; }
-    .login-card{ animation:none !important; }
+    .login-column{ animation:none !important; }
   }
