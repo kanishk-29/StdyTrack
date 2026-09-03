@@ -1938,7 +1938,7 @@ function fdSetFilter(f){
   if(root){
     root.querySelectorAll('#filterBar button[data-filter]').forEach(b=>b.classList.toggle('active', b.dataset.filter === f));
   }
-  fdMoveIndicator(document.querySelector('#filterBar button[data-filter="'+f+'"]'));
+  fdWireInteractions();
 }
 
 function fdGreeting(){
@@ -2031,8 +2031,13 @@ function fdOpenSubject(id){
 function fdAddSubject(){ if(typeof openAddSubject === 'function') openAddSubject(); else if(typeof addSubject==='function') addSubject(); }
 function fdViewStats(){
   closeFolderDashboard();
-  if(typeof openDashboard==='function') openDashboard();
-  else if(typeof goDashboard==='function') goDashboard();
+  try{
+    if(typeof closeMySubjectsLanding === 'function') closeMySubjectsLanding();
+  }catch(e){}
+  try{
+    if(typeof showView === 'function') showView('study');
+  }catch(e){}
+  if(typeof renderAll === 'function') renderAll();
 }
 
 /* remember open context so Escape/exit can return to the folder dashboard */
