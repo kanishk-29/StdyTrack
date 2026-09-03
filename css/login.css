@@ -248,11 +248,17 @@
   }
   .login-error.show{ opacity:1; pointer-events:auto; }
 
-  /* Small-screen / mobile */
+  /* Small-screen / mobile. NOTE: we avoid aligning the card with
+     `align-items:center` on a scrollable fixed overlay — that classic flexbox
+     combo clips the top of a card taller than the viewport (unreachable above
+     the scroll area). Instead the flex item centers itself vertically with
+     auto top/bottom margins and the fixed overlay scrolls, so the full card
+     is always reachable on short/rotated screens. Horizontal alignment stays
+     with `justify-content` (center on mobile, right on desktop). */
   @media (max-width:900px){
     .login-screen{
       justify-content:center;
-      align-items:center;
+      align-items:flex-start;
       padding:22px;
       min-height:100svh;
       height:100svh;
@@ -260,6 +266,7 @@
       overflow-y:auto;
     }
     .login-screen::after{ background:rgba(0,0,0,.18); }
+    .login-stage{ margin:auto 0; }
     .login-card{
       width:min(430px, 94vw);
       min-width:0;
@@ -267,7 +274,7 @@
   }
 
   @media (max-width:480px){
-    .login-screen{ padding:13px; align-items:center; }
+    .login-screen{ padding:13px 13px 30px; }
     .login-card{
       padding:25px 21px 25px;
       border-radius:25px;
@@ -280,9 +287,15 @@
     .btn, .login-google, .login-demo{ min-height:54px; font-size:15px; }
   }
 
-  /* On very short desktop windows, allow scrolling so the card never clips */
-  @media (max-height:680px) and (min-width:901px){
-    .login-screen{ overflow-y:auto; }
+  /* On very short desktop windows, allow scrolling so the card never clips.
+     Same guard as mobile: keep the top reachable by centering the flex item
+     with auto top/bottom margins instead of align-items:center. */
+  @media (max-height:700px){
+    .login-screen{
+      align-items:flex-start;
+      overflow-y:auto;
+    }
+    .login-stage{ margin:auto 0; }
   }
 
   @media (prefers-reduced-motion: reduce){
