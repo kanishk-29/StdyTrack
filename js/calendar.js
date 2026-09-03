@@ -255,7 +255,7 @@ function drawerFolderTileHtml(folder, idx){
         <span class="drawer-folder-stat"><span class="drawer-folder-stat-ic">◷</span> ${timeStr} Time</span>
       </div>`
     : `<div class="drawer-folder-no-topic">📁 No topics added yet</div>`;
-  return `<div class="drawer-folder-tile${folder.image?' has-image':''}" onclick="activeFolderFilter='${folder.id}'; renderSidebar();">
+  return `<div class="drawer-folder-tile${folder.image?' has-image':''}" onclick="activeFolderFilter='${folder.id}'; stopFolderClock(); if(typeof openFolderDashboard==='function') openFolderDashboard(); else renderSidebar();">
     <div class="drawer-folder-img" style="${thumbStyle}">${thumbInner}
       <div class="pp-folder-tile-edit-wrap drawer-folder-edit-wrap">
         <input type="file" accept="image/*" id="folderImgInput-${folder.id}" style="display:none" onchange="handleFolderImage(event,'${folder.id}')">
@@ -400,7 +400,7 @@ function renderSidebar(){
     data.folders.forEach((f,i)=>{ tilesHtml += drawerFolderTileHtml(f, i); });
     if(unsortedCount){
       const upal = [{bar:'#8a8fa3', pillBg:'#f0f0f5', pillColor:'#8a8fa3', arrowBg:'#f2f2f5', arrowColor:'#8a8fa3'}][0];
-      tilesHtml += `<div class="drawer-folder-tile unsorted" onclick="activeFolderFilter=''; renderSidebar();">
+      tilesHtml += `<div class="drawer-folder-tile unsorted" onclick="activeFolderFilter=''; stopFolderClock(); if(typeof openFolderDashboard==='function') openFolderDashboard(); else renderSidebar();">
         <div class="drawer-folder-img" style="background:linear-gradient(135deg, ${upal.bar} 0%, ${upal.bar}cc 100%);"><span style="font-size:32px;">📂</span></div>
         <div class="drawer-folder-content">
           <div class="drawer-folder-head"><div class="drawer-folder-name">Unsorted</div><span class="drawer-folder-badge" style="background:${upal.pillBg}; color:${upal.pillColor};">${unsortedCount} subject${unsortedCount===1?'':'s'}</span></div>

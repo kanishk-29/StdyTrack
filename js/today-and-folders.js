@@ -172,8 +172,8 @@ function openFolderFromCard(folderId){
   activeFolderFilter = folderId;
   closedFolderIds.clear();
   closePriorityPlanner();
-  renderSidebar();
-  openSubjectsDrawer(true);
+  stopFolderClock();
+  if(typeof openFolderDashboard === 'function') openFolderDashboard(); else { renderSidebar(); openSubjectsDrawer(true); }
 }
 function promptNewFolderFromCard(){
   const name = prompt('Name this folder (e.g. "Semester 3", "Personal Projects")');
@@ -1652,8 +1652,8 @@ function openFolderFromLanding(folderId){
   if(typeof closedFolderIds !== 'undefined' && closedFolderIds && closedFolderIds.clear) closedFolderIds.clear();
   mslRecordRecent(folderId || '');
   closeMySubjectsLanding();
-  renderSidebar();
-  openSubjectsDrawer(true);
+  stopFolderClock();
+  if(typeof openFolderDashboard === 'function') openFolderDashboard(); else { renderSidebar(); openSubjectsDrawer(true); }
 }
 function openFolderCreateLanding(){
   const name = prompt('Name this folder (e.g. "Semester 3", "Personal Projects")');
@@ -1714,3 +1714,339 @@ function mslToggleSort(){
   cards.forEach(c=>grid.appendChild(c));
   if(btn) btn.textContent = mslSortAsc ? 'Z–A ↕' : 'A–Z ↕';
 }
+
+/* ============================================================
+   FOLDER DASHBOARD — full-page port of
+   study-dashboard_mobile_optimized_v26_final_audited.html
+   Shown as a full-page overlay when a folder is opened
+   (replaces the old in-drawer "Your Subjects" view).
+   Visual/layout faithfully reproduced; data + routing wired to
+   the live app (activeFolderFilter, data.subjects, seconds, etc).
+   ============================================================ */
+
+/* ---- design palette (matches the design's SUBJECTS accents) ---- */
+const FD_ACCENTS = [
+  { color:'#7c5cff', grad:'linear-gradient(135deg,#1c2350,#3a2d7a)', rgb:'124,92,255' },
+  { color:'#ff9a52', grad:'linear-gradient(135deg,#2b2b2b,#4a4a4a)', rgb:'255,154,82' },
+  { color:'#22b8c9', grad:'linear-gradient(135deg,#062038,#0c3a52)', rgb:'34,184,201' },
+  { color:'#34c78f', grad:'linear-gradient(135deg,#123326,#1e5c43)', rgb:'52,199,143' }
+];
+
+function fdHexToRgb(hex){
+  const h = String(hex || '').replace('#','');
+  if(h.length === 3) return `${parseInt(h[0]+h[0],16)},${parseInt(h[1]+h[1],16)},${parseInt(h[2]+h[2],16)}`;
+  if(h.length === 6) return `${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)}`;
+  return '115,86,255';
+}
+
+function fdCurrentFolderName(){
+  foldersEnsure();
+  if(activeFolderFilter === '' || activeFolderFilter === null) return 'Unsorted';
+  const f = getFolder(activeFolderFilter);
+  return f ? f.name : 'Your Subjects';
+}
+
+/* ---- live clock for the dashboard header ---- */
+let fdClockTimer = null;
+function fdStartClock(){
+  fdStopClock();
+  if(typeof fdTickClock !== 'function') return;
+  fdTickClock();
+  fdClockTimer = setInterval(fdTickClock, 1000);
+}
+function fdStopClock(){
+  if(fdClockTimer){ clearInterval(fdClockTimer); fdClockTimer = null; }
+}
+function fdTickClock(){
+  const el = document.getElementById('folderDashboard');
+  if(!el || el.style.display === 'none'){ fdStopClock(); return; }
+  const now = new Date();
+  const hh = document.getElementById('hh'), mm = document.getElementById('mm'), ss = document.getElementById('ss');
+  const dl = document.getElementById('dateLabel'), dy = document.getElementById('dayLabel');
+  if(hh) hh.textContent = String(now.getHours()).padStart(2,'0');
+  if(mm) mm.textContent = String(now.getMinutes()).padStart(2,'0');
+  if(ss){ ss.textContent = String(now.getSeconds()).padStart(2,'0'); ss.classList.remove('tick'); void ss.offsetWidth; ss.classList.add('tick'); }
+  if(dl) dl.textContent = now.toLocaleDateString(undefined, {day:'2-digit', month:'short', year:'numeric'});
+  if(dy) dy.textContent = now.toLocaleDateString(undefined, {weekday:'long'});
+}
+
+const FD_WAVE = `<span class="wave">👋</span>`;
+
+function fdStatsHtml(folderName, subjects){
+  let total=0, done=0, seconds=0;
+  subjects.forEach(s=>{ const c = countLectures(s); total += c.total; done += c.done; seconds += subjectSeconds(s); });
+  const pct = total ? Math.round((done/total)*100) : 0;
+  const streak = (typeof computeGroupStreak === 'function')
+    ? computeGroupStreak(subjects.map(s=>s.id))
+    : (typeof computeCurrentStreak === 'function' ? computeCurrentStreak() : 0);
+  const C = 2*Math.PI*42;
+  const offset = C - (pct/100)*C;
+  const bars = [35,58,42,78,67,86,52,72,47,64,38,55].map((h,i)=>`<i style="height:${h}%; animation-delay:${i*0.05}s;"></i>`).join('');
+  const dots = Array.from({length: Math.min(streak,8)}).map((_,i)=>`<span style="animation-delay:${0.5+i*0.08}s;"></span>`).join('');
+  return `
+    <div class="stat-card glass tilt" style="--glass-accent:115,86,255;">
+      <div class="stat-label">Overall Progress</div>
+      <div class="ring-wrap">
+        <svg width="96" height="96" viewBox="0 0 96 96">
+          <defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient></defs>
+          <circle class="ring-bg" cx="48" cy="48" r="42"/>
+          <circle class="ring-fg" cx="48" cy="48" r="42" style="--offset:${offset}; stroke-dasharray:${C}"/>
+        </svg>
+        <div class="ring-pct" id="ringPctLabel">${pct}%</div>
+      </div>
+      <div class="stat-sub">Folder (${folderName === 'Unsorted' ? 'unsorted' : folderName})</div>
+    </div>
+    <div class="stat-card glass tilt" style="--glass-accent:110,177,255;">
+      <div class="stat-label"><span class="stat-icon" style="background:#e9e4ff;">⏱️</span>Total Studied</div>
+      <div class="big-num">${formatHuman(seconds)}</div>
+      <div class="stat-sub">In this folder</div>
+      <svg class="sparkline" viewBox="0 0 120 34"><path d="M2,24 Q15,6 28,20 T54,16 T80,22 T118,10"/></svg>
+    </div>
+    <div class="stat-card glass tilt" style="--glass-accent:47,199,146;">
+      <div class="stat-label"><span class="stat-icon" style="background:#dcf7ea;">✅</span>Topics Completed</div>
+      <div class="big-num"><span id="topicsDoneNum">${done}</span> <span style="color:var(--soft); font-size:1rem;">/ ${total}</span></div>
+      <div class="stat-sub">In this folder</div>
+      <div class="bars">${bars}</div>
+    </div>
+    <div class="stat-card glass tilt" style="--glass-accent:255,137,95;">
+      <div class="stat-label"><span class="stat-icon flame" style="background:#ffe6d6;">🔥</span>Study Streak</div>
+      <div class="big-num"><span id="streakNum">${streak}</span></div>
+      <div class="stat-sub">Days in a row</div>
+      <div class="streak-dots">${dots}</div>
+    </div>`;
+}
+
+function fdNextFor(s){
+  try{
+    if(Array.isArray(s.units)){
+      for(const u of s.units){
+        if(u && Array.isArray(u.lectures)){
+          const l = u.lectures.find(x=>!x.completed);
+          if(l && l.title) return escapeHtml(l.title);
+        }
+      }
+    }
+    const c = countLectures(s);
+    return c.total ? 'All done!' : 'Get started';
+  }catch(e){ return 'Get started'; }
+}
+
+function fdSubjectCardHtml(s, i){
+  const gi = (typeof data !== 'undefined' && Array.isArray(data.subjects)) ? data.subjects.findIndex(x=>x && x.id===s.id) : i;
+  const globalIdx = gi >= 0 ? gi : i;
+  const c = countLectures(s);
+  const pct = c.total ? Math.round((c.done/c.total)*100) : 0;
+  const time = formatHuman(subjectSeconds(s));
+  const acc = FD_ACCENTS[globalIdx % FD_ACCENTS.length];
+  const rgb = acc.rgb;
+  const style = `--accent:${acc.color}; --accent-rgb:${rgb}; --glass-accent:${rgb}; --accent-soft:rgba(${rgb},.10); --accent-glow:rgba(${rgb},.20); --accent-tint:rgba(${rgb},.055); --accent-border:rgba(${rgb},.22); --accent-gradient:linear-gradient(135deg,${acc.color},${acc.color}99); animation-delay:${i*0.08}s;`;
+  const tagStyle = `background:${acc.color}22; color:${acc.color};`;
+  return `
+    <div class="subject-card glass tilt" style="${style}" data-id="${escapeAttr(s.id)}" onclick="fdOpenSubject('${escapeAttr(s.id)}')" role="button" tabindex="0" aria-label="Open ${escapeAttr(s.name)}">
+      <div class="subject-thumb" style="background:${acc.grad};"></div>
+      <div class="subject-body">
+        <span class="subject-tag" style="${tagStyle}">${escapeHtml(fdBadgeFor(s))}</span>
+        <h4 class="subject-name" title="${escapeAttr(s.name)}">${escapeHtml(s.name)}</h4>
+        <div class="subject-meta">
+          <span>📘 ${c.total} ${c.total===1?'Topic':'Topics'}</span>
+          <span>✔️ ${c.done}/${c.total} Studied</span>
+          <span>🕒 ${time}</span>
+        </div>
+        <div class="progress-row">
+          <div style="flex:1;">
+            <div class="progress-track"><div class="progress-fill" data-target="${pct}" style="background:${acc.color};"></div></div>
+          </div>
+          <div class="progress-pct" style="color:${acc.color};">${pct}%</div>
+        </div>
+        <div class="subject-next">🎯 Next: ${fdNextFor(s)}</div>
+      </div>
+      <div class="subject-go ripple-host" style="color:${acc.color};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>`;
+}
+
+function fdBadgeFor(s){
+  const folder = (s.folderId && typeof getFolder==='function') ? getFolder(s.folderId) : null;
+  if(folder && folder.name){ const n = folder.name; return n.toLowerCase().includes('semester') ? 'SEM III' : n.toUpperCase().slice(0,12); }
+  return activeFolderFilter === '' || activeFolderFilter === null ? 'UNSORTED' : 'SUBJECT';
+}
+
+/* filter tabs: design uses all/progress/done; app uses all/progress/completed */
+const FD_FILTER_MAP = { all:'all', progress:'progress', done:'completed' };
+let fdFilter = 'all';
+
+function fdGetSubjects(folderId){
+  foldersEnsure();
+  const fId = (folderId === '' || folderId === null) ? null : folderId;
+  return subjectsInFolder(fId);
+}
+
+function fdRenderSubjects(filter){
+  const el = document.getElementById('subjectList');
+  if(!el) return;
+  fdFilter = filter || 'all';
+  const subjects = fdGetSubjects(activeFolderFilter);
+  const appFilter = FD_FILTER_MAP[fdFilter] || 'all';
+  const filtered = subjects.filter(s=>{
+    if(appFilter === 'all') return true;
+    const c = countLectures(s);
+    const pct = c.total ? Math.round((c.done/c.total)*100) : 0;
+    if(appFilter === 'completed') return c.total>0 && pct===100;
+    return pct<100;
+  });
+  const cards = filtered.map((s,i)=>fdSubjectCardHtml(s, i)).join('');
+  let empty = '';
+  if(!filtered.length){
+    empty = (subjects.length ? 'No subjects match this filter.' : 'No subjects in this folder yet. Open the drawer to add one.') ;
+    el.innerHTML = `<div class="fd-empty" style="text-align:center;padding:26px;color:var(--muted);">${empty}</div>`;
+  } else {
+    el.innerHTML = cards;
+  }
+}
+
+function fdWireInteractions(){
+  const root = document.getElementById('folderDashboard');
+  if(!root) return;
+  /* progress bars animate to width on next frame */
+  try{
+    requestAnimationFrame(()=>{
+      root.querySelectorAll('.progress-fill').forEach(p=>{ try{ p.style.width = p.dataset.target + '%'; }catch(e){} });
+    });
+  }catch(e){}
+  /* filter indicator position */
+  try{ fdMoveIndicator(root.querySelector('#filterBar button.active') || root.querySelector('#filterBar button[data-filter="all"]')); }catch(e){}
+}
+
+function fdMoveIndicator(btn){
+  const indicator = document.getElementById('filterIndicator');
+  const bar = document.getElementById('filterBar');
+  if(!indicator || !btn || !bar) return;
+  const barRect = bar.getBoundingClientRect();
+  const btnRect = btn.getBoundingClientRect();
+  indicator.style.left = Math.max(0, btnRect.left - barRect.left) + 'px';
+  indicator.style.top = (btnRect.top - barRect.top) + 'px';
+  indicator.style.height = btnRect.height + 'px';
+  indicator.style.bottom = 'auto';
+  indicator.style.width = btnRect.width + 'px';
+  indicator.style.transform = 'none';
+}
+
+function fdSetFilter(f){
+  fdRenderSubjects(f);
+  const root = document.getElementById('folderDashboard');
+  if(root){
+    root.querySelectorAll('#filterBar button[data-filter]').forEach(b=>b.classList.toggle('active', b.dataset.filter === f));
+  }
+  fdMoveIndicator(document.querySelector('#filterBar button[data-filter="'+f+'"]'));
+}
+
+function fdGreeting(){
+  const h = new Date().getHours();
+  if(h < 12) return 'Good morning';
+  if(h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function renderFolderDashboard(){
+  const el = document.getElementById('folderDashboard');
+  if(!el) return;
+  const folderName = fdCurrentFolderName();
+  const subjects = fdGetSubjects(activeFolderFilter);
+  const namePart = (typeof MASCOT_NAME !== 'undefined' && MASCOT_NAME && MASCOT_NAME !== 'friend') ? ', ' + escapeHtml(MASCOT_NAME) : '';
+  el.innerHTML = `
+    <button class="fd-back" onclick="fdBack()" title="Back to My Subjects">←</button>
+    <div class="blobs">
+      <div class="cursor-halo"></div>
+      <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div><div class="blob blob-4"></div>
+    </div>
+    <div class="app">
+      <header class="header glass tilt" style="--glass-accent:126,102,255;">
+        <div>
+          <h1><span id="greeting">${fdGreeting()}${namePart}</span> ${FD_WAVE}</h1>
+          <p>Keep learning, keep growing.</p>
+        </div>
+        <div class="clock glass" style="--glass-accent:145,128,255;">
+          <div class="date-box"><b id="dateLabel">—</b><span id="dayLabel">—</span></div>
+          <div class="timer" id="liveClock">
+            <div class="seg"><div class="num" id="hh">00</div><div class="lbl">Hrs</div></div>
+            <div class="seg"><div class="num" id="mm">00</div><div class="lbl">Min</div></div>
+            <div class="seg"><div class="num" id="ss">00</div><div class="lbl">Sec</div></div>
+          </div>
+        </div>
+      </header>
+      <section class="stats" id="statsGrid">${fdStatsHtml(folderName, subjects)}</section>
+      <div class="section-head">
+        <div class="section-title"><span class="section-icon">▦</span><span>Your Subjects · ${escapeHtml(folderName)}</span></div>
+        <div class="filters glass" id="filterBar">
+          <div class="filter-indicator" id="filterIndicator"></div>
+          <button class="active ripple-host" data-filter="all" onclick="fdSetFilter('all')">All</button>
+          <button class="ripple-host" data-filter="progress" onclick="fdSetFilter('progress')">In Progress</button>
+          <button class="ripple-host" data-filter="done" onclick="fdSetFilter('done')">Completed</button>
+        </div>
+      </div>
+      <div class="subject-list" id="subjectList"></div>
+      <div class="add-card glass ripple-host" id="addSubjectCard" role="button" tabindex="0" aria-label="Add a subject" onclick="fdAddSubject()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();fdAddSubject();}">
+        <span class="add-plus">+</span> Add a subject
+      </div>
+      <div class="banner glass tilt" style="--glass-accent:126,102,255;">
+        <div class="banner-left">
+          <div class="trophy">🏆</div>
+          <div><h3>Consistency is the key to success!</h3><p>You're doing great. Keep pushing forward 🚀</p></div>
+        </div>
+        <div class="view-stats ripple-host" onclick="fdViewStats()">View Study Stats 📊</div>
+      </div>
+      <p class="quote">"Small progress is still progress." — Keep going 💜</p>
+    </div>`;
+  fdRenderSubjects('all');
+  fdWireInteractions();
+  el.style.display = 'block';
+  fdStartClock();
+}
+
+function openFolderDashboard(){
+  const drawer = document.getElementById('subjectsDrawerOverlay');
+  if(drawer) drawer.classList.remove('show');
+  stopFolderClock();
+  renderFolderDashboard();
+  rememberOpener('folderDashboard');
+  saveFolderOpenContext();
+}
+function closeFolderDashboard(){
+  const el = document.getElementById('folderDashboard');
+  if(el) el.style.display = 'none';
+  fdStopClock();
+  restoreOpener('folderDashboard');
+  clearFolderOpenContext();
+}
+function fdBack(){
+  closeFolderDashboard();
+  if(typeof openMySubjectsLanding === 'function') openMySubjectsLanding(); else renderAll();
+  closeSubjectsDrawer();
+}
+function fdOpenSubject(id){
+  closeFolderDashboard();
+  if(typeof jumpToSubject === 'function') jumpToSubject(id); else if(typeof switchToMain==='function') switchToMain();
+}
+function fdAddSubject(){ if(typeof openAddSubject === 'function') openAddSubject(); else if(typeof addSubject==='function') addSubject(); }
+function fdViewStats(){
+  closeFolderDashboard();
+  if(typeof openDashboard==='function') openDashboard();
+  else if(typeof goDashboard==='function') goDashboard();
+}
+
+/* remember open context so Escape/exit can return to the folder dashboard */
+let folderOpenCtx = null;
+function saveFolderOpenContext(){ folderOpenCtx = { filter: fdFilter }; }
+function clearFolderOpenContext(){ folderOpenCtx = null; }
+
+/* keyboard Enter activates a focused subject card (click already bound) */
+document.addEventListener('keydown', (e)=>{
+  const t = e.target;
+  const root = document.getElementById('folderDashboard');
+  if(!root || root.style.display === 'none') return;
+  if(!t || !t.classList || !t.classList.contains('subject-card')) return;
+  if(!(e.key === 'Enter' || e.key === ' ')) return;
+  e.preventDefault();
+  if(typeof t.click === 'function') t.click();
+});

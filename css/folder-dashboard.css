@@ -1,0 +1,3522 @@
+/* Scoped faithful port of study-dashboard_mobile_optimized_v26_final_audited.html —
+   all selectors scoped under #folderDashboard by an automated tool.
+   Keyframes kept global (unique names). Modals/ripples for this design live HERE. */
+#folderDashboard{position:fixed;inset:0;z-index:66;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#folderDashboard{
+  --bg:#f7f8ff;
+  --surface:rgba(255,255,255,.38);
+  --surface-strong:rgba(255,255,255,.58);
+  --surface-soft:rgba(255,255,255,.24);
+  --line:rgba(255,255,255,.82);
+  --line-soft:rgba(255,255,255,.48);
+  --text:#171a35;
+  --muted:#69708d;
+  --soft:#949ab1;
+
+  --purple:#7356ff;
+  --purple2:#a88fff;
+
+  --shadow:
+    0 28px 70px rgba(72,61,145,.11),
+    0 10px 28px rgba(72,61,145,.07);
+
+  --shadow-small:
+    0 12px 30px rgba(72,61,145,.10),
+    0 4px 12px rgba(72,61,145,.06);
+
+  --neu:
+    7px 8px 18px rgba(90,79,145,.12),
+    -7px -7px 18px rgba(255,255,255,.88);
+
+  --inset:
+    inset 4px 5px 12px rgba(101,88,160,.12),
+    inset -4px -4px 12px rgba(255,255,255,.92);
+
+  --r-xl:30px;
+  --r-lg:24px;
+  --r-md:18px;
+  --r-sm:13px;
+}
+
+#folderDashboard *{box-sizing:border-box}
+
+#folderDashboard{scroll-behavior:smooth}
+
+#folderDashboard{
+  --cursor-x:50%;
+  --cursor-y:25%;
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,"Inter",sans-serif;
+  overflow-x:hidden;
+
+  background:
+    radial-gradient(900px 500px at -5% 0%,rgba(126,93,255,.20),transparent 68%),
+    radial-gradient(800px 480px at 105% 10%,rgba(255,151,203,.17),transparent 66%),
+    radial-gradient(900px 520px at 55% 110%,rgba(58,211,197,.13),transparent 68%),
+    linear-gradient(135deg,#f7f8ff,#fff,#f7f9ff);
+}
+
+
+#folderDashboard .blobs{
+  position:fixed;
+  inset:-18%;
+  z-index:0;
+  overflow:hidden;
+  pointer-events:none;
+  filter:saturate(132%);
+  transform:translateZ(0);
+}
+
+
+#folderDashboard .blobs::before{
+  content:"";
+  position:absolute;
+  width:135%;
+  height:15%;
+  left:-17%;
+  top:42%;
+  border-radius:60% 40% 55% 45%;
+  transform:rotate(-7deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(112,78,255,.12) 12%,
+      rgba(125,101,255,.24) 27%,
+      rgba(89,183,255,.22) 43%,
+      rgba(255,135,196,.18) 60%,
+      rgba(104,218,199,.16) 78%,
+      transparent 100%
+    );
+
+  filter:blur(29px);
+  opacity:.95;
+  animation:riverMain 25s steps(30,end) infinite;
+}
+
+
+#folderDashboard .blobs::after{
+  content:"";
+  position:absolute;
+  width:120%;
+  height:10%;
+  left:-10%;
+  top:73%;
+  border-radius:50%;
+  transform:rotate(5deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(70,191,255,.12) 20%,
+      rgba(140,102,255,.16) 42%,
+      rgba(255,142,196,.12) 68%,
+      transparent
+    );
+
+  filter:blur(35px);
+  opacity:.82;
+  animation:riverMain2 32s steps(30,end) infinite;
+}
+
+
+#folderDashboard .blob{
+  position:absolute;
+  border-radius:58% 42% 52% 48%;
+  filter:blur(24px);
+  opacity:.58;
+  mix-blend-mode:multiply;
+  will-change:transform;
+}
+
+
+#folderDashboard .blob-1{
+  width:1120px;
+  height:165px;
+  left:-300px;
+  top:5%;
+
+  transform:rotate(-17deg);
+
+  background:
+    radial-gradient(
+      ellipse at 8% 50%,
+      rgba(103,70,255,.70) 0%,
+      rgba(125,92,255,.54) 27%,
+      rgba(165,132,255,.34) 47%,
+      rgba(102,175,255,.20) 68%,
+      transparent 86%
+    );
+
+  animation:river1 20s steps(24,end) infinite;
+}
+
+
+#folderDashboard .blob-2{
+  width:1250px;
+  height:155px;
+  right:-360px;
+  top:22%;
+
+  transform:rotate(12deg);
+
+  background:
+    radial-gradient(
+      ellipse at 88% 50%,
+      rgba(255,119,193,.46) 0%,
+      rgba(225,119,215,.34) 25%,
+      rgba(144,111,255,.38) 50%,
+      rgba(82,166,255,.24) 73%,
+      transparent 88%
+    );
+
+  animation:river2 23s steps(24,end) infinite;
+}
+
+
+#folderDashboard .blob-3{
+  width:1320px;
+  height:185px;
+  left:-340px;
+  bottom:17%;
+
+  transform:rotate(8deg);
+
+  background:
+    radial-gradient(
+      ellipse at 12% 50%,
+      rgba(37,210,190,.50) 0%,
+      rgba(63,194,222,.39) 27%,
+      rgba(83,151,255,.31) 50%,
+      rgba(132,105,255,.18) 70%,
+      transparent 87%
+    );
+
+  animation:river3 26s steps(24,end) infinite;
+}
+
+
+#folderDashboard .blob-4{
+  width:1080px;
+  height:150px;
+  right:-310px;
+  bottom:-2%;
+
+  transform:rotate(-10deg);
+
+  background:
+    radial-gradient(
+      ellipse at 76% 50%,
+      rgba(255,197,111,.32) 0%,
+      rgba(255,143,183,.38) 30%,
+      rgba(181,111,245,.23) 56%,
+      transparent 86%
+    );
+
+  animation:river4 21s steps(24,end) infinite;
+}
+
+@keyframes riverMain{
+  0%,100%{transform:translate3d(-5%,0,0) rotate(-7deg) scaleX(1)}
+  50%{transform:translate3d(10%,3%,0) rotate(-3deg) scaleX(1.07)}
+}
+
+@keyframes riverMain2{
+  0%,100%{transform:translate3d(-4%,0,0) rotate(5deg) scaleX(1)}
+  50%{transform:translate3d(8%,-2%,0) rotate(1deg) scaleX(1.09)}
+}
+
+@keyframes river1{
+  0%,100%{transform:translate3d(-25px,0,0) rotate(-17deg) scaleX(1)}
+  50%{transform:translate3d(210px,70px,0) rotate(-9deg) scaleX(1.15)}
+}
+
+@keyframes river2{
+  0%,100%{transform:translate3d(25px,0,0) rotate(12deg) scaleX(1)}
+  50%{transform:translate3d(-230px,75px,0) rotate(7deg) scaleX(1.13)}
+}
+
+@keyframes river3{
+  0%,100%{transform:translate3d(-35px,15px,0) rotate(8deg) scaleX(1)}
+  50%{transform:translate3d(230px,-70px,0) rotate(3deg) scaleX(1.12)}
+}
+
+@keyframes river4{
+  0%,100%{transform:translate3d(25px,0,0) rotate(-10deg) scaleX(1)}
+  50%{transform:translate3d(-210px,-65px,0) rotate(-5deg) scaleX(1.14)}
+}
+
+#folderDashboard .app{
+  position:relative;
+  --surface-glow:rgba(255,255,255,.35);
+  z-index:1;
+  max-width:1120px;
+  margin:0 auto;
+  padding:32px 24px 70px;
+  perspective:1400px;
+}
+
+
+#folderDashboard .glass{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+
+  background:
+    radial-gradient(420px 240px at var(--cursor-x) var(--cursor-y),
+      rgba(255,255,255,.24), transparent 62%),
+    linear-gradient(
+      125deg,
+      rgba(255,255,255,.64) 0%,
+      rgba(255,255,255,.31) 40%,
+      rgba(255,255,255,.45) 70%,
+      rgba(255,255,255,.28) 100%
+    );
+
+  border:1px solid var(--line);
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 1px 0 0 rgba(255,255,255,.58),
+    inset -1px -1px 0 rgba(83,70,145,.045);
+
+  backdrop-filter:
+    blur(30px)
+    saturate(165%)
+    contrast(105%);
+
+  -webkit-backdrop-filter:
+    blur(30px)
+    saturate(165%)
+    contrast(105%);
+
+  /* depth is established above; keep the material soft rather than plastic */
+}
+
+
+
+#folderDashboard .glass .material-sheen{
+  position:absolute;
+  inset:-30%;
+  z-index:2;
+  pointer-events:none;
+  background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.14) 48%,transparent 58%);
+  transform:translateX(-35%) rotate(-5deg);
+  transition:transform .7s ease,opacity .35s ease;
+}
+
+#folderDashboard .glass:hover .material-sheen{transform:translateX(35%) rotate(-5deg);opacity:.9}
+
+@media (hover:none){#folderDashboard .glass:hover .material-sheen{transform:none}
+}
+
+
+#folderDashboard .glass{
+  --glass-opacity:.40;
+  --glass-tint:255,255,255;
+  --glass-accent:115,86,255;
+  --glass-accent-alpha:.08;
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.50),
+      rgba(255,255,255,.17) 42%,
+      rgba(255,255,255,.31) 72%,
+      rgba(255,255,255,.16));
+  backdrop-filter:blur(17px) saturate(175%) contrast(103%);
+  -webkit-backdrop-filter:blur(17px) saturate(175%) contrast(103%);
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:
+    0 24px 62px rgba(67,56,140,.105),
+    0 8px 20px rgba(67,56,140,.055),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 1px 0 0 rgba(255,255,255,.54),
+    inset -1px -1px 0 rgba(73,61,135,.045);
+}
+
+
+#folderDashboard .glass-liquid{
+  position:absolute!important;
+  z-index:0!important;
+  inset:-35%!important;
+  pointer-events:none;
+  border-radius:45%;
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(var(--glass-accent),.075) 16%,
+      rgba(var(--glass-accent),.20) 31%,
+      rgba(104,185,255,.12) 48%,
+      rgba(255,145,205,.09) 64%,
+      transparent 83%
+    ),
+    radial-gradient(
+      ellipse 30% 34% at 17% 42%,
+      rgba(var(--glass-accent),.20),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 26% 24% at 79% 62%,
+      rgba(99,177,255,.13),
+      transparent 72%
+    ),
+    radial-gradient(
+      220px 160px at var(--cursor-x,50%) var(--cursor-y,30%),
+      rgba(255,255,255,.16),
+      transparent 72%
+    );
+  filter:blur(19px) saturate(155%);
+  opacity:.90;
+  transform:rotate(-7deg) translate3d(0,0,0);
+  animation:glassCurrent 15s cubic-bezier(.45,.05,.55,.95) infinite alternate;
+}
+
+
+#folderDashboard .glass-reflection{
+  position:absolute!important;
+  z-index:1!important;
+  inset:0!important;
+  pointer-events:none;
+  border-radius:inherit;
+  background:
+    linear-gradient(115deg,
+      rgba(255,255,255,.56) 0%,
+      rgba(255,255,255,.16) 17%,
+      transparent 36%,
+      transparent 63%,
+      rgba(255,255,255,.10) 78%,
+      rgba(255,255,255,.30) 100%),
+    radial-gradient(280px 180px at var(--cursor-x,50%) var(--cursor-y,30%),
+      rgba(255,255,255,.32), transparent 68%);
+  mix-blend-mode:screen;
+  opacity:.70;
+}
+
+
+#folderDashboard .glass-edge{
+  position:absolute!important;
+  z-index:3!important;
+  inset:1px!important;
+  pointer-events:none;
+  border-radius:inherit;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 1px 0 0 rgba(255,255,255,.62),
+    inset -1px 0 0 rgba(105,90,160,.035),
+    inset 0 -1px 0 rgba(105,90,160,.055),
+    inset 0 -22px 40px rgba(var(--glass-accent),.018);
+}
+
+
+#folderDashboard .glass > :not(.glass-liquid):not(.glass-reflection):not(.glass-edge):not(.material-sheen){
+  position:relative;
+  z-index:4;
+}
+
+
+#folderDashboard .header.glass, #folderDashboard .banner.glass{ --glass-accent-alpha:.045; }
+
+#folderDashboard .clock.glass, #folderDashboard .filters.glass, #folderDashboard .modal.glass{ --glass-accent-alpha:.035; }
+
+
+#folderDashboard .filters.glass{
+  background:rgba(255,255,255,.32);
+  backdrop-filter:blur(12px) saturate(170%);
+  -webkit-backdrop-filter:blur(12px) saturate(170%);
+}
+
+
+#folderDashboard .subject-card{
+  --glass-accent:115,86,255;
+  background:
+    linear-gradient(125deg,
+      rgba(255,255,255,.58),
+      rgba(255,255,255,.25) 44%,
+      rgba(255,255,255,.40) 74%,
+      rgba(255,255,255,.22));
+}
+
+#folderDashboard .subject-card .glass-liquid{
+  inset:-50% -20%!important;
+  filter:blur(21px) saturate(160%);
+  opacity:1;
+  animation:subjectCurrent 12s ease-in-out infinite alternate;
+}
+
+
+#folderDashboard .subject-card .glass-reflection{
+  background:
+    radial-gradient(220px 150px at 8% 50%, rgba(var(--accent-rgb),.12), transparent 72%),
+    linear-gradient(115deg,
+      rgba(255,255,255,.56),
+      rgba(255,255,255,.12) 22%,
+      transparent 39%,
+      transparent 72%,
+      rgba(255,255,255,.25));
+}
+
+
+#folderDashboard .subject-thumb{
+  box-shadow:
+    10px 13px 25px rgba(63,52,122,.18),
+    -6px -6px 15px rgba(255,255,255,.90),
+    inset 0 1px 0 rgba(255,255,255,.78),
+    inset 1px 0 0 rgba(255,255,255,.34);
+}
+
+
+#folderDashboard .subject-go, #folderDashboard .clock, #folderDashboard .stat-icon, #folderDashboard .view-stats, #folderDashboard .add-plus{
+  box-shadow:
+    7px 9px 20px rgba(78,66,139,.12),
+    -6px -6px 15px rgba(255,255,255,.90),
+    inset 1px 1px 0 rgba(255,255,255,.95);
+}
+
+#folderDashboard .subject-go:active, #folderDashboard .view-stats:active, #folderDashboard .btn:active{
+  box-shadow:
+    inset 4px 5px 12px rgba(84,72,143,.13),
+    inset -4px -4px 12px rgba(255,255,255,.94);
+}
+
+@keyframes glassCurrent{
+  0%{transform:translate3d(-2%,1%,0) rotate(-7deg) scale(1)}
+  50%{transform:translate3d(4%,-3%,0) rotate(-3deg) scale(1.05)}
+  100%{transform:translate3d(-3%,4%,0) rotate(-9deg) scale(1.08)}
+}
+
+@keyframes subjectCurrent{
+  0%{transform:translate3d(-4%,0,0) rotate(-9deg) scale(1)}
+  100%{transform:translate3d(8%,4%,0) rotate(-2deg) scale(1.10)}
+}
+
+
+#folderDashboard .header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px;
+  padding:26px 30px;
+  margin-bottom:24px;
+  border-radius:var(--r-xl);
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.63),
+      rgba(255,255,255,.25),
+      rgba(255,255,255,.48)
+    );
+
+  animation:dropIn .65s ease both;
+}
+
+#folderDashboard .header h1{
+  margin:0 0 5px;
+  font-size:1.65rem;
+  letter-spacing:-.035em;
+}
+
+#folderDashboard .header p{
+  margin:0;
+  color:var(--muted);
+  font-size:.94rem;
+}
+
+#folderDashboard .wave{
+  display:inline-block;
+  transform-origin:70% 70%;
+  animation:wave 2.2s ease-in-out infinite;
+}
+
+#folderDashboard .clock{
+  display:flex;
+  align-items:center;
+  gap:17px;
+  padding:12px 18px;
+  border-radius:20px;
+
+  background:rgba(255,255,255,.47);
+  box-shadow:
+    var(--neu),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+#folderDashboard .clock .date-box{
+  font-size:.82rem;
+  color:var(--muted);
+  line-height:1.3;
+}
+
+#folderDashboard .clock .date-box b{
+  display:block;
+  color:var(--text);
+  font-size:.92rem;
+}
+
+#folderDashboard .timer{
+  display:flex;
+  gap:8px;
+  font-variant-numeric:tabular-nums;
+  padding-left:14px;
+  border-left:1px solid rgba(110,100,160,.15);
+}
+
+#folderDashboard .timer .seg{text-align:center}
+
+#folderDashboard .timer .seg .num{
+  display:inline-block;
+  font-size:1.08rem;
+  font-weight:750;
+}
+
+#folderDashboard .timer .seg .num.tick{animation:secondPulse .4s ease}
+
+#folderDashboard .timer .seg .lbl{
+  font-size:.58rem;
+  color:var(--soft);
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+
+#folderDashboard .stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+  margin-bottom:30px;
+}
+
+#folderDashboard .stat-card{
+  min-height:178px;
+  padding:21px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  border-radius:var(--r-lg);
+
+  opacity:0;
+  animation:cardIn .55s ease forwards;
+
+  transition:
+    transform .28s ease,
+    box-shadow .28s ease,
+    border-color .28s ease;
+}
+
+#folderDashboard .stat-card:hover{
+  transform:translateY(-4px);
+  box-shadow:
+    0 30px 65px rgba(72,61,145,.15),
+    0 8px 20px rgba(72,61,145,.07),
+    inset 0 1px 0 rgba(255,255,255,1);
+}
+
+#folderDashboard .stats .stat-card:nth-child(1){animation-delay:.05s}
+
+#folderDashboard .stats .stat-card:nth-child(2){animation-delay:.12s}
+
+#folderDashboard .stats .stat-card:nth-child(3){animation-delay:.19s}
+
+#folderDashboard .stats .stat-card:nth-child(4){animation-delay:.26s}
+
+#folderDashboard .stat-label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:.78rem;
+  color:var(--muted);
+}
+
+#folderDashboard .stat-icon{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.9rem;
+
+  background:rgba(255,255,255,.50);
+  border:1px solid rgba(255,255,255,.82);
+
+  box-shadow:
+    5px 6px 13px rgba(91,78,151,.11),
+    -4px -4px 12px rgba(255,255,255,.9),
+    inset 1px 1px 0 rgba(255,255,255,.95);
+}
+
+#folderDashboard .ring-wrap{
+  position:relative;
+  width:94px;
+  height:94px;
+}
+
+#folderDashboard .ring-wrap svg{transform:rotate(-90deg)}
+
+#folderDashboard .ring-bg{
+  fill:none;
+  stroke:rgba(130,112,210,.12);
+  stroke-width:9;
+}
+
+#folderDashboard .ring-fg{
+  fill:none;
+  stroke:url(#ringGrad);
+  stroke-width:9;
+  stroke-linecap:round;
+  stroke-dasharray:263;
+  stroke-dashoffset:263;
+  animation:ringFill 1.4s cubic-bezier(.3,.9,.4,1) .3s forwards;
+}
+
+#folderDashboard .ring-pct{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.18rem;
+  font-weight:750;
+  color:var(--purple);
+}
+
+#folderDashboard .stat-sub{
+  font-size:.75rem;
+  color:var(--soft);
+}
+
+#folderDashboard .big-num{
+  font-size:1.52rem;
+  font-weight:750;
+  letter-spacing:-.03em;
+}
+
+#folderDashboard .sparkline{
+  width:100%;
+  height:34px;
+  opacity:.9;
+}
+
+#folderDashboard .sparkline path{
+  fill:none;
+  stroke:var(--purple2);
+  stroke-width:2.6;
+  stroke-linecap:round;
+  stroke-dasharray:220;
+  stroke-dashoffset:220;
+  animation:draw 1.6s ease .4s forwards;
+}
+
+#folderDashboard .bars{
+  display:flex;
+  align-items:flex-end;
+  gap:3px;
+  height:34px;
+  width:100%;
+}
+
+#folderDashboard .bars i{
+  flex:1;
+  background:linear-gradient(180deg,#45d2a4,#b4edda);
+  border-radius:4px 4px 1px 1px;
+  transform:scaleY(0);
+  transform-origin:bottom;
+  animation:growBar .6s ease forwards;
+}
+
+#folderDashboard .streak-dots{
+  display:flex;
+  gap:5px;
+}
+
+#folderDashboard .streak-dots span{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ff9a52,#ff5d8a);
+  opacity:0;
+  animation:popIn .3s ease forwards;
+}
+
+#folderDashboard .flame{animation:flicker 1.6s ease-in-out infinite}
+
+
+#folderDashboard .section-head{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin:8px 5px 17px;
+}
+
+#folderDashboard .section-icon{
+  width:30px;
+  height:30px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  color:var(--purple);
+  font-size:16px;
+  background:rgba(255,255,255,.44);
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:
+    4px 5px 11px rgba(91,78,151,.09),
+    -3px -3px 8px rgba(255,255,255,.9);
+}
+
+#folderDashboard .section-title{
+  display:flex;
+  min-height:38px;
+  padding:0 4px;
+  border-radius:12px;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  align-items:center;
+  gap:10px;
+  font-size:1.16rem;
+  font-weight:750;
+  letter-spacing:-.02em;
+}
+
+#folderDashboard .filters{
+  position:relative;
+  display:flex;
+  gap:5px;
+  padding:5px;
+  border-radius:999px;
+  background:rgba(255,255,255,.34);
+
+  box-shadow:
+    inset 4px 5px 11px rgba(94,81,154,.10),
+    inset -4px -4px 11px rgba(255,255,255,.85);
+}
+
+#folderDashboard .filter-indicator{
+  position:absolute;
+  top:5px;
+  bottom:5px;
+  left:5px;
+  width:0;
+  border-radius:999px;
+
+  background:
+    linear-gradient(135deg,
+      rgba(112,81,255,.95),
+      rgba(166,138,255,.92));
+
+  box-shadow:
+    0 7px 18px rgba(115,86,255,.30),
+    inset 0 1px 0 rgba(255,255,255,.58);
+
+  transition:
+    transform .35s cubic-bezier(.3,.9,.4,1),
+    width .35s cubic-bezier(.3,.9,.4,1);
+
+  z-index:0;
+}
+
+#folderDashboard .filters button{
+  border:0;
+  background:transparent;
+  padding:8px 17px;
+  border-radius:999px;
+  font-size:.82rem;
+  color:var(--muted);
+  cursor:pointer;
+  position:relative;
+  z-index:1;
+  transition:color .25s ease;
+}
+
+#folderDashboard .filters button.active{color:#fff}
+
+
+#folderDashboard .subject-list{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  position:relative;
+}
+
+#folderDashboard .subject-list::before{
+  content:"";
+  position:absolute;
+  width:520px;
+  height:240px;
+  left:8%;
+  top:8%;
+  background:radial-gradient(ellipse,rgba(116,87,255,.10),transparent 70%);
+  filter:blur(22px);
+  pointer-events:none;
+  z-index:-1;
+}
+
+#folderDashboard .subject-card{
+  --accent:#7356ff;
+  --accent-rgb:115,86,255;
+
+  display:flex;
+  gap:20px;
+  align-items:center;
+  min-height:145px;
+  padding:17px;
+
+  opacity:0;
+  transform:translateY(14px);
+  animation:cardUp .55s cubic-bezier(.2,.8,.2,1) forwards;
+
+  border-radius:var(--r-xl);
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.70),
+      rgba(255,255,255,.34) 48%,
+      rgba(255,255,255,.52)
+    );
+
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease,
+    border-color .3s ease;
+}
+
+#folderDashboard .subject-card{
+  filter:drop-shadow(0 10px 22px rgba(var(--accent-rgb),.035));
+}
+
+
+#folderDashboard .subject-card::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  width:62%;
+  height:160%;
+  left:-7%;
+  top:-30%;
+  border-radius:50%;
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(var(--accent-rgb),.18),
+      rgba(var(--accent-rgb),.06) 42%,
+      transparent 72%
+    );
+
+  filter:blur(12px);
+  opacity:.95;
+  transform:rotate(-12deg);
+}
+
+#folderDashboard .subject-card::after{
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:1px;
+  border-radius:inherit;
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      112deg,
+      rgba(255,255,255,.38),
+      transparent 28%,
+      transparent 72%,
+      rgba(var(--accent-rgb),.035)
+    );
+}
+
+#folderDashboard .subject-card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(255,255,255,.96);
+
+  box-shadow:
+    0 32px 70px rgba(74,62,145,.15),
+    0 9px 25px rgba(74,62,145,.08),
+    0 0 45px rgba(var(--accent-rgb),.08),
+    inset 0 1px 0 rgba(255,255,255,1);
+}
+
+#folderDashboard .subject-thumb{
+  position:relative;
+  z-index:2;
+  width:112px;
+  height:112px;
+  flex-shrink:0;
+  border-radius:21px;
+
+  background-size:cover;
+  background-position:center;
+  background-blend-mode:screen;
+
+  overflow:hidden;
+
+  border:1px solid rgba(255,255,255,.82);
+
+  box-shadow:
+    9px 11px 23px rgba(68,58,125,.17),
+    -6px -6px 16px rgba(255,255,255,.93),
+    inset 0 1px 0 rgba(255,255,255,.9);
+
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .35s ease;
+}
+
+#folderDashboard .subject-card:hover .subject-thumb{
+  transform:translateY(-2px) scale(1.025);
+  box-shadow:
+    12px 15px 29px rgba(68,58,125,.20),
+    -6px -6px 17px rgba(255,255,255,.96),
+    0 0 25px rgba(var(--accent-rgb),.12);
+}
+
+#folderDashboard .subject-thumb::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.32),
+      transparent 34%,
+      transparent 72%,
+      rgba(255,255,255,.13)
+    );
+}
+
+#folderDashboard .subject-thumb::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:-45%;
+  top:-20%;
+  width:75%;
+  height:150%;
+  transform:rotate(22deg);
+
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.20),
+    transparent
+  );
+
+  filter:blur(4px);
+  transition:left .6s ease;
+}
+
+#folderDashboard .subject-card:hover .subject-thumb::after{
+  left:125%;
+}
+
+#folderDashboard .subject-body{
+  position:relative;
+  z-index:2;
+  flex:1;
+  min-width:0;
+}
+
+#folderDashboard .subject-tag{
+  display:inline-block;
+  font-size:.66rem;
+  font-weight:750;
+  padding:4px 10px;
+  border-radius:999px;
+  margin-bottom:7px;
+  letter-spacing:.02em;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.75),
+    0 4px 10px rgba(90,75,160,.06);
+}
+
+#folderDashboard .subject-name{
+  margin:0 0 8px;
+  font-size:1.1rem;
+  font-weight:750;
+  letter-spacing:-.025em;
+}
+
+#folderDashboard .subject-meta{
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  font-size:.77rem;
+  color:var(--muted);
+  margin-bottom:11px;
+}
+
+#folderDashboard .subject-meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+
+#folderDashboard .progress-row{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+#folderDashboard .progress-track{
+  height:8px;
+  border-radius:999px;
+  background:rgba(121,109,183,.11);
+  overflow:hidden;
+  margin-bottom:6px;
+  position:relative;
+
+  box-shadow:
+    inset 2px 2px 5px rgba(100,88,155,.08),
+    inset -1px -1px 3px rgba(255,255,255,.8);
+}
+
+#folderDashboard .progress-fill{
+  height:100%;
+  border-radius:999px;
+  width:0%;
+  position:relative;
+  overflow:hidden;
+  transition:width 1.1s cubic-bezier(.3,.9,.4,1);
+
+  box-shadow:
+    0 0 10px rgba(var(--accent-rgb),.24),
+    inset 0 1px 0 rgba(255,255,255,.40);
+}
+
+#folderDashboard .progress-fill::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.62),
+      transparent
+    );
+  transform:translateX(-100%);
+  animation:shimmer 2.4s ease-in-out 1.6s infinite;
+}
+
+#folderDashboard .progress-pct{
+  width:40px;
+  text-align:right;
+  font-size:.79rem;
+  font-weight:750;
+  color:var(--accent);
+}
+
+#folderDashboard .subject-next{
+  font-size:.77rem;
+  color:var(--soft);
+  margin-top:1px;
+}
+
+#folderDashboard .subject-go{
+  position:relative;
+  z-index:3;
+  width:58px;
+  height:58px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.70),
+      rgba(255,255,255,.30)
+    );
+
+  border:1px solid rgba(255,255,255,.84);
+
+  backdrop-filter:blur(9px) saturate(145%);
+  -webkit-backdrop-filter:blur(9px) saturate(145%);
+
+  box-shadow:
+    8px 10px 21px rgba(81,69,140,.13),
+    -6px -6px 15px rgba(255,255,255,.93),
+    inset 1px 1px 0 rgba(255,255,255,.95);
+
+  cursor:pointer;
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    background .25s ease;
+}
+
+#folderDashboard .subject-go:hover{
+  transform:translateY(-3px) scale(1.07);
+  background:rgba(255,255,255,.65);
+  box-shadow:
+    10px 14px 27px rgba(81,69,140,.15),
+    -6px -6px 16px rgba(255,255,255,.98),
+    0 0 25px rgba(var(--accent-rgb),.14),
+    inset 1px 1px 0 rgba(255,255,255,.98);
+}
+
+#folderDashboard .subject-go:active{
+  transform:scale(.95);
+  box-shadow:var(--inset);
+}
+
+#folderDashboard .subject-go svg{
+  width:21px;
+  height:21px;
+}
+
+
+#folderDashboard .banner{
+  margin-top:26px;
+  padding:21px 25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:16px;
+  border-radius:var(--r-xl);
+}
+
+#folderDashboard .banner-left{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+#folderDashboard .trophy{
+  font-size:2.25rem;
+  filter:drop-shadow(0 8px 13px rgba(115,86,255,.16));
+  animation:bob 3s ease-in-out infinite;
+}
+
+#folderDashboard .banner h3{
+  margin:0 0 3px;
+  font-size:1rem;
+}
+
+#folderDashboard .banner p{
+  margin:0;
+  font-size:.84rem;
+  color:var(--muted);
+}
+
+#folderDashboard .view-stats{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:11px 19px;
+  border-radius:999px;
+
+  background:rgba(255,255,255,.48);
+  border:1px solid rgba(255,255,255,.85);
+
+  box-shadow:
+    7px 8px 18px rgba(81,69,140,.10),
+    -5px -5px 13px rgba(255,255,255,.90),
+    inset 1px 1px 0 rgba(255,255,255,.94);
+
+  font-size:.83rem;
+  font-weight:650;
+  cursor:pointer;
+  color:var(--purple);
+
+  transition:transform .22s ease,box-shadow .22s ease;
+}
+
+#folderDashboard .view-stats:hover{
+  transform:translateY(-2px);
+}
+
+#folderDashboard .quote{
+  text-align:center;
+  margin-top:19px;
+  font-size:.79rem;
+  color:var(--soft);
+  font-style:italic;
+}
+
+
+#folderDashboard .add-card{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:18px;
+  cursor:pointer;
+  color:var(--purple);
+  font-weight:650;
+  font-size:.9rem;
+
+  border:1px dashed rgba(115,86,255,.24);
+  background:rgba(255,255,255,.30);
+  min-height:72px;
+
+  opacity:0;
+  transform:translateY(14px);
+  animation:cardUp .5s ease forwards;
+}
+
+#folderDashboard .add-card:hover{
+  background:rgba(255,255,255,.45);
+}
+
+#folderDashboard .add-plus{
+  width:31px;
+  height:31px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  color:#fff;
+
+  box-shadow:
+    0 7px 17px rgba(115,86,255,.25),
+    inset 0 1px 0 rgba(255,255,255,.42);
+}
+
+#folderDashboard .modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(30,26,62,.25);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:50;
+
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+
+#folderDashboard .modal-overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+#folderDashboard .modal{
+  width:100%;
+  max-width:440px;
+  padding:28px;
+  border-radius:28px;
+
+  transform:scale(.86) translateY(24px);
+  opacity:0;
+
+  transition:
+    transform .4s cubic-bezier(.34,1.56,.64,1),
+    opacity .25s ease;
+}
+
+#folderDashboard .modal-overlay.open .modal{
+  transform:scale(1) translateY(0);
+  opacity:1;
+}
+
+#folderDashboard .modal h3{
+  margin:0 0 18px;
+  font-size:1.08rem;
+}
+
+#folderDashboard .field{margin-bottom:14px}
+
+#folderDashboard .field label{
+  display:block;
+  font-size:.77rem;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+#folderDashboard .field input{
+  width:100%;
+  padding:11px 13px;
+  border-radius:13px;
+  font-size:.88rem;
+
+  border:1px solid rgba(255,255,255,.80);
+  background:rgba(255,255,255,.48);
+
+  color:var(--text);
+  outline:none;
+
+  box-shadow:
+    inset 3px 3px 8px rgba(92,80,148,.06),
+    inset -3px -3px 8px rgba(255,255,255,.82);
+
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+
+#folderDashboard .field input:focus{
+  border-color:rgba(115,86,255,.42);
+  box-shadow:
+    0 0 0 4px rgba(115,86,255,.07),
+    inset 3px 3px 8px rgba(92,80,148,.06);
+}
+
+#folderDashboard .field-row{
+  display:flex;
+  gap:10px;
+}
+
+#folderDashboard .field-row .field{flex:1}
+
+#folderDashboard .swatches{
+  display:flex;
+  gap:9px;
+  margin-top:4px;
+}
+
+#folderDashboard .swatch{
+  width:25px;
+  height:25px;
+  border-radius:50%;
+  cursor:pointer;
+  border:2px solid transparent;
+
+  box-shadow:
+    4px 5px 9px rgba(73,62,125,.13),
+    -3px -3px 7px rgba(255,255,255,.9);
+
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s ease;
+}
+
+#folderDashboard .swatch:hover{transform:scale(1.18)}
+
+#folderDashboard .swatch.selected{
+  border-color:var(--text);
+  transform:scale(1.22);
+  box-shadow:
+    0 6px 13px rgba(0,0,0,.14),
+    0 0 0 4px rgba(255,255,255,.62);
+}
+
+#folderDashboard .modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:21px;
+}
+
+#folderDashboard .btn{
+  padding:10px 19px;
+  border-radius:999px;
+  font-size:.84rem;
+  font-weight:650;
+  border:none;
+  cursor:pointer;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+
+#folderDashboard .btn:hover{transform:translateY(-2px)}
+
+#folderDashboard .btn:active{transform:translateY(0) scale(.97)}
+
+#folderDashboard .btn-ghost{
+  background:rgba(140,120,220,.08);
+  color:var(--muted);
+}
+
+#folderDashboard .btn-primary{
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  color:#fff;
+  box-shadow:
+    0 8px 19px rgba(115,86,255,.27),
+    inset 0 1px 0 rgba(255,255,255,.40);
+}
+
+
+#folderDashboard .ripple-host{
+  position:relative;
+  overflow:hidden;
+}
+
+#folderDashboard .ripple{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.55);
+  transform:scale(0);
+  pointer-events:none;
+  animation:rippleOut .6s ease-out forwards;
+}
+
+@keyframes rippleOut{
+  to{transform:scale(2.6);opacity:0}
+}
+
+
+@keyframes dropIn{
+  from{opacity:0;transform:translateY(-12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(13px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes cardUp{
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes ringFill{
+  to{stroke-dashoffset:var(--offset,100)}
+}
+
+@keyframes draw{
+  to{stroke-dashoffset:0}
+}
+
+@keyframes growBar{
+  to{transform:scaleY(1)}
+}
+
+@keyframes popIn{
+  to{opacity:1}
+}
+
+@keyframes flicker{
+  0%,100%{transform:scale(1) rotate(0)}
+  50%{transform:scale(1.12) rotate(-4deg)}
+}
+
+@keyframes wave{
+  0%,100%{transform:rotate(0)}
+  25%{transform:rotate(18deg)}
+  75%{transform:rotate(-8deg)}
+}
+
+@keyframes bob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+
+@keyframes shimmer{
+  0%{transform:translateX(-100%)}
+  55%,100%{transform:translateX(220%)}
+}
+
+@keyframes secondPulse{
+  0%{transform:scale(1.35);color:var(--purple)}
+  100%{transform:scale(1);color:var(--text)}
+}
+
+
+@keyframes riverMain{
+  0%,100%{transform:translate3d(-3%,0,0) rotate(-5deg) scale(1)}
+  50%{transform:translate3d(8%,7%,0) rotate(-2deg) scale(1.08)}
+}
+
+@keyframes riverMain2{
+  0%,100%{transform:translate3d(4%,0,0) rotate(6deg) scale(1)}
+  50%{transform:translate3d(-7%,-5%,0) rotate(3deg) scale(1.06)}
+}
+
+@keyframes river1{
+  0%,100%{transform:translate3d(-20px,0,0) rotate(-17deg) scale(1)}
+  50%{transform:translate3d(190px,75px,0) rotate(-10deg) scale(1.12)}
+}
+
+@keyframes river2{
+  0%,100%{transform:translate3d(20px,0,0) rotate(19deg) scale(1)}
+  50%{transform:translate3d(-180px,80px,0) rotate(12deg) scale(1.10)}
+}
+
+@keyframes river3{
+  0%,100%{transform:translate3d(0,0,0) rotate(10deg) scale(1)}
+  50%{transform:translate3d(150px,-65px,0) rotate(5deg) scale(1.09)}
+}
+
+@keyframes river4{
+  0%,100%{transform:translate3d(0,0,0) rotate(-12deg) scale(1)}
+  50%{transform:translate3d(-140px,-70px,0) rotate(-6deg) scale(1.10)}
+}
+
+#folderDashboard body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.18;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(255,255,255,.9),transparent 24%),
+    radial-gradient(circle at 80% 65%,rgba(255,255,255,.75),transparent 22%);
+  mix-blend-mode:screen;
+}
+
+@keyframes riverGlow{
+  0%{transform:translate3d(-2%,0,0) scale(1)}
+  100%{transform:translate3d(7%,5%,0) scale(1.08)}
+}
+
+@media (max-width:850px){#folderDashboard .app{padding:22px 16px 55px}
+#folderDashboard .stats{grid-template-columns:repeat(2,1fr)}
+#folderDashboard .header{align-items:flex-start}
+}
+
+@media (max-width:560px){#folderDashboard .glass{backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%)}
+#folderDashboard .blob{filter:blur(24px);opacity:.48}
+#folderDashboard .header{padding:21px;flex-direction:column}
+#folderDashboard .clock{width:100%;justify-content:space-between}
+#folderDashboard .stats{grid-template-columns:1fr 1fr;gap:11px}
+#folderDashboard .stat-card{min-height:155px;padding:14px}
+#folderDashboard .subject-card{gap:13px;padding:13px}
+#folderDashboard .subject-thumb{width:76px;height:76px;border-radius:16px}
+#folderDashboard .subject-go{width:45px;height:45px}
+#folderDashboard .subject-name{font-size:.96rem}
+#folderDashboard .subject-meta{gap:8px;font-size:.7rem}
+#folderDashboard .filters button{padding:7px 10px}
+}
+
+@media (max-width:400px){#folderDashboard .stats{grid-template-columns:1fr}
+#folderDashboard .section-head{align-items:flex-start;flex-direction:column}
+#folderDashboard .subject-card{align-items:flex-start}
+#folderDashboard .subject-go{margin-top:12px}
+}
+
+@media (prefers-reduced-motion:reduce){#folderDashboard *, #folderDashboard *::before, #folderDashboard *::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+
+
+#folderDashboard{
+  --neu:
+    3px 4px 10px rgba(74,63,132,.075),
+    -3px -3px 9px rgba(255,255,255,.72);
+
+  --inset:
+    inset 2px 3px 8px rgba(74,63,132,.075),
+    inset -2px -2px 8px rgba(255,255,255,.78);
+
+  --neu-dark-soft:rgba(74,63,132,.075);
+  --neu-light-soft:rgba(255,255,255,.78);
+}
+
+
+#folderDashboard .glass{
+  box-shadow:
+    0 24px 62px rgba(67,56,140,.095),
+    0 7px 19px rgba(67,56,140,.045),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 1px 0 0 rgba(255,255,255,.50),
+    inset -1px -1px 0 rgba(73,61,135,.035);
+}
+
+
+#folderDashboard .subject-go, #folderDashboard .clock, #folderDashboard .stat-icon, #folderDashboard .view-stats, #folderDashboard .add-plus{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.58),
+      rgba(255,255,255,.28)
+    );
+
+  box-shadow:
+    3px 4px 10px rgba(74,63,132,.075),
+    -3px -3px 9px rgba(255,255,255,.72),
+    inset 1px 1px 0 rgba(255,255,255,.82);
+
+  border-color:rgba(255,255,255,.72);
+}
+
+
+#folderDashboard .stat-icon{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.62),
+      rgba(255,255,255,.30)
+    ) !important;
+}
+
+
+#folderDashboard .clock{
+  box-shadow:
+    4px 5px 13px rgba(74,63,132,.065),
+    -3px -3px 10px rgba(255,255,255,.76),
+    inset 1px 1px 0 rgba(255,255,255,.86);
+}
+
+
+#folderDashboard .subject-go{
+  background:
+    radial-gradient(
+      circle at 32% 27%,
+      rgba(255,255,255,.68),
+      rgba(255,255,255,.27) 58%,
+      rgba(255,255,255,.19)
+    );
+  box-shadow:
+    4px 6px 13px rgba(74,63,132,.075),
+    -3px -3px 10px rgba(255,255,255,.78),
+    inset 1px 1px 0 rgba(255,255,255,.90);
+}
+
+#folderDashboard .subject-go:hover{
+  box-shadow:
+    6px 8px 16px rgba(74,63,132,.09),
+    -4px -4px 11px rgba(255,255,255,.84),
+    0 0 22px rgba(var(--accent-rgb),.10),
+    inset 1px 1px 0 rgba(255,255,255,.92);
+}
+
+
+#folderDashboard .subject-go:active, #folderDashboard .view-stats:active, #folderDashboard .btn:active{
+  box-shadow:
+    inset 2px 3px 8px rgba(74,63,132,.075),
+    inset -2px -2px 8px rgba(255,255,255,.78);
+}
+
+
+#folderDashboard .stat-icon{
+  box-shadow:
+    3px 4px 9px rgba(74,63,132,.06),
+    -3px -3px 8px rgba(255,255,255,.75),
+    inset 1px 1px 0 rgba(255,255,255,.86);
+}
+
+
+#folderDashboard .view-stats{
+  box-shadow:
+    3px 4px 10px rgba(74,63,132,.065),
+    -3px -3px 9px rgba(255,255,255,.76),
+    inset 1px 1px 0 rgba(255,255,255,.86);
+}
+
+
+#folderDashboard .add-plus{
+  box-shadow:
+    3px 4px 9px rgba(74,63,132,.08),
+    -3px -3px 8px rgba(255,255,255,.76),
+    inset 1px 1px 0 rgba(255,255,255,.35);
+}
+
+
+#folderDashboard .filters{
+  background:
+    rgba(255,255,255,.26);
+
+  box-shadow:
+    inset 2px 3px 8px rgba(74,63,132,.065),
+    inset -2px -2px 8px rgba(255,255,255,.76);
+}
+
+#folderDashboard .filter-indicator{
+  box-shadow:
+    0 5px 13px rgba(115,86,255,.20),
+    inset 0 1px 0 rgba(255,255,255,.50);
+}
+
+
+#folderDashboard .subject-thumb{
+  box-shadow:
+    6px 8px 16px rgba(63,52,122,.11),
+    -4px -4px 11px rgba(255,255,255,.80),
+    inset 0 1px 0 rgba(255,255,255,.72),
+    inset 1px 0 0 rgba(255,255,255,.28);
+}
+
+
+#folderDashboard .subject-card{
+  box-shadow:
+    0 24px 58px rgba(67,56,140,.085),
+    0 7px 18px rgba(67,56,140,.045),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 1px 0 0 rgba(255,255,255,.52),
+    inset -1px -1px 0 rgba(73,61,135,.035);
+}
+
+#folderDashboard .subject-card:hover{
+  box-shadow:
+    0 29px 66px rgba(67,56,140,.12),
+    0 9px 22px rgba(67,56,140,.055),
+    0 0 40px rgba(var(--accent-rgb),.065),
+    inset 0 1px 0 rgba(255,255,255,1);
+}
+
+
+#folderDashboard .progress-track{
+  box-shadow:
+    inset 1px 2px 5px rgba(80,68,143,.065),
+    inset -1px -1px 3px rgba(255,255,255,.70);
+}
+
+
+#folderDashboard .btn-ghost{
+  box-shadow:none;
+}
+
+#folderDashboard .field input{
+  box-shadow:
+    inset 2px 2px 6px rgba(92,80,148,.045),
+    inset -2px -2px 6px rgba(255,255,255,.70);
+}
+
+
+#folderDashboard .glass .material-sheen{
+  opacity:.92;
+}
+
+
+@media (prefers-reduced-motion:reduce){#folderDashboard .glass .material-sheen{transform:none!important}
+}
+
+
+
+#folderDashboard .glass-bubble{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+
+  background:
+    radial-gradient(
+      circle at 30% 22%,
+      rgba(255,255,255,.72) 0%,
+      rgba(255,255,255,.42) 27%,
+      rgba(255,255,255,.20) 64%,
+      rgba(255,255,255,.12) 100%
+    );
+
+  border:1px solid rgba(255,255,255,.76);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(165%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(165%);
+
+  box-shadow:
+    4px 6px 13px rgba(65,54,125,.075),
+    -3px -3px 10px rgba(255,255,255,.76),
+    inset 1px 1px 0 rgba(255,255,255,.88),
+    inset -1px -1px 0 rgba(72,59,137,.035);
+
+  transition:
+    transform .24s cubic-bezier(.2,.8,.2,1),
+    box-shadow .24s ease,
+    background .24s ease,
+    border-color .24s ease;
+}
+
+
+#folderDashboard .glass-bubble::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  border-radius:inherit;
+
+  background:
+    linear-gradient(
+      125deg,
+      rgba(255,255,255,.55) 0%,
+      rgba(255,255,255,.17) 19%,
+      transparent 43%,
+      transparent 72%,
+      rgba(255,255,255,.16) 100%
+    );
+
+  opacity:.85;
+}
+
+
+#folderDashboard .glass-bubble::after{
+  content:"";
+  position:absolute;
+  width:58%;
+  height:20%;
+  left:-13%;
+  top:7%;
+  z-index:1;
+  pointer-events:none;
+
+  transform:rotate(-22deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.46),
+      transparent
+    );
+
+  filter:blur(4px);
+  opacity:.65;
+}
+
+
+#folderDashboard .glass-bubble > *{
+  position:relative;
+  z-index:2;
+}
+
+
+#folderDashboard .subject-go{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+
+  /* IMPORTANT: no opaque neumorphic base */
+  background:
+    radial-gradient(
+      circle at 31% 24%,
+      rgba(255,255,255,.76),
+      rgba(255,255,255,.40) 30%,
+      rgba(255,255,255,.19) 68%,
+      rgba(255,255,255,.11)
+    );
+
+  border:1px solid rgba(255,255,255,.80);
+
+  backdrop-filter:
+    blur(19px)
+    saturate(170%);
+
+  -webkit-backdrop-filter:
+    blur(19px)
+    saturate(170%);
+
+  box-shadow:
+    4px 6px 14px rgba(65,54,125,.075),
+    -3px -3px 10px rgba(255,255,255,.80),
+    inset 1px 1px 0 rgba(255,255,255,.92),
+    inset -1px -1px 0 rgba(72,59,137,.03);
+
+  transition:
+    transform .24s cubic-bezier(.2,.8,.2,1),
+    box-shadow .24s ease,
+    background .24s ease,
+    border-color .24s ease;
+
+  /* preserve existing button behavior */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+
+#folderDashboard .subject-go::before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border-radius:50%;
+  z-index:0;
+
+  background:
+    radial-gradient(
+      circle at 50% 65%,
+      rgba(var(--accent-rgb),.15),
+      transparent 67%
+    );
+
+  filter:blur(4px);
+  opacity:.9;
+  pointer-events:none;
+}
+
+
+#folderDashboard .subject-go::after{
+  content:"";
+  position:absolute;
+  width:70%;
+  height:34%;
+  left:6%;
+  top:5%;
+  border-radius:50%;
+  z-index:1;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.62),
+      rgba(255,255,255,.13) 70%,
+      transparent
+    );
+
+  transform:rotate(-18deg);
+  filter:blur(4px);
+  pointer-events:none;
+}
+
+
+#folderDashboard .subject-go svg{
+  position:relative;
+  z-index:3;
+  width:20px;
+  height:20px;
+
+  filter:
+    drop-shadow(0 1px 2px rgba(255,255,255,.75));
+}
+
+
+#folderDashboard .subject-go:hover{
+  transform:translateY(-3px) scale(1.075);
+
+  background:
+    radial-gradient(
+      circle at 29% 21%,
+      rgba(255,255,255,.82),
+      rgba(255,255,255,.46) 34%,
+      rgba(255,255,255,.20) 70%
+    );
+
+  border-color:rgba(255,255,255,.94);
+
+  box-shadow:
+    7px 10px 19px rgba(65,54,125,.095),
+    -4px -4px 12px rgba(255,255,255,.88),
+    0 0 0 1px rgba(var(--accent-rgb),.08),
+    0 0 25px rgba(var(--accent-rgb),.13),
+    inset 1px 1px 0 rgba(255,255,255,.96);
+}
+
+
+#folderDashboard .subject-go:active{
+  transform:scale(.96);
+
+  box-shadow:
+    inset 2px 3px 7px rgba(65,54,125,.07),
+    inset -2px -2px 7px rgba(255,255,255,.78),
+    0 1px 4px rgba(65,54,125,.045);
+}
+
+
+#folderDashboard .view-stats, #folderDashboard .add-plus, #folderDashboard .btn-primary{
+  position:relative;
+}
+
+
+#folderDashboard .view-stats{
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.58),
+      rgba(255,255,255,.20)
+    ) !important;
+
+  border:1px solid rgba(255,255,255,.76) !important;
+
+  box-shadow:
+    4px 5px 11px rgba(65,54,125,.065),
+    -3px -3px 9px rgba(255,255,255,.74),
+    inset 1px 1px 0 rgba(255,255,255,.88) !important;
+}
+
+#folderDashboard .view-stats:hover{
+  box-shadow:
+    6px 8px 15px rgba(65,54,125,.08),
+    -3px -3px 10px rgba(255,255,255,.82),
+    inset 1px 1px 0 rgba(255,255,255,.92) !important;
+}
+
+
+#folderDashboard .add-plus{
+  background:
+    radial-gradient(
+      circle at 31% 23%,
+      rgba(255,255,255,.78),
+      rgba(255,255,255,.28) 58%,
+      rgba(115,86,255,.12)
+    ) !important;
+
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:
+    4px 5px 11px rgba(65,54,125,.07),
+    -3px -3px 9px rgba(255,255,255,.76),
+    inset 1px 1px 0 rgba(255,255,255,.90) !important;
+}
+
+
+#folderDashboard .btn-primary{
+  background:
+    linear-gradient(
+      135deg,
+      rgba(115,86,255,.84),
+      rgba(164,137,255,.68)
+    ) !important;
+
+  border:1px solid rgba(255,255,255,.46) !important;
+
+  box-shadow:
+    0 8px 18px rgba(115,86,255,.17),
+    inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+
+
+#folderDashboard .stat-icon{
+  background:
+    radial-gradient(
+      circle at 30% 22%,
+      rgba(255,255,255,.70),
+      rgba(255,255,255,.30) 60%,
+      rgba(255,255,255,.16)
+    ) !important;
+
+  border:1px solid rgba(255,255,255,.72);
+
+  box-shadow:
+    3px 4px 9px rgba(65,54,125,.055),
+    -3px -3px 8px rgba(255,255,255,.74),
+    inset 1px 1px 0 rgba(255,255,255,.86);
+}
+
+
+#folderDashboard .filters{
+  box-shadow:
+    inset 1px 2px 6px rgba(74,63,132,.045),
+    inset -1px -1px 6px rgba(255,255,255,.72);
+}
+
+#folderDashboard .filter-indicator{
+  box-shadow:
+    0 5px 12px rgba(115,86,255,.18),
+    inset 0 1px 0 rgba(255,255,255,.54);
+}
+
+
+#folderDashboard .subject-card{
+  --card-accent:var(--accent-violet);
+  --card-accent-rgb:115,86,255;
+
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+
+  display:grid;
+  grid-template-columns:112px minmax(0,1fr) 58px;
+  align-items:center;
+  gap:20px;
+
+  min-height:164px;
+  padding:18px;
+
+  /* Glass body — not a flat white rectangle */
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.61) 0%,
+      rgba(255,255,255,.29) 38%,
+      rgba(255,255,255,.39) 66%,
+      rgba(255,255,255,.22) 100%
+    );
+
+  border:1px solid rgba(255,255,255,.80);
+
+  backdrop-filter:
+    blur(27px)
+    saturate(165%);
+
+  -webkit-backdrop-filter:
+    blur(27px)
+    saturate(165%);
+
+  box-shadow:
+    0 25px 58px rgba(63,52,130,.085),
+    0 7px 18px rgba(63,52,130,.045),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 1px 0 0 rgba(255,255,255,.48),
+    inset -1px -1px 0 rgba(74,61,136,.035);
+
+  opacity:0;
+  transform:translateY(14px);
+  animation:cardUp .5s ease forwards;
+
+  transition:
+    transform .34s cubic-bezier(.2,.8,.2,1),
+    box-shadow .34s ease,
+    border-color .34s ease,
+    background .34s ease;
+}
+
+
+#folderDashboard .subject-card::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  pointer-events:none;
+
+  width:76%;
+  height:210%;
+  left:-12%;
+  top:-54%;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(var(--card-accent-rgb),.22) 0%,
+      rgba(var(--card-accent-rgb),.12) 31%,
+      rgba(var(--card-accent-rgb),.035) 58%,
+      transparent 78%
+    );
+
+  filter:blur(16px) saturate(140%);
+  transform:rotate(-13deg);
+
+  transition:
+    transform .55s ease,
+    opacity .35s ease;
+}
+
+
+#folderDashboard .subject-card::after{
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:1px;
+  pointer-events:none;
+  border-radius:inherit;
+
+  background:
+    linear-gradient(
+      115deg,
+      rgba(255,255,255,.43) 0%,
+      rgba(255,255,255,.12) 17%,
+      transparent 35%,
+      transparent 63%,
+      rgba(var(--card-accent-rgb),.045) 79%,
+      rgba(255,255,255,.19) 100%
+    );
+
+  mix-blend-mode:screen;
+}
+
+
+#folderDashboard .subject-card .subject-body::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+
+  width:68%;
+  height:180%;
+  left:-24%;
+  top:-42%;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 50%,
+      rgba(var(--card-accent-rgb),.11),
+      rgba(106,179,255,.055) 38%,
+      transparent 70%
+    );
+
+  filter:blur(12px);
+  pointer-events:none;
+}
+
+
+#folderDashboard .subject-card > *{
+  position:relative;
+  z-index:4;
+}
+
+
+#folderDashboard .subject-thumb{
+  position:relative;
+  z-index:5;
+
+  width:112px;
+  height:112px;
+
+  border-radius:22px;
+  overflow:hidden;
+
+  background-size:cover;
+  background-position:center;
+
+  border:1px solid rgba(255,255,255,.82);
+
+  box-shadow:
+    7px 10px 19px rgba(55,47,112,.12),
+    -5px -5px 13px rgba(255,255,255,.82),
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 1px 0 0 rgba(255,255,255,.40);
+
+  transition:
+    transform .38s cubic-bezier(.2,.8,.2,1),
+    box-shadow .38s ease;
+}
+
+
+#folderDashboard .subject-thumb::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.32) 0%,
+      rgba(255,255,255,.08) 25%,
+      transparent 45%,
+      transparent 70%,
+      rgba(255,255,255,.13) 100%
+    );
+}
+
+
+#folderDashboard .subject-thumb::after{
+  content:"";
+  position:absolute;
+  z-index:3;
+  pointer-events:none;
+
+  width:58%;
+  height:150%;
+  left:-78%;
+  top:-25%;
+
+  transform:rotate(22deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.38),
+      transparent
+    );
+
+  filter:blur(4px);
+  opacity:.62;
+
+  transition:left .72s cubic-bezier(.2,.8,.2,1);
+}
+
+#folderDashboard .subject-card:hover .subject-thumb{
+  transform:translateY(-3px) scale(1.025);
+
+  box-shadow:
+    9px 13px 24px rgba(55,47,112,.15),
+    -5px -5px 14px rgba(255,255,255,.88),
+    0 0 27px rgba(var(--card-accent-rgb),.10),
+    inset 0 1px 0 rgba(255,255,255,.90);
+}
+
+#folderDashboard .subject-card:hover .subject-thumb::after{
+  left:128%;
+}
+
+
+#folderDashboard .subject-body{
+  min-width:0;
+  align-self:center;
+}
+
+#folderDashboard .subject-tag{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+
+  font-size:.65rem;
+  font-weight:750;
+  letter-spacing:.025em;
+
+  padding:5px 10px;
+  border-radius:999px;
+  margin-bottom:8px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--card-accent-rgb),.13),
+      rgba(255,255,255,.32)
+    ) !important;
+
+  border:1px solid rgba(255,255,255,.58);
+
+  box-shadow:
+    0 4px 9px rgba(65,54,125,.035),
+    inset 0 1px 0 rgba(255,255,255,.78);
+}
+
+#folderDashboard .subject-name{
+  margin:0 0 9px;
+
+  font-size:1.12rem;
+  line-height:1.2;
+  font-weight:760;
+  letter-spacing:-.028em;
+
+  text-shadow:0 1px 0 rgba(255,255,255,.55);
+}
+
+#folderDashboard .subject-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:13px;
+
+  margin-bottom:12px;
+
+  font-size:.76rem;
+  color:var(--muted);
+}
+
+#folderDashboard .subject-meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+
+#folderDashboard .subject-meta span svg{
+  opacity:.72;
+}
+
+
+#folderDashboard .progress-track{
+  position:relative;
+
+  height:8px;
+  margin-bottom:6px;
+
+  border-radius:999px;
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(106,93,164,.10),
+      rgba(255,255,255,.24)
+    );
+
+  box-shadow:
+    inset 1px 2px 5px rgba(76,65,137,.07),
+    inset -1px -1px 3px rgba(255,255,255,.70);
+}
+
+#folderDashboard .progress-fill{
+  position:relative;
+  height:100%;
+  border-radius:999px;
+
+  box-shadow:
+    0 0 13px rgba(var(--card-accent-rgb),.20),
+    inset 0 1px 0 rgba(255,255,255,.46);
+}
+
+#folderDashboard .progress-fill::before{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.18),
+      transparent 30%,
+      rgba(255,255,255,.16)
+    );
+}
+
+#folderDashboard .progress-fill::after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:32%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.62),
+      transparent
+    );
+
+  filter:blur(4px);
+  transform:translateX(-150%);
+  animation:progressSheen 2.6s ease-in-out 1.4s infinite;
+}
+
+#folderDashboard .progress-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+#folderDashboard .progress-pct{
+  width:41px;
+  flex-shrink:0;
+  text-align:right;
+  font-size:.78rem;
+  font-weight:760;
+  color:var(--card-accent);
+}
+
+
+#folderDashboard .subject-next{
+  margin-top:1px;
+  font-size:.76rem;
+  color:var(--soft);
+}
+
+
+#folderDashboard .subject-go{
+  align-self:center;
+  justify-self:end;
+  z-index:7;
+
+  width:58px;
+  height:58px;
+
+  /* make the bubble feel embedded in the same glass material */
+  background:
+    radial-gradient(
+      circle at 29% 23%,
+      rgba(255,255,255,.76),
+      rgba(255,255,255,.38) 32%,
+      rgba(var(--card-accent-rgb),.08) 73%,
+      rgba(255,255,255,.14)
+    ) !important;
+
+  border:1px solid rgba(255,255,255,.82) !important;
+
+  box-shadow:
+    4px 6px 13px rgba(65,54,125,.065),
+    -3px -3px 10px rgba(255,255,255,.80),
+    0 0 19px rgba(var(--card-accent-rgb),.065),
+    inset 1px 1px 0 rgba(255,255,255,.92) !important;
+}
+
+#folderDashboard .subject-go:hover{
+  transform:translateY(-3px) scale(1.075);
+
+  box-shadow:
+    7px 10px 20px rgba(65,54,125,.09),
+    -4px -4px 12px rgba(255,255,255,.88),
+    0 0 30px rgba(var(--card-accent-rgb),.14),
+    inset 1px 1px 0 rgba(255,255,255,.96) !important;
+}
+
+
+#folderDashboard .subject-card:hover{
+  transform:translateY(-5px);
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.67),
+      rgba(255,255,255,.30) 43%,
+      rgba(255,255,255,.42) 70%,
+      rgba(255,255,255,.25)
+    );
+
+  border-color:rgba(255,255,255,.94);
+
+  box-shadow:
+    0 31px 70px rgba(63,52,130,.12),
+    0 10px 24px rgba(63,52,130,.055),
+    0 0 45px rgba(var(--card-accent-rgb),.075),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 1px 0 0 rgba(255,255,255,.60);
+}
+
+#folderDashboard .subject-card:hover::before{
+  transform:rotate(-9deg) translate3d(4%,2%,0) scale(1.08);
+}
+
+
+@keyframes progressSheen{
+  0%{transform:translateX(-150%)}
+  45%,100%{transform:translateX(430%)}
+}
+
+
+@media(max-width:720px){#folderDashboard .subject-card{
+    grid-template-columns:88px minmax(0,1fr) 48px;
+    gap:14px;
+    min-height:138px;
+  }
+#folderDashboard .subject-thumb{
+    width:88px;
+    height:88px;
+    border-radius:18px;
+  }
+#folderDashboard .subject-go{
+    width:48px;
+    height:48px;
+  }
+}
+
+@media(max-width:520px){#folderDashboard .subject-card{
+    grid-template-columns:72px minmax(0,1fr) 44px;
+    gap:12px;
+    padding:13px;
+  }
+#folderDashboard .subject-thumb{
+    width:72px;
+    height:72px;
+    border-radius:15px;
+  }
+#folderDashboard .subject-name{
+    font-size:.96rem;
+  }
+#folderDashboard .subject-meta{
+    gap:7px;
+    font-size:.69rem;
+  }
+#folderDashboard .subject-go{
+    width:44px;
+    height:44px;
+  }
+}
+
+
+
+#folderDashboard{
+  background:
+    linear-gradient(135deg,#fbfcff 0%,#ffffff 48%,#f8faff 100%);
+}
+
+#folderDashboard .blobs{
+  inset:-10%;
+  filter:saturate(150%);
+  opacity:1;
+}
+
+#folderDashboard .blobs::before{
+  width:150%;
+  height:22%;
+  left:-22%;
+  top:37%;
+  transform:rotate(-8deg);
+  background:
+    linear-gradient(90deg,
+      transparent 0%,
+      rgba(112,78,255,.10) 8%,
+      rgba(112,78,255,.28) 23%,
+      rgba(92,155,255,.23) 42%,
+      rgba(255,120,195,.22) 61%,
+      rgba(74,205,190,.20) 79%,
+      transparent 100%);
+  filter:blur(17px);
+  opacity:.95;
+}
+
+#folderDashboard .blobs::after{
+  width:145%;
+  height:17%;
+  left:-20%;
+  top:68%;
+  transform:rotate(6deg);
+  background:
+    linear-gradient(90deg,
+      transparent,
+      rgba(52,196,205,.16) 17%,
+      rgba(113,91,255,.20) 38%,
+      rgba(255,139,194,.17) 63%,
+      rgba(91,205,178,.14) 82%,
+      transparent);
+  filter:blur(21px);
+  opacity:.9;
+}
+
+#folderDashboard .blob{filter:blur(18px);opacity:.48;}
+
+#folderDashboard .blob-1{width:1250px;height:125px;left:-340px;top:7%;}
+
+#folderDashboard .blob-2{width:1380px;height:120px;right:-420px;top:25%;}
+
+#folderDashboard .blob-3{width:1450px;height:140px;left:-380px;bottom:19%;}
+
+#folderDashboard .blob-4{width:1220px;height:120px;right:-360px;bottom:1%;}
+
+
+#folderDashboard .glass{
+  background:
+    linear-gradient(125deg,
+      rgba(255,255,255,.46) 0%,
+      rgba(255,255,255,.20) 38%,
+      rgba(255,255,255,.30) 68%,
+      rgba(255,255,255,.15) 100%) !important;
+  backdrop-filter:blur(13px) saturate(180%) contrast(105%);
+  -webkit-backdrop-filter:blur(13px) saturate(180%) contrast(105%);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:
+    0 22px 55px rgba(67,56,140,.08),
+    0 6px 18px rgba(67,56,140,.035),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 1px 0 0 rgba(255,255,255,.62),
+    inset -1px -1px 0 rgba(73,61,135,.03);
+}
+
+#folderDashboard .glass-liquid{
+  opacity:1 !important;
+  filter:blur(15px) saturate(180%) !important;
+}
+
+
+#folderDashboard .glass-reflection{
+  opacity:.92 !important;
+  will-change:background;
+  background:
+    linear-gradient(115deg,
+      rgba(255,255,255,.64) 0%,
+      rgba(255,255,255,.18) 18%,
+      transparent 38%,
+      transparent 63%,
+      rgba(255,255,255,.12) 79%,
+      rgba(255,255,255,.32) 100%),
+    radial-gradient(360px 220px at var(--cursor-x,50%) var(--cursor-y,30%),
+      rgba(255,255,255,.30),transparent 68%) !important;
+}
+
+#folderDashboard .glass-edge{
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 2px 0 0 rgba(255,255,255,.62),
+    inset -1px 0 0 rgba(91,76,145,.035),
+    inset 0 -2px 0 rgba(91,76,145,.055) !important;
+}
+
+#folderDashboard .glass .material-sheen{
+  opacity:1 !important;
+  background:linear-gradient(110deg,transparent 34%,rgba(255,255,255,.22) 48%,transparent 62%) !important;
+}
+
+
+#folderDashboard{
+  --neu:
+    3px 4px 10px rgba(74,63,132,.055),
+    -3px -3px 9px rgba(255,255,255,.70);
+  --inset:
+    inset 2px 3px 7px rgba(74,63,132,.055),
+    inset -2px -2px 7px rgba(255,255,255,.74);
+}
+
+#folderDashboard .subject-go, #folderDashboard .view-stats, #folderDashboard .stat-icon, #folderDashboard .clock, #folderDashboard .add-plus{
+  box-shadow:
+    3px 4px 10px rgba(74,63,132,.055),
+    -3px -3px 9px rgba(255,255,255,.70),
+    inset 1px 1px 0 rgba(255,255,255,.88) !important;
+}
+
+
+#folderDashboard .subject-list{gap:22px;}
+
+#folderDashboard .subject-card{
+  display:grid !important;
+  grid-template-columns:138px minmax(0,1fr) 64px !important;
+  min-height:194px !important;
+  padding:18px !important;
+  gap:22px !important;
+  border-radius:30px !important;
+  background:
+    linear-gradient(120deg,
+      rgba(255,255,255,.52),
+      rgba(255,255,255,.18) 43%,
+      rgba(255,255,255,.31) 72%,
+      rgba(255,255,255,.13)) !important;
+  box-shadow:
+    0 25px 58px rgba(63,52,130,.085),
+    0 7px 18px rgba(63,52,130,.04),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 1px 0 0 rgba(255,255,255,.60) !important;
+}
+
+#folderDashboard .subject-card::before{
+  width:82% !important;
+  height:230% !important;
+  left:-18% !important;
+  top:-64% !important;
+  background:
+    radial-gradient(ellipse,
+      rgba(var(--card-accent-rgb),.30) 0%,
+      rgba(var(--card-accent-rgb),.15) 30%,
+      rgba(var(--card-accent-rgb),.055) 56%,
+      transparent 78%) !important;
+  filter:blur(14px) !important;
+}
+
+#folderDashboard .subject-card::after{
+  background:
+    linear-gradient(118deg,
+      rgba(255,255,255,.58) 0%,
+      rgba(255,255,255,.16) 16%,
+      transparent 35%,
+      transparent 61%,
+      rgba(var(--card-accent-rgb),.06) 79%,
+      rgba(255,255,255,.28) 100%) !important;
+}
+
+#folderDashboard .subject-thumb{
+  width:138px !important;
+  height:138px !important;
+  border-radius:25px !important;
+  box-shadow:
+    9px 12px 23px rgba(55,47,112,.13),
+    -6px -6px 15px rgba(255,255,255,.88),
+    inset 0 1px 0 rgba(255,255,255,.92),
+    inset 1px 0 0 rgba(255,255,255,.44) !important;
+}
+
+#folderDashboard .subject-thumb::before{
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.44),
+      rgba(255,255,255,.10) 27%,
+      transparent 46%,
+      transparent 70%,
+      rgba(255,255,255,.18)) !important;
+}
+
+#folderDashboard .subject-body{
+  padding:8px 4px !important;
+}
+
+#folderDashboard .subject-tag{
+  padding:6px 11px !important;
+  margin-bottom:10px !important;
+}
+
+#folderDashboard .subject-name{
+  font-size:1.20rem !important;
+  margin-bottom:11px !important;
+}
+
+#folderDashboard .subject-meta{
+  gap:16px !important;
+  margin-bottom:14px !important;
+}
+
+#folderDashboard .progress-track{
+  height:10px !important;
+  box-shadow:
+    inset 2px 2px 6px rgba(76,65,137,.09),
+    inset -1px -1px 4px rgba(255,255,255,.82) !important;
+}
+
+#folderDashboard .progress-fill{
+  box-shadow:
+    0 0 15px rgba(var(--card-accent-rgb),.28),
+    inset 0 1px 0 rgba(255,255,255,.58) !important;
+}
+
+#folderDashboard .subject-next{
+  margin-top:4px !important;
+  padding-top:3px;
+}
+
+#folderDashboard .subject-go{
+  width:64px !important;
+  height:64px !important;
+  border-radius:50% !important;
+  background:
+    radial-gradient(circle at 29% 22%,
+      rgba(255,255,255,.82),
+      rgba(255,255,255,.42) 32%,
+      rgba(var(--card-accent-rgb),.11) 72%,
+      rgba(255,255,255,.12)) !important;
+  box-shadow:
+    5px 7px 15px rgba(65,54,125,.07),
+    -4px -4px 11px rgba(255,255,255,.84),
+    0 0 24px rgba(var(--card-accent-rgb),.09),
+    inset 1px 1px 0 rgba(255,255,255,.95) !important;
+}
+
+#folderDashboard .subject-go::before{
+  inset:4px !important;
+  background:
+    radial-gradient(circle at 50% 65%,
+      rgba(var(--card-accent-rgb),.24),
+      transparent 67%) !important;
+}
+
+#folderDashboard .subject-go::after{
+  width:72% !important;
+  height:36% !important;
+  left:5% !important;
+  top:5% !important;
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.72),
+      rgba(255,255,255,.15) 72%,
+      transparent) !important;
+}
+
+
+#folderDashboard .subject-card:hover::before{
+  transform:rotate(-7deg) translate3d(7%,3%,0) scale(1.12) !important;
+}
+
+#folderDashboard .subject-card:hover .subject-thumb{
+  transform:translateY(-4px) scale(1.035) !important;
+}
+
+#folderDashboard .subject-card:hover .subject-go{
+  transform:translateY(-4px) scale(1.09) !important;
+}
+
+
+@media(max-width:720px){#folderDashboard .subject-card{
+    grid-template-columns:96px minmax(0,1fr) 50px !important;
+    min-height:152px !important;
+    gap:15px !important;
+  }
+#folderDashboard .subject-thumb{width:96px !important;height:96px !important;}
+#folderDashboard .subject-go{width:50px !important;height:50px !important;}
+}
+
+@media(max-width:520px){#folderDashboard .subject-card{
+    grid-template-columns:76px minmax(0,1fr) 44px !important;
+    min-height:136px !important;
+    padding:13px !important;
+    gap:11px !important;
+  }
+#folderDashboard .subject-thumb{width:76px !important;height:76px !important;}
+#folderDashboard .subject-go{width:44px !important;height:44px !important;}
+}
+
+
+#folderDashboard .subject-card{
+  --accent-soft:rgba(var(--accent-rgb),.10);
+  --accent-glow:rgba(var(--accent-rgb),.20);
+  --accent-tint:rgba(var(--accent-rgb),.055);
+  --accent-border:rgba(var(--accent-rgb),.22);
+  --accent-gradient:linear-gradient(135deg,var(--accent),rgba(var(--accent-rgb),.52));
+  --accent-liquid:linear-gradient(105deg,transparent 0%,rgba(var(--accent-rgb),.08) 16%,rgba(var(--accent-rgb),.20) 34%,rgba(var(--accent-rgb),.10) 57%,transparent 84%);
+}
+
+#folderDashboard .subject-card::before{
+  background:
+    var(--accent-liquid),
+    radial-gradient(ellipse at 18% 46%,rgba(var(--accent-rgb),.25),rgba(var(--accent-rgb),.11) 38%,transparent 72%) !important;
+}
+
+#folderDashboard .subject-card::after{
+  background:
+    linear-gradient(118deg,rgba(255,255,255,.58),rgba(255,255,255,.14) 17%,transparent 36%,transparent 61%,rgba(var(--accent-rgb),.07) 78%,rgba(255,255,255,.27)),
+    radial-gradient(260px 170px at 12% 50%,rgba(var(--accent-rgb),.09),transparent 72%) !important;
+}
+
+#folderDashboard .subject-card .glass-liquid{
+  background:
+    var(--accent-liquid),
+    radial-gradient(ellipse 34% 35% at 17% 43%,rgba(var(--accent-rgb),.20),transparent 72%),
+    radial-gradient(ellipse 28% 25% at 78% 62%,rgba(var(--accent-rgb),.08),transparent 72%) !important;
+}
+
+#folderDashboard .subject-tag{
+  color:var(--accent) !important;
+  background:linear-gradient(135deg,rgba(var(--accent-rgb),.14),rgba(255,255,255,.34)) !important;
+  border-color:var(--accent-border) !important;
+  box-shadow:0 4px 10px rgba(var(--accent-rgb),.06),inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+
+#folderDashboard .progress-fill{
+  background:var(--accent-gradient) !important;
+  box-shadow:0 0 15px rgba(var(--accent-rgb),.24),inset 0 1px 0 rgba(255,255,255,.58) !important;
+}
+
+#folderDashboard .progress-pct{color:var(--accent) !important;}
+
+#folderDashboard .subject-go{
+  color:var(--accent) !important;
+  background:radial-gradient(circle at 29% 22%,rgba(255,255,255,.82),rgba(255,255,255,.40) 31%,rgba(var(--accent-rgb),.11) 70%,rgba(255,255,255,.13)) !important;
+  border-color:var(--accent-border) !important;
+  box-shadow:5px 7px 15px rgba(65,54,125,.06),-4px -4px 11px rgba(255,255,255,.84),0 0 24px rgba(var(--accent-rgb),.09),inset 1px 1px 0 rgba(255,255,255,.95) !important;
+}
+
+#folderDashboard .subject-go::before{background:radial-gradient(circle,rgba(var(--accent-rgb),.25),transparent 68%) !important;}
+
+#folderDashboard .subject-thumb{
+  box-shadow:9px 12px 23px rgba(55,47,112,.13),-6px -6px 15px rgba(255,255,255,.88),0 0 0 1px rgba(var(--accent-rgb),.08),0 0 25px rgba(var(--accent-rgb),.07),inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+
+#folderDashboard .subject-card:hover{
+  box-shadow:0 31px 68px rgba(63,52,130,.11),0 9px 23px rgba(63,52,130,.045),0 0 42px rgba(var(--accent-rgb),.10),inset 0 1px 0 rgba(255,255,255,1) !important;
+}
+
+
+#folderDashboard .glass{position:relative;overflow:hidden;}
+
+#folderDashboard .glass::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;
+  background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,0) 35%);
+}
+
+#folderDashboard .glass::after{
+  content:"";position:absolute;inset:1px;border-radius:inherit;pointer-events:none;z-index:5;
+  background:linear-gradient(120deg,rgba(255,255,255,.18),transparent 45%);
+}
+
+
+#folderDashboard .glass > *{position:relative;z-index:6;}
+
+
+#folderDashboard .glass .glass-reflection{
+  transform:translate3d(calc((var(--cursor-x,50) - 50) * .18px),calc((var(--cursor-y,50) - 50) * .12px),0);
+  transition:transform .18s ease-out,opacity .25s ease;
+}
+
+#folderDashboard .subject-card::before, #folderDashboard .subject-card::after{z-index:1;}
+
+#folderDashboard .subject-card .subject-thumb, #folderDashboard .subject-card .subject-body, #folderDashboard .subject-card .subject-go{z-index:2;}
+
+
+#folderDashboard .glass{
+  position:relative;
+  border:1px solid rgba(255,255,255,.34) !important;
+  box-shadow:
+    inset 1px 1px 0 rgba(255,255,255,.62),
+    inset -1px -1px 0 rgba(126,110,170,.07),
+    0 18px 45px rgba(70,58,110,.075);
+}
+
+#folderDashboard .glass::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:3;
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.72) 0%,
+      rgba(255,255,255,.30) 13%,
+      rgba(255,255,255,0) 34%,
+      rgba(255,255,255,0) 72%,
+      rgba(120,105,155,.055) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  padding:1px;
+}
+
+#folderDashboard .glass::after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:3;
+  background:
+    linear-gradient(120deg,
+      rgba(255,255,255,.20),
+      transparent 38%,
+      transparent 68%,
+      rgba(104,92,135,.035));
+  opacity:.8;
+}
+
+#folderDashboard .glass > *{position:relative;z-index:4;}
+
+
+#folderDashboard .subject-card{
+  border-bottom-color:rgba(var(--accent-rgb),.12) !important;
+}
+
+#folderDashboard .subject-card::after{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.34),
+    inset 0 -1px 0 rgba(var(--accent-rgb),.075);
+}
+
+@media (prefers-reduced-motion: reduce){#folderDashboard .glass::before, #folderDashboard .glass::after{transition:none !important;}
+}
+
+
+#folderDashboard{
+  --glass-l1-alpha:.25;
+  --glass-l1-blur:15px;
+  --glass-l2-alpha:.45;
+  --glass-l2-blur:13px;
+  --glass-l3-alpha:.60;
+  --glass-l3-blur:10px;
+  --glass-l4-alpha:.70;
+  --glass-l4-blur:8px;
+}
+
+
+#folderDashboard .filters.glass{
+  background:rgba(255,255,255,var(--glass-l1-alpha)) !important;
+  backdrop-filter:blur(var(--glass-l1-blur)) saturate(160%) !important;
+  -webkit-backdrop-filter:blur(var(--glass-l1-blur)) saturate(160%) !important;
+}
+
+
+#folderDashboard .stat-card.glass, #folderDashboard .subject-card.glass, #folderDashboard .add-card.glass{
+  background:rgba(255,255,255,var(--glass-l2-alpha)) !important;
+  backdrop-filter:blur(var(--glass-l2-blur)) saturate(175%) !important;
+  -webkit-backdrop-filter:blur(var(--glass-l2-blur)) saturate(175%) !important;
+}
+
+
+#folderDashboard .subject-card.glass{
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.58),
+      rgba(255,255,255,.40) 45%,
+      rgba(var(--accent-rgb),.045) 100%) !important;
+}
+
+
+#folderDashboard .header.glass, #folderDashboard .banner.glass, #folderDashboard .modal.glass{
+  background:rgba(255,255,255,var(--glass-l3-alpha)) !important;
+  backdrop-filter:blur(var(--glass-l3-blur)) saturate(180%) !important;
+  -webkit-backdrop-filter:blur(var(--glass-l3-blur)) saturate(180%) !important;
+}
+
+
+#folderDashboard .clock.glass, #folderDashboard .view-stats, #folderDashboard .add-plus, #folderDashboard .subject-go, #folderDashboard .subject-tag{
+  background:rgba(255,255,255,var(--glass-l4-alpha)) !important;
+  backdrop-filter:blur(var(--glass-l4-blur)) saturate(185%) !important;
+  -webkit-backdrop-filter:blur(var(--glass-l4-blur)) saturate(185%) !important;
+}
+
+
+#folderDashboard .subject-go{
+  background:
+    radial-gradient(circle at 29% 22%,
+      rgba(255,255,255,.88),
+      rgba(255,255,255,.70) 32%,
+      rgba(var(--accent-rgb),.12) 72%,
+      rgba(255,255,255,.64)) !important;
+}
+
+
+#folderDashboard .subject-tag{
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.74),
+      rgba(var(--accent-rgb),.08)) !important;
+}
+
+
+#folderDashboard .glass-level-1{background:rgba(255,255,255,var(--glass-l1-alpha)) !important;backdrop-filter:blur(var(--glass-l1-blur)) saturate(160%) !important;-webkit-backdrop-filter:blur(var(--glass-l1-blur)) saturate(160%) !important;}
+
+#folderDashboard .glass-level-2{background:rgba(255,255,255,var(--glass-l2-alpha)) !important;backdrop-filter:blur(var(--glass-l2-blur)) saturate(175%) !important;-webkit-backdrop-filter:blur(var(--glass-l2-blur)) saturate(175%) !important;}
+
+#folderDashboard .glass-level-3{background:rgba(255,255,255,var(--glass-l3-alpha)) !important;backdrop-filter:blur(var(--glass-l3-blur)) saturate(180%) !important;-webkit-backdrop-filter:blur(var(--glass-l3-blur)) saturate(180%) !important;}
+
+#folderDashboard .glass-level-4{background:rgba(255,255,255,var(--glass-l4-alpha)) !important;backdrop-filter:blur(var(--glass-l4-blur)) saturate(185%) !important;-webkit-backdrop-filter:blur(var(--glass-l4-blur)) saturate(185%) !important;}
+
+
+#folderDashboard .glass{
+  isolation:isolate;
+  transform-style:preserve-3d;
+}
+
+#folderDashboard .glass::before, #folderDashboard .glass::after, #folderDashboard .glass > .glass-liquid, #folderDashboard .glass > .glass-reflection, #folderDashboard .glass > .glass-edge, #folderDashboard .glass > .material-sheen{
+  pointer-events:none;
+}
+
+
+#folderDashboard button:focus-visible, #folderDashboard [role="button"]:focus-visible, #folderDashboard .add-card:focus-visible{
+  outline:2px solid rgba(124,92,255,.55);
+  outline-offset:3px;
+  box-shadow:0 0 0 4px rgba(124,92,255,.10), var(--neu, 3px 4px 10px rgba(74,63,132,.055), -3px -3px 9px rgba(255,255,255,.70));
+}
+
+
+@media (hover:none), (pointer:coarse){#folderDashboard .tilt{transform:none !important;}
+#folderDashboard .subject-card:hover, #folderDashboard .subject-card:hover .subject-thumb, #folderDashboard .subject-card:hover .subject-go{transform:none !important;}
+#folderDashboard .glass .material-sheen{opacity:.55 !important;transform:none !important;}
+}
+
+
+@media (prefers-reduced-motion:reduce){#folderDashboard *, #folderDashboard *::before, #folderDashboard *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+#folderDashboard .tilt{transform:none !important;}
+#folderDashboard .glass .material-sheen{transform:none !important;}
+}
+
+
+@supports not ((backdrop-filter:blur(4px)) or (-webkit-backdrop-filter:blur(4px))){#folderDashboard .glass{background:rgba(255,255,255,.82) !important;}
+#folderDashboard .glass-level-1{background:rgba(255,255,255,.86) !important;}
+#folderDashboard .glass-level-2{background:rgba(255,255,255,.90) !important;}
+#folderDashboard .glass-level-3{background:rgba(255,255,255,.94) !important;}
+#folderDashboard .glass-level-4{background:rgba(255,255,255,.97) !important;}
+}
+
+
+#folderDashboard .glass > .glass-liquid, #folderDashboard .glass > .glass-reflection, #folderDashboard .glass > .glass-edge, #folderDashboard .glass > .material-sheen{z-index:1 !important;}
+
+#folderDashboard .glass > :not(.glass-liquid):not(.glass-reflection):not(.glass-edge):not(.material-sheen){z-index:4;}
+
+
+#folderDashboard.modal-open{overflow:hidden;}
+
+#folderDashboard .modal-overlay.open{overscroll-behavior:contain;}
+
+#folderDashboard .design-credit{
+  width:100%;
+  text-align:center;
+  margin:18px 0 8px;
+  padding:6px 12px;
+  font-size:.68rem;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:rgba(92,91,108,.48);
+  user-select:none;
+}
+
+@media (max-width:640px){#folderDashboard .design-credit{margin-top:14px;font-size:.62rem}
+}
+
+
+#folderDashboard .subject-go{
+  position:relative !important;
+  z-index:4 !important;
+  width:58px !important;
+  height:58px !important;
+  border-radius:50% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.70),rgba(255,255,255,.30)) !important;
+  border:1px solid rgba(255,255,255,.84) !important;
+  backdrop-filter:blur(9px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(9px) saturate(145%) !important;
+  box-shadow:8px 10px 21px rgba(81,69,140,.13),-6px -6px 15px rgba(255,255,255,.93),inset 1px 1px 0 rgba(255,255,255,.95) !important;
+}
+
+#folderDashboard .subject-go svg{
+  position:relative !important;
+  z-index:6 !important;
+  width:21px !important;
+  height:21px !important;
+  display:block !important;
+  color:inherit !important;
+  filter:drop-shadow(0 1px 2px rgba(255,255,255,.75));
+}
+
+#folderDashboard .subject-go::before, #folderDashboard .subject-go::after{ z-index:1 !important; }
+
+#folderDashboard .subject-go:hover{
+  transform:translateY(-3px) scale(1.07) !important;
+  background:rgba(255,255,255,.65) !important;
+}
+
+#folderDashboard .add-card{
+  position:relative !important;
+  z-index:2 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:10px !important;
+  min-height:72px !important;
+}
+
+#folderDashboard .add-plus{
+  position:relative !important;
+  z-index:6 !important;
+  width:31px !important;
+  height:31px !important;
+  min-width:31px !important;
+  flex:0 0 31px !important;
+  border-radius:50% !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:linear-gradient(135deg,var(--purple),var(--purple2)) !important;
+  color:#fff !important;
+  font-size:1.1rem !important;
+  line-height:1 !important;
+  box-shadow:0 7px 17px rgba(115,86,255,.25),inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+
+#folderDashboard .add-card:hover .add-plus{
+  transform:translateY(-1px) scale(1.04);
+  box-shadow:0 9px 20px rgba(115,86,255,.28),inset 0 1px 0 rgba(255,255,255,.48) !important;
+}
+
+
+#folderDashboard, #folderDashboard{width:100%;max-width:100%;overflow-x:hidden;}
+
+@media (max-width:900px){#folderDashboard .app{max-width:100%;padding:24px 18px 60px;}
+#folderDashboard .header{gap:18px;padding:22px 24px;}
+#folderDashboard .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:24px;}
+#folderDashboard .stat-card{min-height:158px;padding:18px;}
+#folderDashboard .subject-list{gap:16px;}
+#folderDashboard .subject-card{min-width:0;}
+#folderDashboard .banner{padding:19px 21px;}
+}
+
+@media (max-width:640px){#folderDashboard .app{padding:14px 12px 44px;}
+#folderDashboard .header{
+    padding:18px;
+    margin-bottom:16px;
+    border-radius:22px;
+  }
+#folderDashboard .header h1{font-size:1.38rem;line-height:1.25;}
+#folderDashboard .header p{font-size:.82rem;margin-top:5px;}
+#folderDashboard .clock{
+    width:100%;
+    gap:12px;
+    padding:10px 13px;
+    border-radius:17px;
+  }
+#folderDashboard .clock .date-box{font-size:.70rem;min-width:0;}
+#folderDashboard .clock .date-box b{font-size:.79rem;}
+#folderDashboard .timer{gap:6px;padding-left:10px;margin-left:auto;}
+#folderDashboard .timer .seg .num{font-size:.95rem;}
+#folderDashboard .timer .seg .lbl{font-size:.52rem;}
+#folderDashboard .stats{gap:10px;margin-bottom:21px;}
+#folderDashboard .stat-card{min-height:132px;padding:13px 10px;gap:6px;border-radius:18px;}
+#folderDashboard .stat-card .stat-icon{width:38px;height:38px;font-size:1.05rem;}
+#folderDashboard .stat-card .stat-value{font-size:1.28rem;}
+#folderDashboard .stat-card .stat-label{font-size:.69rem;}
+#folderDashboard .stat-card .stat-sub{font-size:.60rem;}
+#folderDashboard .section-head{gap:11px;margin-bottom:13px;}
+#folderDashboard .section-title{font-size:1rem;}
+#folderDashboard .section-icon{width:29px;height:29px;}
+#folderDashboard .filters{max-width:100%;overflow-x:auto;scrollbar-width:none;}
+#folderDashboard .filters::-webkit-scrollbar{display:none;}
+#folderDashboard .filters button{white-space:nowrap;padding:7px 10px;font-size:.68rem;}
+#folderDashboard .subject-list{gap:12px;}
+#folderDashboard .subject-card{
+    grid-template-columns:70px minmax(0,1fr) 46px !important;
+    min-height:122px !important;
+    padding:11px !important;
+    gap:10px !important;
+    border-radius:22px !important;
+  }
+#folderDashboard .subject-thumb{
+    width:70px !important;
+    height:70px !important;
+    border-radius:17px !important;
+  }
+#folderDashboard .subject-body{padding:3px 1px !important;min-width:0;}
+#folderDashboard .subject-tag{font-size:.60rem;padding:4px 8px !important;margin-bottom:6px !important;}
+#folderDashboard .subject-name{
+    font-size:.92rem !important;
+    line-height:1.18;
+    margin-bottom:7px !important;
+    overflow-wrap:anywhere;
+  }
+#folderDashboard .subject-meta{gap:7px !important;margin-bottom:8px !important;font-size:.62rem;flex-wrap:wrap;}
+#folderDashboard .progress-track{height:7px !important;}
+#folderDashboard .subject-next{font-size:.63rem;line-height:1.25;}
+#folderDashboard .subject-go{
+    width:46px !important;
+    height:46px !important;
+    align-self:center;
+  }
+#folderDashboard .subject-go svg{width:18px !important;height:18px !important;}
+#folderDashboard .add-card{min-height:62px !important;padding:14px !important;border-radius:20px !important;}
+#folderDashboard .add-plus{width:29px !important;height:29px !important;min-width:29px !important;flex-basis:29px !important;}
+#folderDashboard .banner{
+    margin-top:18px;
+    padding:16px;
+    gap:13px;
+    border-radius:22px;
+  }
+#folderDashboard .banner-left{align-items:flex-start;gap:11px;min-width:0;}
+#folderDashboard .trophy{font-size:1.75rem;flex:0 0 auto;}
+#folderDashboard .banner h3{font-size:.88rem;line-height:1.25;}
+#folderDashboard .banner p{font-size:.72rem;line-height:1.35;}
+#folderDashboard .view-stats{width:100%;justify-content:center;padding:10px 14px;font-size:.75rem;}
+#folderDashboard .quote{margin-top:13px;font-size:.68rem;line-height:1.4;}
+#folderDashboard .modal-overlay{padding:12px;}
+#folderDashboard .modal{max-height:calc(100dvh - 24px);overflow-y:auto;padding:21px !important;border-radius:23px !important;}
+#folderDashboard .field-row{grid-template-columns:1fr !important;gap:12px;}
+#folderDashboard .modal-actions{position:sticky;bottom:-21px;padding-top:12px;padding-bottom:0;background:linear-gradient(180deg,transparent,rgba(255,255,255,.88) 35%);}
+}
+
+@media (max-width:420px){#folderDashboard .app{padding-left:10px;padding-right:10px;}
+#folderDashboard .header{padding:16px;border-radius:20px;}
+#folderDashboard .header h1{font-size:1.22rem;}
+#folderDashboard .clock{padding:9px 11px;gap:8px;}
+#folderDashboard .timer{gap:4px;padding-left:8px;}
+#folderDashboard .timer .seg .num{font-size:.86rem;}
+#folderDashboard .timer .seg .lbl{font-size:.47rem;}
+#folderDashboard .stats{grid-template-columns:1fr 1fr;gap:8px;}
+#folderDashboard .stat-card{min-height:118px;padding:10px 7px;}
+#folderDashboard .stat-card .stat-value{font-size:1.12rem;}
+#folderDashboard .section-head{align-items:flex-start;flex-direction:column;}
+#folderDashboard .filters{width:100%;}
+#folderDashboard .subject-card{
+    grid-template-columns:60px minmax(0,1fr) 42px !important;
+    min-height:112px !important;
+    padding:10px !important;
+    gap:9px !important;
+    border-radius:19px !important;
+  }
+#folderDashboard .subject-thumb{width:60px !important;height:60px !important;border-radius:15px !important;}
+#folderDashboard .subject-name{font-size:.84rem !important;}
+#folderDashboard .subject-meta{font-size:.57rem;gap:5px !important;}
+#folderDashboard .subject-next{font-size:.58rem;}
+#folderDashboard .subject-go{width:42px !important;height:42px !important;}
+#folderDashboard .subject-go svg{width:16px !important;height:16px !important;}
+#folderDashboard .add-card{min-height:58px !important;}
+#folderDashboard .banner-left{width:100%;}
+#folderDashboard .view-stats{width:100%;}
+#folderDashboard .modal{padding:18px !important;}
+}
+
+@media (max-width:340px){#folderDashboard .stats{grid-template-columns:1fr;}
+#folderDashboard .subject-card{grid-template-columns:54px minmax(0,1fr) 40px !important;}
+#folderDashboard .subject-thumb{width:54px !important;height:54px !important;}
+#folderDashboard .subject-go{width:40px !important;height:40px !important;}
+}
+
+@media (hover:none), (pointer:coarse){#folderDashboard .subject-card:active{transform:scale(.995);}
+#folderDashboard .subject-go:hover{transform:none !important;}
+#folderDashboard .add-card:hover .add-plus{transform:none;}
+}
+
+
+@media (max-width:700px){#folderDashboard{scroll-behavior:auto}
+#folderDashboard .blobs{
+    filter:none!important;
+    transform:none!important;
+    opacity:.72;
+  }
+#folderDashboard .blobs::before, #folderDashboard .blobs::after{
+    animation:none!important;
+    filter:blur(18px)!important;
+  }
+#folderDashboard .blob{
+    animation:none!important;
+    filter:blur(18px)!important;
+    opacity:.30!important;
+    transform:none!important;
+  }
+#folderDashboard .glass, #folderDashboard .subject-go, #folderDashboard .clock, #folderDashboard .stat-icon, #folderDashboard .view-stats, #folderDashboard .modal-overlay, #folderDashboard .field input{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+#folderDashboard .glass{
+    background:rgba(255,255,255,.72)!important;
+    box-shadow:
+      0 10px 28px rgba(67,56,140,.075),
+      inset 0 1px 0 rgba(255,255,255,.90)!important;
+  }
+#folderDashboard .glass-liquid{
+    animation:none!important;
+    filter:blur(12px)!important;
+    opacity:.48!important;
+  }
+#folderDashboard .glass-reflection{
+    mix-blend-mode:normal!important;
+    opacity:.32!important;
+  }
+#folderDashboard .material-sheen{
+    display:none!important;
+  }
+#folderDashboard .subject-card{
+    filter:none!important;
+    transition:none!important;
+  }
+#folderDashboard .subject-card::before{
+    filter:blur(8px)!important;
+  }
+#folderDashboard .subject-thumb{
+    box-shadow:
+      5px 6px 14px rgba(68,58,125,.11),
+      inset 0 1px 0 rgba(255,255,255,.78)!important;
+    transition:none!important;
+  }
+#folderDashboard .flame, #folderDashboard .wave, #folderDashboard .trophy, #folderDashboard .progress-fill::after{
+    animation:none!important;
+  }
+#folderDashboard .stat-card, #folderDashboard .subject-card, #folderDashboard .add-card{
+    animation:none!important;
+    opacity:1!important;
+    transform:none!important;
+  }
+#folderDashboard .subject-go, #folderDashboard .clock, #folderDashboard .stat-icon, #folderDashboard .view-stats, #folderDashboard .add-plus{
+    box-shadow:
+      3px 4px 9px rgba(74,63,132,.07),
+      inset 1px 1px 0 rgba(255,255,255,.80)!important;
+  }
+#folderDashboard body::after{
+    display:none;
+  }
+}
+
+
+@media (hover:none) and (pointer:coarse){#folderDashboard .subject-card:hover, #folderDashboard .subject-card:hover .subject-thumb, #folderDashboard .subject-go:hover, #folderDashboard .view-stats:hover, #folderDashboard .stat-card:hover, #folderDashboard .add-card:hover{
+    transform:none!important;
+  }
+#folderDashboard .subject-card:hover .subject-thumb::after{
+    left:-45%!important;
+  }
+}
+
+
+#folderDashboard #filterBar{position:relative; z-index:20; isolation:isolate;}
+
+
+#folderDashboard #filterBar > .filter-indicator{
+  position:absolute !important;
+  top:5px !important;
+  bottom:5px !important;
+  left:0 !important;
+  width:0;
+  flex:none !important;
+  pointer-events:none !important;
+  z-index:0 !important;
+}
+
+#folderDashboard #filterBar button{
+  position:relative;
+  z-index:2;
+  pointer-events:auto;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+
+/* --- added back control (not part of original design; needed for app routing) --- */
+#folderDashboard .fd-back{
+  position:fixed; top:16px; left:18px; z-index:60;
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.55);
+  border:1px solid rgba(255,255,255,.8);
+  backdrop-filter:blur(12px) saturate(160%);
+  -webkit-backdrop-filter:blur(12px) saturate(160%);
+  box-shadow:0 10px 24px rgba(72,61,145,.12), inset 0 1px 0 rgba(255,255,255,.9);
+  color:#171a35; font-size:1.15rem; font-weight:700; cursor:pointer;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+#folderDashboard .fd-back:hover{ transform:translateY(-1px) scale(1.05); box-shadow:0 13px 30px rgba(72,61,145,.17), inset 0 1px 0 rgba(255,255,255,.95); }
+#folderDashboard .fd-back:focus-visible{ outline:2px solid rgba(124,92,255,.55); outline-offset:3px; }
+@media (max-width:640px){ #folderDashboard .fd-back{ top:12px; left:12px; width:38px; height:38px; } }
+#folderDashboard .fd-empty{ text-align:center; padding:26px; color:#69708d; }
+
+/* ensure the design's subject thumb shows a subtle icon underlay gradient */
+#folderDashboard .subject-thumb{ background-size:cover; background-position:center; }
