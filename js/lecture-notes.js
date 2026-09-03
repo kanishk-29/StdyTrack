@@ -1123,7 +1123,7 @@ function ekgLine(uid){
   </svg></span>`;
 }
 function escapeAttr(str){
-  return (str||'').replace(/"/g,'&quot;');
+  return (str||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 function safeHref(url){
   const s = String(url || '').trim();

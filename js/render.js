@@ -2,7 +2,8 @@
 // ---------------- RENDER ----------------
 function countLectures(subject){
   let total=0, done=0;
-  subject.units.forEach(u => u.lectures.forEach(l => { total++; if(l.completed) done++; }));
+  if(!subject || !Array.isArray(subject.units)) return {total, done};
+  subject.units.forEach(u => { if(!u || !Array.isArray(u.lectures)) return; u.lectures.forEach(l => { total++; if(l && l.completed) done++; }); });
   return {total, done};
 }
 

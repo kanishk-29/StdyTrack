@@ -63,11 +63,14 @@ function formatHuman(sec){
 }
 
 function liveLectureSeconds(l){
+  if(!l || typeof l !== 'object') return 0;
   return (l.seconds||0) + (l.timerStart ? Math.floor((Date.now()-l.timerStart)/1000) : 0);
 }
 function unitSeconds(u){
+  if(!u || !Array.isArray(u.lectures)) return 0;
   return u.lectures.reduce((sum,l)=> sum + liveLectureSeconds(l), 0);
 }
 function subjectSeconds(s){
+  if(!s || !Array.isArray(s.units)) return 0;
   return s.units.reduce((sum,u)=> sum + unitSeconds(u), 0);
 }
