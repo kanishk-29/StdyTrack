@@ -104,10 +104,8 @@ function showLoginScreen(){
     err.textContent = '';
     err.classList.remove('show', 'success');
   }
-  const petals = document.getElementById('loginPetals');
-  if(petals) petals.innerHTML = loginPetalsHtml();
   const img = document.getElementById('loginMascotImg');
-  if(img) img.src = MASCOT_IMAGES.hmph;
+  if(img) img.src = 'rei-avatar.png';
   screen.classList.add('show');
   setupLoginCardTilt();
 }
