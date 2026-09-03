@@ -151,6 +151,14 @@ function updateAccountInfo(){
 }
 
 (function checkLoginAndStart(){
+  // If a demo/trial session kicked off first (fast "Try the demo" click before
+  // the async auth check below settles), don't let auth re-show the login gate
+  // or clobber the running demo.
+  if(typeof DEMO_MODE !== 'undefined' && DEMO_MODE){
+    const loader = document.getElementById('appLoader');
+    if(loader && loader.parentNode) loader.remove();
+    return;
+  }
   if(cloudIsConfigured()){
     // Firebase remembers the sign-in per browser, so restore it asynchronously.
     // initCloudSync() must finish before firebase.auth() exists in the project.
@@ -186,7 +194,8 @@ function updateAccountInfo(){
           if(!cloudStartDecided){
             cloudStartDecided = true;
             if(loader && loader.parentNode) loader.remove();
-            showLoginScreen();
+            // Never show the login gate over a running demo/trial session.
+            if(typeof DEMO_MODE === 'undefined' || !DEMO_MODE) showLoginScreen();
           }
           // Later null events = sign-out; signOutAndShowLogin handles the reload.
         }
@@ -196,6 +205,7 @@ function updateAccountInfo(){
   }
 
   // No Firebase configured: there is nothing to authenticate against.
+  if(typeof DEMO_MODE !== 'undefined' && DEMO_MODE) return;
   const loader = document.getElementById('appLoader');
   if(loader) loader.remove();
   showLoginScreen();
