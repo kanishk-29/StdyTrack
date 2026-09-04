@@ -1,32 +1,37 @@
-/* Liquid Glass + Neumorphism — full faithful port of
-   study_tracker_active_day_richer_aura_colors.html, applied to the Study
-   Tracker dashboard (hero/scorecard, activity + study-log calendar, quick
-   tiles, subject cards, priority, deadlines, revision, nav chips).
-   Values copied exactly from the shared design file's CSS.
-   Only changes the LOOK (login keeps its own dark night-shrine theme). */
+/* Liquid Glass + Neumorphism — visual override ported from
+   study_tracker_active_day_richer_aura_colors.html.
+   Only changes the LOOK (no HTML/JS/logic touched): aurora backdrop,
+   neumorphic dual shadows, pill shapes, serif headings, GitHub-style
+   heatmap calendar, and gradient-topped subject cards. Loaded after
+   liquid-glass.css so it wins on the components it targets.
+   Dark mode uses the app's existing [data-theme="dark"] selector. */
 
-/* ============================================================
-   1. DESIGN TOKENS (scoped to .app so nothing leaks to login /
-      modals that should keep their own look)
-   ============================================================ */
+/* ---- Neumorphic design tokens (scoped to .app) ---- */
 .app{
-  --neo-bg:#e9edf3;
-  --neo-paper:#f6f7f4;
   --neo-glass:rgba(255,255,255,.56);
-  --neo-glass-strong:rgba(255,255,255,.72);
-  --neo-glass-soft:rgba(255,255,255,.34);
-  --neo-line:rgba(255,255,255,.78);
+  --neo-glass-strong:rgba(255,255,255,.74);
+  --neo-glass-soft:rgba(255,255,255,.30);
+  --neo-line:rgba(255,255,255,.85);
   --neo-ink:#242638;
-  --neo-muted:#747889;
+  --neo-muted:#5f6478;
   --neo-soft:#9ba0ad;
   --neo-purple:#7759e8;
   --neo-purple2:#9c77ff;
   --neo-green:#25865f;
-  --neo-shadow:18px 18px 42px rgba(119,128,148,.16),-14px -14px 34px rgba(255,255,255,.72);
-  --neo-shadow-soft:10px 10px 24px rgba(119,128,148,.14),-8px -8px 20px rgba(255,255,255,.66);
+  --neo-blue:#4666e1;
+  --neo-pink:#ec4ea5;
+  --neo-cyan:#22c7d6;
+  --neo-amber:#d9a21b;
+  --neo-red:#dd4e2f;
+  --neo-shadow:
+    18px 18px 42px rgba(119,128,148,.16),
+    -14px -14px 34px rgba(255,255,255,.78);
+  --neo-shadow-soft:
+    10px 10px 24px rgba(119,128,148,.13),
+    -8px -8px 20px rgba(255,255,255,.70);
 }
 
-/* ---- Aurora backdrop (the design's body) ---- */
+/* ---- Aurora backdrop (replaces the paper grid) ---- */
 body{
   background:
     radial-gradient(circle at 9% 6%,rgba(116,144,255,.14),transparent 23%),
@@ -36,334 +41,158 @@ body{
 }
 .app{ position:relative; }
 
-/* Serif headings for restyled areas only (mirrors the design's Georgia
-   headings without changing every other modal/detail heading) */
-.scorecard h1,
-.page-title,
-.dash-block-header h3,
-.panel-title,
-.revision-title,
-.dash-quick-title,
-.today-total{ font-family:Georgia,"Times New Roman",serif; }
+/* ---- Shared glass panel + pill language ---- */
+.glass-block,
+.panel,
+.dash-block,
+.today-panel,
+.revision-panel,
+.streak,
+.today-right,
+.today-left,
+.revision-card{
+  border:1px solid var(--neo-line);
+  background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(255,255,255,.30));
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:var(--neo-shadow);
+}
 
-/* ============================================================
-   2. TOPBAR-LIKE view switcher (design's .nav-chip pills)
-   ============================================================ */
-.view-switcher{
-  position:sticky;top:0;z-index:20;
-  padding:14px 0 10px;
+/* ---- STARTING PART: scorecard header ---- */
+.scorecard{
+  background:
+    radial-gradient(circle at 78% 16%,rgba(129,108,241,.16),transparent 25%),
+    linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.32));
+  border:1px solid var(--neo-line);
+  box-shadow:var(--neo-shadow);
+}
+.scorecard h1,
+.page-title{
+  font-family:Georgia,"Times New Roman",serif;
+  letter-spacing:-.03em;
+}
+.scorecard-gradient{
+  width:8px;
+  background:linear-gradient(180deg,#497ecf,#8a5ce5,#27c967,#4a8b69);
+  background-size:100% 320%;
+}
+
+/* ---- CALENDAR: GitHub-style heatmap (neumorphic inset) ---- */
+.cal-wrap{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.60),rgba(255,255,255,.32));
+  border:1px solid var(--neo-line);
+  border-radius:22px;
+  padding:16px;
+  box-shadow:var(--neo-shadow);
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
-  background:linear-gradient(180deg,rgba(235,239,245,.72),rgba(235,239,245,.2));
-  gap:8px;
 }
-.view-btn,.nav-chip,.theme-toggle{
-  min-height:38px;padding:0 16px;border-radius:999px;
+.cal-cell{
+  background:rgba(255,255,255,.26);
   border:1px solid var(--neo-line);
-  background:var(--neo-glass);
-  color:var(--neo-muted);
+  border-radius:11px 8px 12px 9px;
+  box-shadow:
+    inset 2px 2px 5px rgba(111,124,116,.08),
+    inset -2px -2px 4px rgba(255,255,255,.45);
+}
+.cal-cell.level-0{ background:rgba(255,255,255,.26); }
+.cal-cell.level-1{ background:linear-gradient(145deg,rgba(70,184,131,.22),rgba(70,184,131,.10)); border-color:rgba(70,131,104,.3); }
+.cal-cell.level-2{ background:linear-gradient(145deg,rgba(62,166,116,.55),rgba(62,166,116,.38)); }
+.cal-cell.level-3{ background:linear-gradient(145deg,rgba(43,140,96,.78),rgba(43,140,96,.60)); }
+.cal-cell.level-4{ background:linear-gradient(145deg,rgba(28,108,74,1),rgba(28,108,74,.82)); }
+.cal-cell.is-today{
+  box-shadow:0 0 0 2px var(--neo-amber), inset 2px 2px 5px rgba(111,124,116,.08), inset -2px -2px 4px rgba(255,255,255,.45);
+}
+.cal-legend .cal-swatch.level-1{ background:rgba(70,184,131,.22); }
+.cal-legend .cal-swatch.level-2{ background:rgba(62,166,116,.55); }
+.cal-legend .cal-swatch.level-3{ background:rgba(43,140,96,.78); }
+.cal-legend .cal-swatch.level-4{ background:rgba(28,108,74,1); }
+
+/* ---- ONGOING SUBJECT: gradient-topped glass cards ---- */
+.dash-course-card{
+  border:1px solid var(--neo-line);
+  border-radius:22px;
+  background:linear-gradient(135deg,rgba(255,255,255,.60),rgba(255,255,255,.32));
+  box-shadow:var(--neo-shadow-soft);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.dash-course-card:hover{ box-shadow:var(--neo-shadow); }
+/* Thumb keeps each subject's own color gradient (JS sets it inline via
+   dashboard.js), matching the design file's per-color subject tops. */
+.dash-course-thumb-label{ color:#fff; font-weight:800; }
+.dash-course-pct{
+  background:rgba(0,0,0,.35);
+  color:#fff;
+  border-radius:999px;
+}
+.dash-course-progress-track{
+  border-radius:999px;
+  background:rgba(122,105,170,.12);
+  box-shadow:inset 1px 1px 3px rgba(90,100,115,.18), inset -1px -1px 2px rgba(255,255,255,.6);
+}
+.dash-course-progress-fill{ border-radius:999px; }
+
+/* ---- QUICK TILES: neumorphic pills ---- */
+.dash-quick-tile{
+  border:1px solid var(--neo-line);
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.30));
   box-shadow:var(--neo-shadow-soft);
   backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
 }
-.view-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  font-weight:700;font-size:13px;
-}
-.view-btn.active{
-  background:linear-gradient(135deg,#7652ef,#8d67ff);
-  border-color:transparent;
-  color:#fff;
-  box-shadow:0 14px 26px rgba(117,85,230,.24);
-}
+.dash-quick-tile:hover{ box-shadow:var(--neo-shadow); transform:translateY(-1px); }
 
-/* ============================================================
-   3. HERO (= scorecard, exactly per design)
-   ============================================================ */
-.scorecard{
-  margin-top:10px;padding:38px 34px 32px;border-radius:34px;
-  border:1px solid var(--neo-line);
-  background:
-    radial-gradient(circle at 78% 16%,rgba(129,108,241,.16),transparent 25%),
-    linear-gradient(135deg,rgba(255,255,255,.58),rgba(255,255,255,.28));
-  box-shadow:var(--neo-shadow);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-  position:relative;overflow:hidden;
-}
-.scorecard .eyebrow{
-  display:inline-flex;padding:9px 15px;border-radius:999px;
-  background:rgba(128,94,247,.11);color:#6e51df;
-  letter-spacing:.13em;font-weight:800;font-size:12px;
-}
-.scorecard h1{ font-size:42px;font-weight:900;letter-spacing:-.03em;margin:14px 0 0; }
-.scorecard-gradient{
-  position:absolute;left:0;top:0;bottom:0;width:8px;
-  background:linear-gradient(180deg,#497ecf,#8a5ce5,#27c967,#4a8b69);
-  background-size:100% 320%;z-index:2;
-}
-.hero-grid{display:grid;grid-template-columns:1fr 290px;gap:28px;align-items:end;margin-top:16px;}
-.hero-copy{margin:6px 0 22px;max-width:640px;color:var(--neo-muted);font-size:17px;line-height:1.65;}
-.stats{display:flex;gap:10px;flex-wrap:wrap;}
-.stat{
-  border-radius:999px;padding:9px 14px;background:var(--neo-glass-strong);border:1px solid var(--neo-line);
-  box-shadow:var(--neo-shadow-soft);font-size:12px;font-weight:800;color:var(--neo-muted);
-}
-.stat b{color:var(--neo-ink);font-weight:900;}
-
-/* ---- Streak card (design .streak) ---- */
-.streak{
-  border-radius:28px;padding:22px;background:var(--neo-glass-strong);
-  border:1px solid var(--neo-line);box-shadow:var(--neo-shadow-soft);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-}
-.streak-head{display:flex;justify-content:space-between;color:var(--neo-muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;}
-.streak-num{font-size:34px;font-weight:900;margin-top:12px;color:var(--neo-ink);}
-.streak-num small{font-size:14px;color:var(--neo-muted);font-weight:700;}
-.streak-bar{height:10px;margin-top:14px;border-radius:999px;background:rgba(122,105,170,.12);overflow:hidden;}
-.streak-bar span{display:block;height:100%;width:0%;border-radius:inherit;background:linear-gradient(90deg,#6f54e7,#b08cff);transition:width .8s cubic-bezier(.22,1,.36,1);}
-
-/* ---- Hero actions (design .hero-actions / .primary-btn) ---- */
-.hero-actions{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:26px;}
-.hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
-.page-title{font-size:25px;font-weight:900;letter-spacing:-.03em;color:var(--neo-ink);}
-.secondary{color:var(--neo-muted);font-size:13px;margin-top:5px;}
-.primary-btn{
-  padding:13px 19px;border-radius:18px;color:#fff;background:linear-gradient(135deg,#7652ef,#8d67ff);
-  box-shadow:0 14px 26px rgba(117,85,230,.24);font-weight:900;border:none;cursor:pointer;
-}
-.backup-btn{
-  padding:11px 16px;border-radius:999px;
-  border:1px solid var(--neo-line);background:var(--neo-glass);
-  box-shadow:var(--neo-shadow-soft);backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-}
-.backup-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px;}
-.last-saved{font-size:10px;color:var(--neo-soft);margin-top:6px;}
-
-/* ============================================================
-   4. TODAY — activity glass-block (design .activity)
-   ============================================================ */
-.today-panel{
-  position:relative;
-  min-height:350px;padding:28px;
-  border-radius:20px;
-  border:1px solid var(--neo-line);
-  background:
-    radial-gradient(circle at 75% 30%,rgba(126,98,235,.10),transparent 27%),
-    linear-gradient(135deg,rgba(255,255,255,.49),rgba(255,255,255,.22));
-  box-shadow:var(--neo-shadow-soft);
-  backdrop-filter:blur(22px) saturate(1.25);
-  -webkit-backdrop-filter:blur(22px) saturate(1.25);
-  overflow:hidden;
-  display:grid;grid-template-columns:1fr 340px;gap:30px;align-items:start;margin-top:22px;
-}
-.today-panel .today-fog,
-.today-panel .today-fog-2{
-  position:absolute;z-index:0;pointer-events:none;border-radius:50%;filter:blur(28px);mix-blend-mode:screen;
-}
-.today-panel .today-fog{width:72%;height:34%;left:-13%;bottom:4%;
-  background:radial-gradient(ellipse at center,rgba(220,228,223,.105) 0%,rgba(198,214,207,.065) 35%,rgba(170,194,183,.025) 58%,transparent 74%);
-  opacity:.72;transform:rotate(-7deg);}
-.today-panel .today-fog-2{width:58%;height:30%;right:-12%;top:6%;
-  background:radial-gradient(ellipse at center,rgba(222,230,225,.10) 0%,rgba(202,218,210,.06) 40%,transparent 70%);
-  opacity:.6;transform:rotate(6deg);}
-.today-panel .today-fog-veil{position:absolute;z-index:0;left:-24%;bottom:18%;width:148%;height:28%;
-  pointer-events:none;border-radius:50%;
-  background:radial-gradient(ellipse at center,rgba(242,246,243,.075) 0%,rgba(214,227,219,.045) 28%,rgba(179,199,188,.02) 52%,transparent 74%);
-  filter:blur(24px);opacity:.52;transform:rotate(-2deg);}
-
-.today-left{position:relative;z-index:1;}
-.activity-label{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--neo-soft);font-weight:900;font-family:'JetBrains Mono',monospace;}
-.today-total{
-  font-size:31px;color:var(--neo-green);font-weight:900;margin-top:5px;letter-spacing:-.02em;
-  background:linear-gradient(135deg,#25865f,#22c7d6);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.activity-copy{color:var(--neo-muted);font-size:14px;margin-top:10px;}
-.activity-copy.yesterday{margin-top:18px;}
-.stat-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
-.today-left .stat-chip{
-  border-radius:999px;padding:9px 14px;background:var(--neo-glass-strong);border:1px solid var(--neo-line);
-  box-shadow:var(--neo-shadow-soft);font-size:12px;font-weight:800;color:var(--neo-muted);
-}
-.topic-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-.topic{
-  padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;color:#6c53b6;
-  background:rgba(135,101,235,.10);
-}
-.today-empty{color:var(--neo-soft);font-size:13px;font-weight:700;}
-
-/* ---- Study-log glass calendar (design .study-calendar-glass) ---- */
-.today-right.study-calendar-glass{
-  border-radius:30px 22px 34px 26px;
-  padding:22px 22px 19px;
-  min-height:390px;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.62),rgba(255,255,255,.34)),
-    radial-gradient(240px 180px at 88% 8%,rgba(117,91,237,.14),transparent 70%);
-  border:1px solid rgba(255,255,255,.74);
-  box-shadow:
-    18px 20px 38px rgba(77,90,84,.16),
-    -13px -13px 30px rgba(255,255,255,.72),
-    inset 1px 1px 0 rgba(255,255,255,.68);
-  backdrop-filter:blur(22px) saturate(1.25);
-  -webkit-backdrop-filter:blur(22px) saturate(1.25);
-  position:relative;z-index:1;
-}
-.calendar-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px;}
-.calendar-kicker{font-size:10px;letter-spacing:.17em;font-weight:900;color:var(--neo-soft);font-family:'JetBrains Mono',monospace;}
-.calendar-month{margin-top:3px;font-size:22px;font-weight:900;letter-spacing:-.035em;color:var(--neo-ink);}
-.calendar-total{
-  min-width:92px;padding:9px 12px;border-radius:16px;
-  background:rgba(255,255,255,.30);
-  box-shadow:inset 3px 3px 7px rgba(104,115,109,.10),inset -3px -3px 7px rgba(255,255,255,.50);
-  text-align:right;color:var(--neo-ink);
-}
-.calendar-total strong{display:block;font-size:20px;font-weight:900;}
-.calendar-total span{font-size:10px;color:var(--neo-muted);font-weight:800;}
-
-.cal-terminal{background:transparent;border:none;box-shadow:none;backdrop-filter:none;}
-.cal-term-bar .cal-term-path{font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--neo-muted);}
-.cal-weekday-labels span{font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--neo-soft);}
-.cal-week-labels span{font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--neo-soft);}
-.cal-week-labels span.is-current{color:#3b9f72;}
-
-/* Heatmap cells = the design's .cal-day (neumorphic inset, GitHub-style) */
-.cal-cell{
-  aspect-ratio:1/1;border-radius:11px 8px 12px 9px;
-  font-size:12px;font-weight:800;color:var(--neo-muted);
-  background:rgba(255,255,255,.26);
-  box-shadow:inset 2px 2px 5px rgba(111,124,116,.08),inset -2px -2px 4px rgba(255,255,255,.45);
-}
-.cal-cell.level-0{background:rgba(255,255,255,.26);}
-.cal-cell.level-1{background:linear-gradient(145deg,rgba(70,184,131,.22),rgba(70,184,131,.10));color:#388c68;}
-.cal-cell.level-2{background:linear-gradient(145deg,rgba(70,184,131,.36),rgba(70,184,131,.18));color:#277b59;}
-.cal-cell.level-3{background:linear-gradient(145deg,rgba(74,129,224,.43),rgba(108,91,216,.25));color:#4f52aa;}
-.cal-cell.level-4{background:linear-gradient(145deg,rgba(112,91,224,.64),rgba(79,167,218,.35));color:#403d89;}
-.cal-cell.is-today{
-  z-index:4;transform:translateY(-1px);
-  box-shadow:4px 5px 10px rgba(55,66,59,.14),-3px -3px 8px rgba(255,255,255,.82),inset 1px 1px 0 rgba(255,255,255,.72) !important;
-}
-.cal-legend{font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:.04em;color:var(--neo-soft);}
-.cal-legend .cal-swatch.level-1{background:rgba(70,184,131,.22);}
-.cal-legend .cal-swatch.level-2{background:rgba(70,184,131,.36);}
-.cal-legend .cal-swatch.level-3{background:linear-gradient(145deg,rgba(74,129,224,.43),rgba(108,91,216,.25));}
-.cal-legend .cal-swatch.level-4{background:linear-gradient(145deg,rgba(112,91,224,.64),rgba(79,167,218,.35));}
-.cal-legend .cal-swatch.level-0{background:rgba(255,255,255,.26);}
-
-/* ============================================================
-   5. DASHBOARD sections / quick tiles / subjects / priority
-   ============================================================ */
-.dashboard-section{margin-top:22px;}
-.dash-block{
-  padding:22px 26px;border-radius:22px;margin-top:18px;
-  border:1px solid var(--neo-line);
-  background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(255,255,255,.30));
-  box-shadow:var(--neo-shadow-soft);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-}
-.dash-block-header h3{font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--neo-ink);}
-
-/* ---- Quick tiles (design .quick) ---- */
-.dash-quick-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px;}
-.dash-quick-tile{
-  border-radius:22px;padding:19px 14px;text-align:center;border:1px solid var(--neo-line);
-  background:var(--neo-glass);box-shadow:var(--neo-shadow-soft);backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  transition:transform .18s ease,box-shadow .18s ease;
-}
-.dash-quick-tile:hover{transform:translateY(-2px);box-shadow:var(--neo-shadow);}
-.dash-quick-icon{font-size:25px;margin-bottom:8px;background:transparent !important;}
-.dash-quick-title{display:block;font-size:14px;font-weight:900;color:var(--neo-ink);}
-.dash-quick-sub{display:block;color:var(--neo-soft);font-size:12px;font-weight:700;margin-top:2px;}
-
-/* ---- Ongoing subjects (design .subject cards) ---- */
-.dash-courses-scroll{display:flex;gap:14px;overflow-x:auto;padding:2px 2px 16px;scrollbar-width:thin;scrollbar-color:#8d69d9 transparent;}
-.dash-course-card{
-  flex:0 0 250px;min-height:174px;border-radius:22px;overflow:hidden;
-  border:1px solid var(--neo-line);background:var(--neo-glass);box-shadow:var(--neo-shadow-soft);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-}
-.dash-course-card:hover{box-shadow:var(--neo-shadow);}
-.dash-course-thumb-label{color:#fff;font-weight:900;letter-spacing:.11em;text-transform:uppercase;font-size:10px;}
-.dash-course-pct{border-radius:999px;background:rgba(255,255,255,.2);color:#fff;font-weight:900;font-size:10px;}
-.dash-course-name{font-weight:900;font-size:14px;color:var(--neo-ink);}
-.dash-course-meta{font-size:10px;color:var(--neo-soft);margin-top:4px;font-weight:700;}
-.dash-course-progress-track{height:5px;border-radius:999px;background:rgba(122,105,152,.16);margin-top:8px;overflow:hidden;}
-.dash-course-progress-fill{border-radius:inherit;height:100%;}
-.dash-course-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
-.dash-course-next{color:var(--neo-soft);font-size:10px;font-weight:700;}
-.dash-resume-btn{
-  padding:7px 10px;border-radius:10px;background:#242a39;color:#fff;font-weight:800;font-size:10px;
-  border:none;cursor:pointer;
-}
-
-/* ---- Priority (design .priority red / purple) ---- */
-.dash-priority-list{display:grid;gap:9px;margin-top:14px;}
+/* ---- PRIORITY / DEADLINES / REVISION ---- */
 .dash-priority-row{
-  min-height:48px;border-radius:16px;padding:0 14px;display:flex;align-items:center;gap:12px;color:#fff;
-  box-shadow:0 12px 24px rgba(0,0,0,.10);
-  background:linear-gradient(90deg,#6350ba,#9a69d6);
+  border-radius:16px;
+  box-shadow:0 10px 20px rgba(180,60,60,.22);
 }
-.dash-priority-row:nth-child(odd){background:linear-gradient(90deg,#bd2d30,#eb4544);}
-.dash-priority-row.is-done{background:linear-gradient(90deg,#25865f,#2fb07f) !important;}
-.dash-priority-name{font-weight:900;}
-.dash-priority-sub{font-weight:700;opacity:.82;font-size:11px;}
-.dash-priority-pill{margin-left:auto;font-size:11px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.18);font-weight:900;}
-
-/* ---- Upcoming deadlines (design .panel / .empty) ---- */
-.dash-deadlines .dash-deadlines-empty{
-  margin-top:10px;padding:20px;border-radius:18px;border:1px dashed var(--neo-line);color:var(--neo-soft);text-align:center;
-  font-weight:700;font-size:12.5px;
-}
-.dash-deadline-row{
-  display:flex;align-items:center;gap:12px;margin-bottom:9px;
-  border-radius:16px;padding:13px 14px;
+.dash-deadline-row,.revision-item{
   border:1px solid var(--neo-line);
   background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.30));
+  border-radius:16px;
   box-shadow:var(--neo-shadow-soft);
 }
-.dash-deadline-name{font-weight:900;color:var(--neo-ink);}
-.dash-deadline-sub{font-size:11px;color:var(--neo-muted);font-weight:700;margin-top:3px;}
-.dash-deadline-pill{border-radius:999px;padding:6px 10px;font-weight:900;font-size:11px;background:var(--neo-glass-strong);color:var(--neo-muted);box-shadow:var(--neo-shadow-soft);}
 
-/* ---- Revision (design .revision with red left border) ---- */
-.revision-panel{margin-top:18px;}
-.revision-card{
-  padding:18px;border-radius:20px;
-  border:1px solid var(--neo-line);border-left:4px solid #dd4e2f;
-  background:var(--neo-glass);box-shadow:var(--neo-shadow-soft);
+/* ---- TODAY total / streak ---- */
+.today-total{
+  background:linear-gradient(135deg,#25865f,#22c7d6);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
-.revision-title{font-size:18px;font-weight:900;color:var(--neo-ink);}
-.revision-list{display:grid;gap:9px;margin-top:12px;}
-.revision-item{
-  display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:0;
-  padding:13px 14px;border-radius:14px;background:rgba(255,255,255,.25);
-}
-.revision-item-name{font-weight:900;color:var(--neo-ink);font-size:14px;}
-.revision-item-sub{font-size:12px;color:var(--neo-soft);margin-top:4px;font-weight:700;}
-.revision-score{padding:6px 9px;border-radius:999px;font-weight:900;font-size:11px;white-space:nowrap;}
-.revision-score.critical{background:rgba(235,175,40,.12);color:#cf8a1d;}
-.revision-score.warn{background:rgba(122,105,170,.12);color:#7759e8;}
 
-/* ============================================================
-   RESPONSIVE (design's mobile adjustments + our grid)
-   ============================================================ */
-@media (max-width:920px){
-  .hero-grid{grid-template-columns:1fr;}
-  .streak{max-width:360px;}
-  .today-panel{grid-template-columns:1fr;}
-  .dash-quick-grid{grid-template-columns:repeat(3,1fr);}
+/* ---- NAV PILLS (view switcher / chips) ---- */
+.view-btn,.nav-chip,.theme-toggle{
+  border:1px solid var(--neo-line);
+  background:var(--neo-glass);
+  color:var(--neo-muted);
+  border-radius:999px;
+  box-shadow:var(--neo-shadow-soft);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
 }
-@media (max-width:560px){
-  .dash-quick-grid{grid-template-columns:repeat(2,1fr);}
-  .hero-actions{flex-direction:column;align-items:flex-start;}
+.view-btn.active{
+  background:linear-gradient(135deg,#497ecf,#8a5ce5);
+  border-color:transparent;
+  color:#fff;
+  box-shadow:0 10px 24px rgba(105,86,227,.28);
 }
+
+/* Serif headings for the restyled areas (not global — keeps every other
+   modal/detail heading on its existing font so nothing outside the requested
+   scope changes). */
+.scorecard h1,
+.page-title,
+.dash-block-header h3,
+.today-total,
+.panel-title{ font-family:Georgia,"Times New Roman",serif; letter-spacing:-.02em; }
 
 /* ============================================================
-   DARK MODE (app uses [data-theme="dark"]; the design's body.dark)
+   DARK MODE (app uses [data-theme="dark"])
    ============================================================ */
 [data-theme="dark"] body{
   background:
@@ -382,27 +211,29 @@ body{
   --neo-shadow:18px 18px 44px rgba(0,0,0,.34),-10px -10px 28px rgba(44,58,81,.23);
   --neo-shadow-soft:10px 10px 25px rgba(0,0,0,.28),-8px -8px 19px rgba(46,57,78,.18);
 }
-[data-theme="dark"] .scorecard,
-[data-theme="dark"] .today-panel,
-[data-theme="dark"] .today-right,
+[data-theme="dark"] .glass-block,
+[data-theme="dark"] .panel,
 [data-theme="dark"] .dash-block,
+[data-theme="dark"] .today-panel,
+[data-theme="dark"] .revision-panel,
+[data-theme="dark"] .streak,
+[data-theme="dark"] .today-right,
+[data-theme="dark"] .today-left,
 [data-theme="dark"] .revision-card,
-[data-theme="dark"] .dash-deadline-row{
+[data-theme="dark"] .cal-wrap,
+[data-theme="dark"] .dash-course-card,
+[data-theme="dark"] .dash-quick-tile,
+[data-theme="dark"] .dash-deadline-row,
+[data-theme="dark"] .revision-item,
+[data-theme="dark"] .scorecard{
   background:linear-gradient(135deg,rgba(25,32,44,.82),rgba(18,24,34,.66));
   border-color:rgba(255,255,255,.08);
 }
-[data-theme="dark"] .today-panel{background:radial-gradient(circle at 75% 30%,rgba(126,98,235,.10),transparent 27%),linear-gradient(135deg,rgba(25,32,44,.82),rgba(18,24,34,.66));}
-[data-theme="dark"] .today-right{background:linear-gradient(145deg,rgba(28,36,51,.82),rgba(18,24,34,.66)),radial-gradient(240px 180px at 88% 8%,rgba(117,91,237,.18),transparent 70%);border-color:rgba(255,255,255,.10);}
-[data-theme="dark"] .cal-cell{background:rgba(255,255,255,.04);box-shadow:inset 1px 1px 3px rgba(0,0,0,.35);}
-[data-theme="dark"] .cal-cell.level-0{background:rgba(255,255,255,.04);}
-[data-theme="dark"] .view-btn,
-[data-theme="dark"] .nav-chip,
-[data-theme="dark"] .theme-toggle,
-[data-theme="dark"] .backup-btn{background:var(--neo-glass);color:var(--neo-muted);}
-[data-theme="dark"] .revision-item{background:rgba(255,255,255,.04);}
-[data-theme="dark"] .calendar-total{background:rgba(255,255,255,.06);}
-[data-theme="dark"] .streak{background:var(--neo-glass-strong);}
+[data-theme="dark"] .cal-cell{ background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.05); box-shadow:inset 1px 1px 3px rgba(0,0,0,.35); }
+[data-theme="dark"] .cal-cell.level-0{ background:rgba(255,255,255,.04); }
+[data-theme="dark"] .view-btn,[data-theme="dark"] .nav-chip,[data-theme="dark"] .theme-toggle{ background:var(--neo-glass); color:var(--neo-muted); }
 
+/* Preferred-reduced-motion: kill neumorphic transition shimmer */
 @media (prefers-reduced-motion:reduce){
-  .scorecard-gradient,.streak-bar span,.dash-quick-tile,.dash-course-card{animation:none !important;transition:none !important;}
+  .scorecard-gradient{ animation:none; }
 }

@@ -542,23 +542,6 @@ function renderCalendar(){
   }
   grid.innerHTML = html;
   document.getElementById('calWeekLabels').innerHTML = weekLabelsHtml;
-
-  // Calendar head: current month + active (studied) days in the visible window
-  const cmEl = document.getElementById('calendarMonth');
-  if(cmEl) cmEl.textContent = now.toLocaleDateString(undefined, {month:'long', year:'numeric'});
-  const ctEl = document.getElementById('calendarTotal');
-  if(ctEl){
-    let activeDays = 0;
-    for(let i=0; i<35; i++){
-      const d = new Date(gridStart);
-      d.setDate(d.getDate() + i);
-      if(d > now) continue;
-      const kk = todayKey(d);
-      const secs = (kk === todayK) ? todaySnap.total : ((data.dailyLog && data.dailyLog[kk]) ? data.dailyLog[kk].total : 0);
-      if(secs > 0) activeDays++;
-    }
-    ctEl.innerHTML = `<strong>${activeDays}</strong><span>active days</span>`;
-  }
 }
 
 let calTooltipPinned = false;
