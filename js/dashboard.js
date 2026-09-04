@@ -229,6 +229,7 @@ function toggleCoverMenu(subjectId){
   const menu = document.getElementById('coverMenu-'+subjectId);
   if(!menu) return;
   const wrap = menu.closest('.dash-course-edit-wrap');
+  if(!wrap) return;
   const isOpen = wrap.classList.contains('menu-open');
   closeCoverMenus();
   if(!isOpen) wrap.classList.add('menu-open');

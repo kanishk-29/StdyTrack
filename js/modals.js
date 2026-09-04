@@ -148,7 +148,9 @@ function openAddUnit(subjectId){
 
 function openEditUnit(subjectId, unitId){
   const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===unitId);
+  if(!u) return;
   editState = {subjectId, unitId, lectureId:null, mode:'edit-unit'};
   document.getElementById('unitModalTitle').textContent = 'Rename Unit';
   document.getElementById('unitNameInput').value = u.name;
@@ -164,8 +166,10 @@ async function saveUnit(){
   const name = document.getElementById('unitNameInput').value.trim();
   if(!name) return;
   const s = data.subjects.find(x=>x.id===editState.subjectId);
+  if(!s) return;
   if(editState.mode==='edit-unit'){
-    const u = s.units.find(x=>x.id===editState.unitId);
+    const u = (s.units||[]).find(x=>x.id===editState.unitId);
+    if(!u) return;
     u.name = name;
   } else {
     s.units.push({id:uid(), name, open:true, lectures:[], tests:[]});
@@ -202,7 +206,9 @@ async function saveBulkLectures(){
   const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
   if(!lines.length){ showToast('Add at least one line'); return; }
   const s = data.subjects.find(x=>x.id===editState.subjectId);
-  const u = s.units.find(x=>x.id===editState.unitId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===editState.unitId);
+  if(!u) return;
   let added = 0;
   lines.forEach(line=>{
     const parts = line.split('|');

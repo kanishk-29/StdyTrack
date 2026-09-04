@@ -93,7 +93,13 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(async () => {
-        const cached = await caches.match(event.request);
+        let cached = await caches.match(event.request);
+        if (!cached) {
+          const url = new URL(event.request.url);
+          url.search = '';
+          cached = await caches.match(url.pathname.replace(/^\.\//, './'));
+          if (!cached) cached = await caches.match('.' + url.pathname);
+        }
         if (cached) return cached;
         if (event.request.destination !== 'image' && event.request.mode === 'navigate') {
           return caches.match('./index.html');

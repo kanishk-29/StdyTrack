@@ -43,8 +43,11 @@ function openAddLecture(subjectId, unitId){
 
 function openEditLecture(subjectId, unitId, lectureId){
   const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
-  const l = u.lectures.find(x=>x.id===lectureId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===unitId);
+  if(!u) return;
+  const l = (u.lectures||[]).find(x=>x.id===lectureId);
+  if(!l) return;
   editState = {subjectId, unitId, lectureId, mode:'edit'};
   document.getElementById('lectureModalTitle').textContent = 'Edit Lecture';
   document.getElementById('lectureTitleInput').value = l.title;
@@ -69,10 +72,13 @@ async function saveLecture(){
   const link = document.getElementById('lectureLinkInput').value.trim();
   const notes = document.getElementById('lectureNotesInput').value.trim();
   const s = data.subjects.find(x=>x.id===editState.subjectId);
-  const u = s.units.find(x=>x.id===editState.unitId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===editState.unitId);
+  if(!u) return;
 
   if(editState.mode==='edit'){
-    const l = u.lectures.find(x=>x.id===editState.lectureId);
+    const l = (u.lectures||[]).find(x=>x.id===editState.lectureId);
+    if(!l) return;
     l.title = title; l.link = safeHref(link); l.notes = notes;
 
     // Time-logged correction — lets you fix a runaway/forgotten timer
@@ -112,9 +118,9 @@ function handleSearch(){
   const resultsEl = document.getElementById('searchResults');
   if(!q){ resultsEl.classList.remove('show'); resultsEl.innerHTML=''; return; }
   const matches = [];
-  data.subjects.forEach(s=>{
-    s.units.forEach(u=>{
-      u.lectures.forEach(l=>{
+  (data.subjects||[]).forEach(s=>{
+    (s.units||[]).forEach(u=>{
+      (u.lectures||[]).forEach(l=>{
         if(l.title.toLowerCase().includes(q)){
           matches.push({type:'lecture', subjectId:s.id, unitId:u.id, lectureId:l.id, title:l.title, sub:`${s.name} · ${u.name}`});
         }

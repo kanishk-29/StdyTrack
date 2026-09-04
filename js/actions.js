@@ -61,7 +61,9 @@ document.addEventListener('click', (e)=>{
 
 function toggleUnit(subjectId, unitId){
   const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===unitId);
+  if(!u) return;
   const opening = !u.open;
   u.open = !u.open;
   renderMain();
@@ -71,8 +73,11 @@ function toggleUnit(subjectId, unitId){
 
 async function toggleLecture(subjectId, unitId, lectureId){
   const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
-  const l = u.lectures.find(x=>x.id===lectureId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===unitId);
+  if(!u) return;
+  const l = (u.lectures||[]).find(x=>x.id===lectureId);
+  if(!l) return;
   l.completed = !l.completed;
   if(l.completed){
     l.completedAt = Date.now();
@@ -171,6 +176,7 @@ document.addEventListener('click', (e)=>{
 
 function deleteSubject(subjectId){
   const s = data.subjects.find(x=>x.id===subjectId);
+  if(!s) return;
   askConfirm(`Delete "${s.name}" and everything in it?`, async ()=>{
     data.subjects = data.subjects.filter(x=>x.id!==subjectId);
     if(activeSubjectId===subjectId) activeSubjectId = data.subjects.length ? data.subjects[0].id : null;
@@ -185,7 +191,9 @@ function deleteSubject(subjectId){
 
 function deleteUnit(subjectId, unitId){
   const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===unitId);
+  if(!u) return;
   askConfirm(`Delete "${u.name}" and its lectures?`, async ()=>{
     s.units = s.units.filter(x=>x.id!==unitId);
     if(runningRef && runningRef.unitId===unitId){
@@ -199,8 +207,10 @@ function deleteUnit(subjectId, unitId){
 
 function deleteLecture(subjectId, unitId, lectureId){
   const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
-  const l = u.lectures.find(x=>x.id===lectureId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===unitId);
+  if(!u) return;
+  const l = (u.lectures||[]).find(x=>x.id===lectureId);
   askConfirm(`Delete "${l ? l.title : 'this lecture'}"? Its logged time will be lost.`, ()=>{
     u.lectures = u.lectures.filter(x=>x.id!==lectureId);
     if(runningRef && runningRef.lectureId===lectureId){

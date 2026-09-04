@@ -14,8 +14,11 @@ function openAddTest(subjectId, unitId){
 
 function openEditTest(subjectId, unitId, testId){
   const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
-  const t = u.tests.find(x=>x.id===testId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===unitId);
+  if(!u) return;
+  const t = (u.tests||[]).find(x=>x.id===testId);
+  if(!t) return;
   editState = {subjectId, unitId, testId, mode:'edit-test'};
   document.getElementById('testModalTitle').textContent = 'Edit Test Score';
   document.getElementById('testNameInput').value = t.name || '';
@@ -55,7 +58,9 @@ async function saveTest(){
     return;
   }
   const s = data.subjects.find(x=>x.id===editState.subjectId);
-  const u = s.units.find(x=>x.id===editState.unitId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===editState.unitId);
+  if(!u) return;
   if(!u.tests) u.tests = [];
   if(editState.mode==='edit-test'){
     const t = u.tests.find(x=>x.id===editState.testId);
@@ -72,8 +77,10 @@ async function saveTest(){
 
 function deleteTest(subjectId, unitId, testId){
   const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
-  const t = u.tests.find(x=>x.id===testId);
+  if(!s) return;
+  const u = (s.units||[]).find(x=>x.id===unitId);
+  if(!u) return;
+  const t = (u.tests||[]).find(x=>x.id===testId);
   askConfirm(`Delete "${t ? (t.name||'this test') : 'this test'}" score?`, ()=>{
     u.tests = u.tests.filter(x=>x.id!==testId);
     renderAll();

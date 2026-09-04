@@ -31,12 +31,14 @@ function showCalPlanPopover(evt, key){
   calPlanKey = key;
   renderCalPlanPopover();
   const pop = document.getElementById('calPlanPopover');
+  if(!pop) return;
   pop.classList.add('show');
   positionCalPlanPopover(evt.currentTarget);
 }
 
 function positionCalPlanPopover(cellEl){
   const pop = document.getElementById('calPlanPopover');
+  if(!pop) return;
   const cellRect = cellEl.getBoundingClientRect();
   const popRect = pop.getBoundingClientRect();
   let left = cellRect.left + cellRect.width/2 - popRect.width/2;
@@ -49,7 +51,8 @@ function positionCalPlanPopover(cellEl){
 
 function hideCalPlanPopover(){
   calPlanKey = null;
-  document.getElementById('calPlanPopover').classList.remove('show');
+  const pop = document.getElementById('calPlanPopover');
+  if(pop) pop.classList.remove('show');
 }
 
 function renderCalPlanPopover(){
@@ -616,11 +619,13 @@ function startFolderClock(){
   const tick = () => {
     if(document.hidden) return;
     const hEl = document.getElementById('folderClockH');
-    if(!hEl){ stopFolderClock(); return; }
+    const mEl = document.getElementById('folderClockM');
+    const sEl = document.getElementById('folderClockS');
+    if(!hEl || !mEl || !sEl){ stopFolderClock(); return; }
     const now = new Date();
-    document.getElementById('folderClockH').textContent = String(now.getHours()).padStart(2,'0');
-    document.getElementById('folderClockM').textContent = String(now.getMinutes()).padStart(2,'0');
-    document.getElementById('folderClockS').textContent = String(now.getSeconds()).padStart(2,'0');
+    hEl.textContent = String(now.getHours()).padStart(2,'0');
+    mEl.textContent = String(now.getMinutes()).padStart(2,'0');
+    sEl.textContent = String(now.getSeconds()).padStart(2,'0');
   };
   tick();
   folderClockTimer = setInterval(tick, 1000);
@@ -992,7 +997,7 @@ function unitPetalsHtml(seedIdx){
 
 function lectureIconChar(l){
   const t = ((l.title||'') + ' ' + (l.notes||'')).toLowerCase();
-  if(t.includes('overview') || t.includes('intro to') || t.includes('introduction to') && t.includes('course')) return '📄';
+  if(t.includes('overview') || (t.includes('intro to') || t.includes('introduction to')) && t.includes('course')) return '📄';
   if(t.includes('model') || t.includes('schema') || t.includes('relational') || t.includes('diagram')) return '🧩';
   if(t.includes('database') || t.includes('dbms') || t.includes('sql') || t.includes('query')) return '🗄️';
   return '📘';

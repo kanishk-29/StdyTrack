@@ -55,7 +55,8 @@ function renderScorecard(){
   }
   prevDone = done; prevTotal = total;
   const pct = total ? Math.round((done/total)*100) : 0;
-  document.getElementById('percentBadge').textContent = pct + '%';
+  const pctEl = document.getElementById('percentBadge');
+  if(pctEl) pctEl.textContent = pct + '%';
 }
 
 function subjectNameById(id){
@@ -66,7 +67,8 @@ function subjectNameById(id){
 function renderToday(){
   const snap = getTodaySnapshot();
   const wrap = document.getElementById('todaySubjects');
-  document.getElementById('todayTotal').textContent = formatHuman(snap.total);
+  const totalEl = document.getElementById('todayTotal');
+  if(totalEl) totalEl.textContent = formatHuman(snap.total);
   const entries = Object.entries(snap.bySubject).filter(([,sec])=>sec>0).sort((a,b)=>b[1]-a[1]);
   if(!entries.length){
     wrap.innerHTML = `<span class="today-empty">No study time logged yet today — hit ▶ on a lecture to start.</span>`;
@@ -81,13 +83,15 @@ function renderToday(){
   const yKey = todayKey(yesterday);
   const ySeconds = (data.dailyLog && data.dailyLog[yKey]) ? data.dailyLog[yKey].total : 0;
   const yEl = document.getElementById('yesterdayLine');
-  let trendHtml = '';
-  if(ySeconds>0){
-    if(snap.total>ySeconds) trendHtml = `<span class="yd-trend up">▲ ahead</span>`;
-    else if(snap.total<ySeconds) trendHtml = `<span class="yd-trend down">▼ behind</span>`;
-    else trendHtml = `<span class="yd-trend same">= same</span>`;
+  if(yEl){
+    let trendHtml = '';
+    if(ySeconds>0){
+      if(snap.total>ySeconds) trendHtml = `<span class="yd-trend up">▲ ahead</span>`;
+      else if(snap.total<ySeconds) trendHtml = `<span class="yd-trend down">▼ behind</span>`;
+      else trendHtml = `<span class="yd-trend same">= same</span>`;
+    }
+    yEl.innerHTML = `Yesterday: <span class="yd-value">${formatHuman(ySeconds)}</span> ${trendHtml}`;
   }
-  yEl.innerHTML = `Yesterday: <span class="yd-value">${formatHuman(ySeconds)}</span> ${trendHtml}`;
 }
 
 function getWeakUnits(){
