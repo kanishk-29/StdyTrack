@@ -25,6 +25,10 @@
        by touch/wheel — only the visible bar is removed). */
     scrollbar-width:none;
     -ms-overflow-style:none;
+    /* No pinch-zoom starting on the login gate — it stays full-page on
+       mobile (page-scale lock is also toggled from login.js for older
+       browsers). Panning/scrolling still works. */
+    touch-action:pan-x pan-y;
     opacity:0; pointer-events:none;
     transition:opacity .4s ease;
     isolation:isolate;

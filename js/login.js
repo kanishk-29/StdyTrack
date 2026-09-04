@@ -214,6 +214,24 @@ async function startDemo(){
   await startDemoMode();
 }
 
+// While the login gate is up, lock the viewport scale so a pinch-zoom can't
+// shrink the login to a tiny box (mobile). Restored on hide so the rest of
+// the app stays zoomable/accessible.
+let loginViewportPrev = null;
+function lockLoginViewport(){
+  if(loginViewportPrev !== null) return; // already locked
+  const m = document.querySelector('meta[name="viewport"]');
+  if(!m) return;
+  loginViewportPrev = m.getAttribute('content') || '';
+  m.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+}
+function restoreLoginViewport(){
+  if(loginViewportPrev === null) return;
+  const m = document.querySelector('meta[name="viewport"]');
+  if(m) m.setAttribute('content', loginViewportPrev);
+  loginViewportPrev = null;
+}
+
 function showLoginScreen(){
   const screen = document.getElementById('loginScreen');
   if(!screen) return;
@@ -225,6 +243,7 @@ function showLoginScreen(){
   const img = document.getElementById('loginMascotImg');
   if(img) img.src = 'rei-avatar.png';
   screen.classList.add('show');
+  lockLoginViewport();
   setupLoginCardTilt();
   setupLoginScene();
 }
@@ -233,6 +252,7 @@ function hideLoginScreen(){
   if(!screen) return;
   teardownLoginCardTilt();
   teardownLoginScene();
+  restoreLoginViewport();
   screen.classList.remove('show');
   screen.classList.add('hide');
   setTimeout(()=>screen.remove(), 400);
