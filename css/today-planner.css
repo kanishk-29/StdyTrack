@@ -4,7 +4,8 @@
   .pp-hint{
     font-size:12px; color:var(--ink-soft); line-height:1.5;
     margin:10px 0 4px; padding:10px 12px;
-    background:var(--paper); border:1px solid var(--border); border-radius:10px;
+    background:var(--glass-bg-light); border:1px solid var(--glass-border-subtle); border-radius:10px;
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
   }
   .pp-hint strong{ color:var(--ink); }
 
@@ -21,8 +22,9 @@
   .pp-date-chip{
     flex-shrink:0; width:46px; scroll-snap-align:start;
     display:flex; flex-direction:column; align-items:center; gap:2px;
-    padding:7px 0 8px; border-radius:12px; border:1.5px solid var(--border);
-    background:var(--card); cursor:pointer; position:relative;
+    padding:7px 0 8px; border-radius:12px; border:1.5px solid var(--glass-border-subtle);
+    background:var(--glass-bg); cursor:pointer; position:relative;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
     transition:all .15s ease;
   }
   .pp-date-chip:hover{ border-color:var(--violet); }
@@ -42,8 +44,9 @@
   .pp-date-chip.selected .pp-date-chip-dot{ background:#fff; }
   .pp-datestrip-jump{
     flex-shrink:0; width:118px; height:32px; padding:0 8px; border-radius:8px;
-    border:1px solid var(--border); background:var(--card); color:var(--ink-soft);
+    border:1px solid var(--glass-border-subtle); background:var(--glass-bg-light); color:var(--ink-soft);
     font-family:'Inter',sans-serif; font-size:11px; cursor:pointer;
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
   }
 
   .pp-active-col{ margin-top:4px; }

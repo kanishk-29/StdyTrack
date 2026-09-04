@@ -2,7 +2,9 @@
   /* ---------- MODAL ---------- */
   .overlay{
     position:fixed; inset:0;
-    background:rgba(35,43,61,0.45);
+    background:rgba(35,43,61,0.30);
+    backdrop-filter:blur(6px) saturate(1.2);
+    -webkit-backdrop-filter:blur(6px) saturate(1.2);
     display:none;
     align-items:center;
     justify-content:center;
@@ -18,15 +20,20 @@
   }
   .overlay.show{ display:flex; }
   .modal{
-    background:var(--card);
-    border-radius:16px;
+    background:var(--glass-bg-heavy);
+    border:1px solid var(--glass-border);
+    border-radius:20px;
     padding:26px 24px 24px;
     width:100%;
     max-width:420px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.2);
+    backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    -webkit-backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    box-shadow:var(--glass-shadow-deep);
     animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);
     --modal-accent: var(--amber);
     --modal-accent-soft: var(--amber-soft, #fbf1de);
+    position:relative;
+    overflow:hidden;
     /* Tall modals (settings is the tallest) must stay reachable on short
        viewports: cap height and scroll inside instead of clipping. Without
        this the content above/below the fold is unreachable on desktop, where
@@ -81,6 +88,21 @@
     from{ opacity:0; transform:translateY(12px) scale(0.97); }
     to{ opacity:1; transform:translateY(0) scale(1); }
   }
+  .modal::before{
+    content:"";
+    position:absolute; top:0; left:6%; right:6%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent);
+    z-index:1; pointer-events:none;
+  }
+  .modal::after{
+    content:"";
+    position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:
+      radial-gradient(120% 55% at 8% -8%, rgba(255,255,255,.3), transparent 42%),
+      radial-gradient(circle at 100% 0%, rgba(180,160,255,.06), transparent 30%);
+    z-index:1;
+  }
+  .modal > *:not(.modal-banner){ position:relative; z-index:2; }
   .modal-icon-header{
     display:flex; align-items:center; gap:12px;
     margin-bottom:18px;
@@ -133,12 +155,14 @@
   .field input, .field textarea, .field select{
     width:100%;
     padding:10px 12px;
-    border:1.5px solid var(--border);
+    border:1px solid var(--glass-border-subtle);
     border-radius:10px;
     font-family:'Inter',sans-serif;
     font-size:13.5px;
-    background:#fffefb;
+    background:var(--glass-bg-light);
     color:var(--ink);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
     transition:border-color .15s ease, box-shadow .15s ease;
   }
   .field textarea{ resize:vertical; min-height:60px; line-height:1.5; }
@@ -199,7 +223,9 @@
   /* ---------- SLIDE-IN PROGRESS PANEL ---------- */
   .slide-overlay{
     position:fixed; inset:0;
-    background:rgba(35,43,61,0.45);
+    background:rgba(35,43,61,0.30);
+    backdrop-filter:blur(6px) saturate(1.2);
+    -webkit-backdrop-filter:blur(6px) saturate(1.2);
     z-index:80;
     display:none;
   }
@@ -208,8 +234,11 @@
     position:fixed; top:0; right:0; bottom:0;
     width:100%;
     max-width:560px;
-    background:var(--card);
-    box-shadow:-10px 0 40px rgba(0,0,0,0.25);
+    background:var(--glass-bg-heavy);
+    backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    -webkit-backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    box-shadow:-10px 0 40px rgba(0,0,0,0.15), inset 1px 0 0 rgba(255,255,255,.3);
+    border-left:1px solid var(--glass-border);
     padding:
       max(24px, env(safe-area-inset-top))
       26px
@@ -220,6 +249,7 @@
     overscroll-behavior-y:contain;
     transform:translateX(100%);
     transition:transform .35s cubic-bezier(.22,1,.36,1);
+    position:relative;
   }
   .slide-overlay.show .slide-panel{ transform:translateX(0); }
 

@@ -1,10 +1,12 @@
 /* Today page layout + terminal-style commit graph */
   /* ---------- TODAY + CALENDAR ---------- */
   .today-panel{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-    box-shadow:var(--shadow);
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border-subtle);
+    border-radius:18px;
+    box-shadow:var(--glass-shadow);
+    backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
     padding:20px 26px;
     margin-top:16px;
     display:flex;
@@ -12,7 +14,16 @@
     justify-content:space-between;
     gap:24px;
     flex-wrap:wrap;
+    position:relative;
+    overflow:hidden;
   }
+  .today-panel::before{
+    content:"";
+    position:absolute; top:0; left:6%; right:6%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent);
+    z-index:1; pointer-events:none;
+  }
+  .today-panel > *{ position:relative; z-index:2; }
   .today-left{ min-width:180px; }
   .today-total{
     font-family:'JetBrains Mono',monospace;

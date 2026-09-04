@@ -19,6 +19,7 @@ const APP_SHELL = [
   './shrine-background.png',
   './rei-avatar.png',
   './css/base.css',
+  './css/liquid-glass.css',
   './css/habit-tracker.css',
   './css/header-search.css',
   './css/today-calendar.css',

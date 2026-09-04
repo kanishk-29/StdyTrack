@@ -1,10 +1,12 @@
 /* Top scorecard header + search bar */
   /* ---------- SCORECARD HEADER ---------- */
   .scorecard{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-    box-shadow:var(--shadow-lift);
+    background:var(--glass-bg-heavy);
+    border:1px solid var(--glass-border);
+    border-radius:20px;
+    box-shadow:var(--glass-shadow-lift);
+    backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    -webkit-backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
     padding:22px 28px;
     display:flex;
     align-items:center;
@@ -16,10 +18,24 @@
   }
   .scorecard::before{
     content:"";
+    position:absolute; top:0; left:6%; right:6%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent);
+    z-index:1;
+  }
+  .scorecard::after{
+    content:"";
+    position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:
+      radial-gradient(120% 55% at 8% -8%, rgba(255,255,255,.3), transparent 42%),
+      radial-gradient(circle at 100% 0%, rgba(180,160,255,.06), transparent 30%);
+    z-index:1;
+  }
+  .scorecard-gradient{
     position:absolute; left:0; top:0; bottom:0; width:6px;
     background:linear-gradient(var(--amber), var(--violet), var(--teal), var(--green));
     background-size:100% 300%;
     animation:gradientShift 6s ease infinite;
+    z-index:2;
   }
   @keyframes gradientShift{
     0%{ background-position:0 0%; }
@@ -100,17 +116,21 @@
     font-size:10.5px;
     font-weight:700;
     padding:4px 10px;
-    border-radius:6px;
-    border:1px solid var(--border);
-    background:var(--card);
+    border-radius:8px;
+    border:1px solid var(--glass-border-subtle);
+    background:var(--glass-bg-light);
     color:var(--ink-soft);
     cursor:pointer;
-    transition:all .15s ease;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);
   }
   .backup-btn:hover{
     border-color:var(--violet);
     color:var(--violet);
-    background:var(--violet-soft);
+    background:rgba(124,92,191,.08);
+    transform:translateY(-1px);
+    box-shadow:var(--glass-glow-violet);
   }
   .last-saved{
     margin-top:6px;
@@ -125,23 +145,27 @@
   .search-input{
     width:100%;
     padding:11px 16px;
-    border-radius:10px;
-    border:1px solid var(--border);
+    border-radius:12px;
+    border:1px solid var(--glass-border-subtle);
     font-family:'Inter',sans-serif;
     font-size:13.5px;
-    background:var(--card);
+    background:var(--glass-bg);
     color:var(--ink);
-    box-shadow:var(--shadow);
-    transition:all .15s ease;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    box-shadow:var(--glass-shadow);
+    transition:all .2s ease;
   }
-  .search-input:focus{ outline:none; border-color:var(--violet); box-shadow:0 0 0 3px var(--violet-soft); }
+  .search-input:focus{ outline:none; border-color:var(--violet); box-shadow:0 0 0 3px var(--violet-soft), var(--glass-shadow); }
   .search-results{
     position:absolute; top:100%; left:0; right:0;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:10px;
+    background:var(--glass-bg-heavy);
+    border:1px solid var(--glass-border);
+    border-radius:12px;
     margin-top:6px;
-    box-shadow:var(--shadow-lift);
+    backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    box-shadow:var(--glass-shadow-lift);
     max-height:340px;
     overflow-y:auto;
     z-index:40;

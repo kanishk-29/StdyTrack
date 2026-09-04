@@ -1,25 +1,36 @@
 /* Habit-tracking calendar card component */
   .habit-shell{display:flex; flex-direction:column; gap:16px;}
   .habit-card{
-    background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow);
+    background:var(--glass-bg); border:1px solid var(--glass-border-subtle); border-radius:18px;
+    box-shadow:var(--glass-shadow);
+    backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+    -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
     padding:20px 22px;
+    position:relative; overflow:hidden;
   }
+  .habit-card::before{
+    content:"";
+    position:absolute; top:0; left:6%; right:6%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent);
+    z-index:1; pointer-events:none;
+  }
+  .habit-card > *{ position:relative; z-index:2; }
   .habit-header{display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;}
   .habit-title{font-family:'Neuton',serif; font-size:22px; margin:0;}
   .habit-subtitle{font-size:13px; color:var(--ink-soft); margin-top:4px;}
   .habit-clock{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink-soft); margin-top:6px;}
   .habit-summary-grid{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px;}
-  .habit-metric{background:#faf8f2; border:1px solid var(--paper-line); border-radius:12px; padding:12px 14px;}
+  .habit-metric{background:var(--glass-bg-light); border:1px solid var(--glass-border-subtle); border-radius:12px; padding:12px 14px; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);}
   .habit-metric .label{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--ink-faint); text-transform:uppercase;}
   .habit-metric .value{font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:var(--ink); margin-top:4px;}
   .habit-calendar-grid{display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:8px;}
-  .habit-day-card{background:#faf8f2; border:1px solid var(--paper-line); border-radius:10px; padding:10px 8px; display:flex; flex-direction:column; gap:8px; min-height:156px;}
+  .habit-day-card{background:var(--glass-bg-light); border:1px solid var(--glass-border-subtle); border-radius:10px; padding:10px 8px; display:flex; flex-direction:column; gap:8px; min-height:156px; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);}
   .habit-day-card.is-today{border-color:var(--violet); box-shadow:0 0 0 1px var(--violet-soft);}
   .habit-day-top{display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--ink-faint);}
   .habit-day-top strong{color:var(--ink);}
   .habit-check-row{display:flex; flex-direction:column; gap:6px; font-size:11px; color:var(--ink-soft);}
   .habit-check{display:flex; align-items:center; gap:6px; cursor:pointer;}
-  .habit-note{margin-top:4px; width:100%; border:1px solid var(--paper-line); border-radius:6px; padding:6px 7px; font-size:10.5px; background:#fffefb; color:var(--ink); resize:vertical; min-height:42px;}
+  .habit-note{margin-top:4px; width:100%; border:1px solid var(--glass-border-subtle); border-radius:6px; padding:6px 7px; font-size:10.5px; background:var(--glass-bg-light); color:var(--ink); resize:vertical; min-height:42px; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
   .habit-note:focus{outline:2px solid rgba(47,143,138,0.2); border-color:var(--teal);}
   .habit-check input{accent-color:var(--green); width:14px; height:14px;}
   .habit-check input:disabled{opacity:0.55; cursor:not-allowed;}
