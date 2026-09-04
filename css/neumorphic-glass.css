@@ -119,9 +119,8 @@ body{
   -webkit-backdrop-filter:blur(18px);
 }
 .dash-course-card:hover{ box-shadow:var(--neo-shadow); }
-.dash-course-thumb{
-  background:linear-gradient(160deg,#4666e1,#59658f);
-}
+/* Thumb keeps each subject's own color gradient (JS sets it inline via
+   dashboard.js), matching the design file's per-color subject tops. */
 .dash-course-thumb-label{ color:#fff; font-weight:800; }
 .dash-course-pct{
   background:rgba(0,0,0,.35);
@@ -183,8 +182,14 @@ body{
   box-shadow:0 10px 24px rgba(105,86,227,.28);
 }
 
-/* Serif page headers */
-h1,h2,h3{ font-family:Georgia,"Times New Roman",serif; letter-spacing:-.02em; }
+/* Serif headings for the restyled areas (not global — keeps every other
+   modal/detail heading on its existing font so nothing outside the requested
+   scope changes). */
+.scorecard h1,
+.page-title,
+.dash-block-header h3,
+.today-total,
+.panel-title{ font-family:Georgia,"Times New Roman",serif; letter-spacing:-.02em; }
 
 /* ============================================================
    DARK MODE (app uses [data-theme="dark"])
