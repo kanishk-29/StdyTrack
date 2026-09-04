@@ -278,7 +278,8 @@
     .dash-quick-grid{ grid-template-columns:repeat(2, 1fr); }
   }
   @media (max-width:480px){
-    .dash-course-card{ flex-basis:220px; }
+    .dash-courses-scroll{ flex-direction:column; overflow-x:visible; gap:12px; }
+    .dash-course-card{ flex:1 1 100%; }
     .dash-quick-grid{ gap:8px; margin-bottom:18px; }
     .dash-quick-tile{ padding:12px 8px; border-radius:12px; }
     .dash-quick-icon{ width:36px; height:36px; font-size:17px; margin-bottom:8px; }
