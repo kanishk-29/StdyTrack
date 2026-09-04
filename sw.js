@@ -1,11 +1,66 @@
-// Minimal offline cache for the Study Tracker showcase page.
-// index.html is fully self-contained (all CSS/JS inline), so the shell only
-// needs the page itself to work offline.
+// Minimal offline cache for Study Tracker.
+// All real data lives in localStorage, not in this cache ???????? this only
+// lets the app shell (html/css/js/icons) load when there's no connection.
 
-const CACHE_NAME = 'study-tracker-shell-v59';
+const CACHE_NAME = 'study-tracker-shell-v58';
 const APP_SHELL = [
   './',
-  './index.html'
+  './index.html',
+  './manifest.json',
+  './robots.txt',
+  './sitemap.xml',
+  './study-tips.html',
+  './exam-prep.html',
+  './why-study-tracker.html',
+  './icon-192.png',
+  './icon-512.png',
+  './apple-touch-icon.png',
+  './background.png',
+  './shrine-background.png',
+  './rei-avatar.png',
+  './css/base.css',
+  './css/liquid-glass.css',
+  './css/neumorphic-glass.css',
+  './css/habit-tracker.css',
+  './css/header-search.css',
+  './css/today-calendar.css',
+  './css/calendar-popover.css',
+  './css/timer.css',
+  './css/sidebar.css',
+  './css/my-subjects.css',
+  './css/folder-dashboard.css',
+  './css/subject-detail.css',
+  './css/exam-pacing.css',
+  './css/tooltip-footer.css',
+  './css/modal.css',
+  './css/today-planner.css',
+  './css/lecture-notes.css',
+  './css/analytics.css',
+  './css/focus-mode.css',
+  './css/login.css',
+  './css/mascot.css',
+  './css/dark-mode.css',
+  './css/a11y.css',
+  './js/data.js',
+  './js/demo.js',
+  './js/today-and-folders.js',
+  './js/cloud-sync.js',
+  './js/storage.js',
+  './js/settings.js',
+  './js/time-tracking.js',
+  './js/exam-scores.js',
+  './js/render.js',
+  './js/dashboard.js',
+  './js/calendar.js',
+  './js/tooltip.js',
+  './js/lecture-notes.js',
+  './js/actions.js',
+  './js/test-score-actions.js',
+  './js/modals.js',
+  './js/exam-date.js',
+  './js/init.js',
+  './js/mascot.js',
+  './js/login.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -26,8 +81,9 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Network-first so the page updates promptly; falls back to the cached
-// single-page shell when offline.
+// Network-first for app files so updates show up promptly; falls back to
+// cache when offline. Images never fall back to index.html (that would
+// serve HTML bytes for a broken <img>); they just use the cache or fail.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
@@ -40,9 +96,14 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(async () => {
         let cached = await caches.match(event.request);
-        if (!cached) cached = await caches.match('./index.html');
+        if (!cached) {
+          const url = new URL(event.request.url);
+          url.search = '';
+          cached = await caches.match(url.pathname.replace(/^\.\//, './'));
+          if (!cached) cached = await caches.match('.' + url.pathname);
+        }
         if (cached) return cached;
-        if (event.request.mode === 'navigate') {
+        if (event.request.destination !== 'image' && event.request.mode === 'navigate') {
           return caches.match('./index.html');
         }
         return Response.error();
