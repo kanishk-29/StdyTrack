@@ -57,6 +57,16 @@ function renderScorecard(){
   const pct = total ? Math.round((done/total)*100) : 0;
   const pctEl = document.getElementById('percentBadge');
   if(pctEl) pctEl.textContent = pct + '%';
+  // Hero extras (streak card + active-subjects stat pill)
+  const scEl = document.getElementById('activeSubjectsStat');
+  if(scEl) scEl.innerHTML = '👥 ' + data.subjects.length + ' active subjects';
+  if(typeof computeCurrentStreak === 'function'){
+    const st = computeCurrentStreak();
+    const snEl = document.getElementById('streakNum');
+    if(snEl) snEl.textContent = st;
+    const sbEl = document.getElementById('streakBarFill');
+    if(sbEl) sbEl.style.width = Math.min(st,24)/24*100 + '%';
+  }
 }
 
 function subjectNameById(id){
@@ -75,6 +85,13 @@ function renderToday(){
   } else {
     wrap.innerHTML = entries.map(([sid,sec])=>
       `<span class="stat-chip time accent-${(data.subjects.findIndex(s=>s.id===sid)%5)+1}">${escapeHtml(subjectNameById(sid))} · ${formatHuman(sec)}</span>`
+    ).join('');
+  }
+  // Topic strip (design's .topic pills) — up to 4 today subjects
+  const tStrip = document.getElementById('todayTopicStrip');
+  if(tStrip){
+    tStrip.innerHTML = entries.slice(0,4).map(([sid,sec])=>
+      `<span class="topic">${escapeHtml(subjectNameById(sid))} · ${formatHuman(sec)}</span>`
     ).join('');
   }
 

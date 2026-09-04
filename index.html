@@ -63,29 +63,29 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
       media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
-<link rel="stylesheet" href="css/base.css?v=57">
-<link rel="stylesheet" href="css/liquid-glass.css?v=57">
-<link rel="stylesheet" href="css/neumorphic-glass.css?v=57">
-<link rel="stylesheet" href="css/habit-tracker.css?v=57">
-<link rel="stylesheet" href="css/header-search.css?v=57">
-<link rel="stylesheet" href="css/today-calendar.css?v=57">
-<link rel="stylesheet" href="css/calendar-popover.css?v=57">
-<link rel="stylesheet" href="css/timer.css?v=57">
-<link rel="stylesheet" href="css/sidebar.css?v=57">
-<link rel="stylesheet" href="css/my-subjects.css?v=57">
-  <link rel="stylesheet" href="css/folder-dashboard.css?v=57">
-<link rel="stylesheet" href="css/subject-detail.css?v=57">
-<link rel="stylesheet" href="css/exam-pacing.css?v=57">
-<link rel="stylesheet" href="css/tooltip-footer.css?v=57">
-<link rel="stylesheet" href="css/modal.css?v=57">
-<link rel="stylesheet" href="css/today-planner.css?v=57">
-<link rel="stylesheet" href="css/lecture-notes.css?v=57">
-<link rel="stylesheet" href="css/analytics.css?v=57">
-<link rel="stylesheet" href="css/focus-mode.css?v=57">
-<link rel="stylesheet" href="css/login.css?v=57">
-<link rel="stylesheet" href="css/mascot.css?v=57">
-<link rel="stylesheet" href="css/dark-mode.css?v=57">
-<link rel="stylesheet" href="css/a11y.css?v=57">
+<link rel="stylesheet" href="css/base.css?v=58">
+<link rel="stylesheet" href="css/liquid-glass.css?v=58">
+<link rel="stylesheet" href="css/neumorphic-glass.css?v=58">
+<link rel="stylesheet" href="css/habit-tracker.css?v=58">
+<link rel="stylesheet" href="css/header-search.css?v=58">
+<link rel="stylesheet" href="css/today-calendar.css?v=58">
+<link rel="stylesheet" href="css/calendar-popover.css?v=58">
+<link rel="stylesheet" href="css/timer.css?v=58">
+<link rel="stylesheet" href="css/sidebar.css?v=58">
+<link rel="stylesheet" href="css/my-subjects.css?v=58">
+  <link rel="stylesheet" href="css/folder-dashboard.css?v=58">
+<link rel="stylesheet" href="css/subject-detail.css?v=58">
+<link rel="stylesheet" href="css/exam-pacing.css?v=58">
+<link rel="stylesheet" href="css/tooltip-footer.css?v=58">
+<link rel="stylesheet" href="css/modal.css?v=58">
+<link rel="stylesheet" href="css/today-planner.css?v=58">
+<link rel="stylesheet" href="css/lecture-notes.css?v=58">
+<link rel="stylesheet" href="css/analytics.css?v=58">
+<link rel="stylesheet" href="css/focus-mode.css?v=58">
+<link rel="stylesheet" href="css/login.css?v=58">
+<link rel="stylesheet" href="css/mascot.css?v=58">
+<link rel="stylesheet" href="css/dark-mode.css?v=58">
+<link rel="stylesheet" href="css/a11y.css?v=58">
 </head>
 <body>
 
@@ -173,26 +173,43 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   </div>
 
   <div id="studyView" class="view-page">
-    <header class="scorecard">
+    <header class="scorecard hero">
       <div class="scorecard-gradient"></div>
-      <div>
-        <span class="eyebrow">PROGRESS REPORT</span>
-        <h1>Study Tracker</h1>
-        <div class="user-welcome" id="userWelcome"></div>
-      </div>
-      <div class="scorecard-right">
-        <div class="big-score"><span id="totalCompleted">0</span><span class="slash">/</span><span id="totalLectures">0</span></div>
-        <div class="score-label">LECTURES CLEARED</div>
-        <div class="percent-badge" id="percentBadge">0%</div>
-        <div class="backup-row">
-          <button class="backup-btn" onclick="sparkAt(this,'var(--teal)'); openProgressSlide()" title="View daily progress graph">📊 Progress</button>
-          <button class="backup-btn" onclick="exportData()" title="Download a backup file">⬇ Backup</button>
-          <button class="backup-btn" onclick="document.getElementById('importFile').click()" title="Restore from a backup file">⬆ Restore</button>
-          <button class="backup-btn" onclick="openSettings()" title="Settings">⚙️ Settings</button>
-          <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
+      <div class="eyebrow">PROGRESS REPORT</div>
+      <div class="hero-grid">
+        <div class="hero-main">
+          <h1>Study Tracker</h1>
+          <div class="user-welcome" id="userWelcome"></div>
+          <p class="hero-copy">Keep the momentum going across your lectures, subjects, tests, projects, and daily priorities.</p>
+          <div class="stats">
+            <span class="stat">📚 <b id="totalCompleted">0</b> / <b id="totalLectures">0</b> lectures cleared</span>
+            <span class="stat">🎯 <b id="percentBadge">0%</b> complete</span>
+            <span class="stat" id="activeSubjectsStat">👥 0 active subjects</span>
+          </div>
         </div>
-        <div class="last-saved" id="lastSaved"></div>
+        <aside class="streak">
+          <div class="streak-head"><span>Study streak</span><span>✦</span></div>
+          <div class="streak-num"><b id="streakNum">0</b> <small>days</small></div>
+          <div class="streak-bar"><span id="streakBarFill"></span></div>
+        </aside>
       </div>
+      <div class="hero-actions">
+        <div>
+          <div class="page-title">Today, at a glance</div>
+          <div class="secondary">A calm workspace for everything you need to study next.</div>
+        </div>
+        <div class="hero-btns">
+          <button class="backup-btn" onclick="sparkAt(this,'var(--teal)'); openProgressSlide()" title="View daily progress graph">📊 Progress</button>
+          <button class="primary-btn" onclick="document.getElementById('importFile').click()" title="Add a new subject/folder">+ New Folder</button>
+        </div>
+      </div>
+      <div class="backup-row">
+        <button class="backup-btn" onclick="exportData()" title="Download a backup file">⬇ Backup</button>
+        <button class="backup-btn" onclick="document.getElementById('importFile').click()" title="Restore from a backup file">⬆ Restore</button>
+        <button class="backup-btn" onclick="openSettings()" title="Settings">⚙️ Settings</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
+      </div>
+      <div class="last-saved" id="lastSaved"></div>
     </header>
 
     <div class="search-wrap">
@@ -200,14 +217,26 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <div class="search-results" id="searchResults"></div>
     </div>
 
-    <div class="today-panel">
+    <div class="today-panel glass-block activity">
+      <div class="today-fog" aria-hidden="true"></div>
+      <div class="today-fog-2" aria-hidden="true"></div>
+      <div class="today-fog-veil" aria-hidden="true"></div>
       <div class="today-left">
-        <span class="eyebrow">TODAY</span>
+        <div class="activity-label">TODAY</div>
         <div class="today-total" id="todayTotal">0m</div>
+        <p class="activity-copy">Let&rsquo;s see what you&rsquo;re studying right now and how today is shaping up.</p>
         <div class="stat-row" id="todaySubjects"></div>
-        <div class="yesterday-line" id="yesterdayLine"></div>
+        <div class="topic-strip" id="todayTopicStrip"></div>
+        <div class="activity-copy yesterday" id="yesterdayLine"></div>
       </div>
-      <div class="today-right">
+      <div class="today-right heatmap study-calendar-glass">
+        <div class="calendar-head">
+          <div>
+            <div class="calendar-kicker">STUDY LOG</div>
+            <div class="calendar-month" id="calendarMonth">Upcoming</div>
+          </div>
+          <div class="calendar-total" id="calendarTotal"><strong>0</strong><span>active days</span></div>
+        </div>
         <div class="cal-terminal" id="calTerminal">
           <div class="cal-term-bar">
             <span class="cal-term-dot dot-r"></span><span class="cal-term-dot dot-y"></span><span class="cal-term-dot dot-g"></span>
@@ -848,28 +877,28 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 
 <div class="toast" id="toast"></div>
 
-<script src="js/data.js?v=57"></script>
-<script src="js/demo.js?v=57"></script>
-<script src="js/today-and-folders.js?v=57"></script>
+<script src="js/data.js?v=58"></script>
+<script src="js/demo.js?v=58"></script>
+<script src="js/today-and-folders.js?v=58"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="js/cloud-sync.js?v=57"></script>
-<script src="js/storage.js?v=57"></script>
-<script src="js/settings.js?v=57"></script>
-<script src="js/time-tracking.js?v=57"></script>
-<script src="js/exam-scores.js?v=57"></script>
-<script src="js/render.js?v=57"></script>
-<script src="js/dashboard.js?v=57"></script>
-<script src="js/calendar.js?v=57"></script>
-<script src="js/tooltip.js?v=57"></script>
-<script src="js/lecture-notes.js?v=57"></script>
-<script src="js/actions.js?v=57"></script>
-<script src="js/test-score-actions.js?v=57"></script>
-<script src="js/modals.js?v=57"></script>
-<script src="js/exam-date.js?v=57"></script>
-<script src="js/init.js?v=57"></script>
-<script src="js/mascot.js?v=57"></script>
-<script src="js/login.js?v=57"></script>
+<script src="js/cloud-sync.js?v=58"></script>
+<script src="js/storage.js?v=58"></script>
+<script src="js/settings.js?v=58"></script>
+<script src="js/time-tracking.js?v=58"></script>
+<script src="js/exam-scores.js?v=58"></script>
+<script src="js/render.js?v=58"></script>
+<script src="js/dashboard.js?v=58"></script>
+<script src="js/calendar.js?v=58"></script>
+<script src="js/tooltip.js?v=58"></script>
+<script src="js/lecture-notes.js?v=58"></script>
+<script src="js/actions.js?v=58"></script>
+<script src="js/test-score-actions.js?v=58"></script>
+<script src="js/modals.js?v=58"></script>
+<script src="js/exam-date.js?v=58"></script>
+<script src="js/init.js?v=58"></script>
+<script src="js/mascot.js?v=58"></script>
+<script src="js/login.js?v=58"></script>
 </body>
 </html>
