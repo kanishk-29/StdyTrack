@@ -35,6 +35,15 @@
   .login-screen.show{ opacity:1; pointer-events:auto; }
   .login-screen.hide{ opacity:0; pointer-events:none; }
   .login-screen::-webkit-scrollbar{ display:none; width:0; height:0; }
+  .login-screen{ overscroll-behavior:contain; }
+
+  /* While the login gate is up, the page behind must not scroll at all —
+     otherwise the viewport scrollbar shows through next to the login and it
+     looks like a "scrolling line". Pure CSS: rules drop automatically once
+     the gate hides, so normal app scrolling restores itself. */
+  html:has(.login-screen.show){ overflow:hidden; scrollbar-width:none; }
+  html:has(.login-screen.show) body{ overflow:hidden; }
+  html:has(.login-screen.show)::-webkit-scrollbar{ display:none; width:0; height:0; }
 
   /* ---- atmosphere layers (all behind the interactive card) ---- */
   .login-scene-bg{
