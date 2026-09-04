@@ -1,0 +1,234 @@
+/* Liquid Glass + Neumorphism — visual override ported from
+   study_tracker_active_day_richer_aura_colors.html.
+   Only changes the LOOK (no HTML/JS/logic touched): aurora backdrop,
+   neumorphic dual shadows, pill shapes, serif headings, GitHub-style
+   heatmap calendar, and gradient-topped subject cards. Loaded after
+   liquid-glass.css so it wins on the components it targets.
+   Dark mode uses the app's existing [data-theme="dark"] selector. */
+
+/* ---- Neumorphic design tokens (scoped to .app) ---- */
+.app{
+  --neo-glass:rgba(255,255,255,.56);
+  --neo-glass-strong:rgba(255,255,255,.74);
+  --neo-glass-soft:rgba(255,255,255,.30);
+  --neo-line:rgba(255,255,255,.85);
+  --neo-ink:#242638;
+  --neo-muted:#5f6478;
+  --neo-soft:#9ba0ad;
+  --neo-purple:#7759e8;
+  --neo-purple2:#9c77ff;
+  --neo-green:#25865f;
+  --neo-blue:#4666e1;
+  --neo-pink:#ec4ea5;
+  --neo-cyan:#22c7d6;
+  --neo-amber:#d9a21b;
+  --neo-red:#dd4e2f;
+  --neo-shadow:
+    18px 18px 42px rgba(119,128,148,.16),
+    -14px -14px 34px rgba(255,255,255,.78);
+  --neo-shadow-soft:
+    10px 10px 24px rgba(119,128,148,.13),
+    -8px -8px 20px rgba(255,255,255,.70);
+}
+
+/* ---- Aurora backdrop (replaces the paper grid) ---- */
+body{
+  background:
+    radial-gradient(circle at 9% 6%,rgba(116,144,255,.14),transparent 23%),
+    radial-gradient(circle at 86% 10%,rgba(191,163,255,.13),transparent 26%),
+    radial-gradient(circle at 40% 100%,rgba(80,205,180,.09),transparent 30%),
+    linear-gradient(180deg,#e8edf4 0%,#eef1f4 50%,#e5e9ee 100%) !important;
+}
+.app{ position:relative; }
+
+/* ---- Shared glass panel + pill language ---- */
+.glass-block,
+.panel,
+.dash-block,
+.today-panel,
+.revision-panel,
+.streak,
+.today-right,
+.today-left,
+.revision-card{
+  border:1px solid var(--neo-line);
+  background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(255,255,255,.30));
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:var(--neo-shadow);
+}
+
+/* ---- STARTING PART: scorecard header ---- */
+.scorecard{
+  background:
+    radial-gradient(circle at 78% 16%,rgba(129,108,241,.16),transparent 25%),
+    linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.32));
+  border:1px solid var(--neo-line);
+  box-shadow:var(--neo-shadow);
+}
+.scorecard h1,
+.page-title{
+  font-family:Georgia,"Times New Roman",serif;
+  letter-spacing:-.03em;
+}
+.scorecard-gradient{
+  width:8px;
+  background:linear-gradient(180deg,#497ecf,#8a5ce5,#27c967,#4a8b69);
+  background-size:100% 320%;
+}
+
+/* ---- CALENDAR: GitHub-style heatmap (neumorphic inset) ---- */
+.cal-wrap{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.60),rgba(255,255,255,.32));
+  border:1px solid var(--neo-line);
+  border-radius:22px;
+  padding:16px;
+  box-shadow:var(--neo-shadow);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.cal-cell{
+  background:rgba(255,255,255,.26);
+  border:1px solid var(--neo-line);
+  border-radius:11px 8px 12px 9px;
+  box-shadow:
+    inset 2px 2px 5px rgba(111,124,116,.08),
+    inset -2px -2px 4px rgba(255,255,255,.45);
+}
+.cal-cell.level-0{ background:rgba(255,255,255,.26); }
+.cal-cell.level-1{ background:linear-gradient(145deg,rgba(70,184,131,.22),rgba(70,184,131,.10)); border-color:rgba(70,131,104,.3); }
+.cal-cell.level-2{ background:linear-gradient(145deg,rgba(62,166,116,.55),rgba(62,166,116,.38)); }
+.cal-cell.level-3{ background:linear-gradient(145deg,rgba(43,140,96,.78),rgba(43,140,96,.60)); }
+.cal-cell.level-4{ background:linear-gradient(145deg,rgba(28,108,74,1),rgba(28,108,74,.82)); }
+.cal-cell.is-today{
+  box-shadow:0 0 0 2px var(--neo-amber), inset 2px 2px 5px rgba(111,124,116,.08), inset -2px -2px 4px rgba(255,255,255,.45);
+}
+.cal-legend .cal-swatch.level-1{ background:rgba(70,184,131,.22); }
+.cal-legend .cal-swatch.level-2{ background:rgba(62,166,116,.55); }
+.cal-legend .cal-swatch.level-3{ background:rgba(43,140,96,.78); }
+.cal-legend .cal-swatch.level-4{ background:rgba(28,108,74,1); }
+
+/* ---- ONGOING SUBJECT: gradient-topped glass cards ---- */
+.dash-course-card{
+  border:1px solid var(--neo-line);
+  border-radius:22px;
+  background:linear-gradient(135deg,rgba(255,255,255,.60),rgba(255,255,255,.32));
+  box-shadow:var(--neo-shadow-soft);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.dash-course-card:hover{ box-shadow:var(--neo-shadow); }
+.dash-course-thumb{
+  background:linear-gradient(160deg,#4666e1,#59658f);
+}
+.dash-course-thumb-label{ color:#fff; font-weight:800; }
+.dash-course-pct{
+  background:rgba(0,0,0,.35);
+  color:#fff;
+  border-radius:999px;
+}
+.dash-course-progress-track{
+  border-radius:999px;
+  background:rgba(122,105,170,.12);
+  box-shadow:inset 1px 1px 3px rgba(90,100,115,.18), inset -1px -1px 2px rgba(255,255,255,.6);
+}
+.dash-course-progress-fill{ border-radius:999px; }
+
+/* ---- QUICK TILES: neumorphic pills ---- */
+.dash-quick-tile{
+  border:1px solid var(--neo-line);
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.30));
+  box-shadow:var(--neo-shadow-soft);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.dash-quick-tile:hover{ box-shadow:var(--neo-shadow); transform:translateY(-1px); }
+
+/* ---- PRIORITY / DEADLINES / REVISION ---- */
+.dash-priority-row{
+  border-radius:16px;
+  box-shadow:0 10px 20px rgba(180,60,60,.22);
+}
+.dash-deadline-row,.revision-item{
+  border:1px solid var(--neo-line);
+  background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.30));
+  border-radius:16px;
+  box-shadow:var(--neo-shadow-soft);
+}
+
+/* ---- TODAY total / streak ---- */
+.today-total{
+  background:linear-gradient(135deg,#25865f,#22c7d6);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* ---- NAV PILLS (view switcher / chips) ---- */
+.view-btn,.nav-chip,.theme-toggle{
+  border:1px solid var(--neo-line);
+  background:var(--neo-glass);
+  color:var(--neo-muted);
+  border-radius:999px;
+  box-shadow:var(--neo-shadow-soft);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.view-btn.active{
+  background:linear-gradient(135deg,#497ecf,#8a5ce5);
+  border-color:transparent;
+  color:#fff;
+  box-shadow:0 10px 24px rgba(105,86,227,.28);
+}
+
+/* Serif page headers */
+h1,h2,h3{ font-family:Georgia,"Times New Roman",serif; letter-spacing:-.02em; }
+
+/* ============================================================
+   DARK MODE (app uses [data-theme="dark"])
+   ============================================================ */
+[data-theme="dark"] body{
+  background:
+    radial-gradient(circle at 10% 5%,rgba(103,86,231,.17),transparent 24%),
+    radial-gradient(circle at 88% 12%,rgba(39,164,210,.12),transparent 24%),
+    linear-gradient(180deg,#0e131d 0%,#111824 54%,#0b1019 100%) !important;
+}
+[data-theme="dark"] .app{
+  --neo-glass:rgba(24,31,43,.70);
+  --neo-glass-strong:rgba(28,36,51,.82);
+  --neo-glass-soft:rgba(255,255,255,.05);
+  --neo-line:rgba(255,255,255,.10);
+  --neo-ink:#f6f7fb;
+  --neo-muted:#b7bfcd;
+  --neo-soft:#8f99aa;
+  --neo-shadow:18px 18px 44px rgba(0,0,0,.34),-10px -10px 28px rgba(44,58,81,.23);
+  --neo-shadow-soft:10px 10px 25px rgba(0,0,0,.28),-8px -8px 19px rgba(46,57,78,.18);
+}
+[data-theme="dark"] .glass-block,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .dash-block,
+[data-theme="dark"] .today-panel,
+[data-theme="dark"] .revision-panel,
+[data-theme="dark"] .streak,
+[data-theme="dark"] .today-right,
+[data-theme="dark"] .today-left,
+[data-theme="dark"] .revision-card,
+[data-theme="dark"] .cal-wrap,
+[data-theme="dark"] .dash-course-card,
+[data-theme="dark"] .dash-quick-tile,
+[data-theme="dark"] .dash-deadline-row,
+[data-theme="dark"] .revision-item,
+[data-theme="dark"] .scorecard{
+  background:linear-gradient(135deg,rgba(25,32,44,.82),rgba(18,24,34,.66));
+  border-color:rgba(255,255,255,.08);
+}
+[data-theme="dark"] .cal-cell{ background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.05); box-shadow:inset 1px 1px 3px rgba(0,0,0,.35); }
+[data-theme="dark"] .cal-cell.level-0{ background:rgba(255,255,255,.04); }
+[data-theme="dark"] .view-btn,[data-theme="dark"] .nav-chip,[data-theme="dark"] .theme-toggle{ background:var(--neo-glass); color:var(--neo-muted); }
+
+/* Preferred-reduced-motion: kill neumorphic transition shimmer */
+@media (prefers-reduced-motion:reduce){
+  .scorecard-gradient{ animation:none; }
+}
