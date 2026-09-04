@@ -63,27 +63,27 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
       media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
-<link rel="stylesheet" href="css/base.css?v=54">
-<link rel="stylesheet" href="css/habit-tracker.css?v=54">
-<link rel="stylesheet" href="css/header-search.css?v=54">
-<link rel="stylesheet" href="css/today-calendar.css?v=54">
-<link rel="stylesheet" href="css/calendar-popover.css?v=54">
-<link rel="stylesheet" href="css/timer.css?v=54">
-<link rel="stylesheet" href="css/sidebar.css?v=54">
-<link rel="stylesheet" href="css/my-subjects.css?v=54">
-  <link rel="stylesheet" href="css/folder-dashboard.css?v=54">
-<link rel="stylesheet" href="css/subject-detail.css?v=54">
-<link rel="stylesheet" href="css/exam-pacing.css?v=54">
-<link rel="stylesheet" href="css/tooltip-footer.css?v=54">
-<link rel="stylesheet" href="css/modal.css?v=54">
-<link rel="stylesheet" href="css/today-planner.css?v=54">
-<link rel="stylesheet" href="css/lecture-notes.css?v=54">
-<link rel="stylesheet" href="css/analytics.css?v=54">
-<link rel="stylesheet" href="css/focus-mode.css?v=54">
-<link rel="stylesheet" href="css/login.css?v=54">
-<link rel="stylesheet" href="css/mascot.css?v=54">
-<link rel="stylesheet" href="css/dark-mode.css?v=54">
-<link rel="stylesheet" href="css/a11y.css?v=54">
+<link rel="stylesheet" href="css/base.css?v=55">
+<link rel="stylesheet" href="css/habit-tracker.css?v=55">
+<link rel="stylesheet" href="css/header-search.css?v=55">
+<link rel="stylesheet" href="css/today-calendar.css?v=55">
+<link rel="stylesheet" href="css/calendar-popover.css?v=55">
+<link rel="stylesheet" href="css/timer.css?v=55">
+<link rel="stylesheet" href="css/sidebar.css?v=55">
+<link rel="stylesheet" href="css/my-subjects.css?v=55">
+  <link rel="stylesheet" href="css/folder-dashboard.css?v=55">
+<link rel="stylesheet" href="css/subject-detail.css?v=55">
+<link rel="stylesheet" href="css/exam-pacing.css?v=55">
+<link rel="stylesheet" href="css/tooltip-footer.css?v=55">
+<link rel="stylesheet" href="css/modal.css?v=55">
+<link rel="stylesheet" href="css/today-planner.css?v=55">
+<link rel="stylesheet" href="css/lecture-notes.css?v=55">
+<link rel="stylesheet" href="css/analytics.css?v=55">
+<link rel="stylesheet" href="css/focus-mode.css?v=55">
+<link rel="stylesheet" href="css/login.css?v=55">
+<link rel="stylesheet" href="css/mascot.css?v=55">
+<link rel="stylesheet" href="css/dark-mode.css?v=55">
+<link rel="stylesheet" href="css/a11y.css?v=55">
 </head>
 <body>
 
@@ -93,43 +93,57 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 </div>
 
 <div class="login-screen" id="loginScreen">
+  <div class="login-scene-bg"></div>
+  <div class="login-scene-shade"></div>
+  <div class="login-moon-glow" aria-hidden="true"></div>
+  <div class="login-lantern-glow l1" aria-hidden="true"></div>
+  <div class="login-lantern-glow l2" aria-hidden="true"></div>
+  <div class="login-stars" id="loginStars" aria-hidden="true"></div>
+  <div class="login-haze" aria-hidden="true"></div>
+  <div class="login-snow" id="loginSnow" aria-hidden="true"></div>
+  <div class="login-embers" id="loginEmbers" aria-hidden="true"></div>
+
   <div class="login-stage" id="loginStage">
-    <div class="login-column" id="loginCard">
-      <div class="avatar-wrap">
-        <img class="avatar login-mascot" id="loginMascotImg" src="rei-avatar.png" alt="Rei" draggable="false">
-      </div>
-
-      <div class="badge"><span class="login-eyebrow-dot"></span>Access Checkpoint</div>
-
-      <h1 class="login-title">Study <span class="accent">Tracker</span></h1>
-
-      <p class="login-subtitle" id="loginGreeting">I'm Rei. Sign in with Google —<br>then let's get to work.</p>
-
-      <div class="login-fields" id="loginFields">
-        <div class="login-error" id="loginError" aria-live="polite"></div>
-        <button type="button" class="login-google" id="loginGoogleBtn" onclick="googleSignIn()">
-          <svg class="lg-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="#4285F4" d="M21.35 12.23c0-.71-.06-1.4-.18-2.05H12v3.88h5.23a4.47 4.47 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.92-4.18 2.92-7.22z"/>
-            <path fill="#34A853" d="M12 21.5c2.63 0 4.84-.87 6.45-2.35l-3.14-2.45c-.87.58-1.98.93-3.31.93-2.54 0-4.7-1.72-5.47-4.03H3.29v2.53A9.75 9.75 0 0 0 12 21.5z"/>
-            <path fill="#FBBC05" d="M6.53 13.6A5.86 5.86 0 0 1 6.22 12c0-.56.1-1.1.31-1.6V7.87H3.29A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.04 4.13l3.24-2.53z"/>
-            <path fill="#EA4335" d="M12 6.37c1.43 0 2.72.49 3.74 1.45l2.8-2.8C16.83 3.45 14.63 2.5 12 2.5a9.75 9.75 0 0 0-8.71 5.37l3.24 2.53C7.3 8.09 9.46 6.37 12 6.37z"/>
-          </svg>
-          Continue with Google
-        </button>
-
-        <button type="button" class="login-demo" id="loginDemoBtn" onclick="startDemo()">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="demo-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.8 2.8M16.2 16.2l2.8 2.8M19 5l-2.8 2.8M7.8 16.2 5 19" opacity=".4"/></svg>
-          Try the demo — no account needed
-        </button>
-
-        <p class="login-demo-hint" id="loginDemoHint">Explore a pre-filled sample (Math, DBMS, OOP…) —<br>nothing is saved or sent to the cloud.</p>
-
-        <div class="login-footnote" id="loginFootnote">
-          <span class="lock">▣</span>
-          <span>Sign in with Google — your data is protected<br>by your Google account</span>
+    <header class="login-header">
+      <div class="login-logo">
+        <div class="login-logo-icon">✦</div>
+        <div>
+          <div class="login-logo-title">Study Tracker</div>
+          <div class="login-logo-sub">Organize. Focus. Achieve.</div>
         </div>
       </div>
-    </div>
+    </header>
+
+    <main class="login-main">
+      <div class="login-spacer" aria-hidden="true"></div>
+
+      <section class="login-card" id="loginCard" aria-label="Sign in">
+        <div class="login-glass-sheen" aria-hidden="true"></div>
+        <div class="login-top">
+          <div class="login-avatar">
+            <img class="avatar login-mascot" id="loginMascotImg" src="rei-avatar.png" alt="Rei" draggable="false">
+          </div>
+          <div class="login-welcome-kicker"><span class="login-eyebrow-dot"></span>Access Checkpoint</div>
+        </div>
+
+        <h1 class="login-title">Study Tracker</h1>
+        <p class="login-subtitle" id="loginGreeting">I'm Rei. Sign in with Google —<br>then let's get to work.</p>
+
+        <div class="login-error" id="loginError" aria-live="polite"></div>
+
+        <button type="button" class="btn google" id="loginGoogleBtn" onclick="googleSignIn()">
+          <span class="g-glyph">G</span> Continue with Google
+        </button>
+
+        <button type="button" class="btn demo" id="loginDemoBtn" onclick="startDemo()">
+          <span class="demo-icon">☀</span> Try the demo — no account needed
+        </button>
+
+        <p class="login-hint" id="loginDemoHint">Explore a pre-filled sample (Math, DBMS, OOP…) —<br>nothing is saved or sent to the cloud.</p>
+
+        <div class="login-security" id="loginFootnote">🔒 &nbsp; Sign in with Google — your data is protected<br>by your Google account.</div>
+      </section>
+    </main>
   </div>
 </div>
 
@@ -830,28 +844,28 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 
 <div class="toast" id="toast"></div>
 
-<script src="js/data.js?v=54"></script>
-<script src="js/demo.js?v=54"></script>
-<script src="js/today-and-folders.js?v=54"></script>
+<script src="js/data.js?v=55"></script>
+<script src="js/demo.js?v=55"></script>
+<script src="js/today-and-folders.js?v=55"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="js/cloud-sync.js?v=54"></script>
-<script src="js/storage.js?v=54"></script>
-<script src="js/settings.js?v=54"></script>
-<script src="js/time-tracking.js?v=54"></script>
-<script src="js/exam-scores.js?v=54"></script>
-<script src="js/render.js?v=54"></script>
-<script src="js/dashboard.js?v=54"></script>
-<script src="js/calendar.js?v=54"></script>
-<script src="js/tooltip.js?v=54"></script>
-<script src="js/lecture-notes.js?v=54"></script>
-<script src="js/actions.js?v=54"></script>
-<script src="js/test-score-actions.js?v=54"></script>
-<script src="js/modals.js?v=54"></script>
-<script src="js/exam-date.js?v=54"></script>
-<script src="js/init.js?v=54"></script>
-<script src="js/mascot.js?v=54"></script>
-<script src="js/login.js?v=54"></script>
+<script src="js/cloud-sync.js?v=55"></script>
+<script src="js/storage.js?v=55"></script>
+<script src="js/settings.js?v=55"></script>
+<script src="js/time-tracking.js?v=55"></script>
+<script src="js/exam-scores.js?v=55"></script>
+<script src="js/render.js?v=55"></script>
+<script src="js/dashboard.js?v=55"></script>
+<script src="js/calendar.js?v=55"></script>
+<script src="js/tooltip.js?v=55"></script>
+<script src="js/lecture-notes.js?v=55"></script>
+<script src="js/actions.js?v=55"></script>
+<script src="js/test-score-actions.js?v=55"></script>
+<script src="js/modals.js?v=55"></script>
+<script src="js/exam-date.js?v=55"></script>
+<script src="js/init.js?v=55"></script>
+<script src="js/mascot.js?v=55"></script>
+<script src="js/login.js?v=55"></script>
 </body>
 </html>

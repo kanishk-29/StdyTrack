@@ -46,6 +46,124 @@ function teardownLoginCardTilt(){
   mascotLoginTiltHandler = null;
 }
 
+// Night-shrine atmosphere: stars, snow, embers, subtle parallax and a cursor
+// glass sheen on the card. Decorative only — guarded so it never breaks the
+// login on touch / reduced-motion devices, and torn down when the gate hides.
+let loginSceneFx = null;
+function setupLoginScene(){
+  if(loginSceneFx) return; // already listening — don't stack duplicates
+  const screen = document.getElementById('loginScreen');
+  if(!screen) return;
+  const reduceMotion = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const finePointer = (window.matchMedia && window.matchMedia('(pointer: fine)').matches);
+  const emberRoot = document.getElementById('loginEmbers');
+  const starRoot = document.getElementById('loginStars');
+  const snowRoot = document.getElementById('loginSnow');
+
+  if(emberRoot && !reduceMotion && emberRoot.childElementCount === 0){
+    const count = finePointer ? 18 : 10;
+    const frag = document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const e = document.createElement('span');
+      e.className = 'login-ember';
+      e.style.left = `${2 + Math.random()*22}%`;
+      e.style.bottom = `${8 + Math.random()*24}%`;
+      e.style.setProperty('--dur', `${4.5 + Math.random()*5}s`);
+      e.style.setProperty('--delay', `${-Math.random()*8}s`);
+      e.style.setProperty('--drift', `${-28 + Math.random()*56}px`);
+      frag.appendChild(e);
+    }
+    emberRoot.appendChild(frag);
+  }
+  if(starRoot && starRoot.childElementCount === 0){
+    const count = finePointer ? 55 : 34;
+    const frag = document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const s = document.createElement('span');
+      s.className = 'login-star';
+      const size = 1 + Math.random()*1.6;
+      s.style.left = `${Math.random()*100}%`;
+      s.style.top = `${Math.random()*62}%`;
+      s.style.width = `${size}px`;
+      s.style.height = `${size}px`;
+      s.style.setProperty('--dur', reduceMotion ? '0s' : `${2.5 + Math.random()*4}s`);
+      s.style.setProperty('--delay', `${-Math.random()*6}s`);
+      s.style.setProperty('--peak', `${.5 + Math.random()*.5}`);
+      if(reduceMotion) s.style.opacity = '.55';
+      frag.appendChild(s);
+    }
+    starRoot.appendChild(frag);
+  }
+  if(snowRoot && !reduceMotion && snowRoot.childElementCount === 0){
+    const count = finePointer ? 46 : 26;
+    const frag = document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const f = document.createElement('span');
+      f.className = 'login-flake';
+      const size = 2 + Math.random()*3.5;
+      f.style.left = `${Math.random()*100}%`;
+      f.style.width = `${size}px`;
+      f.style.height = `${size}px`;
+      f.style.setProperty('--dur', `${9 + Math.random()*10}s`);
+      f.style.setProperty('--delay', `${-Math.random()*18}s`);
+      f.style.setProperty('--drift', `${-60 + Math.random()*120}px`);
+      f.style.setProperty('--peak', `${.4 + Math.random()*.5}`);
+      frag.appendChild(f);
+    }
+    snowRoot.appendChild(frag);
+  }
+
+  let parallaxMove = null, parallaxLeave = null;
+  let raf = 0, px = 0, py = 0;
+  if(finePointer && !reduceMotion){
+    parallaxMove = (e)=>{
+      const dx = (e.clientX / Math.max(1, window.innerWidth) - .5) * 2;
+      const dy = (e.clientY / Math.max(1, window.innerHeight) - .5) * 2;
+      px = dx * -8; py = dy * -5;
+      if(!raf){
+        raf = requestAnimationFrame(()=>{
+          screen.style.setProperty('--px', `${px}px`);
+          screen.style.setProperty('--py', `${py}px`);
+          raf = 0;
+        });
+      }
+    };
+    parallaxLeave = ()=>{
+      screen.style.setProperty('--px','0px');
+      screen.style.setProperty('--py','0px');
+    };
+    screen.addEventListener('pointermove', parallaxMove);
+    screen.addEventListener('pointerleave', parallaxLeave);
+  }
+
+  let sheenMove = null, sheenLeave = null;
+  const card = document.getElementById('loginCard');
+  if(card && finePointer && !reduceMotion){
+    sheenMove = (e)=>{
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--gx', `${((e.clientX - r.left) / r.width) * 100}%`);
+      card.style.setProperty('--gy', `${((e.clientY - r.top) / r.height) * 100}%`);
+    };
+    sheenLeave = ()=>{
+      card.style.setProperty('--gx','50%');
+      card.style.setProperty('--gy','12%');
+    };
+    card.addEventListener('pointermove', sheenMove);
+    card.addEventListener('pointerleave', sheenLeave);
+  }
+
+  loginSceneFx = ()=>{
+    if(parallaxMove) screen.removeEventListener('pointermove', parallaxMove);
+    if(parallaxLeave) screen.removeEventListener('pointerleave', parallaxLeave);
+    if(sheenMove && card) card.removeEventListener('pointermove', sheenMove);
+    if(sheenLeave && card) card.removeEventListener('pointerleave', sheenLeave);
+    loginSceneFx = null;
+  };
+}
+function teardownLoginScene(){
+  if(loginSceneFx) loginSceneFx();
+}
+
 function authFriendlyError(err){
   const code = err && err.code;
   const map = {
@@ -108,11 +226,13 @@ function showLoginScreen(){
   if(img) img.src = 'rei-avatar.png';
   screen.classList.add('show');
   setupLoginCardTilt();
+  setupLoginScene();
 }
 function hideLoginScreen(){
   const screen = document.getElementById('loginScreen');
   if(!screen) return;
   teardownLoginCardTilt();
+  teardownLoginScene();
   screen.classList.remove('show');
   screen.classList.add('hide');
   setTimeout(()=>screen.remove(), 400);
