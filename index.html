@@ -3289,7 +3289,7 @@ h1{
       </div>
       <aside class="streak">
         <div class="streak-head"><span>Study streak</span><span>✦</span></div>
-        <div class="streak-num">4 <small style="font-size:14px;color:var(--muted)">days</small></div>
+        <div class="streak-num">6 <small style="font-size:14px;color:var(--muted)">days</small></div>
         <div class="streak-bar"><span></span></div>
       </aside>
     </div>
@@ -3335,7 +3335,7 @@ h1{
             <div class="calendar-kicker">STUDY LOG</div>
             <div class="calendar-month">September 2026</div>
           </div>
-          <div class="calendar-total"><strong>18</strong><span>active days</span></div>
+          <div class="calendar-total"><strong>25</strong><span>active days</span></div>
         </div>
         <div class="calendar-weekdays">
           <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
@@ -3497,6 +3497,22 @@ if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
 document.querySelectorAll('.activity .study-calendar-glass .cal-day').forEach((el,i)=>{
   el.style.setProperty('--i', i);
 });
+</script>
+
+<script>
+// Clean-up for users who previously installed the old Study Tracker app:
+// drop any leftover service worker + old app-shell caches so everyone gets the
+// fresh static page (prevents stale-cache served pages with broken clicks).
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    regs.forEach((r) => r.unregister());
+  });
+}
+if (window.caches && caches.keys) {
+  caches.keys().then((keys) => {
+    Promise.all(keys.filter((k) => /^study-tracker-shell-/.test(k)).map((k) => caches.delete(k)));
+  });
+}
 </script>
 
 </body>
