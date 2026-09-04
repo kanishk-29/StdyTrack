@@ -21,6 +21,10 @@
     box-sizing:border-box;
     overflow-x:hidden; overflow-y:auto;
     -webkit-overflow-scrolling:touch;
+    /* Hide the scrollbar for a smooth full-bleed look (content still scrolls
+       by touch/wheel — only the visible bar is removed). */
+    scrollbar-width:none;
+    -ms-overflow-style:none;
     opacity:0; pointer-events:none;
     transition:opacity .4s ease;
     isolation:isolate;
@@ -30,6 +34,7 @@
   }
   .login-screen.show{ opacity:1; pointer-events:auto; }
   .login-screen.hide{ opacity:0; pointer-events:none; }
+  .login-screen::-webkit-scrollbar{ display:none; width:0; height:0; }
 
   /* ---- atmosphere layers (all behind the interactive card) ---- */
   .login-scene-bg{
