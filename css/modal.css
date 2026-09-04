@@ -27,6 +27,15 @@
     animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);
     --modal-accent: var(--amber);
     --modal-accent-soft: var(--amber-soft, #fbf1de);
+    /* Tall modals (settings is the tallest) must stay reachable on short
+       viewports: cap height and scroll inside instead of clipping. Without
+       this the content above/below the fold is unreachable on desktop, where
+       only the <=540px rule used to allow scrolling. */
+    max-height:calc(100dvh - 40px);
+    max-height:calc(100vh - 40px);
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-y:contain;
   }
   @media (max-width:540px){
     .modal{
