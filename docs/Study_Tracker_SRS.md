@@ -7,7 +7,7 @@
 A Progressive Web App for Lecture Time-Tracking, Test-Score Analytics,
 Daily Habit Building and Exam Preparation
 
-Version 1.1
+Version 1.2
 
 4 September 2026
 
@@ -24,7 +24,7 @@ Version 1.1
 | Document Title | Software Requirements Specification — Study Tracker |
 | Document ID | ST-SRS-001 |
 | Project | Study Tracker (Web / PWA) |
-| Version | 1.1 |
+| Version | 1.2 |
 | Status | Final — Baseline |
 | Classification | Public — Portfolio Reference |
 | Author / Owner | Kanishk — Sole Developer & Product Owner |
@@ -39,6 +39,7 @@ Version 1.1
 | 0.5 | 01 Sep 2026 | Added full functional requirement tables per module; drafted data model. | Kanishk |
 | 1.0 | 3 September 2026 | Reviewed against shipped source code for accuracy; baselined as v1.0. | Kanishk |
 | 1.1 | 4 September 2026 | Folder-opening now renders a dedicated full-page folder dashboard (design port, css/folder-dashboard.css) instead of the in-drawer list; updated FR-6 and interface tracing, added the dashboard stylesheet to the module references. | Kanishk |
+| 1.2 | 4 September 2026 | Night-shrine login redesign with interactive scene (stars/snow/embers/parallax/glass-sheen), viewport scale-lock on mobile, settings slide-in drawer, phone card overflow fix (subject cards stack vertically ≤480px), null-guard hardening across 14 CRUD chains, SW cache query-string fallback, JSON-LD WebSite schema, deleted unused legacy files. | Kanishk |
 
 **Approval**
 
@@ -328,8 +329,15 @@ At a high level, the system allows a user to:
 - IR-5: The interface shall support a light and a dark theme,
   user-toggleable and persisted across sessions.
 
+- IR-5a: Settings shall be presented in a slide-in drawer from the right
+  edge (not a centered modal), overlaying the current view with a
+  backdrop.
+
 - IR-6: The interface shall meet baseline accessibility behaviour:
   visible focus rings and a reduced-motion mode (see css/a11y.css).
+
+- IR-7: The HTML head shall include a JSON-LD WebSite schema
+  (structured data) for search engine and AI discovery.
 
 **3.2 Hardware Interfaces**
 
@@ -523,7 +531,7 @@ js/calendar.js (drawer folder tiles), css/folder-dashboard.css*
 
 | **ID** | **Requirement** | **Priority** |
 |----|----|----|
-| FR-15.1 | The system shall present a login/checkpoint screen and shall allow the user to continue in an offline/guest mode without an account. | High |
+| FR-15.1 | The system shall present a night-shrine-themed login/checkpoint screen with an interactive scene (animated stars, snow particles, embers, parallax, glass-sheen effects) and shall allow the user to continue in an offline/guest mode without an account. On mobile, the viewport scale shall be locked during the login gate to prevent pinch-zoom layout shifts. | High |
 | FR-15.2 | When cloud sync is configured and the user is signed in, the system shall reconcile local and cloud copies of the data by comparing update timestamps and applying the more recent copy. | High |
 | FR-15.3 | The system shall present friendly, human-readable error messages for authentication failures (e.g. wrong password, unverified email). | Medium |
 | FR-15.4 | Cloud writes shall be de-duplicated and rate-limited (minimum interval between pushes) to conserve backend write quota, while guaranteeing the last change is eventually synced via a trailing push. | Medium |
@@ -535,7 +543,7 @@ js/calendar.js (drawer folder tiles), css/folder-dashboard.css*
 | **ID** | **Requirement** | **Priority** |
 |----|----|----|
 | FR-16.1 | The system shall be installable to a device home screen/app list per the Web App Manifest (name, icons, standalone display, theme colour). | Medium |
-| FR-16.2 | The system shall register a service worker that caches the static application shell so the app loads without a network connection. | High |
+| FR-16.2 | The system shall register a service worker that caches the static application shell so the app loads without a network connection. The fetch handler shall strip query strings (e.g. `?v=56`) before matching cached URLs, ensuring offline access works regardless of cache-busting parameters. | High |
 | FR-16.3 | The system shall display a warning banner if browser storage is unavailable or a save operation fails, so the user is aware data may not persist. | High |
 
 **5. Data Model**
@@ -556,6 +564,8 @@ maintained thereafter, is summarised below.
 | priorityPlanner.byDate | Object\<dateKey, PlanDay\> | Per-date planner items (goals/tasks), including linked-lecture references and completion/star state. |
 | events | Array\<Event\> | User-created calendar events shown on the planner page. |
 | updatedAt | Number (epoch ms) | Last-modified timestamp, used to reconcile local vs. cloud copies on load. |
+
+**6. Non-Functional Requirements**
 
 **6. Non-Functional Requirements**
 
@@ -614,8 +624,13 @@ maintained thereafter, is summarised below.
   change observed on a simple page refresh.
 
 - NFR-14: CSS and JS load order in index.html shall be preserved as
-  documented in README.md, since later files intentionally override or
-  depend on earlier ones.
+  documented in the project file map, since later files intentionally
+  override or depend on earlier ones.
+
+- NFR-17: All CRUD chain lookups (subject → unit → lecture/test) shall
+  include null guards to prevent crashes when a parent entity has been
+  deleted (e.g. by cloud sync from another device) while a child modal
+  is open.
 
 **6.6 Portability**
 
