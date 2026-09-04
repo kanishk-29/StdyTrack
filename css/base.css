@@ -57,6 +57,9 @@
     text-size-adjust:100%;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  /* No image/media may ever stretch the page wider than the screen — a single
+     oversized graphic is the classic cause of a "tiny, zoomed-out" phone page. */
+  img, svg, video, canvas{ max-width:100%; }
   button, [role="button"], input, select, textarea{ touch-action:manipulation; }
   button:not(:disabled){ cursor:pointer; user-select:none; }
   html,body{margin:0;padding:0;}
