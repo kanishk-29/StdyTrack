@@ -1,12 +1,15 @@
-/* Liquid Glass + Neumorphism — visual override ported from
+/* Liquid Glass + Neumorphism — full visual override ported faithfully from
    study_tracker_active_day_richer_aura_colors.html.
    Only changes the LOOK (no HTML/JS/logic touched): aurora backdrop,
    neumorphic dual shadows, pill shapes, serif headings, GitHub-style
-   heatmap calendar, and gradient-topped subject cards. Loaded after
-   liquid-glass.css so it wins on the components it targets.
-   Dark mode uses the app's existing [data-theme="dark"] selector. */
+   heatmap calendar, gradient-topped subject cards, glass panels, gradient
+   priority rows and revision band. Loaded after liquid-glass.css so it wins
+   on every component it targets. Dark mode uses app's [data-theme="dark"]. */
 
-/* ---- Neumorphic design tokens (scoped to .app) ---- */
+/* ============================================================
+   1. DESIGN TOKENS (scoped to .app so nothing leaks to login /
+      modals that should keep their own look)
+   ============================================================ */
 .app{
   --neo-glass:rgba(255,255,255,.56);
   --neo-glass-strong:rgba(255,255,255,.74);
@@ -41,52 +44,203 @@ body{
 }
 .app{ position:relative; }
 
-/* ---- Shared glass panel + pill language ---- */
+/* ---- Shared glass + pill language (neumorphic dual shadow) ---- */
 .glass-block,
 .panel,
 .dash-block,
 .today-panel,
 .revision-panel,
+.revision-card,
 .streak,
 .today-right,
 .today-left,
-.revision-card{
+.scorecard,
+.cal-wrap,
+.dash-course-card,
+.dash-quick-tile,
+.dash-deadline-row,
+.revision-item,
+.dash-priority-block{
   border:1px solid var(--neo-line);
   background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(255,255,255,.30));
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
   box-shadow:var(--neo-shadow);
+  border-radius:22px;
 }
 
-/* ---- STARTING PART: scorecard header ---- */
+/* ============================================================
+   2. TOPBAR-LIKE view switcher (the design's sticky nav chips)
+   ============================================================ */
+.view-switcher{
+  position:sticky;top:0;z-index:20;
+  padding:14px 0 10px;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  background:linear-gradient(180deg,rgba(235,239,245,.72),rgba(235,239,245,.2));
+  gap:8px;
+}
+.view-btn,.nav-chip,.theme-toggle{
+  min-height:38px;
+  padding:0 16px;
+  border:1px solid var(--neo-line);
+  border-radius:999px;
+  background:var(--neo-glass);
+  box-shadow:var(--neo-shadow-soft);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.view-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-weight:700;font-size:13px;
+  color:var(--neo-muted);
+}
+.view-btn.active{
+  background:linear-gradient(135deg,#7652ef,#8d67ff);
+  border-color:transparent;
+  color:#fff;
+  box-shadow:0 14px 26px rgba(117,85,230,.24);
+}
+
+/* ============================================================
+   3. STARTING PART — scorecard treated as the shared hero panel
+   ============================================================ */
 .scorecard{
+  margin-top:10px;
+  padding:34px;
+  border-radius:34px;
   background:
     radial-gradient(circle at 78% 16%,rgba(129,108,241,.16),transparent 25%),
     linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.32));
-  border:1px solid var(--neo-line);
   box-shadow:var(--neo-shadow);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
 }
-.scorecard h1,
-.page-title{
+.scorecard h1{
   font-family:Georgia,"Times New Roman",serif;
+  font-size:34px;
+  font-weight:900;
   letter-spacing:-.03em;
+}
+.scorecard .eyebrow{
+  display:inline-flex;
+  padding:9px 15px;
+  border-radius:999px;
+  background:rgba(128,94,247,.11);
+  color:#6e51df;
+  letter-spacing:.13em;
+  font-family:'JetBrains Mono',monospace;
+  font-weight:800;
+  font-size:11px;
 }
 .scorecard-gradient{
   width:8px;
   background:linear-gradient(180deg,#497ecf,#8a5ce5,#27c967,#4a8b69);
   background-size:100% 320%;
 }
-
-/* ---- CALENDAR: GitHub-style heatmap (neumorphic inset) ---- */
-.cal-wrap{
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.60),rgba(255,255,255,.32));
+.big-score{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:900;
+  letter-spacing:-.02em;
+}
+.percent-badge{
+  border-radius:999px;
+  background:rgba(255,255,255,.30);
+  box-shadow:
+    inset 3px 3px 7px rgba(104,115,109,.10),
+    inset -3px -3px 7px rgba(255,255,255,.50);
+}
+.backup-btn{
+  border-radius:999px;
   border:1px solid var(--neo-line);
-  border-radius:22px;
-  padding:16px;
-  box-shadow:var(--neo-shadow);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+  background:var(--neo-glass);
+  box-shadow:var(--neo-shadow-soft);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+
+/* ---- TODAY left = the shared hero/activity glass-block ---- */
+.today-left{
+  position:relative;
+  padding:28px;
+  background:
+    radial-gradient(circle at 75% 30%,rgba(126,98,235,.10),transparent 27%),
+    linear-gradient(135deg,rgba(255,255,255,.49),rgba(255,255,255,.22));
+  backdrop-filter:blur(22px) saturate(1.25);
+  -webkit-backdrop-filter:blur(22px) saturate(1.25);
+}
+.today-left .eyebrow{
+  display:inline-flex;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(128,94,247,.11);
+  color:#6e51df;
+  letter-spacing:.18em;
+  font-family:'JetBrains Mono',monospace;
+  font-weight:900;
+  font-size:11px;
+}
+.today-total{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:31px;
+  font-weight:900;
+  letter-spacing:-.02em;
+  background:linear-gradient(135deg,#25865f,#22c7d6);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:var(--neo-green);
+}
+.stat-row{
+  display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;
+}
+.stat-row .stat-pill,
+.stat-chip{
+  border-radius:999px;
+  padding:9px 14px;
+  background:var(--neo-glass-strong);
+  border:1px solid var(--neo-line);
+  box-shadow:var(--neo-shadow-soft);
+  font-size:12px;font-weight:800;
+  color:var(--neo-muted);
+}
+.yesterday-line{
+  color:var(--neo-soft);
+  font-size:13px;
+  font-weight:600;
+}
+
+/* ---- TODAY right = the shared study-calendar-glass card ---- */
+.today-right .cal-terminal{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.62),rgba(255,255,255,.34)),
+    radial-gradient(240px 180px at 88% 8%,rgba(117,91,237,.14),transparent 70%);
+  border:1px solid rgba(255,255,255,.74);
+  border-radius:30px 22px 34px 26px;
+  box-shadow:
+    18px 20px 38px rgba(77,90,84,.16),
+    -13px -13px 30px rgba(255,255,255,.72),
+    inset 1px 1px 0 rgba(255,255,255,.68);
+  backdrop-filter:blur(22px) saturate(1.25);
+  -webkit-backdrop-filter:blur(22px) saturate(1.25);
+}
+.cal-term-path{
+  font-family:'JetBrains Mono',monospace;
+  font-weight:800;
+  letter-spacing:.05em;
+}
+.cal-wrap{
+  background:transparent;
+  border:none;
+  box-shadow:none;
+  border-radius:0;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+.cal-weekday-labels span{
+  font-family:'JetBrains Mono',monospace;
+  font-weight:800;
+  color:var(--neo-soft);
 }
 .cal-cell{
   background:rgba(255,255,255,.26);
@@ -95,101 +249,245 @@ body{
   box-shadow:
     inset 2px 2px 5px rgba(111,124,116,.08),
     inset -2px -2px 4px rgba(255,255,255,.45);
+  color:var(--neo-muted);
+  font-weight:800;
 }
 .cal-cell.level-0{ background:rgba(255,255,255,.26); }
-.cal-cell.level-1{ background:linear-gradient(145deg,rgba(70,184,131,.22),rgba(70,184,131,.10)); border-color:rgba(70,131,104,.3); }
-.cal-cell.level-2{ background:linear-gradient(145deg,rgba(62,166,116,.55),rgba(62,166,116,.38)); }
-.cal-cell.level-3{ background:linear-gradient(145deg,rgba(43,140,96,.78),rgba(43,140,96,.60)); }
-.cal-cell.level-4{ background:linear-gradient(145deg,rgba(28,108,74,1),rgba(28,108,74,.82)); }
+.cal-cell.level-1{ background:linear-gradient(145deg,rgba(70,184,131,.22),rgba(70,184,131,.10)); color:#388c68; }
+.cal-cell.level-2{ background:linear-gradient(145deg,rgba(70,184,131,.36),rgba(70,184,131,.18)); color:#277b59; }
+.cal-cell.level-3{ background:linear-gradient(145deg,rgba(74,129,224,.43),rgba(108,91,216,.25)); color:#4f52aa; }
+.cal-cell.level-4{ background:linear-gradient(145deg,rgba(112,91,224,.64),rgba(79,167,218,.35)); color:#403d89; }
 .cal-cell.is-today{
-  box-shadow:0 0 0 2px var(--neo-amber), inset 2px 2px 5px rgba(111,124,116,.08), inset -2px -2px 4px rgba(255,255,255,.45);
+  box-shadow:
+    0 0 0 2px var(--neo-amber),
+    inset 2px 2px 5px rgba(111,124,116,.08),
+    inset -2px -2px 4px rgba(255,255,255,.45);
+}
+.cal-cell.is-running{
+  box-shadow:
+    4px 5px 10px rgba(55,66,59,.14),
+    -3px -3px 8px rgba(255,255,255,.82),
+    inset 1px 1px 0 rgba(255,255,255,.72) !important;
 }
 .cal-legend .cal-swatch.level-1{ background:rgba(70,184,131,.22); }
-.cal-legend .cal-swatch.level-2{ background:rgba(62,166,116,.55); }
-.cal-legend .cal-swatch.level-3{ background:rgba(43,140,96,.78); }
-.cal-legend .cal-swatch.level-4{ background:rgba(28,108,74,1); }
+.cal-legend .cal-swatch.level-2{ background:rgba(70,184,131,.36); }
+.cal-legend .cal-swatch.level-3{ background:linear-gradient(145deg,rgba(74,129,224,.43),rgba(108,91,216,.25)); }
+.cal-legend .cal-swatch.level-4{ background:linear-gradient(145deg,rgba(112,91,224,.64),rgba(79,167,218,.35)); }
+.cal-legend{
+  font-family:'JetBrains Mono',monospace;
+  font-weight:700;
+  letter-spacing:.04em;
+  color:var(--neo-soft);
+}
 
-/* ---- ONGOING SUBJECT: gradient-topped glass cards ---- */
-.dash-course-card{
-  border:1px solid var(--neo-line);
+/* ============================================================
+   4. DASHBOARD section serif headers + glass panels
+   ============================================================ */
+.dash-block{
+  padding:22px 26px;
+  box-shadow:var(--neo-shadow-soft);
+}
+.dash-block-header h3{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:20px;
+  font-weight:900;
+  letter-spacing:-.02em;
+  color:var(--neo-ink);
+}
+.dash-block-header h3 .eyebrow{
+  display:inline-flex;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(128,94,247,.10);
+  color:#6e51df;
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:.14em;
+  font-weight:800;
+  font-size:10px;
+  margin-left:6px;
+}
+
+/* ---- QUICK TILES (the design's quick-grid pills) ---- */
+.dash-quick-grid{
+  gap:12px;
+}
+.dash-quick-tile{
   border-radius:22px;
-  background:linear-gradient(135deg,rgba(255,255,255,.60),rgba(255,255,255,.32));
+  padding:19px 14px;
+  text-align:center;
+  border:1px solid var(--neo-line);
+  background:var(--neo-glass);
+  box-shadow:var(--neo-shadow-soft);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.dash-quick-tile:hover{
+  box-shadow:var(--neo-shadow);
+  transform:translateY(-2px);
+}
+.dash-quick-icon{
+  border-radius:999px;
+  font-size:22px;
+}
+.dash-quick-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:900;
+  font-size:15px;
+  color:var(--neo-ink);
+}
+.dash-quick-sub{
+  font-weight:700;
+  font-size:11px;
+  color:var(--neo-soft);
+}
+
+/* ---- ONGOING SUBJECTS (the design's per-color subject cards) ---- */
+.dash-course-card{
+  border-radius:22px;
+  border:1px solid var(--neo-line);
+  background:var(--neo-glass);
   box-shadow:var(--neo-shadow-soft);
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
+  overflow:hidden;
+  transition:transform .2s ease,box-shadow .2s ease;
 }
-.dash-course-card:hover{ box-shadow:var(--neo-shadow); }
+.dash-course-card:hover{ box-shadow:var(--neo-shadow); transform:translateY(-2px); }
 /* Thumb keeps each subject's own color gradient (JS sets it inline via
-   dashboard.js), matching the design file's per-color subject tops. */
-.dash-course-thumb-label{ color:#fff; font-weight:800; }
+   dashboard.js:200), matching the design's per-color subject tops. */
+.dash-course-thumb-label{
+  color:#fff;
+  font-weight:900;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  font-size:10px;
+}
 .dash-course-pct{
   background:rgba(0,0,0,.35);
   color:#fff;
   border-radius:999px;
+  font-weight:900;
+  font-size:10px;
+}
+.dash-course-name{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:900;
+  font-size:14px;
+  color:var(--neo-ink);
+}
+.dash-course-meta{
+  font-size:10px;
+  color:var(--neo-soft);
+  font-weight:700;
 }
 .dash-course-progress-track{
   border-radius:999px;
   background:rgba(122,105,170,.12);
-  box-shadow:inset 1px 1px 3px rgba(90,100,115,.18), inset -1px -1px 2px rgba(255,255,255,.6);
+  box-shadow:
+    inset 1px 1px 3px rgba(90,100,115,.18),
+    inset -1px -1px 2px rgba(255,255,255,.6);
 }
 .dash-course-progress-fill{ border-radius:999px; }
-
-/* ---- QUICK TILES: neumorphic pills ---- */
-.dash-quick-tile{
-  border:1px solid var(--neo-line);
-  border-radius:18px;
-  background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.30));
-  box-shadow:var(--neo-shadow-soft);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
+.dash-course-next{
+  font-size:10px;
+  font-weight:700;
+  color:var(--neo-soft);
 }
-.dash-quick-tile:hover{ box-shadow:var(--neo-shadow); transform:translateY(-1px); }
+.dash-resume-btn{
+  border-radius:12px;
+  padding:7px 12px;
+  background:linear-gradient(135deg,#242a39,#2e3550);
+  color:#fff;
+  font-weight:800;
+  font-size:11px;
+  border:none;
+}
 
-/* ---- PRIORITY / DEADLINES / REVISION ---- */
+/* ============================================================
+   5. TODAY'S PRIORITY (the design's red/purple gradient rows)
+   ============================================================ */
 .dash-priority-row{
   border-radius:16px;
-  box-shadow:0 10px 20px rgba(180,60,60,.22);
+  color:#fff;
+  background:linear-gradient(90deg,#6350ba,#9a69d6);
+  box-shadow:0 12px 24px rgba(99,80,186,.28);
+  border:1px solid rgba(255,255,255,.16);
 }
-.dash-deadline-row,.revision-item{
+.dash-priority-row:nth-child(odd){
+  background:linear-gradient(90deg,#bd2d30,#eb4544);
+  box-shadow:0 12px 24px rgba(189,45,48,.26);
+}
+.dash-priority-row.is-done{
+  background:linear-gradient(90deg,#25865f,#2fb07f) !important;
+  box-shadow:0 12px 24px rgba(37,134,95,.24) !important;
+}
+.dash-priority-icon{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.2)); }
+.dash-priority-name{ font-weight:900; }
+.dash-priority-sub{ font-weight:700; opacity:.85; font-size:12px; }
+.dash-priority-pill{
+  border-radius:999px;
+  padding:5px 11px;
+  background:rgba(255,255,255,.22);
+  font-weight:900;
+  font-size:11px;
+}
+
+/* ---- UPCOMING DEADLINES (glass rows) ---- */
+.dash-deadline-row{
   border:1px solid var(--neo-line);
   background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.30));
   border-radius:16px;
   box-shadow:var(--neo-shadow-soft);
 }
-
-/* ---- TODAY total / streak ---- */
-.today-total{
-  background:linear-gradient(135deg,#25865f,#22c7d6);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-/* ---- NAV PILLS (view switcher / chips) ---- */
-.view-btn,.nav-chip,.theme-toggle{
-  border:1px solid var(--neo-line);
-  background:var(--neo-glass);
-  color:var(--neo-muted);
+.dash-deadline-name{ font-weight:900; color:var(--neo-ink); }
+.dash-deadline-sub{ font-weight:700; font-size:12px; color:var(--neo-muted); }
+.dash-deadline-pill{
   border-radius:999px;
-  box-shadow:var(--neo-shadow-soft);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
+  font-weight:900;
+  font-size:11px;
 }
-.view-btn.active{
-  background:linear-gradient(135deg,#497ecf,#8a5ce5);
-  border-color:transparent;
-  color:#fff;
-  box-shadow:0 10px 24px rgba(105,86,227,.28);
-}
+.dash-deadline-pill.critical{ background:linear-gradient(90deg,#bd2d30,#eb4544); color:#fff; }
+.dash-deadline-pill.warn{ background:linear-gradient(90deg,#d98f1b,#eeb24a); color:#5a3a06; }
 
-/* Serif headings for the restyled areas (not global — keeps every other
-   modal/detail heading on its existing font so nothing outside the requested
-   scope changes). */
-.scorecard h1,
-.page-title,
-.dash-block-header h3,
-.today-total,
-.panel-title{ font-family:Georgia,"Times New Roman",serif; letter-spacing:-.02em; }
+/* ============================================================
+   6. REVISION BAND (the design's needs-revision, red left border)
+   ============================================================ */
+.revision-panel{ margin-top:18px; }
+.revision-card{
+  padding:18px;
+  border-radius:20px;
+  border-left:4px solid #dd4e2f;
+}
+.revision-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:18px;
+  font-weight:900;
+  color:var(--neo-ink);
+}
+.revision-list{ display:grid; gap:9px; margin-top:12px; }
+.revision-item{
+  display:flex;justify-content:space-between;gap:14px;align-items:center;
+  padding:13px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.25);
+}
+.revision-item-name{ font-weight:900; color:var(--neo-ink); font-size:14px; }
+.revision-item-sub{ font-size:12px; color:var(--neo-muted); font-weight:700; }
+.revision-score{
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:11px;
+}
+.revision-score.critical{ background:rgba(235,175,40,.12); color:#cf8a1d; }
+.revision-score.warn{ background:rgba(122,105,170,.12); color:#7759e8; }
+
+/* ---- Section headings (page-title / secondary from the design) ---- */
+.page-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:900;
+  letter-spacing:-.03em;
+}
 
 /* ============================================================
    DARK MODE (app uses [data-theme="dark"])
@@ -216,24 +514,42 @@ body{
 [data-theme="dark"] .dash-block,
 [data-theme="dark"] .today-panel,
 [data-theme="dark"] .revision-panel,
+[data-theme="dark"] .revision-card,
 [data-theme="dark"] .streak,
 [data-theme="dark"] .today-right,
 [data-theme="dark"] .today-left,
-[data-theme="dark"] .revision-card,
-[data-theme="dark"] .cal-wrap,
+[data-theme="dark"] .scorecard,
+[data-theme="dark"] .cal-terminal,
 [data-theme="dark"] .dash-course-card,
 [data-theme="dark"] .dash-quick-tile,
 [data-theme="dark"] .dash-deadline-row,
-[data-theme="dark"] .revision-item,
-[data-theme="dark"] .scorecard{
+[data-theme="dark"] .revision-item{
   background:linear-gradient(135deg,rgba(25,32,44,.82),rgba(18,24,34,.66));
   border-color:rgba(255,255,255,.08);
 }
-[data-theme="dark"] .cal-cell{ background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.05); box-shadow:inset 1px 1px 3px rgba(0,0,0,.35); }
+[data-theme="dark"] .today-left{
+  background:linear-gradient(135deg,rgba(25,32,44,.82),rgba(18,24,34,.66));
+}
+[data-theme="dark"] .cal-cell{
+  background:rgba(255,255,255,.04);
+  border-color:rgba(255,255,255,.05);
+  box-shadow:inset 1px 1px 3px rgba(0,0,0,.35);
+}
 [data-theme="dark"] .cal-cell.level-0{ background:rgba(255,255,255,.04); }
-[data-theme="dark"] .view-btn,[data-theme="dark"] .nav-chip,[data-theme="dark"] .theme-toggle{ background:var(--neo-glass); color:var(--neo-muted); }
+[data-theme="dark"] .view-btn,
+[data-theme="dark"] .nav-chip,
+[data-theme="dark"] .theme-toggle,
+[data-theme="dark"] .backup-btn{
+  background:var(--neo-glass);
+  color:var(--neo-muted);
+}
+[data-theme="dark"] .dash-priority-row{ box-shadow:0 12px 24px rgba(0,0,0,.35); }
+[data-theme="dark"] .revision-item{ background:rgba(255,255,255,.04); }
+[data-theme="dark"] .dash-deadline-row{ background:linear-gradient(135deg,rgba(25,32,44,.72),rgba(18,24,34,.6)); }
 
-/* Preferred-reduced-motion: kill neumorphic transition shimmer */
+/* Preferred-reduced-motion: keep static */
 @media (prefers-reduced-motion:reduce){
-  .scorecard-gradient{ animation:none; }
+  .scorecard-gradient,
+  .dash-course-card,
+  .dash-quick-tile{ transform:none !important; transition:none !important; }
 }
