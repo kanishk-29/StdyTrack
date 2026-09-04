@@ -30,6 +30,8 @@ document.addEventListener('keydown', (e)=>{
     if(focusOv && focusOv.classList.contains('show')){ closeFocusMode(); return; }
     const progOv = document.getElementById('progressOverlay');
     if(progOv && progOv.classList.contains('show')){ closeProgressSlide(); return; }
+    const slideOv = document.querySelector('.slide-overlay.show:not(#progressOverlay)');
+    if(slideOv){ closeModal(slideOv.id); return; }
     const drawer = document.getElementById('subjectsDrawerOverlay');
     if(drawer && drawer.classList.contains('show')){ closeSubjectsDrawer(); return; }
     const fdash = document.getElementById('folderDashboard');

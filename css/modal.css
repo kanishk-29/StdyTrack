@@ -222,3 +222,19 @@
     transition:transform .35s cubic-bezier(.22,1,.36,1);
   }
   .slide-overlay.show .slide-panel{ transform:translateX(0); }
+
+  /* ---------- SETTINGS DRAWER (right slide-in, replaces the old modal) ----------
+     Full-height panel with its own scroll, so long settings content is always
+     reachable without zooming out — no matter how short the viewport is. */
+  .settings-drawer{ max-width:480px; }
+  .settings-drawer h3{
+    font-family:'Neuton',serif;
+    margin:0;
+    font-size:19px;
+    line-height:1.2;
+  }
+  .settings-drawer .modal-icon-header{ margin-right:30px; }
+  .settings-drawer .settings-section{ margin-bottom:16px; }
+  .settings-drawer-close{
+    position:absolute; top:14px; right:16px; z-index:2;
+  }
