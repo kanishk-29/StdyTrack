@@ -265,3 +265,17 @@
     flex-shrink:0;
   }
   .cal-tooltip .ct-empty{ color:#7d8590; font-style:italic; }
+
+  /* ---------- PHONE: today panel + calendar fit narrow screens ----------
+     Without this, the panel padding plus the 280px min-width force the page
+     wider than small phones, so everything looks tiny once zoomed out. */
+  @media (max-width:600px){
+    .today-panel{ padding:14px 16px; gap:14px; margin-top:12px; }
+    .today-left{ min-width:0; }
+    .today-total{ font-size:26px; }
+    .today-right{ min-width:0; flex:1 1 100%; }
+    .cal-term-body{ padding:10px 12px 10px; }
+    .cal-grid, .cal-week-cols{ max-width:none; }
+    .cal-cell{ min-height:28px; }
+    .cal-legend{ max-width:none; }
+  }

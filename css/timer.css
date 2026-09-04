@@ -279,4 +279,11 @@
   }
   @media (max-width:480px){
     .dash-course-card{ flex-basis:220px; }
+    .dash-quick-grid{ gap:8px; margin-bottom:18px; }
+    .dash-quick-tile{ padding:12px 8px; border-radius:12px; }
+    .dash-quick-icon{ width:36px; height:36px; font-size:17px; margin-bottom:8px; }
+    .dash-quick-title{ font-size:12px; }
+    .dash-quick-sub{ font-size:9.5px; }
+    .dash-block{ margin-bottom:18px; }
+    .dash-block-header h3{ font-size:16px; }
   }
