@@ -237,6 +237,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           <button class="backup-btn" onclick="sparkAt(this,'var(--teal)'); openProgressSlide()" title="View daily progress graph">📊 Progress</button>
           <button class="backup-btn" onclick="exportData()" title="Download a backup file">⬇ Backup</button>
           <button class="backup-btn" onclick="document.getElementById('importFile').click()" title="Restore from a backup file">⬆ Restore</button>
+          <button class="backup-btn" onclick="shareApp()" title="Share Study Tracker with friends">🔗 Share</button>
           <button class="backup-btn" onclick="openSettings()" title="Settings">⚙️ Settings</button>
           <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
         </div>

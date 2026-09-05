@@ -204,6 +204,36 @@ function settingsSaveTimeCorrection(){
   }, 'Save correction');
 }
 
+function shareApp(){
+  const title = 'Study Tracker';
+  const text = 'Track your lectures, notes, study time and exam scores with a free Study Tracker app.';
+  const url = (location.href || '').replace(/[?#].*$/, '') || 'https://stdytrack.vercel.app/';
+  if(navigator.share){
+    navigator.share({ title, text, url }).catch(()=>{});
+    return;
+  }
+  const done = () => showToast('Link copied — share it anywhere 🔗');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(()=> fallbackShareCopy(url, done));
+  } else {
+    fallbackShareCopy(url, done);
+  }
+}
+function fallbackShareCopy(url, done){
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    done();
+  }catch(e){ showToast('Could not copy link'); }
+}
+
 function exportData(){
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
