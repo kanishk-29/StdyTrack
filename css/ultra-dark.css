@@ -110,6 +110,48 @@
 }
 .scorecard .last-saved{font-size:10px;color:var(--muted)}
 
+/* === STREAK WIDGET (from mockup lines 500-540) === */
+.streak{
+  padding:18px 20px;border-radius:18px;
+  background:rgba(255,255,255,.30);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow-soft);
+  min-width:140px;
+}
+.streak-head{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--soft);font-weight:900;
+}
+.streak-num{
+  font-size:36px;font-weight:900;letter-spacing:-.04em;
+  color:var(--ink);margin:6px 0 10px;line-height:1;
+}
+.streak-bar{
+  height:6px;border-radius:999px;
+  background:rgba(122,105,152,.16);
+  box-shadow:inset 2px 2px 5px rgba(99,104,120,.12),inset -2px -2px 4px rgba(255,255,255,.46);
+  overflow:hidden;
+}
+.streak-bar span{
+  display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,#61e7f4,#6f9cff);
+  box-shadow:0 0 12px rgba(97,231,244,.22);
+  transition:width .4s ease;
+}
+[data-theme="dark"] .streak{
+  background:
+    radial-gradient(circle at 78% 15%,rgba(97,231,244,.13),transparent 42%),
+    linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),
+    rgba(16,23,36,.72);
+}
+[data-theme="dark"] .streak-num{color:#f5fbff;text-shadow:0 0 28px rgba(97,231,244,.14)}
+[data-theme="dark"] .streak-bar{background:rgba(255,255,255,.07)}
+[data-theme="dark"] .streak-bar span{
+  background:linear-gradient(90deg,#4fd9e8,#6f9cff);
+  box-shadow:0 0 18px rgba(97,231,244,.22);
+}
+
 /* === ACTIVITY / TODAY (mockup lines 148-167, 346-349) === */
 .activity{
   border:1px solid var(--line);

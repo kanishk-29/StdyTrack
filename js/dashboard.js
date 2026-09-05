@@ -2,10 +2,56 @@
 // ---------------- DASHBOARD ----------------
 function renderDashboard(){
   renderRunningBanner();
+  renderStreak();
   renderDashQuickGrid();
   renderDashPriority();
   renderDashCourses();
   renderDashDeadlines();
+}
+
+// ---- Streak calculation ----
+function renderStreak(){
+  const daysEl = document.getElementById('streakDays');
+  const barEl = document.getElementById('streakBarFill');
+  if(!daysEl || !barEl) return;
+  const studyDays = getStudyDaysSet();
+  let streak = 0;
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  // Count consecutive days including today
+  while(true){
+    const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    if(studyDays.has(key)){
+      streak++;
+      d.setDate(d.getDate()-1);
+    } else {
+      break;
+    }
+  }
+  daysEl.textContent = streak;
+  barEl.style.width = Math.min(100, (streak/7)*100)+'%';
+}
+
+function getStudyDaysSet(){
+  const set = new Set();
+  if(!data || !data.subjects) return set;
+  for(const s of data.subjects){
+    for(const u of (Array.isArray(s.units)?s.units:[])){
+      for(const l of (u&&Array.isArray(u.lectures)?u.lectures:[])){
+        if(l && l.completed && l.completedDate){
+          const d = new Date(l.completedDate);
+          set.add(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+        }
+      }
+    }
+  }
+  // Also check study log entries
+  if(data.studyLog){
+    for(const key of Object.keys(data.studyLog)){
+      if(data.studyLog[key] > 0) set.add(key);
+    }
+  }
+  return set;
 }
 
 let lastBannerKey = null;

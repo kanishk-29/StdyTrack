@@ -207,6 +207,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         <div class="big-score"><span id="totalCompleted">0</span><span class="slash">/</span><span id="totalLectures">0</span></div>
         <div class="score-label">LECTURES CLEARED</div>
         <div class="percent-badge" id="percentBadge">0%</div>
+        <aside class="streak" id="streakWidget">
+          <div class="streak-head"><span>Study streak</span><span>✦</span></div>
+          <div class="streak-num"><span id="streakDays">0</span> <small style="font-size:14px;color:var(--muted)">days</small></div>
+          <div class="streak-bar"><span id="streakBarFill" style="width:0%"></span></div>
+        </aside>
         <div class="backup-row">
           <button class="backup-btn" onclick="sparkAt(this,'var(--teal)'); openProgressSlide()" title="View daily progress graph">📊 Progress</button>
           <button class="backup-btn" onclick="exportData()" title="Download a backup file">⬇ Backup</button>
@@ -904,5 +909,19 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 <script src="js/init.js?v=71"></script>
 <script src="js/mascot.js?v=71"></script>
 <script src="js/login.js?v=71"></script>
+<script>
+// Micro-interactions: press states on quick tiles and course cards
+document.querySelectorAll('.dash-quick-tile, .dash-course-card, .dash-resume-btn').forEach(function(el){
+  el.addEventListener('pointerdown',function(){el.classList.add('is-pressed')});
+  ['pointerup','pointercancel','pointerleave'].forEach(function(evt){
+    el.addEventListener(evt,function(){el.classList.remove('is-pressed')});
+  });
+});
+</script>
+<style>
+@media(prefers-reduced-motion:no-preference){
+  .is-pressed{transform:translateY(1px) scale(.992)!important;filter:saturate(.98)}
+}
+</style>
 </body>
 </html>
