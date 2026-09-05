@@ -218,7 +218,7 @@ function renderDashCourses(){
         <div class="dash-course-progress-track"><div class="dash-course-progress-fill" style="width:${pct}%; background:${color};"></div></div>
         <div class="dash-course-footer">
           <span class="dash-course-next">🕒 ${nextLabel}</span>
-          <button class="dash-resume-btn" onclick="event.stopPropagation(); resumeSubject('${s.id}')">▶ Resume</button>
+          <button class="dash-resume-btn resume" onclick="event.stopPropagation(); resumeSubject('${s.id}')">▶ Resume</button>
         </div>
       </div>
     </div>`;
@@ -450,8 +450,8 @@ function jumpToLecture(subjectId, unitId, lectureId){
   activeSubjectId = subjectId;
   subjectPageOpen = true;
   document.body.classList.add('subject-page-active');
-  const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
+  const s = (data.subjects||[]).find(x=>x.id===subjectId);
+  const u = (s && Array.isArray(s.units)) ? s.units.find(x=>x.id===unitId) : null;
   if(u) u.open = true;
   renderAll();
   if(typeof mascotOnTopicOpen === 'function') mascotOnTopicOpen(subjectId, unitId, lectureId);
@@ -469,8 +469,8 @@ function jumpToUnit(subjectId, unitId){
   activeSubjectId = subjectId;
   subjectPageOpen = true;
   document.body.classList.add('subject-page-active');
-  const s = data.subjects.find(x=>x.id===subjectId);
-  const u = s.units.find(x=>x.id===unitId);
+  const s = (data.subjects||[]).find(x=>x.id===subjectId);
+  const u = (s && Array.isArray(s.units)) ? s.units.find(x=>x.id===unitId) : null;
   if(u) u.open = true;
   renderAll();
   if(typeof mascotOnSubjectOpen === 'function') mascotOnSubjectOpen(subjectId);
@@ -507,6 +507,10 @@ function studyLevelClass(seconds){
 let calViewY = 0, calViewM = 0; // browse cursor for the study log calendar (0 = current month)
 
 function calNav(delta){
+  if(typeof hideCalPlanPopover === 'function') hideCalPlanPopover();
+  calTooltipPinned = false;
+  calTooltipPinnedKey = null;
+  hideCalTooltip();
   if(!calViewY){ const n = new Date(); calViewY = n.getFullYear(); calViewM = n.getMonth(); }
   let y = calViewY, m = calViewM + delta;
   if(m < 0){ m = 11; y--; }
@@ -516,6 +520,10 @@ function calNav(delta){
 }
 
 function calGoToday(){
+  if(typeof hideCalPlanPopover === 'function') hideCalPlanPopover();
+  calTooltipPinned = false;
+  calTooltipPinnedKey = null;
+  hideCalTooltip();
   const n = new Date();
   calViewY = n.getFullYear(); calViewM = n.getMonth();
   renderCalendar();
@@ -548,7 +556,7 @@ function renderCalendar(){
     const day = new Date(y, m, dayNum);
     const key = todayKey(day);
     const isToday = key === todayK;
-    const isFuture = day > now && !isToday;
+    const isFuture = key > todayK;
 
     if(dayNum < 1 || dayNum > daysInMonth){
       html += `<span class="cal-day muted-day">${day.getDate()}</span>`;
@@ -599,11 +607,24 @@ function renderCalendar(){
 })();
 
 let calTooltipPinned = false;
+let calTooltipPinnedKey = null;
+
 function showCalTooltip(evt, key, pin){
-  if(pin){ calTooltipPinned = !calTooltipPinned; if(!calTooltipPinned){ hideCalTooltip(); return; } }
-  else if(calTooltipPinned){ return; }
+  if(pin){
+    if(calTooltipPinned && calTooltipPinnedKey === key){
+      calTooltipPinned = false;
+      calTooltipPinnedKey = null;
+      hideCalTooltip();
+      return;
+    }
+    calTooltipPinned = true;
+    calTooltipPinnedKey = key;
+  } else if(calTooltipPinned){
+    return;
+  }
 
   const tip = document.getElementById('calTooltip');
+  if(!tip) return;
   const now = new Date();
   const [y,m,d] = key.split('-').map(Number);
   const dateObj = new Date(y, m-1, d);
@@ -641,12 +662,13 @@ function showCalTooltip(evt, key, pin){
 function hideCalTooltip(){
   if(calTooltipPinned) return;
   const tip = document.getElementById('calTooltip');
-  tip.classList.remove('show');
+  if(tip) tip.classList.remove('show');
 }
 
 document.addEventListener('click', (e)=>{
   if(calTooltipPinned && !e.target.closest('.cal-day') && !e.target.closest('.cal-tooltip')){
     calTooltipPinned = false;
+    calTooltipPinnedKey = null;
     hideCalTooltip();
   }
 });

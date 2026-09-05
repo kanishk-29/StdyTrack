@@ -233,6 +233,7 @@ function showView(view){
     priorityBtn.classList.toggle('active', view === 'priority');
   }
   if(view === 'priority'){ ppQuoteText = null; renderPriorityPage(); }
+  if(view === 'habits'){ if(typeof renderHabitsPage === 'function') renderHabitsPage(); }
 }
 
 function habitKey(d){

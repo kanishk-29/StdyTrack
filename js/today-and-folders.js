@@ -1440,9 +1440,9 @@ function animateRings(){
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
       document.querySelectorAll('.ring-fill').forEach(el=>{
-        const pct = parseFloat(el.dataset.pct);
-        const c = parseFloat(el.getAttribute('stroke-dasharray'));
-        el.style.strokeDashoffset = c - (c*pct/100);
+        const pct = parseFloat((el.dataset && el.dataset.pct !== undefined) ? el.dataset.pct : el.getAttribute('data-pct')) || 0;
+        const c = parseFloat(el.getAttribute('stroke-dasharray')) || 0;
+        if(c) el.style.strokeDashoffset = c - (c*pct/100);
       });
     });
   });

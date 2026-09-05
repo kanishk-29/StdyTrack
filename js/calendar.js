@@ -38,7 +38,7 @@ function showCalPlanPopover(evt, key){
 
 function positionCalPlanPopover(cellEl){
   const pop = document.getElementById('calPlanPopover');
-  if(!pop) return;
+  if(!pop || !cellEl) return;
   const cellRect = cellEl.getBoundingClientRect();
   const popRect = pop.getBoundingClientRect();
   let left = cellRect.left + cellRect.width/2 - popRect.width/2;
@@ -165,6 +165,8 @@ function unplanLecture(subjectId, unitId, lectureId){
   renderCalendar();
   renderMain();
   renderCalPlanPopover();
+  const cell = document.querySelector(`.cal-day[data-date="${calPlanKey || key}"]`);
+  if(cell) positionCalPlanPopover(cell);
   if(currentView==='priority') renderPriorityPage();
   showToast('Removed from plan');
 }

@@ -244,8 +244,9 @@ function sanitizeBackup(d){
       u.tests.forEach(t=>{
         if(!t || typeof t !== 'object') return;
         t.id = sanitizeId(t.id);
-        if(typeof t.score !== 'number') t.score = 0;
-        if(typeof t.outOf !== 'number') t.outOf = 0;
+        t.name = String(t.name || '').slice(0,200);
+        if(typeof t.obtained !== 'number') t.obtained = Number(t.obtained ?? t.score ?? 0) || 0;
+        if(typeof t.total !== 'number') t.total = Number(t.total ?? t.outOf ?? 0) || 0;
         t.date = String(t.date || '').slice(0,32);
       });
     });

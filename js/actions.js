@@ -176,11 +176,21 @@ document.addEventListener('click', (e)=>{
   if(!e.target.closest('.ds-menu-wrap')) closeSubjectMenus();
 });
 
+function cleanupPlannerLinks(matchFn){
+  if(!data || !data.priorityPlanner || !data.priorityPlanner.byDate) return;
+  for(const k in data.priorityPlanner.byDate){
+    if(Array.isArray(data.priorityPlanner.byDate[k])){
+      data.priorityPlanner.byDate[k] = data.priorityPlanner.byDate[k].filter(i=>!i.link || !matchFn(i.link));
+    }
+  }
+}
+
 function deleteSubject(subjectId){
   const s = data.subjects.find(x=>x.id===subjectId);
   if(!s) return;
   askConfirm(`Delete "${s.name}" and everything in it?`, async ()=>{
     data.subjects = data.subjects.filter(x=>x.id!==subjectId);
+    cleanupPlannerLinks(l => l.subjectId === subjectId);
     if(activeSubjectId===subjectId) activeSubjectId = data.subjects.length ? data.subjects[0].id : null;
     if(runningRef && runningRef.subjectId===subjectId){
       runningRef = null;
@@ -198,6 +208,7 @@ function deleteUnit(subjectId, unitId){
   if(!u) return;
   askConfirm(`Delete "${u.name}" and its lectures?`, async ()=>{
     s.units = s.units.filter(x=>x.id!==unitId);
+    cleanupPlannerLinks(l => l.unitId === unitId);
     if(runningRef && runningRef.unitId===unitId){
       runningRef = null;
       stopTicking();
@@ -215,6 +226,7 @@ function deleteLecture(subjectId, unitId, lectureId){
   const l = (u.lectures||[]).find(x=>x.id===lectureId);
   askConfirm(`Delete "${l ? l.title : 'this lecture'}"? Its logged time will be lost.`, ()=>{
     u.lectures = u.lectures.filter(x=>x.id!==lectureId);
+    cleanupPlannerLinks(l => l.lectureId === lectureId);
     if(runningRef && runningRef.lectureId===lectureId){
       runningRef = null;
       stopTicking();
