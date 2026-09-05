@@ -681,20 +681,9 @@ function renderCalendar(){
   });
 }
 
-(function(){
-  const term = document.getElementById('calTerminal');
-  if(!term) return;
-  let wheelLock = 0;
-  term.addEventListener('wheel', (e)=>{
-    if(e.target.closest('#calPlanPopover')) return;
-    if(Math.abs(e.deltaY) < 2) return;
-    e.preventDefault();
-    const now = Date.now();
-    if(now - wheelLock < 320) return;
-    wheelLock = now;
-    calNav(e.deltaY > 0 ? 1 : -1);
-  }, {passive:false});
-})();
+// Month changes are Previous/Next-button only: no wheel, swipe, or keyboard
+// shortcuts hijack page scroll over the calendar (they used to flip months
+// on accidental trackpad/touch gestures).
 
 let calTooltipPinned = false;
 let calTooltipPinnedKey = null;

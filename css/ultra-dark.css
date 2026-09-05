@@ -1332,7 +1332,7 @@
 .month-calendar-viewport{
   width:100%;overflow-x:hidden;overflow-y:hidden;
   scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;
-  outline:none;cursor:default;touch-action:none;user-select:none;
+  outline:none;cursor:default;touch-action:pan-y;user-select:none;
 }
 .month-calendar-viewport::-webkit-scrollbar{display:none}
 .month-calendar-viewport:active{cursor:grabbing}
