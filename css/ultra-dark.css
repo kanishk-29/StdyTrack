@@ -1358,7 +1358,10 @@
 .month-cell.l3{background:#12b52f}
 .month-cell.l4{background:#35ed48}
 .month-cell:hover:not(.outside){transform:scale(1.06);filter:brightness(1.12);z-index:2;box-shadow:0 0 13px rgba(44,236,75,.34)}
-.month-cell.today{outline:1px solid rgba(255,255,255,.82);outline-offset:2px}
+.month-cell.today{
+  outline:2px solid rgba(97,231,244,.95)!important;outline-offset:2px;
+  box-shadow:0 0 8px rgba(97,231,244,.65),0 0 20px rgba(97,231,244,.30)!important;
+}
 .month-cell.is-studying{animation:singleMonthPulse 2.2s ease-in-out infinite;box-shadow:0 0 0 1px rgba(255,255,255,.32),0 0 20px rgba(44,236,75,.62)}
 @keyframes singleMonthPulse{
   0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.28),0 0 9px rgba(44,236,75,.30)}
