@@ -40,23 +40,15 @@ function renderScorecard(){
     const c = countLectures(s);
     total += c.total; done += c.done;
   });
-  const doneEl = document.getElementById('totalCompleted');
-  const totalEl = document.getElementById('totalLectures');
-  // Only restart the animated counter when the number actually changed;
-  // on the first paint (prevXxx === null) or unchanged renders just set
-  // textContent directly so we never spin up two 500ms rAF loops for nothing.
-  if(doneEl){
-    if(prevDone !== null && prevDone !== done) animateCount(doneEl, prevDone, done, 500);
-    else doneEl.textContent = done;
-  }
-  if(totalEl){
-    if(prevTotal !== null && prevTotal !== total) animateCount(totalEl, prevTotal, total, 500);
-    else totalEl.textContent = total;
-  }
   prevDone = done; prevTotal = total;
   const pct = total ? Math.round((done/total)*100) : 0;
-  const pctEl = document.getElementById('percentBadge');
-  if(pctEl) pctEl.textContent = pct + '%';
+  const active = (data.subjects||[]).length;
+  const statL = document.getElementById('statLectures');
+  const statP = document.getElementById('statPct');
+  const statS = document.getElementById('statSubjects');
+  if(statL) statL.textContent = `${done} / ${total} lectures cleared`;
+  if(statP) statP.textContent = `${pct}% complete`;
+  if(statS) statS.textContent = `${active} active subject${active===1?'':'s'}`;
 }
 
 function subjectNameById(id){

@@ -207,22 +207,25 @@
 .dash-quick-title{display:block;font-size:14px;font-weight:900;color:var(--ink)}
 .dash-quick-sub{color:var(--soft);font-size:12px}
 
-/* === PRIORITY LIST (mockup lines 185-192, 359-361) === */
+/* === PRIORITY LIST (mockup lines 185-192, 359-361, final pass 1253-1254) ===
+   Live markup uses .dash-priority-row (+ .is-done for completed). */
 .dash-priority-list{display:grid;gap:9px;margin-top:14px}
-.dash-priority-item{
-  min-height:48px;border-radius:16px;padding:0 14px;
+.dash-priority-row{
+  min-height:48px;border-radius:16px;padding:11px 14px;
   display:flex;align-items:center;gap:12px;color:#fff;
-  box-shadow:0 12px 24px rgba(0,0,0,.10);
+  background:linear-gradient(100deg,#c83a43,#ef6659,#ee8068)!important;
+  box-shadow:0 12px 24px rgba(0,0,0,.10)!important;
   position:relative;overflow:hidden;
+  border:0!important;
 }
-.dash-priority-item::before{
+.dash-priority-row::before{
   content:"";position:absolute;inset:0;
   background:linear-gradient(110deg,rgba(255,255,255,.14),transparent 30%,transparent 70%,rgba(255,255,255,.06));
   pointer-events:none;
 }
-.dash-priority-item.urgent{background:linear-gradient(90deg,#bd2d30,#eb4544)}
-.dash-priority-item.normal{background:linear-gradient(90deg,#6350ba,#9a69d6)}
-.dash-priority-item .priority-badge{
+.dash-priority-row.is-done{background:linear-gradient(100deg,#6354c7,#7a63dc,#a273e1)!important}
+.dash-priority-row:hover{transform:translateY(-1px)}
+.dash-priority-pill{
   margin-left:auto;font-size:11px;padding:6px 10px;border-radius:999px;
   background:rgba(255,255,255,.18);
   box-shadow:inset 2px 2px 4px rgba(0,0,0,.08),inset -2px -2px 4px rgba(255,255,255,.12);
@@ -1111,28 +1114,120 @@
    LAYOUT FIXES — match mockup positioning exactly
    ========================================================== */
 
-/* Scorecard: two-column layout matching mockup hero-grid */
-.scorecard{
-  display:grid!important;
-  grid-template-columns:1fr auto;
-  align-items:start;
-  gap:24px;
-  padding:38px 34px 32px!important;
+/* === HERO STRUCTURE — copied from mockup lines 108-133, 1599-1623 === */
+.scorecard .eyebrow{align-self:flex-start}
+.scorecard .hero-grid{
+  display:grid;grid-template-columns:1fr 290px;gap:28px;align-items:end;margin-top:16px;width:100%;
 }
-.scorecard > div:first-child{
-  display:flex;flex-direction:column;gap:4px;
+.scorecard h1{
+  margin:0!important;font-family:Georgia,"Times New Roman",serif!important;
+  font-size:clamp(52px,5.4vw,82px)!important;line-height:.95!important;letter-spacing:-.045em!important;
 }
-.scorecard-right{
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:flex-end!important;
-  gap:12px!important;
-  margin-top:0!important;
+.scorecard .hero-copy{
+  margin:16px 0 24px!important;max-width:780px!important;color:var(--muted)!important;
+  font-size:17px!important;line-height:1.65!important;
 }
+.scorecard .stats{display:flex!important;gap:10px!important;flex-wrap:wrap!important}
+.scorecard .stat{
+  border-radius:999px!important;padding:9px 14px!important;background:var(--glass-strong)!important;
+  border:1px solid var(--line)!important;box-shadow:var(--shadow-soft)!important;
+  font-size:12px!important;font-weight:800!important;color:var(--muted)!important;
+}
+.scorecard .stat:nth-child(1){color:#5a63bf!important}
+.scorecard .stat:nth-child(2){color:#2d9270!important}
+.scorecard .stat:nth-child(3){color:#b07631!important}
+.scorecard .hero-actions{
+  display:flex!important;justify-content:space-between!important;align-items:center!important;
+  margin-top:24px!important;gap:16px;flex-wrap:wrap;
+}
+.scorecard .page-title{font-size:25px!important;font-weight:900!important;letter-spacing:-.03em!important;color:var(--ink)!important}
+.scorecard .secondary{color:var(--muted)!important;font-size:13px!important;margin-top:5px!important}
 .scorecard .streak{
-  order:-1;
-  margin-bottom:4px;
+  border-radius:28px!important;padding:22px!important;background:var(--glass-strong)!important;
+  border:1px solid var(--line)!important;box-shadow:var(--shadow-soft)!important;backdrop-filter:blur(18px);
 }
+.scorecard .streak-head{
+  display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.scorecard .streak-num{font-size:34px!important;font-weight:900!important;margin-top:12px!important}
+.scorecard .streak-bar{height:10px!important;margin-top:14px!important;border-radius:999px!important;background:rgba(122,105,170,.12)!important;overflow:hidden}
+.scorecard .streak-bar span{
+  display:block;height:100%!important;border-radius:inherit!important;
+  background:linear-gradient(90deg,#6f54e7,#b08cff)!important;
+}
+@media(max-width:920px){
+  .scorecard .hero-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:680px){
+  .scorecard .hero-actions{align-items:flex-start!important;flex-direction:column!important}
+}
+[data-theme="dark"] .scorecard .stat:nth-child(1){color:#aba8ff!important}
+[data-theme="dark"] .scorecard .stat:nth-child(2){color:#7ce2b0!important}
+[data-theme="dark"] .scorecard .stat:nth-child(3){color:#f0c36d!important}
+[data-theme="dark"] .scorecard .page-title{color:#edf5f8!important}
+
+/* === CINEMATIC TODAY PANEL — copied from mockup lines 2087-2202 ===
+   Outer activity surface is black in ALL modes; Study Log stays white. */
+#studyView .activity{
+  background:
+    radial-gradient(420px 280px at 22% 14%,rgba(92,91,176,.18),transparent 68%),
+    radial-gradient(360px 250px at 86% 82%,rgba(34,164,167,.10),transparent 70%),
+    linear-gradient(145deg,#171b22 0%,#0e1116 55%,#090c11 100%)!important;
+  border:1px solid rgba(255,255,255,.085)!important;
+  box-shadow:
+    22px 24px 48px rgba(0,0,0,.34),
+    inset 1px 1px 0 rgba(255,255,255,.045),
+    inset -1px -1px 0 rgba(0,0,0,.30)!important;
+  color:#f6f7fb!important;
+}
+#studyView .activity .activity-label{color:#7f8b9d!important}
+#studyView .activity .today-time{color:#66d6a0!important;text-shadow:0 0 18px rgba(73,211,153,.12)}
+#studyView .activity .activity-copy{color:#aeb7c5!important}
+#studyView .activity .activity-copy strong{color:#f08a73!important}
+#studyView .activity .topic{
+  color:#d4cbff!important;
+  background:linear-gradient(135deg,rgba(108,91,231,.20),rgba(50,166,198,.10))!important;
+  border:1px solid rgba(255,255,255,.07)!important;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.07),4px 6px 13px rgba(0,0,0,.16)!important;
+}
+#studyView .activity .live-session-time{color:#8b96a5!important}
+#studyView .activity .today-yesterday{color:#8b96a5!important}
+/* Study Log stays white */
+#studyView .activity .study-calendar-glass{
+  color:#232936!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.94),rgba(245,249,247,.78)),
+    radial-gradient(260px 190px at 88% 7%,rgba(128,102,244,.15),transparent 70%),
+    radial-gradient(220px 160px at 8% 94%,rgba(55,183,184,.08),transparent 70%)!important;
+  border:1px solid rgba(255,255,255,.96)!important;
+  box-shadow:
+    20px 23px 44px rgba(0,0,0,.28),
+    -12px -13px 30px rgba(255,255,255,.88),
+    inset 1px 1px 0 rgba(255,255,255,.95),
+    inset -1px -1px 0 rgba(115,128,119,.07)!important;
+  backdrop-filter:blur(28px) saturate(1.28)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(1.28)!important;
+}
+[data-theme="dark"] #studyView .activity .study-calendar-glass{
+  color:#283029!important;
+  background:
+    linear-gradient(145deg,rgba(250,252,249,.97),rgba(234,241,236,.88)),
+    radial-gradient(260px 190px at 88% 7%,rgba(128,102,244,.13),transparent 70%),
+    radial-gradient(220px 160px at 8% 94%,rgba(55,183,184,.07),transparent 70%)!important;
+  border-color:rgba(255,255,255,.98)!important;
+}
+#studyView .activity .study-calendar-glass .calendar-kicker{color:#7a847f!important}
+#studyView .activity .study-calendar-glass .calendar-month{color:#252b35!important}
+#studyView .activity .study-calendar-glass .calendar-total{
+  color:#27302c!important;background:rgba(255,255,255,.58)!important;
+  border-color:rgba(120,135,124,.12)!important;
+}
+#studyView .activity .study-calendar-glass .calendar-total strong{color:#27302c!important}
+#studyView .activity .study-calendar-glass .calendar-total span{color:#7e8882!important}
+#studyView .activity .study-calendar-glass .calendar-weekdays span{color:#858f89!important}
+#studyView .activity .study-calendar-glass .calendar-foot{border-top-color:rgba(105,119,110,.12)!important}
+#studyView .activity .study-calendar-glass .calendar-foot span{color:#858f89!important}
 
 /* Activity panel: calendar positioned right on desktop */
 @media(min-width:921px){
@@ -1226,18 +1321,85 @@
 .dash-course-card:nth-child(5n+4) .dash-course-thumb{background:linear-gradient(160deg,#22c7d6,#4f99a0)!important}
 .dash-course-card:nth-child(5n+5) .dash-course-thumb{background:linear-gradient(160deg,#ec4ea5,#9c4e77)!important}
 
-/* Priority list: match mockup red/purple */
-.dash-priority-item.urgent{
-  background:linear-gradient(90deg,#bd2d30,#eb4544)!important;
-  color:#fff!important;
-  border-radius:14px!important;
-  padding:0 16px!important;
+/* Revision title: serif like mockup panel-title */
+.revision-title{
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:19px!important;font-weight:900!important;letter-spacing:-.01em!important;
+}
+
+/* === MONTH CONTRIBUTION CALENDAR — copied from mockup lines 5286-5437 === */
+.month-calendar-shell{position:relative;z-index:1;width:100%;padding:24px 26px 18px;box-sizing:border-box}
+.month-calendar-viewport{
+  width:100%;overflow-x:hidden;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;
+  outline:none;cursor:default;touch-action:none;user-select:none;
+}
+.month-calendar-viewport::-webkit-scrollbar{display:none}
+.month-calendar-viewport:active{cursor:grabbing}
+.month-calendar-track{display:flex;width:100%}
+.month-panel{flex:0 0 100%;min-width:100%;box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;padding:0 2px}
+.month-panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:20px}
+.month-panel-title{font-size:25px;line-height:1;letter-spacing:-.035em;font-weight:700;color:#252b35}
+.month-panel-subtitle{margin-top:7px;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:#7a847f;font-weight:700}
+.month-panel-count{color:#7e8882;font-size:11px;white-space:nowrap}
+.month-grid-wrap{display:grid;grid-template-columns:50px minmax(0,1fr);gap:12px;align-items:stretch}
+.month-weekdays{display:grid;grid-template-rows:repeat(7,minmax(0,1fr));gap:7px;align-items:stretch;align-self:stretch}
+.month-weekdays span{display:flex;align-items:center;justify-content:flex-start;color:#858f89;font-size:11px;line-height:1;font-weight:600;white-space:nowrap}
+.month-week-grid{display:grid;grid-template-columns:repeat(var(--weeks),minmax(0,1fr));grid-template-rows:repeat(7,auto);gap:7px;align-items:start}
+.month-cell{
+  width:100%;aspect-ratio:1/1;height:auto;min-width:0;min-height:0;border-radius:5px;
+  background:#101716;border:1px solid rgba(255,255,255,.018);box-sizing:border-box;
+  transition:transform .15s ease,box-shadow .15s ease,filter .15s ease;position:relative;
+}
+.month-cell.outside{background:transparent!important;border-color:transparent!important;pointer-events:none;box-shadow:none!important}
+.month-cell.none{background:#111817}
+.month-cell.l1{background:#075a18}
+.month-cell.l2{background:#078221}
+.month-cell.l3{background:#12b52f}
+.month-cell.l4{background:#35ed48}
+.month-cell:hover:not(.outside){transform:scale(1.06);filter:brightness(1.12);z-index:2;box-shadow:0 0 13px rgba(44,236,75,.34)}
+.month-cell.today{outline:1px solid rgba(255,255,255,.82);outline-offset:2px}
+.month-cell.is-studying{animation:singleMonthPulse 2.2s ease-in-out infinite;box-shadow:0 0 0 1px rgba(255,255,255,.32),0 0 20px rgba(44,236,75,.62)}
+@keyframes singleMonthPulse{
+  0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.28),0 0 9px rgba(44,236,75,.30)}
+  50%{box-shadow:0 0 0 1px rgba(255,255,255,.75),0 0 24px rgba(44,236,75,.78)}
+}
+.month-cell.has-plan{outline:1px dashed rgba(97,231,244,.8);outline-offset:1px;cursor:pointer}
+.month-calendar-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:18px}
+.month-calendar-nav{display:flex;align-items:center;gap:8px}
+.month-nav-btn{border:1px solid rgba(82,235,119,.20);background:rgba(255,255,255,.035);color:#3c4a44;border-radius:9px;padding:7px 11px;font:700 10px/1 Inter,system-ui,sans-serif;cursor:pointer;transition:transform .15s ease,background .15s ease,box-shadow .15s ease,border-color .15s ease}
+.month-nav-btn:hover:not(:disabled){transform:translateY(-1px);background:rgba(44,236,75,.10);border-color:rgba(82,235,119,.42);box-shadow:0 0 12px rgba(44,236,75,.12)}
+.month-nav-btn:active:not(:disabled){transform:scale(.98)}
+.month-nav-btn:disabled{opacity:.28;cursor:not-allowed}
+.month-legend{display:flex;align-items:center;gap:7px;color:#858f89;font-size:11px;font-weight:500}
+.month-legend-cell{width:12px;height:12px;border-radius:3px;display:block;background:#111817}
+.month-legend-cell.l1{background:#075a18}
+.month-legend-cell.l2{background:#078221}
+.month-legend-cell.l3{background:#12b52f}
+.month-legend-cell.l4{background:#35ed48;box-shadow:0 0 8px rgba(53,237,72,.28)}
+@media(max-width:760px){
+  .month-calendar-shell{padding:20px 16px 16px}
+  .month-nav-btn span{display:none}
+  .month-nav-btn{padding:8px 11px}
+  .month-panel-title{font-size:21px}
+  .month-grid-wrap{grid-template-columns:35px minmax(0,1fr);gap:8px}
+  .month-week-grid{gap:5px}
+  .month-weekdays{gap:5px}
+  .month-cell{border-radius:4px}
+  .month-calendar-footer{align-items:flex-start;flex-direction:column;gap:12px}
+}
+@media(max-width:480px){
+  .month-panel-count{display:none}
+  .month-weekdays span{font-size:10px}
+  .month-week-grid{gap:4px}
+}
+
+/* Priority list: final mockup gradients (100deg 3-stop) */
+.dash-priority-row{
+  background:linear-gradient(100deg,#c83a43,#ef6659,#ee8068)!important;
+  border-radius:16px!important;
   min-height:48px!important;
 }
-.dash-priority-item.normal{
-  background:linear-gradient(90deg,#6350ba,#9a69d6)!important;
-  color:#fff!important;
-  border-radius:14px!important;
-  padding:0 16px!important;
-  min-height:48px!important;
+.dash-priority-row.is-done{
+  background:linear-gradient(100deg,#6354c7,#7a63dc,#a273e1)!important;
 }

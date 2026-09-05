@@ -86,7 +86,7 @@ function toggleCppPicker(){
   const willShow = picker.style.display !== 'flex';
   picker.style.display = willShow ? 'flex' : 'none';
   if(willShow) populateCppSubjects();
-  const cell = document.querySelector(`.cal-day[data-date="${calPlanKey}"]`);
+  const cell = document.querySelector(`.month-cell[data-date="${calPlanKey}"]`);
   if(cell) positionCalPlanPopover(cell);
 }
 
@@ -126,7 +126,7 @@ function confirmAddPlan(){
   planLectureForDate(subjectId, unitId, lectureId, calPlanKey);
   document.getElementById('cppPicker').style.display = 'none';
   renderCalPlanPopover();
-  const cell = document.querySelector(`.cal-day[data-date="${calPlanKey}"]`);
+  const cell = document.querySelector(`.month-cell[data-date="${calPlanKey}"]`);
   if(cell) positionCalPlanPopover(cell);
 }
 
@@ -165,14 +165,14 @@ function unplanLecture(subjectId, unitId, lectureId){
   renderCalendar();
   renderMain();
   renderCalPlanPopover();
-  const cell = document.querySelector(`.cal-day[data-date="${calPlanKey || key}"]`);
+  const cell = document.querySelector(`.month-cell[data-date="${calPlanKey || key}"]`);
   if(cell) positionCalPlanPopover(cell);
   if(currentView==='priority') renderPriorityPage();
   showToast('Removed from plan');
 }
 
 document.addEventListener('click', (e)=>{
-  if(calPlanKey && !e.target.closest('.cal-day') && !e.target.closest('.cal-plan-popover')){
+  if(calPlanKey && !e.target.closest('.month-cell') && !e.target.closest('.cal-plan-popover')){
     hideCalPlanPopover();
   }
 });

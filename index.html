@@ -198,20 +198,28 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <div id="studyView" class="view-page">
     <header class="scorecard">
       <div class="scorecard-gradient"></div>
-      <div>
-        <span class="eyebrow">PROGRESS REPORT</span>
-        <h1>Study Tracker</h1>
-        <div class="user-welcome" id="userWelcome"></div>
-      </div>
-      <div class="scorecard-right">
-        <div class="big-score"><span id="totalCompleted">0</span><span class="slash">/</span><span id="totalLectures">0</span></div>
-        <div class="score-label">LECTURES CLEARED</div>
-        <div class="percent-badge" id="percentBadge">0%</div>
+      <span class="eyebrow">PROGRESS REPORT</span>
+      <div class="hero-grid">
+        <div>
+          <h1>Study Tracker</h1>
+          <p class="hero-copy user-welcome" id="userWelcome"></p>
+          <div class="stats">
+            <span class="stat" id="statLectures">0 / 0 lectures cleared</span>
+            <span class="stat" id="statPct">0% complete</span>
+            <span class="stat" id="statSubjects">0 active subjects</span>
+          </div>
+        </div>
         <aside class="streak" id="streakWidget">
           <div class="streak-head"><span>Study streak</span><span>✦</span></div>
           <div class="streak-num"><span id="streakDays">0</span> <small style="font-size:14px;color:var(--muted)">days</small></div>
           <div class="streak-bar"><span id="streakBarFill" style="width:0%"></span></div>
         </aside>
+      </div>
+      <div class="hero-actions">
+        <div>
+          <div class="page-title">Today, at a glance</div>
+          <div class="secondary">A calm workspace for everything you need to study next.</div>
+        </div>
         <div class="backup-row">
           <button class="backup-btn" onclick="sparkAt(this,'var(--teal)'); openProgressSlide()" title="View daily progress graph">📊 Progress</button>
           <button class="backup-btn" onclick="exportData()" title="Download a backup file">⬇ Backup</button>
@@ -219,8 +227,8 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           <button class="backup-btn" onclick="openSettings()" title="Settings">⚙️ Settings</button>
           <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
         </div>
-        <div class="last-saved" id="lastSaved"></div>
       </div>
+      <div class="last-saved" id="lastSaved"></div>
     </header>
 
     <div class="search-wrap">
@@ -245,32 +253,23 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <div class="topic-strip" id="todaySubjects"></div>
       <div class="activity-copy today-yesterday" id="yesterdayLine"></div>
 
-      <div class="study-calendar-glass" id="calTerminal" aria-label="Study log calendar">
-        <div class="calendar-head">
-          <div class="cal-head-left">
-            <div class="calendar-kicker">STUDY LOG</div>
-            <div class="calendar-month" id="calMonth"></div>
+      <div class="study-calendar-glass contribution-calendar" id="calTerminal" aria-label="Study contribution calendar">
+        <div class="month-calendar-shell">
+          <div class="month-calendar-viewport" id="studyMonthViewport" tabindex="0" aria-label="Scrollable monthly study calendar">
+            <div class="month-calendar-track" id="studyMonthTrack"></div>
           </div>
-          <div class="cal-head-right">
-            <div class="calendar-nav" role="group" aria-label="Month navigation">
-              <button type="button" class="cal-nav-btn" onclick="calNav(-1)" title="Previous month" aria-label="Previous month">‹</button>
-              <button type="button" class="cal-nav-btn cal-today-btn" id="calTodayBtn" onclick="calGoToday()" title="Back to current month" hidden>Today</button>
-              <button type="button" class="cal-nav-btn" onclick="calNav(1)" title="Next month" aria-label="Next month">›</button>
+          <div class="month-calendar-footer">
+            <div class="month-calendar-nav" aria-label="Calendar month navigation"><button type="button" class="month-nav-btn" id="studyMonthPrev" aria-label="Previous month">← <span>Previous</span></button><button type="button" class="month-nav-btn" id="studyMonthNext" aria-label="Next month"><span>Next</span> →</button></div>
+            <div class="month-legend">
+              <span>Less</span>
+              <i class="month-legend-cell none"></i>
+              <i class="month-legend-cell l1"></i>
+              <i class="month-legend-cell l2"></i>
+              <i class="month-legend-cell l3"></i>
+              <i class="month-legend-cell l4"></i>
+              <span>More</span>
             </div>
-            <div class="calendar-total"><strong id="calActiveDays">0</strong><span>active days</span></div>
           </div>
-        </div>
-        <div class="calendar-weekdays">
-          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-        </div>
-        <div class="calendar-grid" id="calendarGrid"></div>
-        <div class="calendar-foot">
-          <span style="color:#3b9f72;font-weight:800">● Studying now</span>
-          <span><i class="legend-dot none"></i>0</span>
-          <span><i class="legend-dot l1"></i>light</span>
-          <span><i class="legend-dot l2"></i>steady</span>
-          <span><i class="legend-dot l3"></i>strong</span>
-          <span><i class="legend-dot l4"></i>deep focus</span>
         </div>
       </div>
     </div>

@@ -9,49 +9,14 @@ function renderDashboard(){
   renderDashDeadlines();
 }
 
-// ---- Streak calculation ----
+// ---- Streak widget (same counter as the quick-grid tile) ----
 function renderStreak(){
   const daysEl = document.getElementById('streakDays');
   const barEl = document.getElementById('streakBarFill');
   if(!daysEl || !barEl) return;
-  const studyDays = getStudyDaysSet();
-  let streak = 0;
-  const d = new Date();
-  d.setHours(0,0,0,0);
-  // Count consecutive days including today
-  while(true){
-    const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    if(studyDays.has(key)){
-      streak++;
-      d.setDate(d.getDate()-1);
-    } else {
-      break;
-    }
-  }
+  const streak = (typeof computeCurrentStreak === 'function') ? computeCurrentStreak() : 0;
   daysEl.textContent = streak;
   barEl.style.width = Math.min(100, (streak/7)*100)+'%';
-}
-
-function getStudyDaysSet(){
-  const set = new Set();
-  if(!data || !data.subjects) return set;
-  for(const s of data.subjects){
-    for(const u of (Array.isArray(s.units)?s.units:[])){
-      for(const l of (u&&Array.isArray(u.lectures)?u.lectures:[])){
-        if(l && l.completed && l.completedDate){
-          const d = new Date(l.completedDate);
-          set.add(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
-        }
-      }
-    }
-  }
-  // Also check study log entries
-  if(data.studyLog){
-    for(const key of Object.keys(data.studyLog)){
-      if(data.studyLog[key] > 0) set.add(key);
-    }
-  }
-  return set;
 }
 
 let lastBannerKey = null;
@@ -171,27 +136,27 @@ function renderDashQuickGrid(){
   const planTomorrowCount = ppList(ppTomorrowKey()).filter(i=>!i.done).length;
   el.innerHTML = `
     <div class="dash-quick-tile" onclick="openSubjectsDrawer()">
-      <div class="dash-quick-icon" style="background:var(--violet-soft);">📚</div>
+      <div class="dash-quick-icon">📚</div>
       <div class="dash-quick-title">My Subjects</div>
       <div class="dash-quick-sub">${subjectCount} tracked</div>
     </div>
     <div class="dash-quick-tile" onclick="openSubjectsDrawer()">
-      <div class="dash-quick-icon" style="background:var(--rose-soft);">📝</div>
+      <div class="dash-quick-icon">📝</div>
       <div class="dash-quick-title">Tests Logged</div>
       <div class="dash-quick-sub">${testCount} total</div>
     </div>
     <div class="dash-quick-tile" onclick="openProgressSlide()">
-      <div class="dash-quick-icon" style="background:#dff3ef;">📊</div>
+      <div class="dash-quick-icon">📊</div>
       <div class="dash-quick-title">Analytics</div>
       <div class="dash-quick-sub">View progress</div>
     </div>
     <div class="dash-quick-tile" onclick="openProgressSlide()">
-      <div class="dash-quick-icon" style="background:#fbf1de;">🔥</div>
+      <div class="dash-quick-icon">🔥</div>
       <div class="dash-quick-title">Streak</div>
       <div class="dash-quick-sub">${streak} day${streak===1?'':'s'}</div>
     </div>
     <div class="dash-quick-tile" onclick="openPriorityPlanner()">
-      <div class="dash-quick-icon" style="background:#fde4e1;">🎯</div>
+      <div class="dash-quick-icon">🎯</div>
       <div class="dash-quick-title">Priorities</div>
       <div class="dash-quick-sub">${planTodayCount} today · ${planTomorrowCount} tmrw</div>
     </div>
@@ -443,7 +408,7 @@ function renderDashDeadlines(){
     .map((s,i)=>({s, color: SUBJECT_GRAPH_COLORS[i % SUBJECT_GRAPH_COLORS.length], pacing: examPacing(s)}))
     .filter(r=>r.pacing);
   if(!rows.length){
-    el.innerHTML = `<div class="dash-deadlines-empty">No exam dates set yet — open a subject and tap "📅 Set exam date" to see it here.</div>`;
+    el.innerHTML = `<div class="dash-deadlines-empty">No exam dates set yet — open a subject and tap <strong>Set exam date</strong> to see it here.</div>`;
     return;
   }
   rows.sort((a,b)=>a.pacing.daysLeft-b.pacing.daysLeft);
@@ -541,100 +506,176 @@ function dayLevel(seconds){
 
 const CAL_SUBJECT_COLORS = SUBJECT_GRAPH_COLORS;
 
-function studyLevelClass(seconds){
-  if(seconds<=0) return 'study-none';
-  const mins = seconds/60;
-  if(mins<=30) return 'study-light';
-  if(mins<=60) return 'study-steady';
-  if(mins<=120) return 'study-strong';
-  return 'study-deep';
-}
+// ---- Contribution-strip study calendar (ported from study_tracker_ultra_dark.html) ----
+// 12 month panels in a button-navigated strip. Levels come from REAL data:
+// lecture-timer seconds (dailyLog + today snapshot) plus global study minutes.
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WEEK_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let monthCalMonth = (new Date()).getMonth();
 
-let calViewY = 0, calViewM = 0; // browse cursor for the study log calendar (0 = current month)
+function monthCalMinutesFor(key, todayK, todaySnap){
+  let mins = 0;
+  if(key === todayK){
+    mins += (todaySnap.total || 0) / 60;
+    try{
+      const g = JSON.parse(localStorage.getItem(GLOBAL_STUDY_KEY) || '{}') || {};
+      mins += Math.max(0, Number(g[key]) || 0);
+    }catch(e){}
+  } else if(data.dailyLog && data.dailyLog[key]){
+    mins += (data.dailyLog[key].total || 0) / 60;
+  }
+  return mins;
+}
+function monthCalLevel(mins){
+  if(mins <= 0) return 0;
+  if(mins < 30) return 1;
+  if(mins < 60) return 2;
+  if(mins < 120) return 3;
+  return 4;
+}
 
 function calNav(delta){
   if(typeof hideCalPlanPopover === 'function') hideCalPlanPopover();
   calTooltipPinned = false;
   calTooltipPinnedKey = null;
   hideCalTooltip();
-  if(!calViewY){ const n = new Date(); calViewY = n.getFullYear(); calViewM = n.getMonth(); }
-  let y = calViewY, m = calViewM + delta;
-  if(m < 0){ m = 11; y--; }
-  if(m > 11){ m = 0; y++; }
-  calViewY = y; calViewM = m;
-  renderCalendar();
+  goToMonth(monthCalMonth + delta);
 }
-
 function calGoToday(){
   if(typeof hideCalPlanPopover === 'function') hideCalPlanPopover();
   calTooltipPinned = false;
   calTooltipPinnedKey = null;
   hideCalTooltip();
-  const n = new Date();
-  calViewY = n.getFullYear(); calViewM = n.getMonth();
-  renderCalendar();
+  goToMonth((new Date()).getMonth());
+}
+function goToMonth(month){
+  const viewport = document.getElementById('studyMonthViewport');
+  const prevBtn = document.getElementById('studyMonthPrev');
+  const nextBtn = document.getElementById('studyMonthNext');
+  monthCalMonth = Math.max(0, Math.min(11, month));
+  if(viewport) viewport.scrollTo({left: monthCalMonth * viewport.clientWidth, behavior:'smooth'});
+  if(prevBtn) prevBtn.disabled = monthCalMonth === 0;
+  if(nextBtn) nextBtn.disabled = monthCalMonth === 11;
 }
 
 function renderCalendar(){
-  const grid = document.getElementById('calendarGrid');
-  if(!grid) return;
-  const now = new Date();
-  if(!calViewY){ calViewY = now.getFullYear(); calViewM = now.getMonth(); }
+  const track = document.getElementById('studyMonthTrack');
+  const viewport = document.getElementById('studyMonthViewport');
+  if(!track || !viewport) return;
+  const now = new Date(); now.setHours(0,0,0,0);
+  const year = now.getFullYear();
   const todayK = todayKey(now);
   const todaySnap = getTodaySnapshot();
-  const y = calViewY;
-  const m = calViewM;
+  const studyingNow = !!runningRef || globalStudyRunning;
+  const prevBtn = document.getElementById('studyMonthPrev');
+  const nextBtn = document.getElementById('studyMonthNext');
 
-  const monthEl = document.getElementById('calMonth');
-  if(monthEl) monthEl.textContent = new Date(y, m, 1).toLocaleDateString(undefined, {month:'long', year:'numeric'});
+  track.innerHTML = '';
+  for(let month = 0; month < 12; month++){
+    const panel = document.createElement('section');
+    panel.className = 'month-panel';
+    panel.setAttribute('aria-label', MONTH_NAMES[month] + ' ' + year + ' study calendar');
 
-  const todayBtn = document.getElementById('calTodayBtn');
-  if(todayBtn) todayBtn.hidden = (y === now.getFullYear() && m === now.getMonth());
+    const first = new Date(year, month, 1);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstSundayIndex = first.getDay();
+    const weeks = Math.ceil((firstSundayIndex + daysInMonth) / 7);
 
-  const daysInMonth = new Date(y, m+1, 0).getDate();
-  const lead = (new Date(y, m, 1).getDay() + 6) % 7; // Monday-first offset
-
-  let html = '';
-  let activeDays = 0;
-  const studyingNow = !!runningRef;
-  for(let i=0; i<42; i++){
-    const dayNum = i - lead + 1;
-    const day = new Date(y, m, dayNum);
-    const key = todayKey(day);
-    const isToday = key === todayK;
-    const isFuture = key > todayK;
-
-    if(dayNum < 1 || dayNum > daysInMonth){
-      html += `<span class="cal-day muted-day">${day.getDate()}</span>`;
-      continue;
-    }
-    const seconds = isToday ? todaySnap.total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
-    if(seconds > 0) activeDays++;
-    const levelClass = studyLevelClass(seconds);
-    const todayClass = isToday ? ' today' : '';
-
-    if(isFuture){
-      const plannedCount = getPlannedLecturesForDate(key).length;
-      const planClass = plannedCount ? ' has-plan' : '';
-      const countHtml = plannedCount ? `<span class="cpp-count">${plannedCount}</span>` : '';
-      html += `<div class="cal-day is-future${planClass}${todayClass}" data-date="${key}" onclick="showCalPlanPopover(event,'${key}')" title="Plan lectures for this day">${countHtml}${day.getDate()}</div>`;
-      continue;
+    let active = 0;
+    for(let day = 1; day <= daysInMonth; day++){
+      const d = new Date(year, month, day);
+      if(monthCalMinutesFor(todayKey(d), todayK, todaySnap) > 0) active++;
     }
 
-    const minutes = seconds/60;
-    const lum = seconds > 0 ? (0.72 + Math.min(1, minutes/300) * 0.74).toFixed(3) : '';
-    const lumAttr = lum ? ` style="--cal-lum:${lum}"` : '';
-    const studyingClass = (isToday && studyingNow) ? ' is-studying' : '';
-    const aura = studyingClass
-      ? `<span class="mystic-aura" aria-hidden="true"><span class="mist one"></span><span class="mist two"></span><span class="mist three"></span></span>`
-      : '';
-    const dot = studyingClass ? '<span class="study-live-dot" aria-label="Currently studying"></span>' : '';
-    html += `<div class="cal-day ${levelClass}${studyingClass}${todayClass}"${lumAttr} data-date="${key}" onmouseenter="showCalTooltip(event,'${key}')" onmouseleave="hideCalTooltip()" onclick="showCalTooltip(event,'${key}',true)">${aura}${day.getDate()}${dot}</div>`;
+    const head = document.createElement('div');
+    head.className = 'month-panel-head';
+    head.innerHTML = '<div><div class="month-panel-title">' + MONTH_NAMES[month] + ' ' + year + '</div><div class="month-panel-subtitle">Study contributions</div></div><div class="month-panel-count">' + active + ' active days</div>';
+    panel.appendChild(head);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'month-grid-wrap';
+
+    const labels = document.createElement('div');
+    labels.className = 'month-weekdays';
+    WEEK_NAMES.forEach(name => { const s = document.createElement('span'); s.textContent = name; labels.appendChild(s); });
+    wrap.appendChild(labels);
+
+    const grid = document.createElement('div');
+    grid.className = 'month-week-grid';
+    grid.style.setProperty('--weeks', weeks);
+    grid.setAttribute('role', 'grid');
+
+    const totalCells = weeks * 7;
+    for(let i = 0; i < totalCells; i++){
+      const dayNumber = i - firstSundayIndex + 1;
+      const cell = document.createElement('div');
+      cell.className = 'month-cell';
+      if(dayNumber < 1 || dayNumber > daysInMonth){
+        cell.classList.add('outside');
+      } else {
+        const d = new Date(year, month, dayNumber);
+        const key = todayKey(d);
+        const mins = monthCalMinutesFor(key, todayK, todaySnap);
+        const level = monthCalLevel(mins);
+        cell.classList.add(level ? 'l' + level : 'none');
+        cell.dataset.date = key;
+        cell.setAttribute('role', 'gridcell');
+        const isFuture = key > todayK;
+        if(isFuture){
+          const planned = getPlannedLecturesForDate(key).length;
+          if(planned) cell.classList.add('has-plan');
+          cell.setAttribute('onclick', `showCalPlanPopover(event,'${key}')`);
+          cell.title = d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) + (planned ? ` — ${planned} planned` : ' — Plan lectures for this day');
+          cell.setAttribute('aria-label', cell.title);
+        } else {
+          cell.setAttribute('onmouseenter', `showCalTooltip(event,'${key}')`);
+          cell.setAttribute('onmouseleave', 'hideCalTooltip()');
+          cell.setAttribute('onclick', `showCalTooltip(event,'${key}',true)`);
+          cell.title = d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) + ' — ' + Math.floor(mins) + ' min studied';
+          cell.setAttribute('aria-label', d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + ' — ' + (level ? 'Study level ' + level : 'No study logged'));
+          if(level) cell.classList.add('real-study');
+          if(mins >= 120) cell.classList.add('high-glow');
+          if(key === todayK){
+            cell.classList.add('today');
+            if(studyingNow){
+              cell.classList.add('is-studying');
+              cell.title = d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) + ' — Studying now';
+            }
+          }
+        }
+      }
+      grid.appendChild(cell);
+    }
+    wrap.appendChild(grid);
+    panel.appendChild(wrap);
+    track.appendChild(panel);
   }
-  grid.innerHTML = html;
 
-  const activeEl = document.getElementById('calActiveDays');
-  if(activeEl) activeEl.textContent = String(activeDays);
+  if(prevBtn && !prevBtn.dataset.bound){
+    prevBtn.dataset.bound = '1';
+    prevBtn.addEventListener('click', () => goToMonth(monthCalMonth - 1));
+  }
+  if(nextBtn && !nextBtn.dataset.bound){
+    nextBtn.dataset.bound = '1';
+    nextBtn.addEventListener('click', () => goToMonth(monthCalMonth + 1));
+  }
+  if(!renderCalendar._resized){
+    renderCalendar._resized = true;
+    window.addEventListener('resize', () => {
+      const vp = document.getElementById('studyMonthViewport');
+      if(vp) vp.scrollLeft = monthCalMonth * vp.clientWidth;
+    });
+  }
+  requestAnimationFrame(() => {
+    const vp = document.getElementById('studyMonthViewport');
+    if(!vp) return;
+    if(!renderCalendar._scrolled) renderCalendar._scrolled = true;
+    // Rebuilding the track resets scroll — always restore the current month
+    // so timer ticks and re-renders never make the calendar jump.
+    vp.scrollLeft = monthCalMonth * vp.clientWidth;
+    if(prevBtn) prevBtn.disabled = monthCalMonth === 0;
+    if(nextBtn) nextBtn.disabled = monthCalMonth === 11;
+  });
 }
 
 (function(){
@@ -712,7 +753,7 @@ function hideCalTooltip(){
 }
 
 document.addEventListener('click', (e)=>{
-  if(calTooltipPinned && !e.target.closest('.cal-day') && !e.target.closest('.cal-tooltip')){
+  if(calTooltipPinned && !e.target.closest('.month-cell') && !e.target.closest('.cal-tooltip')){
     calTooltipPinned = false;
     calTooltipPinnedKey = null;
     hideCalTooltip();
