@@ -41,6 +41,7 @@ const APP_SHELL = [
   './css/mascot.css',
   './css/dark-mode.css',
   './css/dashboard-redesign.css',
+  './css/ultra-dark.css',
   './css/a11y.css',
   './js/data.js',
   './js/demo.js',

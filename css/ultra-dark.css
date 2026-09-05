@@ -1,0 +1,571 @@
+/* ============================================================
+   STUDY TRACKER — ULTRA DARK OVERRIDES
+   Ported from study_tracker_ultra_dark.html
+   Targets: Scorecard/Progress Report, Today/Calendar,
+            Quick Grid, Ongoing Subjects, Upcoming Deadlines,
+            Priority List, Revision Panel
+   ============================================================ */
+
+/* ============================================================
+   1. SCORECARD → HERO (Progress Report section)
+   ============================================================ */
+.scorecard {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  padding: 38px 34px 32px !important;
+  border-radius: 34px !important;
+  border: 1px solid var(--line) !important;
+  background:
+    radial-gradient(circle at 78% 16%, rgba(129, 108, 241, 0.16), transparent 25%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.28)) !important;
+  box-shadow:
+    18px 18px 42px rgba(119, 128, 148, 0.16),
+    -14px -14px 34px rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(24px) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.scorecard::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.18) 48%, transparent 68%) !important;
+  transform: translateX(-45%) !important;
+}
+.scorecard .scorecard-gradient { display: none !important; }
+.scorecard .eyebrow {
+  display: inline-flex !important;
+  padding: 9px 15px !important;
+  border-radius: 999px !important;
+  background: rgba(128, 94, 247, 0.11) !important;
+  color: #6e51df !important;
+  letter-spacing: 0.13em !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+}
+[data-theme="dark"] .scorecard .eyebrow {
+  color: #b7a3ff !important;
+  background: rgba(137, 109, 255, 0.16) !important;
+}
+.scorecard h1 {
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(52px, 5.4vw, 82px) !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.045em !important;
+  margin: 8px 0 0 !important;
+  color: var(--ink) !important;
+}
+.scorecard .user-welcome {
+  margin-top: 6px !important;
+  color: var(--muted) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+.scorecard-right {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 12px !important;
+  margin-top: 0 !important;
+}
+.scorecard .big-score {
+  font-size: 48px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.04em !important;
+  line-height: 1 !important;
+  color: var(--ink) !important;
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 2px !important;
+}
+.scorecard .big-score .slash {
+  font-size: 32px !important;
+  color: var(--muted) !important;
+  font-weight: 400 !important;
+}
+.scorecard .score-label {
+  font-size: 10px !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  font-weight: 800 !important;
+}
+.scorecard .percent-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  background: rgba(128, 94, 247, 0.10) !important;
+  color: #6e51df !important;
+  border: 1px solid rgba(128, 94, 247, 0.18) !important;
+}
+.scorecard .backup-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-top: 4px !important;
+  justify-content: flex-end !important;
+}
+.scorecard .backup-btn {
+  padding: 10px 16px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  border: 1px solid var(--line) !important;
+  background: var(--glass) !important;
+  color: var(--muted) !important;
+  box-shadow: var(--shadow-soft) !important;
+  backdrop-filter: blur(16px) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+}
+.scorecard .backup-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 26px rgba(105, 86, 227, 0.18) !important;
+}
+.scorecard .last-saved {
+  font-size: 10px !important;
+  color: var(--muted) !important;
+}
+
+/* ============================================================
+   2. ACTIVITY / TODAY / CALENDAR
+   ============================================================ */
+.activity {
+  border-radius: 30px !important;
+  border: 1px solid var(--line) !important;
+  background:
+    radial-gradient(circle at 75% 30%, rgba(126, 98, 235, 0.10), transparent 27%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.49), rgba(255, 255, 255, 0.22)) !important;
+  box-shadow: var(--shadow) !important;
+  backdrop-filter: blur(20px) !important;
+  min-height: 350px !important;
+  padding: 28px !important;
+}
+[data-theme="dark"] .activity {
+  background: linear-gradient(135deg, rgba(25, 32, 44, 0.77), rgba(18, 24, 34, 0.60)) !important;
+}
+.activity-label {
+  font-size: 12px !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--soft) !important;
+  font-weight: 900 !important;
+}
+.today-time {
+  font-size: 31px !important;
+  color: var(--green) !important;
+  font-weight: 900 !important;
+  margin-top: 5px !important;
+}
+.activity-copy {
+  color: var(--muted) !important;
+  font-size: 14px !important;
+  margin-top: 10px !important;
+}
+.topic-strip {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin-top: 12px !important;
+}
+.topic {
+  padding: 7px 10px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: #6c53b6 !important;
+  background: rgba(135, 101, 235, 0.10) !important;
+}
+[data-theme="dark"] .topic {
+  color: #c5b8ff !important;
+  background: rgba(141, 112, 255, 0.13) !important;
+}
+
+/* Study Calendar Glass */
+.study-calendar-glass {
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid rgba(120, 135, 155, 0.14) !important;
+  box-shadow: 0 12px 34px rgba(65, 82, 105, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(16px) !important;
+  overflow: hidden !important;
+}
+[data-theme="dark"] .study-calendar-glass {
+  background: rgba(15, 23, 35, 0.82) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+/* ============================================================
+   3. QUICK GRID (My Subjects, Tests, Analytics, Streak, Priorities)
+   ============================================================ */
+.dash-quick-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 12px !important;
+  margin-top: 18px !important;
+}
+.dash-quick-tile {
+  border-radius: 22px !important;
+  padding: 19px 14px !important;
+  text-align: center !important;
+  border: 1px solid var(--line) !important;
+  background: var(--glass) !important;
+  box-shadow:
+    16px 16px 34px rgba(104, 114, 136, 0.14),
+    -12px -12px 28px rgba(255, 255, 255, 0.70),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.74),
+    inset -1px -1px 0 rgba(104, 114, 136, 0.06) !important;
+  backdrop-filter: blur(18px) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+  position: relative !important;
+  isolation: isolate !important;
+}
+.dash-quick-tile:hover {
+  transform: translateY(-3px) !important;
+  box-shadow:
+    24px 26px 56px rgba(107, 117, 139, 0.22),
+    -12px -12px 30px rgba(255, 255, 255, 0.85) !important;
+}
+.dash-quick-icon {
+  font-size: 25px !important;
+  margin-bottom: 8px !important;
+}
+.dash-quick-title {
+  display: block !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  color: var(--ink) !important;
+}
+.dash-quick-sub {
+  color: var(--soft) !important;
+  font-size: 12px !important;
+}
+[data-theme="dark"] .dash-quick-tile {
+  background: rgba(15, 23, 35, 0.70) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+  box-shadow:
+    16px 16px 34px rgba(0, 0, 0, 0.28),
+    -10px -10px 25px rgba(53, 66, 91, 0.17),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.08),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.14) !important;
+}
+[data-theme="dark"] .dash-quick-tile:hover {
+  border-color: rgba(120, 213, 255, 0.18) !important;
+  box-shadow:
+    24px 26px 56px rgba(0, 0, 0, 0.38),
+    -12px -12px 30px rgba(53, 66, 91, 0.22),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.10),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.18) !important;
+}
+[data-theme="dark"] .dash-quick-title {
+  color: #f4f8fb !important;
+}
+
+/* ============================================================
+   4. ONGOING SUBJECTS (horizontal scroll cards)
+   ============================================================ */
+.dash-block {
+  margin-top: 34px !important;
+}
+.dash-block-header h3 {
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--ink) !important;
+  margin: 0 !important;
+}
+.dash-courses-scroll {
+  display: flex !important;
+  gap: 14px !important;
+  overflow-x: auto !important;
+  padding: 4px 4px 16px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #8d69d9 transparent !important;
+  margin-top: 17px !important;
+}
+@media (min-width: 481px) {
+  .dash-courses-scroll {
+    display: flex !important;
+    overflow-x: auto !important;
+  }
+}
+.dash-courses-scroll::-webkit-scrollbar { height: 4px !important; }
+.dash-courses-scroll::-webkit-scrollbar-track { background: transparent !important; }
+.dash-courses-scroll::-webkit-scrollbar-thumb {
+  background: rgba(141, 105, 217, 0.3) !important;
+  border-radius: 999px !important;
+}
+
+/* Course Card — gradient-topped glass card */
+.dash-course-card {
+  flex: 0 0 250px !important;
+  min-height: 174px !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--line) !important;
+  background: var(--glass) !important;
+  box-shadow:
+    16px 16px 34px rgba(104, 114, 136, 0.14),
+    -12px -12px 28px rgba(255, 255, 255, 0.70),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.74),
+    inset -1px -1px 0 rgba(104, 114, 136, 0.06) !important;
+  backdrop-filter: blur(18px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+}
+.dash-course-card:hover {
+  transform: translateY(-3px) !important;
+}
+
+/* Subject card gradient tops — per-index colors like the mockup */
+.dash-course-card[data-color="0"] .dash-course-thumb,
+.dash-course-card:nth-child(5n+1) .dash-course-thumb {
+  background: linear-gradient(160deg, #ffd30c, #8d7c32) !important;
+}
+.dash-course-card[data-color="1"] .dash-course-thumb,
+.dash-course-card:nth-child(5n+2) .dash-course-thumb {
+  background: linear-gradient(160deg, #4666e1, #59658f) !important;
+}
+.dash-course-card[data-color="2"] .dash-course-thumb,
+.dash-course-card:nth-child(5n+3) .dash-course-thumb {
+  background: linear-gradient(160deg, #27c967, #4a8b69) !important;
+}
+.dash-course-card[data-color="3"] .dash-course-thumb,
+.dash-course-card:nth-child(5n+4) .dash-course-thumb {
+  background: linear-gradient(160deg, #22c7d6, #4f99a0) !important;
+}
+.dash-course-card[data-color="4"] .dash-course-thumb,
+.dash-course-card:nth-child(5n+5) .dash-course-thumb {
+  background: linear-gradient(160deg, #ec4ea5, #9c4e77) !important;
+}
+
+.dash-course-thumb {
+  height: 72px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border-top-left-radius: inherit !important;
+  border-top-right-radius: inherit !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  padding: 11px 12px !important;
+}
+.dash-course-thumb-label {
+  position: relative !important;
+  z-index: 2 !important;
+  color: #fff !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.11em !important;
+  text-transform: uppercase !important;
+}
+.dash-course-pct {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  padding: 5px 8px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.20) !important;
+  color: #fff !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  backdrop-filter: blur(8px) !important;
+}
+.dash-course-body {
+  padding: 13px !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+.dash-course-name {
+  font-weight: 900 !important;
+  font-size: 14px !important;
+  color: var(--ink) !important;
+}
+.dash-course-meta {
+  font-size: 10px !important;
+  color: var(--soft) !important;
+}
+.dash-course-progress-track {
+  height: 5px !important;
+  border-radius: 999px !important;
+  background: rgba(122, 105, 152, 0.16) !important;
+  overflow: hidden !important;
+}
+.dash-course-progress-fill {
+  height: 100% !important;
+  border-radius: 999px !important;
+  background: var(--amber) !important;
+}
+.dash-course-footer {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-top: auto !important;
+  padding-top: 4px !important;
+}
+.dash-course-next {
+  font-size: 10px !important;
+  color: var(--soft) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  flex: 1 !important;
+}
+
+/* Resume button — neumorphic dark pill */
+.dash-resume-btn,
+.subject-btn .resume,
+button.resume {
+  padding: 7px 10px !important;
+  border-radius: 10px !important;
+  background: #242a39 !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  font-size: 10px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.dash-resume-btn:hover,
+.subject-btn .resume:hover,
+button.resume:hover {
+  background: #2f3749 !important;
+}
+
+[data-theme="dark"] .dash-course-card {
+  background: rgba(15, 23, 35, 0.70) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+  box-shadow:
+    16px 16px 34px rgba(0, 0, 0, 0.28),
+    -10px -10px 25px rgba(53, 66, 91, 0.17),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.08),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.14) !important;
+}
+[data-theme="dark"] .dash-course-title {
+  color: #f4f8fb !important;
+}
+
+/* ============================================================
+   5. UPCOMING DEADLINES
+   ============================================================ */
+.dash-deadlines,
+.revision-panel {
+  margin-top: 18px !important;
+  padding: 20px !important;
+  border-radius: 22px !important;
+  background: var(--glass) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow:
+    16px 16px 34px rgba(104, 114, 136, 0.14),
+    -12px -12px 28px rgba(255, 255, 255, 0.70),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.74),
+    inset -1px -1px 0 rgba(104, 114, 136, 0.06) !important;
+  backdrop-filter: blur(18px) !important;
+}
+[data-theme="dark"] .dash-deadlines,
+[data-theme="dark"] .revision-panel {
+  background: rgba(15, 23, 35, 0.70) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+.dash-deadlines-empty,
+.dash-deadlines .empty {
+  padding: 20px !important;
+  border-radius: 18px !important;
+  border: 1px dashed var(--line) !important;
+  color: var(--soft) !important;
+  text-align: center !important;
+}
+
+/* ============================================================
+   6. PRIORITY LIST
+   ============================================================ */
+.dash-block-header {
+  margin-bottom: 14px !important;
+}
+.dash-priority-list {
+  display: grid !important;
+  gap: 9px !important;
+}
+.dash-priority-item {
+  min-height: 48px !important;
+  border-radius: 16px !important;
+  padding: 0 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  color: #fff !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.10) !important;
+}
+.dash-priority-item.urgent {
+  background: linear-gradient(90deg, #bd2d30, #eb4544) !important;
+}
+.dash-priority-item.normal {
+  background: linear-gradient(90deg, #6350ba, #9a69d6) !important;
+}
+.dash-priority-item .priority-badge {
+  margin-left: auto !important;
+  font-size: 11px !important;
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* ============================================================
+   7. REVISION PANEL
+   ============================================================ */
+.revision-panel {
+  margin-top: 18px !important;
+  padding: 18px !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--line) !important;
+  border-left: 4px solid #dd4e2f !important;
+  background: var(--glass) !important;
+  box-shadow:
+    16px 16px 34px rgba(104, 114, 136, 0.14),
+    -12px -12px 28px rgba(255, 255, 255, 0.70),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.74),
+    inset -1px -1px 0 rgba(104, 114, 136, 0.06) !important;
+}
+
+/* ============================================================
+   8. RESPONSIVE
+   ============================================================ */
+@media (max-width: 920px) {
+  .dash-quick-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+@media (max-width: 680px) {
+  .scorecard {
+    padding: 28px 20px !important;
+    border-radius: 26px !important;
+  }
+  .scorecard h1 {
+    font-size: 52px !important;
+  }
+  .dash-quick-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .scorecard .backup-row {
+    justify-content: flex-start !important;
+  }
+}
+
+/* ============================================================
+   9. REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .dash-quick-tile,
+  .dash-course-card,
+  .scorecard .backup-btn {
+    transition: none !important;
+  }
+}
