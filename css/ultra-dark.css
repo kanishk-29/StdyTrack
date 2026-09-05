@@ -411,3 +411,656 @@
     transition:none!important;
   }
 }
+
+/* ==========================================================
+   STUDY CALENDAR GLASS — Copied from mockup lines 1804-2083
+   ========================================================== */
+.study-calendar-glass{
+  width:min(520px,46%);
+  min-height:390px;
+  padding:22px 22px 19px;
+  border-radius:30px 22px 34px 26px;
+  isolation:isolate;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.72) 0%,
+      rgba(255,255,255,.48) 38%,
+      rgba(255,255,255,.24) 100%
+    ),
+    radial-gradient(240px 180px at 88% 8%,rgba(129,104,246,.20),transparent 68%),
+    radial-gradient(220px 160px at 8% 92%,rgba(54,174,178,.10),transparent 70%);
+  border:1px solid rgba(255,255,255,.82);
+  box-shadow:
+    22px 24px 48px rgba(77,89,84,.18),
+    -15px -16px 34px rgba(255,255,255,.88),
+    inset 1px 1px 0 rgba(255,255,255,.82),
+    inset -1px -1px 0 rgba(114,128,120,.08);
+  backdrop-filter:blur(30px) saturate(1.38) brightness(1.04);
+  -webkit-backdrop-filter:blur(30px) saturate(1.38) brightness(1.04);
+}
+[data-theme="dark"] .study-calendar-glass{
+  background:
+    linear-gradient(
+      135deg,
+      rgba(48,62,58,.74) 0%,
+      rgba(31,42,39,.60) 42%,
+      rgba(18,26,24,.49) 100%
+    ),
+    radial-gradient(240px 180px at 88% 8%,rgba(125,105,246,.18),transparent 68%),
+    radial-gradient(220px 160px at 8% 92%,rgba(48,190,190,.08),transparent 70%);
+  border-color:rgba(255,255,255,.14);
+  box-shadow:
+    22px 24px 48px rgba(0,0,0,.40),
+    -13px -14px 30px rgba(72,91,84,.15),
+    inset 1px 1px 0 rgba(255,255,255,.075),
+    inset -1px -1px 0 rgba(0,0,0,.18);
+}
+.study-calendar-glass::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  border-radius:inherit;
+  background:
+    linear-gradient(115deg,
+      rgba(255,255,255,.36) 0%,
+      rgba(255,255,255,.08) 22%,
+      transparent 44%,
+      transparent 72%,
+      rgba(255,255,255,.14) 100%);
+  opacity:.9;
+  pointer-events:none;
+}
+.study-calendar-glass::after{
+  content:"";
+  position:absolute;
+  left:8%;
+  top:-18%;
+  width:70%;
+  height:34%;
+  border-radius:50%;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.30),
+    rgba(255,255,255,0)
+  );
+  filter:blur(10px);
+  transform:rotate(-7deg);
+  pointer-events:none;
+}
+.study-calendar-glass .cal-day{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.48),rgba(255,255,255,.20));
+  border:1px solid rgba(255,255,255,.32);
+  box-shadow:
+    3px 4px 9px rgba(83,96,89,.08),
+    -3px -3px 8px rgba(255,255,255,.34),
+    inset 1px 1px 0 rgba(255,255,255,.34);
+  backdrop-filter:blur(10px);
+}
+.study-calendar-glass .cal-day:hover{
+  box-shadow:
+    5px 6px 12px rgba(83,96,89,.12),
+    -4px -4px 9px rgba(255,255,255,.44),
+    inset 1px 1px 0 rgba(255,255,255,.42);
+}
+[data-theme="dark"] .study-calendar-glass .cal-day{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  border-color:rgba(255,255,255,.075);
+  box-shadow:
+    3px 4px 9px rgba(0,0,0,.18),
+    -3px -3px 8px rgba(80,97,91,.07),
+    inset 1px 1px 0 rgba(255,255,255,.045);
+}
+.study-calendar-glass .cal-day.level-1{
+  background:linear-gradient(145deg,rgba(71,190,137,.34),rgba(71,190,137,.13));
+}
+.study-calendar-glass .cal-day.level-2{
+  background:linear-gradient(145deg,rgba(70,184,131,.45),rgba(70,184,131,.18));
+}
+.study-calendar-glass .cal-day.level-3{
+  background:linear-gradient(145deg,rgba(91,123,232,.50),rgba(112,91,220,.23));
+}
+.study-calendar-glass .cal-day.level-4{
+  background:linear-gradient(145deg,rgba(124,102,239,.68),rgba(67,171,218,.30));
+}
+.study-calendar-glass .cal-day.today{
+  background:linear-gradient(145deg,rgba(244,139,118,.56),rgba(222,114,95,.22));
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,.22),
+    4px 5px 11px rgba(119,76,67,.12),
+    inset 1px 1px 0 rgba(255,255,255,.44);
+}
+[data-theme="dark"] .study-calendar-glass .cal-day.level-1{
+  background:linear-gradient(145deg,rgba(61,193,136,.23),rgba(61,193,136,.08));
+}
+[data-theme="dark"] .study-calendar-glass .cal-day.level-2{
+  background:linear-gradient(145deg,rgba(61,193,136,.32),rgba(61,193,136,.11));
+}
+[data-theme="dark"] .study-calendar-glass .cal-day.level-3{
+  background:linear-gradient(145deg,rgba(98,118,238,.38),rgba(114,91,220,.16));
+}
+[data-theme="dark"] .study-calendar-glass .cal-day.level-4{
+  background:linear-gradient(145deg,rgba(130,104,247,.52),rgba(55,176,217,.20));
+}
+.study-calendar-glass .calendar-head{padding-bottom:2px}
+.study-calendar-glass .calendar-total{
+  background:linear-gradient(145deg,rgba(255,255,255,.46),rgba(255,255,255,.18));
+  border:1px solid rgba(255,255,255,.34);
+  box-shadow:
+    inset 3px 3px 8px rgba(103,116,108,.08),
+    inset -3px -3px 8px rgba(255,255,255,.42),
+    6px 7px 14px rgba(81,94,87,.08);
+  backdrop-filter:blur(16px);
+}
+[data-theme="dark"] .study-calendar-glass .calendar-total{
+  background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+  border-color:rgba(255,255,255,.08);
+  box-shadow:
+    inset 3px 3px 8px rgba(0,0,0,.18),
+    inset -3px -3px 8px rgba(77,95,89,.08);
+}
+@media(max-width:920px){
+  .study-calendar-glass{position:relative;right:auto;top:auto;width:min(520px,100%);margin:28px 0 0 auto}
+}
+@media(max-width:680px){
+  .study-calendar-glass{width:100%;padding:18px 15px 16px;min-height:0}
+}
+
+/* ==========================================================
+   FINAL CLEAN VISUAL + CALENDAR — from mockup lines 3265-3302
+   ========================================================== */
+.activity{position:relative!important;overflow:hidden!important;isolation:isolate!important}
+.study-calendar-glass{z-index:3!important;overflow:hidden!important;isolation:isolate!important;transform:none!important;animation:none!important}
+.study-calendar-glass .calendar-grid{overflow:hidden!important}
+@media(min-width:921px){.activity{padding-right:45%!important}.study-calendar-glass{position:absolute!important;right:24px!important;top:24px!important;width:min(520px,46%)!important;margin:0!important}}
+@media(max-width:920px){.activity{min-height:auto!important}.study-calendar-glass{position:relative!important;right:auto!important;top:auto!important;width:min(520px,100%)!important;margin:28px 0 0 auto!important}}
+@media(max-width:680px){.study-calendar-glass{width:100%!important;margin:22px 0 0!important}}
+
+/* Calendar cells: cool liquid aura */
+.study-calendar-glass .cal-day:not(.muted-day){position:relative!important;overflow:hidden!important;isolation:isolate!important;transform:none!important;border:1px solid rgba(255,255,255,.46)!important;color:#435369!important;background:linear-gradient(145deg,rgba(255,255,255,.70),rgba(232,243,250,.40))!important;box-shadow:3px 5px 10px rgba(68,91,118,.10),-3px -3px 8px rgba(255,255,255,.54),inset 1px 1px 0 rgba(255,255,255,.60)!important}
+.study-calendar-glass .cal-day:not(.muted-day)::before{content:"";position:absolute;inset:-18%;z-index:-1;border-radius:50%;pointer-events:none;background:radial-gradient(circle at 20% 28%,rgba(75,184,255,.72),transparent 44%),radial-gradient(circle at 80% 34%,rgba(143,108,255,.66),transparent 45%),radial-gradient(circle at 70% 80%,rgba(48,209,220,.58),transparent 46%);filter:blur(7px) saturate(1.20);opacity:.72;animation:dateAuraFlow 5.8s ease-in-out infinite alternate}
+.study-calendar-glass .cal-day:not(.muted-day)::after{content:"";position:absolute;width:90%;height:180%;left:-70%;top:-42%;z-index:0;border-radius:50%;pointer-events:none;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0) 35%,rgba(255,255,255,.48) 50%,rgba(208,246,255,.12) 62%,transparent 80%);filter:blur(2px);transform:rotate(24deg);opacity:.5;animation:dateAuraSheen 7.6s ease-in-out infinite}
+.study-calendar-glass .cal-day.level-1{color:#2e7555!important;background:radial-gradient(circle at 20% 25%,rgba(105,227,181,.72),transparent 44%),radial-gradient(circle at 80% 76%,rgba(90,168,255,.52),transparent 46%),linear-gradient(145deg,#d8f1e8,#c3e6e0)!important}
+.study-calendar-glass .cal-day.level-2{color:#fff!important;text-shadow:0 1px 2px rgba(35,60,69,.22);background:radial-gradient(circle at 18% 28%,rgba(65,221,165,.88),transparent 45%),radial-gradient(circle at 79% 72%,rgba(76,175,245,.68),transparent 48%),radial-gradient(circle at 72% 25%,rgba(149,105,255,.58),transparent 44%),linear-gradient(145deg,#65cfa0,#54aebe)!important}
+.study-calendar-glass .cal-day.level-3{color:#fff!important;text-shadow:0 1px 2px rgba(30,43,76,.28);background:radial-gradient(circle at 20% 24%,rgba(48,220,224,.92),transparent 43%),radial-gradient(circle at 80% 75%,rgba(132,97,255,.88),transparent 46%),radial-gradient(circle at 72% 22%,rgba(87,145,255,.72),transparent 40%),linear-gradient(145deg,#6981df,#5a8fc7)!important}
+.study-calendar-glass .cal-day.level-4{color:#fff!important;text-shadow:0 1px 3px rgba(25,27,60,.36);background:radial-gradient(circle at 18% 24%,rgba(33,229,220,.95),transparent 42%),radial-gradient(circle at 82% 76%,rgba(118,81,247,.94),transparent 47%),radial-gradient(circle at 67% 18%,rgba(77,139,255,.80),transparent 39%),linear-gradient(145deg,#465fa4,#5a4997)!important;box-shadow:5px 7px 13px rgba(53,62,110,.22),-3px -3px 8px rgba(255,255,255,.36),inset 1px 1px 0 rgba(255,255,255,.24)!important}
+.study-calendar-glass .cal-day.muted-day{opacity:.30!important;color:#738194!important;background:linear-gradient(145deg,rgba(235,243,250,.68),rgba(221,229,239,.46))!important}
+.study-calendar-glass .cal-day.muted-day::before,.study-calendar-glass .cal-day.muted-day::after{animation:none!important;opacity:.08!important}
+.study-calendar-glass .cal-day:hover:not(.is-studying){transform:translateY(-2px) scale(1.025)!important;filter:brightness(1.04) saturate(1.05)}
+
+/* Studying day: dark gold + yellow anime liquid mist */
+.study-calendar-glass .cal-day.today.is-studying{z-index:5!important;position:relative!important;overflow:hidden!important;transform:translateY(-2px) scale(1.025)!important;color:#fff3bd!important;text-shadow:0 1px 2px rgba(47,29,10,.42);background:radial-gradient(circle at 20% 24%,rgba(255,238,126,.98) 0%,transparent 47%),radial-gradient(circle at 78% 28%,rgba(255,172,44,.90) 0%,transparent 52%),radial-gradient(circle at 69% 78%,rgba(255,213,77,.84) 0%,transparent 54%),radial-gradient(circle at 24% 78%,rgba(242,133,42,.78) 0%,transparent 46%),linear-gradient(145deg,#4c3219 0%,#291e16 55%,#171315 100%)!important;box-shadow:0 0 0 1px rgba(255,219,106,.25),0 6px 16px rgba(77,43,18,.32),inset 1px 1px 0 rgba(255,242,173,.20),inset -1px -1px 0 rgba(0,0,0,.42)!important;animation:activeGoldBreath 4.8s ease-in-out infinite!important}
+.study-calendar-glass .cal-day.today.is-studying::before{content:"";position:absolute;inset:-30%;z-index:-1;border-radius:48% 52% 58% 42% / 52% 43% 57% 48%;pointer-events:none;background:radial-gradient(ellipse at 27% 42%,rgba(255,239,125,.98),transparent 57%),radial-gradient(ellipse at 72% 32%,rgba(255,165,46,.80),transparent 57%),radial-gradient(ellipse at 57% 74%,rgba(255,216,86,.82),transparent 59%);filter:blur(9px) saturate(1.28);opacity:.72;mix-blend-mode:screen;animation:goldMistFlow 3.8s ease-in-out infinite alternate}
+.study-calendar-glass .cal-day.today.is-studying::after{content:"";position:absolute;width:72%;height:205%;left:-45%;top:-55%;z-index:1;pointer-events:none;border-radius:50%;transform:rotate(24deg);background:linear-gradient(90deg,transparent 0%,rgba(255,247,194,.02) 34%,rgba(255,236,151,.88) 50%,rgba(255,172,45,.20) 59%,transparent 78%);filter:blur(3px);mix-blend-mode:screen;animation:goldLiquidSheen 3.6s ease-in-out infinite}
+.study-calendar-glass .cal-day.today.is-studying .study-live-dot{width:6px!important;height:6px!important;right:5px!important;top:5px!important;z-index:4!important;background:#ffe88a!important;box-shadow:0 0 7px rgba(255,232,138,.98),0 0 15px rgba(255,174,48,.62),0 0 24px rgba(255,111,31,.22)!important;animation:goldLiveDot 1.45s ease-in-out infinite!important}
+
+@keyframes dateAuraFlow{0%{transform:translate(-5%,-4%) scale(.82) rotate(-8deg);opacity:.42}50%{transform:translate(5%,4%) scale(1.03) rotate(4deg);opacity:.78}100%{transform:translate(-2%,7%) scale(.91) rotate(-2deg);opacity:.56}}
+@keyframes dateAuraSheen{0%,58%{transform:translateX(-10%) rotate(24deg);opacity:0}70%{transform:translateX(125%) rotate(24deg);opacity:.64}84%,100%{transform:translateX(200%) rotate(24deg);opacity:0}}
+@keyframes activeGoldBreath{0%,100%{filter:saturate(1) brightness(1)}50%{filter:saturate(1.13) brightness(1.06)}}
+@keyframes goldMistFlow{0%{transform:translate(-8%,-5%) scale(.82) rotate(-10deg);opacity:.40}35%{transform:translate(5%,3%) scale(.98) rotate(3deg);opacity:.62}65%{transform:translate(-2%,10%) scale(1.08) rotate(9deg);opacity:.82}100%{transform:translate(10%,-2%) scale(.94) rotate(-2deg);opacity:.55}}
+@keyframes goldLiquidSheen{0%,55%{transform:translateX(-8%) rotate(24deg);opacity:0}68%{transform:translateX(125%) rotate(24deg);opacity:.82}82%,100%{transform:translateX(205%) rotate(24deg);opacity:0}}
+@keyframes goldLiveDot{0%,100%{transform:scale(.70);opacity:.58}50%{transform:scale(1.22);opacity:1}}
+
+@media(prefers-reduced-motion:reduce){
+  .study-calendar-glass .cal-day:not(.muted-day)::before,.study-calendar-glass .cal-day:not(.muted-day)::after,.study-calendar-glass .cal-day.today.is-studying,.study-calendar-glass .cal-day.today.is-studying::before,.study-calendar-glass .cal-day.today.is-studying::after,.study-calendar-glass .cal-day.today.is-studying .study-live-dot{animation:none!important}
+}
+
+/* ==========================================================
+   CALENDAR GLOW ENHANCEMENT — from mockup lines 3304-3357
+   ========================================================== */
+.study-calendar-glass{
+  position:relative!important;
+  overflow:hidden!important;
+  border:1px solid rgba(73,255,145,.58)!important;
+  box-shadow:0 0 0 1px rgba(31,255,110,.08),0 0 28px rgba(0,255,100,.14),0 18px 55px rgba(0,255,100,.10),inset 0 0 35px rgba(0,255,100,.035)!important;
+}
+.study-calendar-glass::before{
+  content:"";position:absolute;inset:-2px;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(420px 150px at 12% 48%,rgba(0,255,105,.16),transparent 68%),radial-gradient(420px 150px at 88% 52%,rgba(0,255,105,.13),transparent 68%);
+  animation:calendarAura 5s ease-in-out infinite alternate;
+}
+.study-calendar-glass .cal-day{
+  position:relative;
+  transition:transform .18s ease,filter .18s ease,box-shadow .25s ease,background .25s ease!important;
+}
+.study-calendar-glass .level-1,.study-calendar-glass .l1{background:#075c29!important;box-shadow:0 0 7px rgba(0,255,92,.10)!important}
+.study-calendar-glass .level-2,.study-calendar-glass .l2{background:#07943e!important;box-shadow:0 0 10px rgba(0,255,92,.20),inset 0 0 5px rgba(92,255,150,.12)!important}
+.study-calendar-glass .level-3,.study-calendar-glass .l3{background:#10d94e!important;box-shadow:0 0 12px rgba(0,255,80,.34),0 0 22px rgba(0,255,80,.16),inset 0 0 6px rgba(170,255,190,.16)!important}
+.study-calendar-glass .level-4,.study-calendar-glass .l4{background:#52ff73!important;box-shadow:0 0 9px rgba(105,255,125,.72),0 0 22px rgba(45,255,83,.65),0 0 38px rgba(0,255,72,.28),inset 0 0 8px rgba(230,255,235,.52)!important}
+.study-calendar-glass .cal-day:hover{
+  transform:translateY(-2px) scale(1.10)!important;
+  filter:brightness(1.18) saturate(1.18);
+  box-shadow:0 0 16px rgba(60,255,100,.65),0 0 30px rgba(0,255,80,.30)!important;
+  z-index:3;
+}
+.study-calendar-glass .today.is-studying{
+  animation:studyCellGlow 1.8s ease-in-out infinite!important;
+}
+@keyframes studyCellGlow{
+  0%,100%{filter:brightness(1);box-shadow:0 0 9px rgba(105,255,125,.62),0 0 22px rgba(0,255,72,.30)}
+  50%{filter:brightness(1.28);box-shadow:0 0 13px rgba(150,255,160,.95),0 0 30px rgba(0,255,72,.72),0 0 48px rgba(0,255,72,.28)}
+}
+@keyframes calendarAura{
+  from{opacity:.55;transform:scale(.98)}
+  to{opacity:1;transform:scale(1.02)}
+}
+@media(prefers-reduced-motion:reduce){
+  .study-calendar-glass::before,.study-calendar-glass .today.is-studying{animation:none!important}
+}
+
+/* ==========================================================
+   REAL-TIME STUDY CALENDAR — from mockup lines 5556-5590
+   ========================================================== */
+.activity .today-time-wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.activity .live-study-control{
+  display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(72,236,94,.28);
+  background:rgba(7,31,15,.78);color:#d9ffe0;border-radius:999px;padding:8px 13px;
+  font:700 11px/1 Inter,system-ui,sans-serif;cursor:pointer;letter-spacing:.01em;
+  box-shadow:0 0 14px rgba(40,230,75,.08),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:transform .16s ease,box-shadow .2s ease,background .2s ease;
+}
+.activity .live-study-control:hover{transform:translateY(-1px);box-shadow:0 0 20px rgba(40,230,75,.20)}
+.activity .live-study-control.active{background:rgba(10,61,24,.92);border-color:rgba(73,245,95,.58);box-shadow:0 0 20px rgba(42,235,76,.25)}
+.activity .live-study-dot-ui{width:7px;height:7px;border-radius:50%;background:#32ed48;box-shadow:0 0 8px #32ed48}
+.activity .live-study-control.active .live-study-dot-ui{animation:liveDot 1.15s ease-in-out infinite}
+.activity .live-session-time{font:600 10px/1 Inter,system-ui,sans-serif;color:#6f8176}
+@keyframes liveDot{50%{transform:scale(1.45);opacity:.7}}
+
+/* Real contribution intensity */
+.month-cell.real-study{position:relative}
+.month-cell.real-study.l1{background:#075a18;box-shadow:0 0 5px rgba(40,220,65,.12)}
+.month-cell.real-study.l2{background:#078221;box-shadow:0 0 8px rgba(40,225,65,.22)}
+.month-cell.real-study.l3{background:#12b52f;box-shadow:0 0 13px rgba(44,235,72,.38)}
+.month-cell.real-study.l4{background:#35ed48;box-shadow:0 0 20px rgba(53,237,72,.58)}
+.month-cell.real-study.high-glow{filter:saturate(1.08) brightness(1.05)}
+.month-cell.real-study.is-studying{animation:realStudyPulse 1.8s ease-in-out infinite}
+@keyframes realStudyPulse{
+  0%,100%{filter:brightness(1);box-shadow:0 0 0 1px rgba(255,255,255,.28),0 0 9px rgba(44,236,75,.32)}
+  50%{filter:brightness(1.14);box-shadow:0 0 0 1px rgba(255,255,255,.72),0 0 26px rgba(44,236,75,.78)}
+}
+.month-cell.none{box-shadow:none!important;filter:none!important}
+
+/* ==========================================================
+   RESUME BUTTON MYTHIC AURA — from mockup lines 5713-5797
+   ========================================================== */
+.dash-resume-btn,.subject-btn .resume,button.resume{
+  position:relative!important;
+  isolation:isolate;
+  overflow:visible!important;
+  transition:transform .28s ease,color .28s ease,background .28s ease,border-color .28s ease,box-shadow .28s ease!important;
+  z-index:1;
+}
+.dash-resume-btn::before,.subject-btn .resume::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:-1;
+  opacity:0;
+  background:
+    radial-gradient(circle at 18% 50%,rgba(84,239,255,.95),transparent 32%),
+    radial-gradient(circle at 82% 50%,rgba(105,126,255,.72),transparent 34%),
+    linear-gradient(90deg,rgba(77,235,255,.78),rgba(122,111,255,.65),rgba(77,235,255,.78));
+  filter:blur(7px);
+  transform:scale(.94);
+  transition:opacity .3s ease,transform .35s ease;
+}
+.dash-resume-btn::after,.subject-btn .resume::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  pointer-events:none;
+  opacity:0;
+  padding:1px;
+  background:linear-gradient(115deg,transparent 8%,rgba(125,246,255,.9) 38%,rgba(151,132,255,.78) 52%,transparent 78%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  transform:rotate(0deg);
+  transition:opacity .3s ease;
+}
+.dash-resume-btn:hover,.subject-btn .resume:hover{
+  transform:translateY(-1px) scale(1.035)!important;
+  color:#f4ffff!important;
+  border-color:rgba(110,239,255,.72)!important;
+  background:rgba(39,177,198,.16)!important;
+  box-shadow:0 0 0 1px rgba(92,235,255,.22),0 0 12px rgba(62,224,245,.28),0 0 26px rgba(101,108,255,.18),inset 0 0 12px rgba(83,226,255,.08)!important;
+}
+.dash-resume-btn:hover::before,.subject-btn .resume:hover::before{
+  opacity:1;
+  transform:scale(1.05);
+  animation:resumeAuraBreath 2.4s ease-in-out infinite;
+}
+.dash-resume-btn:hover::after,.subject-btn .resume:hover::after{
+  opacity:1;
+  animation:resumeAuraSweep 2.1s ease-in-out infinite;
+}
+@keyframes resumeAuraBreath{
+  0%,100%{filter:blur(7px);opacity:.62;transform:scale(1.01)}
+  50%{filter:blur(10px);opacity:1;transform:scale(1.09)}
+}
+@keyframes resumeAuraSweep{
+  0%{opacity:.2;transform:translateX(-3%) rotate(0deg)}
+  45%{opacity:.95}
+  100%{opacity:.2;transform:translateX(3%) rotate(0deg)}
+}
+.dash-resume-btn:active,.subject-btn .resume:active{transform:translateY(1px) scale(.99)!important}
+
+/* ==========================================================
+   SETTINGS PANEL — from mockup lines 5800-5828
+   ========================================================== */
+.settings-wrap{position:relative}
+.settings-popover{
+  position:fixed;top:72px;right:24px;width:260px;padding:16px;
+  border:1px solid var(--line);border-radius:20px;
+  background:rgba(12,18,28,.94);backdrop-filter:blur(22px);
+  box-shadow:0 18px 50px rgba(0,0,0,.28);
+  z-index:1000;display:none;
+}
+.settings-popover.open{display:block}
+.settings-popover h3{margin:0 0 12px;font-size:15px}
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);
+  font-size:12px;color:var(--muted)
+}
+.setting-row:first-of-type{border-top:0}
+.setting-select{
+  border:1px solid rgba(120,180,255,.28);border-radius:9px;
+  background:rgba(255,255,255,.06);color:#eefaff;padding:6px 8px;
+}
+.settings-close{
+  float:right;border:0;background:transparent;color:var(--muted);
+  cursor:pointer;font-size:16px
+}
+@media(max-width:680px){
+  .settings-popover{right:12px;left:12px;width:auto}
+}
+
+/* ==========================================================
+   NO-CARD-BORDER / NO-STUDY-MOTION — from mockup lines 5890-5905
+   ========================================================== */
+.no-card-border-effect .dash-course-card::after,
+.no-card-border-effect .dash-deadlines::after,
+.no-card-border-effect .revision-panel::after,
+.no-card-border-effect .dash-quick-tile::after,
+.no-card-border-effect .dash-course-card::before,
+.no-card-border-effect .dash-deadlines::before,
+.no-card-border-effect .revision-panel::before,
+.no-card-border-effect .dash-quick-tile::before{display:none!important}
+.no-study-motion .dash-course-card::after,
+.no-study-motion .dash-deadlines::after,
+.no-study-motion .revision-panel::after,
+.no-study-motion .dash-quick-tile::after,
+.no-study-motion .dash-course-card::before,
+.no-study-motion .dash-deadlines::before,
+.no-study-motion .revision-panel::before,
+.no-study-motion .dash-quick-tile::before{animation:none!important}
+
+/* ==========================================================
+   WORLD-CLASS DARK UI PASS — from mockup lines 5908-6165
+   ========================================================== */
+:root{
+  --wc-bg:#080b12;
+  --wc-bg-2:#0d1220;
+  --wc-surface:rgba(19,25,38,.62);
+  --wc-surface-strong:rgba(22,29,44,.78);
+  --wc-surface-soft:rgba(255,255,255,.035);
+  --wc-border:rgba(255,255,255,.085);
+  --wc-border-hi:rgba(255,255,255,.13);
+  --wc-text:#f4f8fb;
+  --wc-muted:#9aa8b8;
+  --wc-soft:#687688;
+  --wc-cyan:#61e7f4;
+  --wc-blue:#6d9cff;
+  --wc-violet:#9b82ff;
+}
+
+[data-theme="dark"]{
+  color:var(--wc-text)!important;
+  background:
+    radial-gradient(900px 520px at 76% -8%,rgba(72,129,255,.13),transparent 62%),
+    radial-gradient(760px 500px at 8% 18%,rgba(67,225,229,.075),transparent 64%),
+    radial-gradient(700px 520px at 92% 72%,rgba(137,92,255,.065),transparent 66%),
+    linear-gradient(180deg,#080b12 0%,#0a0f18 48%,#080b12 100%)!important;
+  background-attachment:fixed!important;
+}
+[data-theme="dark"]::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.26;
+  background-image:radial-gradient(rgba(255,255,255,.08) .55px,transparent .55px);
+  background-size:5px 5px;
+  mask-image:linear-gradient(to bottom,transparent,black 12%,black 88%,transparent);
+}
+
+/* Header */
+[data-theme="dark"] .topbar{
+  background:rgba(7,10,16,.66)!important;
+  border-bottom:1px solid rgba(255,255,255,.065)!important;
+  backdrop-filter:blur(24px) saturate(135%);
+  -webkit-backdrop-filter:blur(24px) saturate(135%);
+}
+[data-theme="dark"] .nav-chip{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#8492a4!important;
+  transition:color .22s ease,background .22s ease!important;
+}
+[data-theme="dark"] .nav-chip:hover{color:#dbe7ef!important;background:rgba(255,255,255,.045)!important}
+[data-theme="dark"] .nav-chip.active{color:#f4fbff!important;background:rgba(255,255,255,.065)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important}
+[data-theme="dark"] .theme-toggle,
+[data-theme="dark"] .search,
+[data-theme="dark"] .sort{
+  background:rgba(255,255,255,.045)!important;
+  border:1px solid rgba(255,255,255,.075)!important;
+  color:#b9c7d4!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 8px 24px rgba(0,0,0,.18)!important;
+}
+
+/* Shared glass material */
+[data-theme="dark"] .scorecard,
+[data-theme="dark"] .activity,
+[data-theme="dark"] .dash-course-card,
+[data-theme="dark"] .dash-deadlines,
+[data-theme="dark"] .revision-panel,
+[data-theme="dark"] .dash-quick-tile{
+  position:relative!important;
+  isolation:isolate;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.012) 38%,rgba(0,0,0,.10)),
+    var(--wc-surface)!important;
+  border:1px solid var(--wc-border)!important;
+  box-shadow:
+    0 26px 70px rgba(0,0,0,.30),
+    0 5px 18px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.065)!important;
+  backdrop-filter:blur(22px) saturate(125%);
+  -webkit-backdrop-filter:blur(22px) saturate(125%);
+}
+[data-theme="dark"] .scorecard{
+  background:
+    radial-gradient(520px 240px at 78% 0%,rgba(90,147,255,.09),transparent 68%),
+    linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.012) 42%,rgba(0,0,0,.12)),
+    rgba(15,21,33,.72)!important;
+  box-shadow:0 34px 90px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.075)!important;
+}
+/* Hairline highlight */
+[data-theme="dark"] .scorecard::before,
+[data-theme="dark"] .activity::before,
+[data-theme="dark"] .dash-course-card::before,
+[data-theme="dark"] .dash-deadlines::before,
+[data-theme="dark"] .revision-panel::before,
+[data-theme="dark"] .dash-quick-tile::before{
+  content:"";position:absolute;left:12%;right:12%;top:0;height:1px;z-index:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);
+  pointer-events:none;
+}
+[data-theme="dark"] .scorecard>* ,[data-theme="dark"] .activity>* ,[data-theme="dark"] .dash-course-card>* ,
+[data-theme="dark"] .dash-deadlines>* ,[data-theme="dark"] .revision-panel>* ,[data-theme="dark"] .dash-quick-tile>* {position:relative;z-index:1}
+
+/* Typography */
+[data-theme="dark"] h1{letter-spacing:-.045em!important;font-weight:760!important;text-shadow:0 1px 28px rgba(120,185,255,.08)}
+[data-theme="dark"] .eyebrow{color:#79dce9!important;letter-spacing:.16em!important}
+[data-theme="dark"] .scorecard .user-welcome{color:#aeb9c7!important;max-width:680px;line-height:1.7!important}
+[data-theme="dark"] .page-title{color:#edf5f8!important;font-weight:700!important}
+[data-theme="dark"] .secondary{color:#7f8d9e!important}
+[data-theme="dark"] .stat{
+  background:rgba(255,255,255,.035)!important;
+  border:1px solid rgba(255,255,255,.065)!important;
+  color:#aebdca!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+
+/* Subject cards: hierarchy through spacing */
+[data-theme="dark"] .dash-course-card{transition:border-color .25s ease,box-shadow .25s ease,background .25s ease!important}
+[data-theme="dark"] .dash-course-card:hover,
+[data-theme="dark"] .dash-deadlines:hover,
+[data-theme="dark"] .revision-panel:hover,
+[data-theme="dark"] .dash-quick-tile:hover,
+[data-theme="dark"] .activity:hover{
+  transform:none!important;
+  border-color:rgba(120,213,255,.18)!important;
+  box-shadow:0 30px 78px rgba(0,0,0,.34),0 0 0 1px rgba(100,215,240,.035),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+[data-theme="dark"] .dash-course-body,
+[data-theme="dark"] .revision-panel .dash-revision-row,
+[data-theme="dark"] .dash-quick-tile{
+  background:rgba(255,255,255,.022)!important;
+  border-color:rgba(255,255,255,.055)!important;
+}
+
+/* Buttons */
+[data-theme="dark"] .dash-resume-btn{
+  background:rgba(255,255,255,.045)!important;
+  color:#c7d4df!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:none!important;
+}
+.dash-resume-btn,.subject-btn .resume,.subject-btn .resume:hover,
+.subject-btn .resume:focus,.subject-btn .resume:focus-visible,.subject-btn .resume:active{
+  transform:none!important;animation:none!important;transition:none!important;
+  filter:none!important;text-shadow:none!important;
+  box-shadow:none!important;outline:none!important;
+  border-color:rgba(255,255,255,.08)!important;
+  background:rgba(255,255,255,.045)!important;
+  color:#c7d4df!important;
+}
+.dash-resume-btn::before,.dash-resume-btn::after,
+.subject-btn .resume::before,.subject-btn .resume::after{display:none!important;content:none!important;animation:none!important}
+
+/* Inputs */
+[data-theme="dark"] input,[data-theme="dark"] select{
+  background:rgba(255,255,255,.035)!important;
+  border-color:rgba(255,255,255,.075)!important;
+  color:#e9f1f5!important;
+}
+[data-theme="dark"] input:focus,[data-theme="dark"] select:focus{
+  outline:none!important;
+  border-color:rgba(97,231,244,.38)!important;
+  box-shadow:0 0 0 3px rgba(97,231,244,.07)!important;
+}
+
+/* Settings popover */
+[data-theme="dark"] .settings-popover{
+  background:rgba(12,17,27,.86)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  border-radius:18px!important;
+  box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(28px) saturate(135%)!important;
+}
+[data-theme="dark"] .setting-row{border-top-color:rgba(255,255,255,.06)!important}
+[data-theme="dark"] .setting-select{background:rgba(255,255,255,.045)!important;color:#e8f3f7!important}
+
+/* Calendar frame */
+[data-theme="dark"] .study-calendar-glass{
+  background:rgba(4,7,11,.54)!important;
+  border:1px solid rgba(255,255,255,.065)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),inset 0 -18px 50px rgba(0,0,0,.18)!important;
+}
+[data-theme="dark"] .study-calendar-glass .cal-day:not(.muted-day):hover{
+  transform:translateY(-1px) scale(1.015)!important;
+}
+
+/* Scrollbar */
+[data-theme="dark"]::-webkit-scrollbar{width:10px}
+[data-theme="dark"]::-webkit-scrollbar-track{background:#080b12}
+[data-theme="dark"]::-webkit-scrollbar-thumb{background:rgba(255,255,255,.11);border:3px solid #080b12;border-radius:999px}
+[data-theme="dark"]::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.18)}
+
+/* ==========================================================
+   ULTRA-DARK BACKGROUND FINAL — from mockup lines 4417-4493
+   ========================================================== */
+[data-theme="dark"]{
+  --bg:#010202!important;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(30,52,50,.10),transparent 34%),
+    radial-gradient(circle at 8% 42%,rgba(18,38,36,.045),transparent 28%),
+    radial-gradient(circle at 92% 68%,rgba(24,30,34,.045),transparent 30%),
+    #010202!important;
+}
+[data-theme="dark"]::before{
+  background:
+    radial-gradient(circle at 20% 18%,rgba(71,220,202,.035),transparent 24%),
+    radial-gradient(circle at 78% 12%,rgba(123,93,255,.025),transparent 22%)!important;
+  opacity:.72!important;
+}
+[data-theme="dark"]::after{
+  background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,.012) 45%,transparent 58%)!important;
+  opacity:.28!important;
+}
+[data-theme="dark"] .topbar{
+  background:rgba(1,2,2,.78)!important;
+  border-bottom-color:rgba(255,255,255,.045)!important;
+  box-shadow:0 12px 40px rgba(0,0,0,.48)!important;
+}
+[data-theme="dark"] .scorecard,
+[data-theme="dark"] .activity,
+[data-theme="dark"] .dash-course-card,
+[data-theme="dark"] .dash-deadlines,
+[data-theme="dark"] .revision-panel,
+[data-theme="dark"] .dash-quick-tile{
+  background:
+    linear-gradient(145deg,rgba(17,20,20,.82),rgba(5,7,7,.88))!important;
+  border-color:rgba(255,255,255,.065)!important;
+  box-shadow:
+    22px 26px 70px rgba(0,0,0,.62),
+    -6px -6px 24px rgba(255,255,255,.018),
+    inset 0 1px 0 rgba(255,255,255,.045),
+    inset 0 -18px 35px rgba(0,0,0,.18)!important;
+}
+[data-theme="dark"] .scorecard{
+  background:
+    radial-gradient(circle at 78% 8%,rgba(49,178,161,.045),transparent 28%),
+    linear-gradient(145deg,rgba(14,18,18,.90),rgba(3,5,5,.94))!important;
+}
+[data-theme="dark"] .dash-course-body,
+[data-theme="dark"] .revision-panel,
+[data-theme="dark"] .dash-quick-tile{
+  background:rgba(255,255,255,.012)!important;
+  border-color:rgba(255,255,255,.04)!important;
+}
+[data-theme="dark"] .search,
+[data-theme="dark"] .sort,
+[data-theme="dark"] .nav-chip,
+[data-theme="dark"] .theme-toggle,
+[data-theme="dark"] .settings-toggle{
+  background:rgba(8,10,10,.72)!important;
+  border-color:rgba(255,255,255,.065)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),inset 0 -8px 18px rgba(0,0,0,.18)!important;
+}
+[data-theme="dark"] .settings-popover{
+  background:rgba(4,6,6,.94)!important;
+  border-color:rgba(255,255,255,.07)!important;
+  box-shadow:0 30px 100px rgba(0,0,0,.78),inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+[data-theme="dark"] .study-calendar-glass{
+  background:rgba(3,5,5,.78)!important;
+  border-color:rgba(255,255,255,.055)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),inset 0 -18px 32px rgba(0,0,0,.25),0 25px 65px rgba(0,0,0,.55)!important;
+}
+[data-theme="dark"] .dash-resume-btn{background:#090c0c!important}
+[data-theme="dark"]::-webkit-scrollbar-track{background:#010202!important}
