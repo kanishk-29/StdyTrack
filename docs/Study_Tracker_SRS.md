@@ -7,9 +7,9 @@
 A Progressive Web App for Lecture Time-Tracking, Test-Score Analytics,
 Daily Habit Building and Exam Preparation
 
-Version 1.2
+Version 1.3
 
-4 September 2026
+6 September 2026
 
 **Prepared by: Kanishk**
 
@@ -24,11 +24,11 @@ Version 1.2
 | Document Title | Software Requirements Specification — Study Tracker |
 | Document ID | ST-SRS-001 |
 | Project | Study Tracker (Web / PWA) |
-| Version | 1.2 |
+| Version | 1.3 |
 | Status | Final — Baseline |
 | Classification | Public — Portfolio Reference |
 | Author / Owner | Kanishk — Sole Developer & Product Owner |
-| Issue Date | 4 September 2026 |
+| Issue Date | 6 September 2026 |
 | Standard Followed | IEEE Std 830-1998 (adapted for a solo-developer project) |
 
 **Revision History**
@@ -40,6 +40,7 @@ Version 1.2
 | 1.0 | 3 September 2026 | Reviewed against shipped source code for accuracy; baselined as v1.0. | Kanishk |
 | 1.1 | 4 September 2026 | Folder-opening now renders a dedicated full-page folder dashboard (design port, css/folder-dashboard.css) instead of the in-drawer list; updated FR-6 and interface tracing, added the dashboard stylesheet to the module references. | Kanishk |
 | 1.2 | 4 September 2026 | Night-shrine login redesign with interactive scene (stars/snow/embers/parallax/glass-sheen), viewport scale-lock on mobile, settings slide-in drawer, phone card overflow fix (subject cards stack vertically ≤480px), null-guard hardening across 14 CRUD chains, SW cache query-string fallback, JSON-LD WebSite schema, deleted unused legacy files. | Kanishk |
+| 1.3 | 6 September 2026 | Ultra-dark dashboard port from reference mockup (css/ultra-dark.css): scorecard hero with stat pills, quick-action tiles, subject cards, priority/deadlines/revision panels, streak widget; contribution-calendar redesign as a 12-month strip (level thresholds 30/60/120 min, today ring/glow, Previous/Next-only navigation, instant scroll-restore fix); country/timezone engine (24 presets, week-start setting, zone-aware "today" everywhere); session-level global study timer with live calendar glow; visibility/SEO pass (SoftwareApplication + Article/Breadcrumb/FAQPage JSON-LD, `<noscript>` fallback, cross-linked guide pages, share button, retargeted title). Added FR-14.5/14.6, FR-5.4–5.7, modules 4.17–4.18; extended data model (settings, global-timer key) and NFR-18. | Kanishk |
 
 **Approval**
 
@@ -102,6 +103,8 @@ entries.
 | 4.14 Settings, Theme, Backup & Restore           |     12 |
 | 4.15 Authentication & Cloud Sync                 |     13 |
 | 4.16 Offline Support & Installability (PWA)      |     13 |
+| 4.17 Country & Timezone Awareness                |     14 |
+| 4.18 Global Study Timer & Streak Widget          |     14 |
 | **5. Data Model**                                | **14** |
 | **6. Non-Functional Requirements**               | **15** |
 | 6.1 Performance                                  |     15 |
@@ -241,6 +244,29 @@ At a high level, the system allows a user to:
 - Export and import the entire dataset as a backup file, and toggle
   light/dark theme.
 
+- Present a single-page "command centre" dashboard that combines a progress
+  scorecard (progress-report eyebrow, headline, three stat pills), a
+  "Today, at a glance" panel, a 12-month contribution-calendar strip, quick
+  action tiles, today's priority list, per-subject progress cards, and
+  deadlines / needs-revision panels — rebuilt against a reference ultra-dark
+  mockup (css/ultra-dark.css).
+
+- Run a session-level global study timer that is independent of any single
+  lecture, with a live counter on the dashboard; its minutes also drive the
+  calendar strip's intensity for the current day while running.
+
+- Keep a visible study-streak widget (consecutive study days) on the dashboard.
+
+- Operate with timezone awareness: "today" and the first day of the week are
+  computed from a user-selected country/timezone (24 presets or a custom
+  zone) rather than only the device clock, and every date-dependent view
+  (calendar strip, streaks, daily planner, habits, exam pacing, daily logs,
+  demo-data seeding) follows the selected zone consistently.
+
+- Share or copy a link to the app directly from the dashboard via a share
+  action that falls back from the native Web Share API to a copy-to-clipboard
+  toast.
+
 **2.3 User Classes and Characteristics**
 
 | **User Class** | **Description** | **Technical Expertise** |
@@ -336,8 +362,30 @@ At a high level, the system allows a user to:
 - IR-6: The interface shall meet baseline accessibility behaviour:
   visible focus rings and a reduced-motion mode (see css/a11y.css).
 
-- IR-7: The HTML head shall include a JSON-LD WebSite schema
-  (structured data) for search engine and AI discovery.
+- IR-7: The app head shall carry JSON-LD structured data (WebSite +
+  SoftwareApplication); the guide pages shall carry Article + BreadcrumbList
+  schema (the "why" page additionally FAQPage and SoftwareApplication); a
+  `<noscript>` summary block and visible footer/guide links shall ensure
+  crawlers can discover and reach the guide pages from the homepage.
+
+- IR-8: The dashboard shall expose a share action that uses the native Web
+  Share API when available and otherwise copies the app URL to the clipboard
+  with a confirmation toast.
+
+- IR-9: The dashboard shall present the ultra-dark "command centre" layout:
+  progress scorecard, hero actions row ("Today, at a glance" + progress /
+  backup / restore / share / settings), a 12-month contribution-calendar
+  strip with weekday headers and a legend, quick-action tiles, priority list,
+  subject cards, and deadlines/revision panels.
+
+- IR-10: The calendar strip shall render each month as a 7-column week grid
+  (grid-auto-flow: column) with per-day intensity cells; the current day
+  shall be marked with a neon ring/glow that persists while the session
+  timer is running.
+
+- IR-11: Calendar month navigation shall be Previous/Next buttons only; mouse
+  wheel and touch gestures shall not flip the month or hijack page scroll
+  (the strip uses touch-action: pan-y).
 
 **3.2 Hardware Interfaces**
 
@@ -427,6 +475,10 @@ js/today-and-folders.js*
 | FR-5.1 | The system shall allow the user to plan specific lectures against a specific future or past date from a calendar popover. | Medium |
 | FR-5.2 | The system shall allow un-planning (removing) a previously planned lecture from a date. | Medium |
 | FR-5.3 | The system shall compute and display a consecutive-day study streak, both globally and per subject/folder group. | High |
+| FR-5.4 | The system shall render a 12-month contribution strip on the dashboard (12 single-month panels in one horizontally scrollable track), each panel showing a week-grid of intensity cells; future dates with planned lectures shall be flagged and open the planning popover, past dates shall open the day-tooltip on click/hover. | High |
+| FR-5.5 | A day's intensity level shall be derived from total minutes studied (l1 ≥ 30 min, l2 ≥ 60 min, l3 ≥ 120 min, l4 beyond) and rendered as a distinct fill; the level shall also include minutes from the session-level global timer for the current day. | Medium |
+| FR-5.6 | The strip shall keep the layout aligned to the selected week start (Sunday or Monday) and must restore its horizontal scroll position instantly after every rebuild (including per-second session-timer ticks) so the visible month never shifts on its own. | High |
+| FR-5.7 | The strip shall be navigable only via Previous/Next buttons; wheel or touch scrolling must not change the month nor trigger the page to scroll. | Medium |
 
 **4.6 Folder Organisation**
 
@@ -524,6 +576,8 @@ js/calendar.js (drawer folder tiles), css/folder-dashboard.css*
 | FR-14.2 | The system shall allow switching between light and dark themes and persist the chosen theme. | High |
 | FR-14.3 | The system shall allow correcting the recorded time for a specific lecture from the settings panel. | Medium |
 | FR-14.4 | The system shall support exporting the entire dataset to a backup file and importing/restoring a previously exported backup, with the imported data validated/sanitised before being applied. | High |
+| FR-14.5 | The settings drawer shall include a "Country & time" section presenting a country selector (24 presets), a manual timezone field, and a week-start choice (Sunday/Monday), with a live preview of the selected country's current date and time. | Medium |
+| FR-14.6 | The dashboard shall provide a share action that invokes the native Web Share API when supported and otherwise copies the app URL to the clipboard with a confirmation toast. | Low |
 
 **4.15 Authentication & Cloud Sync**
 
@@ -546,6 +600,32 @@ js/calendar.js (drawer folder tiles), css/folder-dashboard.css*
 | FR-16.2 | The system shall register a service worker that caches the static application shell so the app loads without a network connection. The fetch handler shall strip query strings (e.g. `?v=56`) before matching cached URLs, ensuring offline access works regardless of cache-busting parameters. | High |
 | FR-16.3 | The system shall display a warning banner if browser storage is unavailable or a save operation fails, so the user is aware data may not persist. | High |
 
+**4.17 Country & Timezone Awareness**
+
+*Implemented primarily in: js/time-tracking.js, js/settings.js
+(settingsPopulateCountry/settingsSetTimeZone/settingsSetWeekStart/
+updateCountryNowHint), plus zone-aware reads across js/dashboard.js,
+js/render.js, js/calendar.js, js/exam-date.js, js/mascot.js,
+js/storage.js, js/demo.js*
+
+| **ID** | **Requirement** | **Priority** |
+|----|----|----|
+| FR-17.1 | The system shall let the user select a country/timezone from a preset list (24 entries covering major study regions, with a Device-default option) or enter a custom timezone, persisted in settings. | Medium |
+| FR-17.2 | The system shall compute "today" from the selected timezone using a noon-anchored date (zoneTodayDate) so that the calendar day never flips at an unexpected boundary, independent of the device clock's zone. | High |
+| FR-17.3 | The user shall be able to choose whether the week starts on Sunday or Monday; the calendar strip, planner date strips, and weekday headers shall follow that choice. | Medium |
+| FR-17.4 | All date-anchored behaviour shall use the selected zone consistently: dailyLog keys, calendar intensity, streak computation, planner dates and carry-over, habit entries, exam pacing counts, mascot time-of-day logic, and demo-data seeding (demo days are generated relative to the selected zone's today). | High |
+
+**4.18 Global Study Timer & Streak Widget**
+
+*Implemented primarily in: js/dashboard.js
+(toggleGlobalStudyTimer/renderStreak/computeCurrentStreak/monthCalLevel)*
+
+| **ID** | **Requirement** | **Priority** |
+|----|----|----|
+| FR-18.1 | The system shall provide a session-level study timer on the dashboard that starts and stops independently of any single lecture, displaying the running seconds live (formatCompactLive) and updating at least once per second. | Medium |
+| FR-18.2 | Running minutes from the global timer shall be persisted under a dedicated auxiliary key (study-tracker-real-study-minutes-v1) so the session survives a reload, and shall feed the calendar strip's intensity for the current day while active (and its accumulated total thereafter). | Medium |
+| FR-18.3 | The dashboard shall display a study-streak widget derived from consecutive days with logged study (computeCurrentStreak), alongside the strip and scorecard. | Medium |
+
 **5. Data Model**
 
 All application data for one user is stored as a single JSON document
@@ -563,9 +643,14 @@ maintained thereafter, is summarised below.
 | habits.entries | Object\<habitKey, entry\> | Completion entries for the habit tracker, keyed by habit and date. |
 | priorityPlanner.byDate | Object\<dateKey, PlanDay\> | Per-date planner items (goals/tasks), including linked-lecture references and completion/star state. |
 | events | Array\<Event\> | User-created calendar events shown on the planner page. |
+| settings | Object | User preferences persisted and sanitised on load (normalizeLoadedData): display name, theme, selected country/timezone, week-start preference, exam-date default, etc. |
 | updatedAt | Number (epoch ms) | Last-modified timestamp, used to reconcile local vs. cloud copies on load. |
 
-**6. Non-Functional Requirements**
+A small auxiliary, localStorage-only key — study-tracker-real-study-minutes-v1
+— records total minutes accumulated by the dashboard's session-level global
+study timer. It is deliberately kept separate from the main JSON document so
+the running session (and live calendar glow) can survive a page reload; the
+minutes are merged into the current day's calendar intensity at render time.
 
 **6. Non-Functional Requirements**
 
@@ -579,6 +664,13 @@ maintained thereafter, is summarised below.
 
 - NFR-3: Initial load of the cached app shell shall not depend on
   network round-trips once the service worker has cached it.
+
+- NFR-18: While the session-level global timer runs, the dashboard
+  re-renders (calendar strip, live counters) at least once per second; each
+  rebuild must restore the strip's horizontal scroll position instantly
+  (snapCalToMonth, no smooth glide) so repeated per-second refreshes never
+  visibly shift the month a user is viewing, and must not produce scroll-jank
+  or layout drift.
 
 **6.2 Reliability & Availability**
 
@@ -670,6 +762,12 @@ functional scope but part of the deliverable:
 
 - why-study-tracker.html — a product-marketing page explaining the app's
   value proposition.
+
+All three pages are cross-linked with each other and with the home app, and
+carry JSON-LD structured data (Article + BreadcrumbList; the "why" page also
+ships SoftwareApplication and FAQPage schema). The home app links to all three
+via its `<noscript>` block and the login-screen guide footer to help crawlers
+reach the full content graph from the homepage.
 
 **7.3 Assumptions on Document Scope**
 
