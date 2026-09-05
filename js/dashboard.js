@@ -666,7 +666,7 @@ function renderCalendar(){
     renderCalendar._resized = true;
     window.addEventListener('resize', () => {
       const vp = document.getElementById('studyMonthViewport');
-      if(vp) vp.scrollLeft = monthCalMonth * vp.clientWidth;
+      if(vp) snapCalToMonth(vp);
     });
   }
   requestAnimationFrame(() => {
@@ -674,11 +674,21 @@ function renderCalendar(){
     if(!vp) return;
     if(!renderCalendar._scrolled) renderCalendar._scrolled = true;
     // Rebuilding the track resets scroll — always restore the current month
-    // so timer ticks and re-renders never make the calendar jump.
-    vp.scrollLeft = monthCalMonth * vp.clientWidth;
+    // so timer ticks and re-renders never make the calendar move.
+    snapCalToMonth(vp);
     if(prevBtn) prevBtn.disabled = monthCalMonth === 0;
     if(nextBtn) nextBtn.disabled = monthCalMonth === 11;
   });
+}
+// Instant (non-animated) restore: the stylesheet sets scroll-behavior:smooth
+// for button glides, but a plain scrollLeft assignment would inherit it and
+// visibly glide on every rebuild — the "calendar scrolls by itself" effect.
+function snapCalToMonth(vp){
+  const prevBehavior = vp.style.scrollBehavior;
+  vp.style.scrollBehavior = 'auto';
+  vp.scrollLeft = monthCalMonth * vp.clientWidth;
+  void vp.offsetWidth; // flush so the instant position sticks
+  vp.style.scrollBehavior = prevBehavior;
 }
 
 // Month changes are Previous/Next-button only: no wheel, swipe, or keyboard
