@@ -31,7 +31,20 @@
 <script>
 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script>
+// Load Vercel Web Analytics only when actually deployed to vercel.app.
+// Under file:// or other hosts the absolute path would 404 and spam the
+// console with ERR_FILE_NOT_FOUND noise on every visit.
+(function(){
+  var h = location.hostname || '';
+  if(location.protocol === 'https:' && h.endsWith('.vercel.app')){
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = '/_vercel/insights/script.js';
+    document.head.appendChild(s);
+  }
+})();
+</script>
 <script>
 // Apply saved theme ASAP to avoid a flash of the wrong theme.
 (function(){
@@ -63,29 +76,30 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
       media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
-<link rel="stylesheet" href="css/base.css?v=60">
-<link rel="stylesheet" href="css/liquid-glass.css?v=60">
-<link rel="stylesheet" href="css/neumorphic-glass.css?v=60">
-<link rel="stylesheet" href="css/habit-tracker.css?v=60">
-<link rel="stylesheet" href="css/header-search.css?v=60">
-<link rel="stylesheet" href="css/today-calendar.css?v=60">
-<link rel="stylesheet" href="css/calendar-popover.css?v=60">
-<link rel="stylesheet" href="css/timer.css?v=60">
-<link rel="stylesheet" href="css/sidebar.css?v=60">
-<link rel="stylesheet" href="css/my-subjects.css?v=60">
-  <link rel="stylesheet" href="css/folder-dashboard.css?v=60">
-<link rel="stylesheet" href="css/subject-detail.css?v=60">
-<link rel="stylesheet" href="css/exam-pacing.css?v=60">
-<link rel="stylesheet" href="css/tooltip-footer.css?v=60">
-<link rel="stylesheet" href="css/modal.css?v=60">
-<link rel="stylesheet" href="css/today-planner.css?v=60">
-<link rel="stylesheet" href="css/lecture-notes.css?v=60">
-<link rel="stylesheet" href="css/analytics.css?v=60">
-<link rel="stylesheet" href="css/focus-mode.css?v=60">
-<link rel="stylesheet" href="css/login.css?v=60">
-<link rel="stylesheet" href="css/mascot.css?v=60">
-<link rel="stylesheet" href="css/dark-mode.css?v=60">
-<link rel="stylesheet" href="css/a11y.css?v=60">
+<link rel="stylesheet" href="css/base.css?v=67">
+<link rel="stylesheet" href="css/liquid-glass.css?v=67">
+<link rel="stylesheet" href="css/neumorphic-glass.css?v=68">
+<link rel="stylesheet" href="css/habit-tracker.css?v=67">
+<link rel="stylesheet" href="css/header-search.css?v=67">
+<link rel="stylesheet" href="css/today-calendar.css?v=68">
+<link rel="stylesheet" href="css/calendar-popover.css?v=67">
+<link rel="stylesheet" href="css/timer.css?v=67">
+<link rel="stylesheet" href="css/sidebar.css?v=67">
+<link rel="stylesheet" href="css/my-subjects.css?v=67">
+  <link rel="stylesheet" href="css/folder-dashboard.css?v=67">
+<link rel="stylesheet" href="css/subject-detail.css?v=67">
+<link rel="stylesheet" href="css/exam-pacing.css?v=67">
+<link rel="stylesheet" href="css/tooltip-footer.css?v=67">
+<link rel="stylesheet" href="css/modal.css?v=67">
+<link rel="stylesheet" href="css/today-planner.css?v=67">
+<link rel="stylesheet" href="css/lecture-notes.css?v=67">
+<link rel="stylesheet" href="css/analytics.css?v=67">
+<link rel="stylesheet" href="css/focus-mode.css?v=68">
+<link rel="stylesheet" href="css/login.css?v=67">
+<link rel="stylesheet" href="css/mascot.css?v=67">
+<link rel="stylesheet" href="css/dark-mode.css?v=67">
+<link rel="stylesheet" href="css/dashboard-redesign.css?v=68">
+<link rel="stylesheet" href="css/a11y.css?v=67">
 </head>
 <body>
 
@@ -200,32 +214,42 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <div class="search-results" id="searchResults"></div>
     </div>
 
-    <div class="today-panel">
-      <div class="today-left">
-        <span class="eyebrow">TODAY</span>
-        <div class="today-total" id="todayTotal">0m</div>
-        <div class="stat-row" id="todaySubjects"></div>
-        <div class="yesterday-line" id="yesterdayLine"></div>
-      </div>
-      <div class="today-right">
-        <div class="cal-terminal" id="calTerminal">
-          <div class="cal-term-bar">
-            <span class="cal-term-dot dot-r"></span><span class="cal-term-dot dot-y"></span><span class="cal-term-dot dot-g"></span>
-            <span class="cal-term-path">~/study-log --last 5w</span>
+    <div class="activity glass-block">
+      <div class="today-fog" aria-hidden="true"></div>
+      <div class="today-fog-2" aria-hidden="true"></div>
+      <div class="today-fog-veil" aria-hidden="true"></div>
+      <div class="activity-label">TODAY</div>
+      <div class="today-time" id="todayTotal">0m</div>
+      <div class="activity-copy" id="todaySummary"></div>
+      <div class="topic-strip" id="todaySubjects"></div>
+      <div class="activity-copy today-yesterday" id="yesterdayLine"></div>
+
+      <div class="study-calendar-glass" id="calTerminal" aria-label="Study log calendar">
+        <div class="calendar-head">
+          <div class="cal-head-left">
+            <div class="calendar-kicker">STUDY LOG</div>
+            <div class="calendar-month" id="calMonth"></div>
           </div>
-          <div class="cal-term-body">
-            <div class="cal-week-labels">
-              <span class="cal-week-spacer"></span>
-              <div class="cal-week-cols" id="calWeekLabels"></div>
+          <div class="cal-head-right">
+            <div class="calendar-nav" role="group" aria-label="Month navigation">
+              <button type="button" class="cal-nav-btn" onclick="calNav(-1)" title="Previous month" aria-label="Previous month">‹</button>
+              <button type="button" class="cal-nav-btn cal-today-btn" id="calTodayBtn" onclick="calGoToday()" title="Back to current month" hidden>Today</button>
+              <button type="button" class="cal-nav-btn" onclick="calNav(1)" title="Next month" aria-label="Next month">›</button>
             </div>
-            <div class="cal-wrap">
-              <div class="cal-weekday-labels">
-                <span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span>Sun</span>
-              </div>
-              <div class="cal-grid" id="calendarGrid"></div>
-            </div>
-            <div class="cal-legend"><span>less</span><i class="cal-swatch level-0"></i><i class="cal-swatch level-1"></i><i class="cal-swatch level-2"></i><i class="cal-swatch level-3"></i><i class="cal-swatch level-4"></i><span>more</span></div>
+            <div class="calendar-total"><strong id="calActiveDays">0</strong><span>active days</span></div>
           </div>
+        </div>
+        <div class="calendar-weekdays">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-foot">
+          <span style="color:#3b9f72;font-weight:800">● Studying now</span>
+          <span><i class="legend-dot none"></i>0</span>
+          <span><i class="legend-dot l1"></i>light</span>
+          <span><i class="legend-dot l2"></i>steady</span>
+          <span><i class="legend-dot l3"></i>strong</span>
+          <span><i class="legend-dot l4"></i>deep focus</span>
         </div>
       </div>
     </div>
@@ -848,28 +872,28 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 
 <div class="toast" id="toast"></div>
 
-<script src="js/data.js?v=60"></script>
-<script src="js/demo.js?v=60"></script>
-<script src="js/today-and-folders.js?v=60"></script>
+<script src="js/data.js?v=67"></script>
+<script src="js/demo.js?v=67"></script>
+<script src="js/today-and-folders.js?v=67"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="js/cloud-sync.js?v=60"></script>
-<script src="js/storage.js?v=60"></script>
-<script src="js/settings.js?v=60"></script>
-<script src="js/time-tracking.js?v=60"></script>
-<script src="js/exam-scores.js?v=60"></script>
-<script src="js/render.js?v=60"></script>
-<script src="js/dashboard.js?v=60"></script>
-<script src="js/calendar.js?v=60"></script>
-<script src="js/tooltip.js?v=60"></script>
-<script src="js/lecture-notes.js?v=60"></script>
-<script src="js/actions.js?v=60"></script>
-<script src="js/test-score-actions.js?v=60"></script>
-<script src="js/modals.js?v=60"></script>
-<script src="js/exam-date.js?v=60"></script>
-<script src="js/init.js?v=60"></script>
-<script src="js/mascot.js?v=60"></script>
-<script src="js/login.js?v=60"></script>
+<script src="js/cloud-sync.js?v=67"></script>
+<script src="js/storage.js?v=67"></script>
+<script src="js/settings.js?v=67"></script>
+<script src="js/time-tracking.js?v=67"></script>
+<script src="js/exam-scores.js?v=67"></script>
+<script src="js/render.js?v=67"></script>
+<script src="js/dashboard.js?v=67"></script>
+<script src="js/calendar.js?v=67"></script>
+<script src="js/tooltip.js?v=67"></script>
+<script src="js/lecture-notes.js?v=67"></script>
+<script src="js/actions.js?v=67"></script>
+<script src="js/test-score-actions.js?v=67"></script>
+<script src="js/modals.js?v=67"></script>
+<script src="js/exam-date.js?v=67"></script>
+<script src="js/init.js?v=67"></script>
+<script src="js/mascot.js?v=67"></script>
+<script src="js/login.js?v=67"></script>
 </body>
 </html>

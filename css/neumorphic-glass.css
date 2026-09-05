@@ -77,38 +77,6 @@ body{
   background-size:100% 320%;
 }
 
-/* ---- CALENDAR: GitHub-style heatmap (neumorphic inset) ---- */
-.cal-wrap{
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.60),rgba(255,255,255,.32));
-  border:1px solid var(--neo-line);
-  border-radius:22px;
-  padding:16px;
-  box-shadow:var(--neo-shadow);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-}
-.cal-cell{
-  background:rgba(255,255,255,.26);
-  border:1px solid var(--neo-line);
-  border-radius:11px 8px 12px 9px;
-  box-shadow:
-    inset 2px 2px 5px rgba(111,124,116,.08),
-    inset -2px -2px 4px rgba(255,255,255,.45);
-}
-.cal-cell.level-0{ background:rgba(255,255,255,.26); }
-.cal-cell.level-1{ background:linear-gradient(145deg,rgba(70,184,131,.22),rgba(70,184,131,.10)); border-color:rgba(70,131,104,.3); }
-.cal-cell.level-2{ background:linear-gradient(145deg,rgba(62,166,116,.55),rgba(62,166,116,.38)); }
-.cal-cell.level-3{ background:linear-gradient(145deg,rgba(43,140,96,.78),rgba(43,140,96,.60)); }
-.cal-cell.level-4{ background:linear-gradient(145deg,rgba(28,108,74,1),rgba(28,108,74,.82)); }
-.cal-cell.is-today{
-  box-shadow:0 0 0 2px var(--neo-amber), inset 2px 2px 5px rgba(111,124,116,.08), inset -2px -2px 4px rgba(255,255,255,.45);
-}
-.cal-legend .cal-swatch.level-1{ background:rgba(70,184,131,.22); }
-.cal-legend .cal-swatch.level-2{ background:rgba(62,166,116,.55); }
-.cal-legend .cal-swatch.level-3{ background:rgba(43,140,96,.78); }
-.cal-legend .cal-swatch.level-4{ background:rgba(28,108,74,1); }
-
 /* ---- ONGOING SUBJECT: gradient-topped glass cards ---- */
 .dash-course-card{
   border:1px solid var(--neo-line);
@@ -220,7 +188,6 @@ body{
 [data-theme="dark"] .today-right,
 [data-theme="dark"] .today-left,
 [data-theme="dark"] .revision-card,
-[data-theme="dark"] .cal-wrap,
 [data-theme="dark"] .dash-course-card,
 [data-theme="dark"] .dash-quick-tile,
 [data-theme="dark"] .dash-deadline-row,
@@ -229,8 +196,6 @@ body{
   background:linear-gradient(135deg,rgba(25,32,44,.82),rgba(18,24,34,.66));
   border-color:rgba(255,255,255,.08);
 }
-[data-theme="dark"] .cal-cell{ background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.05); box-shadow:inset 1px 1px 3px rgba(0,0,0,.35); }
-[data-theme="dark"] .cal-cell.level-0{ background:rgba(255,255,255,.04); }
 [data-theme="dark"] .view-btn,[data-theme="dark"] .nav-chip,[data-theme="dark"] .theme-toggle{ background:var(--neo-glass); color:var(--neo-muted); }
 
 /* Preferred-reduced-motion: kill neumorphic transition shimmer */

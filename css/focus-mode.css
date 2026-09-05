@@ -140,7 +140,6 @@
     .ac-card{ padding:14px 14px 16px; }
     .subject-graphs{ grid-template-columns:repeat(auto-fill, minmax(135px, 1fr)); }
     .cal-term-body{ padding:12px 10px 10px; }
-    .cal-grid, .cal-week-cols{ max-width:210px; }
   }
   .app-loader{
     position:fixed; inset:0; z-index:9999;

@@ -1013,6 +1013,7 @@ function closeLectureMenus(){
 function toggleLectureMenu(lectureId){
   const menu = document.getElementById('lectureMenu-'+lectureId);
   const row = document.getElementById('lecture-'+lectureId);
+  if(!menu) return;
   const wasOpen = menu.classList.contains('show');
   closeUnitMenus();
   closeUnitSortMenus();

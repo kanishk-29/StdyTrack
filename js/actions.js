@@ -25,6 +25,7 @@ function closeUnitSortMenus(){
 function toggleUnitMenu(unitId){
   const menu = document.getElementById('unitMenu-'+unitId);
   const unitEl = document.querySelector(`.unit[data-unit="${unitId}"]`);
+  if(!menu) return;
   const wasOpen = menu.classList.contains('show');
   closeUnitMenus();
   closeUnitSortMenus();
@@ -36,6 +37,7 @@ function toggleUnitMenu(unitId){
 function toggleUnitSortMenu(unitId){
   const menu = document.getElementById('unitSortMenu-'+unitId);
   const unitEl = document.querySelector(`.unit[data-unit="${unitId}"]`);
+  if(!menu) return;
   const wasOpen = menu.classList.contains('show');
   closeUnitMenus();
   closeUnitSortMenus();

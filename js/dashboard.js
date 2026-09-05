@@ -495,54 +495,108 @@ function dayLevel(seconds){
 
 const CAL_SUBJECT_COLORS = SUBJECT_GRAPH_COLORS;
 
+function studyLevelClass(seconds){
+  if(seconds<=0) return 'study-none';
+  const mins = seconds/60;
+  if(mins<=30) return 'study-light';
+  if(mins<=60) return 'study-steady';
+  if(mins<=120) return 'study-strong';
+  return 'study-deep';
+}
+
+let calViewY = 0, calViewM = 0; // browse cursor for the study log calendar (0 = current month)
+
+function calNav(delta){
+  if(!calViewY){ const n = new Date(); calViewY = n.getFullYear(); calViewM = n.getMonth(); }
+  let y = calViewY, m = calViewM + delta;
+  if(m < 0){ m = 11; y--; }
+  if(m > 11){ m = 0; y++; }
+  calViewY = y; calViewM = m;
+  renderCalendar();
+}
+
+function calGoToday(){
+  const n = new Date();
+  calViewY = n.getFullYear(); calViewM = n.getMonth();
+  renderCalendar();
+}
+
 function renderCalendar(){
   const grid = document.getElementById('calendarGrid');
+  if(!grid) return;
   const now = new Date();
+  if(!calViewY){ calViewY = now.getFullYear(); calViewM = now.getMonth(); }
   const todayK = todayKey(now);
-
-  // Find this week's Monday, then step back 4 more full weeks so
-  // columns line up as real calendar weeks (Mon → Sun).
-  const dow = now.getDay(); // 0=Sun..6=Sat
-  const mondayOffset = (dow === 0) ? -6 : 1 - dow;
-  const thisMonday = new Date(now);
-  thisMonday.setDate(thisMonday.getDate() + mondayOffset);
-  const gridStart = new Date(thisMonday);
-  gridStart.setDate(gridStart.getDate() - 28);
-
   const todaySnap = getTodaySnapshot();
-  let cellIndex = 0;
+  const y = calViewY;
+  const m = calViewM;
+
+  const monthEl = document.getElementById('calMonth');
+  if(monthEl) monthEl.textContent = new Date(y, m, 1).toLocaleDateString(undefined, {month:'long', year:'numeric'});
+
+  const todayBtn = document.getElementById('calTodayBtn');
+  if(todayBtn) todayBtn.hidden = (y === now.getFullYear() && m === now.getMonth());
+
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const lead = (new Date(y, m, 1).getDay() + 6) % 7; // Monday-first offset
+
   let html = '';
-  let weekLabelsHtml = '';
-  for(let w=0; w<5; w++){
-    const weekMon = new Date(gridStart);
-    weekMon.setDate(weekMon.getDate() + w*7);
-    const isCurrentWeek = (w === 4);
-    const label = isCurrentWeek ? 'This week' : weekMon.toLocaleDateString(undefined, {month:'short', day:'numeric'});
-    weekLabelsHtml += `<span class="${isCurrentWeek ? 'is-current' : ''}" title="Week of ${weekMon.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'})}">${label}</span>`;
-    for(let d=0; d<7; d++){
-      const day = new Date(gridStart);
-      day.setDate(day.getDate() + w*7 + d);
-      const key = todayKey(day);
-      const isFuture = day > now && key !== todayK;
-      if(isFuture){
-        const plannedCount = getPlannedLecturesForDate(key).length;
-        const planClass = plannedCount ? ' has-plan' : '';
-        const countHtml = plannedCount ? `<span class="cpp-count">${plannedCount}</span>` : '';
-        html += `<div class="cal-cell is-future${planClass}" data-date="${key}" onclick="showCalPlanPopover(event,'${key}')" title="Plan lectures for this day">${countHtml}</div>`;
-        continue;
-      }
-      const seconds = (key === todayK) ? todaySnap.total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
-      const level = dayLevel(seconds);
-      const todayClass = (key===todayK) ? ' is-today' : '';
-      const runningClass = (key===todayK && runningRef) ? ' is-running' : '';
-      const delay = (cellIndex * 12).toFixed(0);
-      cellIndex++;
-      html += `<div class="cal-cell level-${level}${todayClass}${runningClass}" style="animation-delay:${delay}ms" data-date="${key}" onmouseenter="showCalTooltip(event,'${key}')" onmouseleave="hideCalTooltip()" onclick="showCalTooltip(event,'${key}',true)"></div>`;
+  let activeDays = 0;
+  const studyingNow = !!runningRef;
+  for(let i=0; i<42; i++){
+    const dayNum = i - lead + 1;
+    const day = new Date(y, m, dayNum);
+    const key = todayKey(day);
+    const isToday = key === todayK;
+    const isFuture = day > now && !isToday;
+
+    if(dayNum < 1 || dayNum > daysInMonth){
+      html += `<span class="cal-day muted-day">${day.getDate()}</span>`;
+      continue;
     }
+    const seconds = isToday ? todaySnap.total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
+    if(seconds > 0) activeDays++;
+    const levelClass = studyLevelClass(seconds);
+    const todayClass = isToday ? ' today' : '';
+
+    if(isFuture){
+      const plannedCount = getPlannedLecturesForDate(key).length;
+      const planClass = plannedCount ? ' has-plan' : '';
+      const countHtml = plannedCount ? `<span class="cpp-count">${plannedCount}</span>` : '';
+      html += `<div class="cal-day is-future${planClass}${todayClass}" data-date="${key}" onclick="showCalPlanPopover(event,'${key}')" title="Plan lectures for this day">${countHtml}${day.getDate()}</div>`;
+      continue;
+    }
+
+    const minutes = seconds/60;
+    const lum = seconds > 0 ? (0.72 + Math.min(1, minutes/300) * 0.74).toFixed(3) : '';
+    const lumAttr = lum ? ` style="--cal-lum:${lum}"` : '';
+    const studyingClass = (isToday && studyingNow) ? ' is-studying' : '';
+    const aura = studyingClass
+      ? `<span class="mystic-aura" aria-hidden="true"><span class="mist one"></span><span class="mist two"></span><span class="mist three"></span></span>`
+      : '';
+    const dot = studyingClass ? '<span class="study-live-dot" aria-label="Currently studying"></span>' : '';
+    html += `<div class="cal-day ${levelClass}${studyingClass}${todayClass}"${lumAttr} data-date="${key}" onmouseenter="showCalTooltip(event,'${key}')" onmouseleave="hideCalTooltip()" onclick="showCalTooltip(event,'${key}',true)">${aura}${day.getDate()}${dot}</div>`;
   }
   grid.innerHTML = html;
-  document.getElementById('calWeekLabels').innerHTML = weekLabelsHtml;
+
+  const activeEl = document.getElementById('calActiveDays');
+  if(activeEl) activeEl.textContent = String(activeDays);
 }
+
+(function(){
+  const term = document.getElementById('calTerminal');
+  if(!term) return;
+  let wheelLock = 0;
+  term.addEventListener('wheel', (e)=>{
+    if(e.target.closest('#calPlanPopover')) return;
+    if(Math.abs(e.deltaY) < 2) return;
+    e.preventDefault();
+    const now = Date.now();
+    if(now - wheelLock < 320) return;
+    wheelLock = now;
+    calNav(e.deltaY > 0 ? 1 : -1);
+  }, {passive:false});
+})();
 
 let calTooltipPinned = false;
 function showCalTooltip(evt, key, pin){
@@ -591,7 +645,7 @@ function hideCalTooltip(){
 }
 
 document.addEventListener('click', (e)=>{
-  if(calTooltipPinned && !e.target.closest('.cal-cell') && !e.target.closest('.cal-tooltip')){
+  if(calTooltipPinned && !e.target.closest('.cal-day') && !e.target.closest('.cal-tooltip')){
     calTooltipPinned = false;
     hideCalTooltip();
   }

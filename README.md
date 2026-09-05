@@ -35,6 +35,9 @@ css/                   # loaded top-to-bottom in index.html — order matters
   login.css                    # login / checkpoint screen
   mascot.css                    # study mascot
   dark-mode.css                 # dark-theme overrides (loaded last)
+  dashboard-redesign.css        # liquid-glass + aura redesign (Dashboard, Today,
+                                #   Calendar, Ongoing Subjects — loaded just before
+                                #   a11y.css so it wins on those sections)
   a11y.css                      # focus rings + reduced-motion (loaded very last)
 
 js/                    # loaded top-to-bottom in index.html — order matters,

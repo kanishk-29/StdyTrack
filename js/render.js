@@ -66,15 +66,26 @@ function subjectNameById(id){
 
 function renderToday(){
   const snap = getTodaySnapshot();
-  const wrap = document.getElementById('todaySubjects');
   const totalEl = document.getElementById('todayTotal');
+  const summaryEl = document.getElementById('todaySummary');
+  const wrap = document.getElementById('todaySubjects');
+  const yEl = document.getElementById('yesterdayLine');
   if(totalEl) totalEl.textContent = formatHuman(snap.total);
+
   const entries = Object.entries(snap.bySubject).filter(([,sec])=>sec>0).sort((a,b)=>b[1]-a[1]);
-  if(!entries.length){
-    wrap.innerHTML = `<span class="today-empty">No study time logged yet today — hit ▶ on a lecture to start.</span>`;
-  } else {
+  if(summaryEl){
+    if(!entries.length){
+      summaryEl.textContent = 'No study time logged yet today — hit ▶ on a lecture to start.';
+    } else {
+      const names = entries.map(([sid])=>subjectNameById(sid));
+      summaryEl.textContent = names.length>1
+        ? `Focused across ${names.slice(0,-1).join(', ')} and ${names[names.length-1]}.`
+        : `Focused on ${names[0]}.`;
+    }
+  }
+  if(wrap){
     wrap.innerHTML = entries.map(([sid,sec])=>
-      `<span class="stat-chip time accent-${(data.subjects.findIndex(s=>s.id===sid)%5)+1}">${escapeHtml(subjectNameById(sid))} · ${formatHuman(sec)}</span>`
+      `<span class="topic">${escapeHtml(subjectNameById(sid))} · ${formatHuman(sec)}</span>`
     ).join('');
   }
 
@@ -82,7 +93,6 @@ function renderToday(){
   yesterday.setDate(yesterday.getDate()-1);
   const yKey = todayKey(yesterday);
   const ySeconds = (data.dailyLog && data.dailyLog[yKey]) ? data.dailyLog[yKey].total : 0;
-  const yEl = document.getElementById('yesterdayLine');
   if(yEl){
     let trendHtml = '';
     if(ySeconds>0){
