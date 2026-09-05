@@ -718,3 +718,90 @@ document.addEventListener('click', (e)=>{
     hideCalTooltip();
   }
 });
+
+// ---- Global study timer (from mockup) ----
+// Tracks total daily study minutes independently of lecture timers.
+const GLOBAL_STUDY_KEY = 'study-tracker-real-study-minutes-v1';
+let globalStudyRunning = false;
+let globalStudyTimerId = null;
+let globalStudyStartedAt = 0;
+let globalStudyBaseSeconds = 0;
+
+function getGlobalStudyData(){
+  try { return JSON.parse(localStorage.getItem(GLOBAL_STUDY_KEY) || '{}') || {}; }
+  catch(e){ return {}; }
+}
+function saveGlobalStudyData(d){ localStorage.setItem(GLOBAL_STUDY_KEY, JSON.stringify(d)); }
+function globalStudyMinutesFor(k){ return Math.max(0, Number((getGlobalStudyData())[k]) || 0); }
+function todayStudyKey(){ const n=new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'); }
+function globalStudyLevel(mins){
+  if(mins<=0) return 0;
+  if(mins<30) return 1;
+  if(mins<60) return 2;
+  if(mins<120) return 3;
+  return 4;
+}
+
+function toggleGlobalStudyTimer(){
+  const btn = document.getElementById('liveStudyToggle');
+  const label = document.getElementById('liveStudyLabel');
+  if(!btn || !label) return;
+
+  if(!globalStudyRunning){
+    globalStudyRunning = true;
+    const key = todayStudyKey();
+    globalStudyStartedAt = Date.now();
+    globalStudyBaseSeconds = globalStudyMinutesFor(key) * 60;
+    btn.classList.add('active');
+    label.textContent = 'Pause studying';
+    globalStudyTimerId = setInterval(()=>{
+      const elapsed = (Date.now() - globalStudyStartedAt) / 1000;
+      const totalSeconds = globalStudyBaseSeconds + elapsed;
+      const data = getGlobalStudyData();
+      data[key] = Math.max(globalStudyMinutesFor(key), totalSeconds / 60);
+      saveGlobalStudyData(data);
+      updateGlobalStudyUI();
+      renderCalendar();
+    }, 1000);
+  } else {
+    const elapsed = (Date.now() - globalStudyStartedAt) / 1000;
+    const data = getGlobalStudyData();
+    data[todayStudyKey()] = Math.max(globalStudyMinutesFor(todayStudyKey()), (globalStudyBaseSeconds + elapsed) / 60);
+    saveGlobalStudyData(data);
+    globalStudyRunning = false;
+    clearInterval(globalStudyTimerId);
+    globalStudyTimerId = null;
+    btn.classList.remove('active');
+    label.textContent = 'Start studying';
+    updateGlobalStudyUI();
+    renderCalendar();
+  }
+}
+
+function updateGlobalStudyUI(){
+  const mins = globalStudyMinutesFor(todayStudyKey());
+  const h = Math.floor(mins/60), m = Math.floor(mins%60);
+  const todayEl = document.getElementById('todayTotal');
+  if(todayEl) todayEl.textContent = (h ? h+'h ' : '') + m+'m';
+
+  const sessionEl = document.getElementById('liveSessionTime');
+  if(sessionEl){
+    const sec = globalStudyRunning ? Math.floor((Date.now()-globalStudyStartedAt)/1000) : 0;
+    const sh = Math.floor(sec/3600), sm = Math.floor((sec%3600)/60), ss = sec%60;
+    sessionEl.textContent = 'Session '+(sh?sh+'h ':'')+String(sm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+  }
+}
+
+// Expose for external access
+window.studyCalendar = {
+  getMinutes: ()=>({...getGlobalStudyData()}),
+  addMinutes: (minutes, date=new Date())=>{
+    const pad=n=>String(n).padStart(2,'0');
+    const k=date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate());
+    const d=getGlobalStudyData();
+    d[k]=globalStudyMinutesFor(k)+Math.max(0,Number(minutes)||0);
+    saveGlobalStudyData(d);
+    renderCalendar();
+  },
+  refresh: renderCalendar
+};

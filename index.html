@@ -233,7 +233,14 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <div class="today-fog-2" aria-hidden="true"></div>
       <div class="today-fog-veil" aria-hidden="true"></div>
       <div class="activity-label">TODAY</div>
-      <div class="today-time" id="todayTotal">0m</div>
+      <div class="today-time-wrap">
+        <div class="today-time" id="todayTotal">0m</div>
+        <button type="button" class="live-study-control" id="liveStudyToggle" onclick="toggleGlobalStudyTimer()">
+          <span class="live-study-dot-ui"></span>
+          <span id="liveStudyLabel">Start studying</span>
+        </button>
+        <span class="live-session-time" id="liveSessionTime">Session 00:00</span>
+      </div>
       <div class="activity-copy" id="todaySummary"></div>
       <div class="topic-strip" id="todaySubjects"></div>
       <div class="activity-copy today-yesterday" id="yesterdayLine"></div>
