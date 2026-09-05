@@ -81,7 +81,7 @@ function renderToday(){
     ).join('');
   }
 
-  const yesterday = new Date();
+  const yesterday = zoneTodayDate();
   yesterday.setDate(yesterday.getDate()-1);
   const yKey = todayKey(yesterday);
   const ySeconds = (data.dailyLog && data.dailyLog[yKey]) ? data.dailyLog[yKey].total : 0;

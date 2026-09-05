@@ -579,6 +579,25 @@ L3 - Normalization | https://youtu.be/..."></textarea>
     </div>
 
     <div class="settings-section">
+      <div class="settings-section-title">🌍 Country &amp; time</div>
+      <p class="settings-section-desc">
+        Today, streaks, the calendar, and reminders follow this country's date &amp; time — handy when your device clock is set to a different region.
+      </p>
+      <div class="field">
+        <label>🌐 Country</label>
+        <select id="settingsCountrySelect" onchange="settingsSetTimeZone(this.value)"></select>
+      </div>
+      <div class="field">
+        <label>📅 Week starts on</label>
+        <select id="settingsWeekStartSelect" onchange="settingsSetWeekStart(this.value)">
+          <option value="0">Sunday</option>
+          <option value="1">Monday</option>
+        </select>
+      </div>
+      <div class="modal-subtitle" id="settingsCountryNow" style="margin-top:6px;"></div>
+    </div>
+
+    <div class="settings-section">
       <div class="settings-section-title">🛠️ Fix Lecture Time</div>
       <p class="settings-section-desc">
         For correcting a timer that was accidentally left running. This directly changes your logged study data — use it carefully.

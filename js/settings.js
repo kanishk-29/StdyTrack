@@ -17,6 +17,46 @@ function openSettings(){
   if(demoSec) demoSec.style.display = (typeof DEMO_MODE !== 'undefined' && DEMO_MODE) ? '' : 'none';
   openModal('settingsOverlay');
   updateThemeUI();
+  settingsPopulateCountry();
+}
+
+/* ---------------- COUNTRY & TIME ---------------- */
+function settingsEnsure(){
+  if(!data.settings || typeof data.settings !== 'object') data.settings = {};
+  return data.settings;
+}
+function settingsPopulateCountry(){
+  const sel = document.getElementById('settingsCountrySelect');
+  if(!sel || typeof COUNTRY_ZONES === 'undefined') return;
+  const cur = (typeof appTimeZone === 'function') ? appTimeZone() : '';
+  sel.innerHTML = COUNTRY_ZONES.map(c=>`<option value="${c.tz}"${c.tz===cur?' selected':''}>${escapeHtml(c.label)}</option>`).join('');
+  const ws = document.getElementById('settingsWeekStartSelect');
+  if(ws) ws.value = String((typeof appWeekStart === 'function') ? appWeekStart() : 0);
+  updateCountryNowHint();
+}
+function updateCountryNowHint(){
+  const el = document.getElementById('settingsCountryNow');
+  if(!el || typeof zonedParts !== 'function') return;
+  const p = zonedParts();
+  const label = (typeof COUNTRY_ZONES !== 'undefined')
+    ? (COUNTRY_ZONES.find(c=>c.tz===appTimeZone()) || COUNTRY_ZONES[0]).label
+    : 'device';
+  const wd = new Date(p.y, p.m-1, p.day).toLocaleDateString(undefined, {weekday:'long'});
+  el.textContent = `App date & time: ${wd}, ${p.y}-${String(p.m).padStart(2,'0')}-${String(p.day).padStart(2,'0')} ${String(p.h).padStart(2,'0')}:${String(p.min).padStart(2,'0')} (${label})`;
+}
+function settingsSetTimeZone(tz){
+  const s = settingsEnsure();
+  s.timeZone = (tz && typeof COUNTRY_ZONES !== 'undefined' && COUNTRY_ZONES.some(c=>c.tz===tz)) ? tz : '';
+  if(typeof saveData === 'function') saveData();
+  settingsPopulateCountry();
+  if(typeof renderAll === 'function') renderAll();
+  showToast('Country updated 🌍');
+}
+function settingsSetWeekStart(v){
+  const s = settingsEnsure();
+  s.weekStart = String(v) === '1' ? 1 : 0;
+  if(typeof saveData === 'function') saveData();
+  if(typeof renderAll === 'function') renderAll();
 }
 
 /* ---------------- THEME (DARK MODE) ---------------- */
@@ -263,6 +303,11 @@ function sanitizeBackup(d){
     });
   }
 
+  if(!d.settings || typeof d.settings !== 'object') d.settings = {};
+  else {
+    if(typeof d.settings.timeZone !== 'string') d.settings.timeZone = '';
+    d.settings.weekStart = d.settings.weekStart === 1 ? 1 : 0;
+  }
   if(!d.dailyLog || typeof d.dailyLog !== 'object') d.dailyLog = {};
   for(const k in d.dailyLog){
     const e = d.dailyLog[k];

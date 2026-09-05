@@ -61,12 +61,12 @@ function renderRunningBanner(force){
 }
 
 function computeCurrentStreak(){
-  const now = new Date();
+  const now = zoneTodayDate();
   let streak = 0;
   for(let d=0; d<365; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
     const key = todayKey(day);
-    const seconds = (key===todayKey(now)) ? getTodaySnapshot().total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
+    const seconds = (key===todayKey()) ? getTodaySnapshot().total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
     if(seconds>0) streak++;
     else break;
   }
@@ -74,8 +74,8 @@ function computeCurrentStreak(){
 }
 
 function computeSubjectStreak(subjectId){
-  const now = new Date();
-  const todayK = todayKey(now);
+  const now = zoneTodayDate();
+  const todayK = todayKey();
   const todaySnap = getTodaySnapshot();
   let streak = 0;
   for(let d=0; d<365; d++){
@@ -511,7 +511,7 @@ const CAL_SUBJECT_COLORS = SUBJECT_GRAPH_COLORS;
 // lecture-timer seconds (dailyLog + today snapshot) plus global study minutes.
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const WEEK_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-let monthCalMonth = (new Date()).getMonth();
+let monthCalMonth = zoneTodayDate().getMonth();
 
 function monthCalMinutesFor(key, todayK, todaySnap){
   let mins = 0;
@@ -546,7 +546,7 @@ function calGoToday(){
   calTooltipPinned = false;
   calTooltipPinnedKey = null;
   hideCalTooltip();
-  goToMonth((new Date()).getMonth());
+  goToMonth(zoneTodayDate().getMonth());
 }
 function goToMonth(month){
   const viewport = document.getElementById('studyMonthViewport');
@@ -562,7 +562,7 @@ function renderCalendar(){
   const track = document.getElementById('studyMonthTrack');
   const viewport = document.getElementById('studyMonthViewport');
   if(!track || !viewport) return;
-  const now = new Date(); now.setHours(0,0,0,0);
+  const now = zoneTodayDate();
   const year = now.getFullYear();
   const todayK = todayKey(now);
   const todaySnap = getTodaySnapshot();
@@ -578,8 +578,10 @@ function renderCalendar(){
 
     const first = new Date(year, month, 1);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const firstSundayIndex = first.getDay();
-    const weeks = Math.ceil((firstSundayIndex + daysInMonth) / 7);
+    // Week start follows Settings → Country & time (0 = Sunday, 1 = Monday).
+    const weekStart = (typeof appWeekStart === 'function') ? appWeekStart() : 0;
+    const firstDowIndex = (first.getDay() - weekStart + 7) % 7;
+    const weeks = Math.ceil((firstDowIndex + daysInMonth) / 7);
 
     let active = 0;
     for(let day = 1; day <= daysInMonth; day++){
@@ -597,7 +599,8 @@ function renderCalendar(){
 
     const labels = document.createElement('div');
     labels.className = 'month-weekdays';
-    WEEK_NAMES.forEach(name => { const s = document.createElement('span'); s.textContent = name; labels.appendChild(s); });
+    const orderedWeekNames = WEEK_NAMES.map((_, i) => WEEK_NAMES[(i + weekStart) % 7]);
+    orderedWeekNames.forEach(name => { const s = document.createElement('span'); s.textContent = name; labels.appendChild(s); });
     wrap.appendChild(labels);
 
     const grid = document.createElement('div');
@@ -607,7 +610,7 @@ function renderCalendar(){
 
     const totalCells = weeks * 7;
     for(let i = 0; i < totalCells; i++){
-      const dayNumber = i - firstSundayIndex + 1;
+      const dayNumber = i - firstDowIndex + 1;
       const cell = document.createElement('div');
       cell.className = 'month-cell';
       if(dayNumber < 1 || dayNumber > daysInMonth){
@@ -712,11 +715,10 @@ function showCalTooltip(evt, key, pin){
 
   const tip = document.getElementById('calTooltip');
   if(!tip) return;
-  const now = new Date();
   const [y,m,d] = key.split('-').map(Number);
   const dateObj = new Date(y, m-1, d);
   const label = dateObj.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'});
-  const isToday = key === todayKey(now);
+  const isToday = key === todayKey();
   const entry = isToday ? getTodaySnapshot() : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key] : {total:0, bySubject:{}});
   const total = entry.total || 0;
 
@@ -774,7 +776,7 @@ function getGlobalStudyData(){
 }
 function saveGlobalStudyData(d){ localStorage.setItem(GLOBAL_STUDY_KEY, JSON.stringify(d)); }
 function globalStudyMinutesFor(k){ return Math.max(0, Number((getGlobalStudyData())[k]) || 0); }
-function todayStudyKey(){ const n=new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'); }
+function todayStudyKey(){ return todayKey(); }
 function globalStudyLevel(mins){
   if(mins<=0) return 0;
   if(mins<30) return 1;

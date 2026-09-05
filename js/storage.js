@@ -75,6 +75,7 @@ function normalizeLoadedData(parsed){
   if(!data.habits) data.habits = { entries: {} };
   if(!data.habits.entries) data.habits.entries = {};
   if(!data.priorityPlanner) data.priorityPlanner = { byDate: {} };
+  if(!data.settings || typeof data.settings !== 'object') data.settings = {};
   if(!data.updatedAt) data.updatedAt = 0;
   const ppMigrated = ppEnsure();
   foldersEnsure();
@@ -237,7 +238,7 @@ function showView(view){
 }
 
 function habitKey(d){
-  d = d || new Date();
+  if(!d) return todayKey();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 
@@ -253,7 +254,7 @@ function setHabitEntry(dateKey){
 }
 
 async function toggleHabit(dateKey, type, checked){
-  const today = habitKey(new Date());
+  const today = habitKey();
   if(dateKey !== today){
     renderHabitsPage();
     showToast('You can only update today\'s goal');
@@ -270,7 +271,7 @@ async function toggleHabit(dateKey, type, checked){
 // on every keystroke while still flushing within 500ms of the last edit.
 let habitNoteSaveTimer = null;
 async function saveHabitNote(dateKey, type, value){
-  const today = habitKey(new Date());
+  const today = habitKey();
   if(dateKey !== today) return;
   const entry = setHabitEntry(dateKey);
   if(type === 'gym') entry.gymNote = value;
@@ -281,7 +282,7 @@ async function saveHabitNote(dateKey, type, value){
 
 function getHabitSeries(days){
   const points = [];
-  const now = new Date();
+  const now = zoneTodayDate();
   for(let i=days-1;i>=0;i--){
     const d = new Date(now);
     d.setDate(d.getDate()-i);
@@ -301,7 +302,7 @@ function renderHabitsPage(){
   const consistencyEl = document.getElementById('habitConsistency');
   if(!grid || !chartWrap) return;
 
-  const now = new Date();
+  const now = zoneTodayDate();
   const days = [];
   for(let i=0;i<7;i++){
     const d = new Date(now);
@@ -312,7 +313,9 @@ function renderHabitsPage(){
   const todayKeyValue = habitKey(now);
   const clockEl = document.getElementById('habitClock');
   if(clockEl){
-    clockEl.textContent = now.toLocaleString(undefined, {weekday:'long', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const zp = zonedParts();
+    const sec = String(new Date().getSeconds()).padStart(2,'0');
+    clockEl.textContent = now.toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'}) + `, ${String(zp.h).padStart(2,'0')}:${String(zp.min).padStart(2,'0')}:${sec}`;
   }
   let gymStreak = 0;
   let readingStreak = 0;

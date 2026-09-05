@@ -20,7 +20,8 @@ function demoDateKey(d){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 function demoDaysAgo(n){
-  const d = new Date(); d.setDate(d.getDate()-n); return d;
+  const d = (typeof zoneTodayDate === 'function') ? zoneTodayDate() : new Date();
+  d.setDate(d.getDate()-n); return d;
 }
 function demoMin(sec){ return sec; } // stored as seconds
 
@@ -141,7 +142,7 @@ function buildDemoData(){
   }
 
   // Priority planner — today's plan with two lecture-linked items + one free task.
-  const todayStr = demoDateKey(new Date());
+  const todayStr = demoDateKey(demoDaysAgo(0));
   const tomorrowStr = demoDateKey(demoDaysAgo(-1));
   const dbs = subjects[1]; // Database
   const dbsU = dbs.units[0];

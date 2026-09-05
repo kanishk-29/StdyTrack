@@ -24,7 +24,7 @@ function formatPct(p){
 // ---------------- EXAM COUNTDOWN & PACING ----------------
 function examPacing(s){
   if(!s.examDate) return null;
-  const now = new Date();
+  const now = zoneTodayDate();
   const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const exam = new Date(s.examDate + 'T00:00:00');
   const daysLeft = Math.ceil((exam - today0) / 86400000);

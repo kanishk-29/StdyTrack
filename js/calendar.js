@@ -493,13 +493,13 @@ function renderSidebar(){
 
 // ---- "Your Subjects" folder-page header: greeting + live clock + 4 stat cards ----
 function computeGroupStreak(subjectIds){
-  const now = new Date();
+  const now = zoneTodayDate();
   const todaySnap = getTodaySnapshot();
   let streak = 0;
   for(let d=0; d<365; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
     const key = todayKey(day);
-    const isToday = key===todayKey(now);
+    const isToday = key===todayKey();
     const bySubject = isToday ? (todaySnap.bySubject||{}) : ((data.dailyLog && data.dailyLog[key] && data.dailyLog[key].bySubject) ? data.dailyLog[key].bySubject : {});
     const seconds = subjectIds.reduce((a,id)=>a+(bySubject[id]||0), 0);
     if(seconds>0) streak++; else break;
@@ -508,8 +508,9 @@ function computeGroupStreak(subjectIds){
 }
 
 function folderStatsHeaderHtml(subjects){
-  const now = new Date();
-  const h = now.getHours();
+  const zp = zonedParts();
+  const now = zoneTodayDate();
+  const h = zp.h;
   const greeting = h<12 ? 'Good Morning' : h<17 ? 'Good Afternoon' : 'Good Evening';
   const wave = h<12 ? '👋' : h<17 ? '☀️' : '🌙';
   const namePart = (typeof MASCOT_NAME !== 'undefined' && MASCOT_NAME && MASCOT_NAME !== 'friend') ? `, ${escapeHtml(MASCOT_NAME)}` : '';
@@ -624,10 +625,10 @@ function startFolderClock(){
     const mEl = document.getElementById('folderClockM');
     const sEl = document.getElementById('folderClockS');
     if(!hEl || !mEl || !sEl){ stopFolderClock(); return; }
-    const now = new Date();
-    hEl.textContent = String(now.getHours()).padStart(2,'0');
-    mEl.textContent = String(now.getMinutes()).padStart(2,'0');
-    sEl.textContent = String(now.getSeconds()).padStart(2,'0');
+    const zp = zonedParts();
+    hEl.textContent = String(zp.h).padStart(2,'0');
+    mEl.textContent = String(zp.min).padStart(2,'0');
+    sEl.textContent = String(new Date().getSeconds()).padStart(2,'0');
   };
   tick();
   folderClockTimer = setInterval(tick, 1000);

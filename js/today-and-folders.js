@@ -30,7 +30,7 @@ function ppEnsure(){
   }
   return migrated;
 }
-function ppTodayKey(){ return todayKey(new Date()); }
+function ppTodayKey(){ return todayKey(); }
 
 // ---------------- SUBJECT FOLDERS (departments) ----------------
 // Groups subjects into folders — "Semester 3", "Personal Projects", "Self
@@ -186,8 +186,8 @@ function promptNewFolderFromCard(){
   showToast('Folder created 📁');
 }
 
-function ppTomorrowKey(){ const d = new Date(); d.setDate(d.getDate()+1); return todayKey(d); }
-function ppYesterdayKey(){ const d = new Date(); d.setDate(d.getDate()-1); return todayKey(d); }
+function ppTomorrowKey(){ const d = zoneTodayDate(); d.setDate(d.getDate()+1); return todayKey(d); }
+function ppYesterdayKey(){ const d = zoneTodayDate(); d.setDate(d.getDate()-1); return todayKey(d); }
 function ppList(key){
   ppEnsure();
   if(!data.priorityPlanner.byDate[key]) data.priorityPlanner.byDate[key] = [];
@@ -224,7 +224,7 @@ function ppItemStatus(item){
 function formatTimeLabel(t){
   if(!t) return '';
   const [h,m] = t.split(':').map(Number);
-  const d = new Date(); d.setHours(h,m,0,0);
+  const d = zoneTodayDate(); d.setHours(h,m,0,0);
   return d.toLocaleTimeString(undefined,{hour:'2-digit', minute:'2-digit'});
 }
 
@@ -539,7 +539,7 @@ function ppProgressCardHtml(){
   const todaySnap = getTodaySnapshot();
   const days = [];
   for(let i=6;i>=0;i--){
-    const d = new Date(); d.setDate(d.getDate()-i);
+    const d = zoneTodayDate(); d.setDate(d.getDate()-i);
     const k = todayKey(d);
     const secs = k===todayKey() ? todaySnap.total : ((data.dailyLog && data.dailyLog[k]) ? data.dailyLog[k].total : 0);
     days.push({ label: d.toLocaleDateString(undefined,{weekday:'narrow'}), mins: Math.round(secs/60), isToday: k===todayKey() });
@@ -623,8 +623,7 @@ function startFocusFromPlanner(itemId){
 
 function ppNextUpItem(){
   const items = ppSortedItems(ppTodayKey()).filter(i=>!i.done);
-  const now = new Date();
-  const nowMins = now.getHours()*60 + now.getMinutes();
+  const nowMins = zoneNowMinutes();
   const withTime = items.filter(i=>i.time);
   const upcoming = withTime.find(i=>{
     const [h,m] = i.time.split(':').map(Number);
@@ -643,10 +642,12 @@ function ppNextUpHtml(){
   }
   let countdown = '';
   if(item.time){
-    const now = new Date();
     const [h,m] = item.time.split(':').map(Number);
-    const target = new Date(); target.setHours(h,m,0,0);
-    const diffMin = Math.round((target-now)/60000);
+    const target = zoneTodayDate(); target.setHours(h,m,0,0);
+    // "Now" on the same day-grid, carrying the selected country's wall-clock.
+    const nowWall = zoneTodayDate();
+    const zp = zonedParts(); nowWall.setHours(zp.h, zp.min, 0, 0);
+    const diffMin = Math.round((target-nowWall)/60000);
     if(diffMin <= 0) countdown = 'Now';
     else{
       const hh = Math.floor(diffMin/60), mm = diffMin%60;
@@ -746,10 +747,11 @@ function deleteEvent(id){
 }
 
 function ppMonthCalHtml(){
-  const base = new Date(); base.setDate(1); base.setMonth(base.getMonth()+ppCalMonthOffset);
+  const base = zoneTodayDate(); base.setDate(1); base.setMonth(base.getMonth()+ppCalMonthOffset);
   const year = base.getFullYear(), month = base.getMonth();
   const monthLabel = base.toLocaleDateString(undefined,{month:'long', year:'numeric'});
-  const firstDow = new Date(year,month,1).getDay();
+  const ws = (typeof appWeekStart === 'function') ? appWeekStart() : 0;
+  const firstDow = (new Date(year,month,1).getDay() - ws + 7) % 7;
   const daysInMonth = new Date(year,month+1,0).getDate();
   const daysInPrevMonth = new Date(year,month,0).getDate();
   const todayK = ppTodayKey();
@@ -776,7 +778,7 @@ function ppMonthCalHtml(){
       <span class="ppmc-month">${monthLabel}</span>
       <button type="button" onclick="ppShiftMonth(1)">›</button>
     </div>
-    <div class="ppmc-grid ppmc-dow"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
+    <div class="ppmc-grid ppmc-dow">${((typeof appWeekStart === 'function') && appWeekStart() === 1) ? '<div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>' : '<div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>'}</div>
     <div class="ppmc-grid">${cells}</div>
   </div>`;
 }
@@ -795,7 +797,7 @@ function ppQuoteHtml(){
 }
 
 function ppGreetingHtml(){
-  const h = new Date().getHours();
+  const h = zonedParts().h;
   const greeting = h<12 ? 'Good Morning' : h<17 ? 'Good Afternoon' : 'Good Evening';
   const wave = h<12 ? '👋' : h<17 ? '☀️' : '🌙';
   const namePart = (typeof MASCOT_NAME !== 'undefined' && MASCOT_NAME && MASCOT_NAME !== 'friend') ? `, ${escapeHtml(MASCOT_NAME)}` : '';
@@ -816,7 +818,7 @@ function ppDateStripHtml(){
   const todayK = ppTodayKey();
   const cells = [];
   for(let i=0;i<14;i++){
-    const d = new Date(); d.setDate(d.getDate()+i);
+    const d = zoneTodayDate(); d.setDate(d.getDate()+i);
     const key = todayKey(d);
     const hasItems = (data.priorityPlanner.byDate[key]||[]).length > 0;
     const isSelected = key === ppSelectedDate;
@@ -897,15 +899,14 @@ function setChartRange(days, btn){
 // Total seconds studied on a given day.
 function getDayTotalSeconds(dateObj){
   const key = todayKey(dateObj);
-  const now = new Date();
-  return (key===todayKey(now)) ? getTodaySnapshot().total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
+  return (key===todayKey()) ? getTodaySnapshot().total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
 }
 
 function renderProgressChart(days){
   const wrap = document.getElementById('chartWrap');
   const legend = document.getElementById('chartLegend');
   if(!wrap) return;
-  const now = new Date();
+  const now = zoneTodayDate();
   const points = [];
   for(let i=days-1;i>=0;i--){
     const d = new Date(now);
@@ -974,7 +975,7 @@ function renderProgressChart(days){
   }).join('');
 
   const dotsHtml = coords.map(c=>{
-    const isToday = c.key===todayKey(now);
+    const isToday = c.key===todayKey();
     const label = c.date.toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'});
     const timeLabel = c.seconds>0 ? formatHuman(c.seconds) : 'No study logged';
     return `<circle class="chart-dot ${isToday?'is-today':''}" cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="4"><title>${label} — ${timeLabel}</title></circle>`;
@@ -1034,8 +1035,8 @@ function smoothPath(coords){
 }
 
 function getSubjectSeries(days){
-  const now = new Date();
-  const todayK = todayKey(now);
+  const now = zoneTodayDate();
+  const todayK = todayKey();
   const todaySnap = getTodaySnapshot();
   return (data.subjects||[]).map((s,i)=>{
     const color = SUBJECT_GRAPH_COLORS[i % SUBJECT_GRAPH_COLORS.length];
@@ -1054,7 +1055,7 @@ function getSubjectSeries(days){
 
 function rangeTotal(days){
   let sum = 0;
-  const now = new Date();
+  const now = zoneTodayDate();
   for(let d=0; d<days; d++){
     const day = new Date(now);
     day.setDate(day.getDate()-d);
@@ -1066,7 +1067,7 @@ function rangeTotal(days){
 function renderKPIStats(){
   const el = document.getElementById('acKpiRow');
   if(!el) return;
-  const today = getDayTotalSeconds(new Date());
+  const today = getDayTotalSeconds(zoneTodayDate());
   const week = rangeTotal(7);
   const month = rangeTotal(30);
   el.innerHTML = `
@@ -1246,7 +1247,7 @@ function renderQuickStats(rows, days){
   if(!el) return;
 
   // Current streak: consecutive days (walking back from today) with any study logged.
-  const now = new Date();
+  const now = zoneTodayDate();
   let streak = 0;
   for(let d=0; d<365; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
@@ -1305,7 +1306,7 @@ function renderSubjectGraphsFromRows(rows){
   if(!container) return;
   if(!data.subjects || !data.subjects.length){ container.innerHTML = ''; return; }
 
-  const todayK = todayKey(new Date());
+  const todayK = todayKey();
   const grandTotal = rows.reduce((a,r)=>a+r.total,0);
 
   container.innerHTML = rows.map(({s, color, points, total}, i)=>{
@@ -1809,12 +1810,13 @@ function fdStopClock(){
 function fdTickClock(){
   const el = document.getElementById('folderDashboard');
   if(!el || el.style.display === 'none'){ fdStopClock(); return; }
-  const now = new Date();
+  const zp = zonedParts();
+  const now = zoneTodayDate();
   const hh = document.getElementById('hh'), mm = document.getElementById('mm'), ss = document.getElementById('ss');
   const dl = document.getElementById('dateLabel'), dy = document.getElementById('dayLabel');
-  if(hh) hh.textContent = String(now.getHours()).padStart(2,'0');
-  if(mm) mm.textContent = String(now.getMinutes()).padStart(2,'0');
-  if(ss){ ss.textContent = String(now.getSeconds()).padStart(2,'0');
+  if(hh) hh.textContent = String(zp.h).padStart(2,'0');
+  if(mm) mm.textContent = String(zp.min).padStart(2,'0');
+  if(ss){ ss.textContent = String(new Date().getSeconds()).padStart(2,'0');
     /* flip effect: only force the reflow when the user wants motion */
     let reduce = false;
     try{ reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){}
@@ -1997,7 +1999,7 @@ function fdSetFilter(f){
 }
 
 function fdGreeting(){
-  const h = new Date().getHours();
+  const h = zonedParts().h;
   if(h < 12) return 'Good morning';
   if(h < 17) return 'Good afternoon';
   return 'Good evening';

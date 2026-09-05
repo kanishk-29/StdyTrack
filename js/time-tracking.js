@@ -24,8 +24,84 @@ function findRunningLecture(){
   return null;
 }
 
+// ---- App country / timezone (Settings → Country & time) ----
+// The whole app keys "today" off this: calendar highlight, streaks,
+// planner today/tomorrow, habits, and analytics all follow the selected
+// country instead of the device clock.
+const COUNTRY_ZONES = [
+  { label:'Device default', tz:'' },
+  { label:'India', tz:'Asia/Kolkata' },
+  { label:'Pakistan', tz:'Asia/Karachi' },
+  { label:'Bangladesh', tz:'Asia/Dhaka' },
+  { label:'Nepal', tz:'Asia/Kathmandu' },
+  { label:'Sri Lanka', tz:'Asia/Colombo' },
+  { label:'UAE', tz:'Asia/Dubai' },
+  { label:'Saudi Arabia', tz:'Asia/Riyadh' },
+  { label:'Singapore / Malaysia', tz:'Asia/Singapore' },
+  { label:'Japan', tz:'Asia/Tokyo' },
+  { label:'South Korea', tz:'Asia/Seoul' },
+  { label:'China', tz:'Asia/Shanghai' },
+  { label:'Australia (Sydney)', tz:'Australia/Sydney' },
+  { label:'New Zealand', tz:'Pacific/Auckland' },
+  { label:'UK', tz:'Europe/London' },
+  { label:'Germany / France / Spain', tz:'Europe/Berlin' },
+  { label:'US Eastern', tz:'America/New_York' },
+  { label:'US Central', tz:'America/Chicago' },
+  { label:'US Mountain', tz:'America/Denver' },
+  { label:'US Pacific', tz:'America/Los_Angeles' },
+  { label:'Canada (Toronto)', tz:'America/Toronto' },
+  { label:'Brazil (São Paulo)', tz:'America/Sao_Paulo' },
+  { label:'South Africa', tz:'Africa/Johannesburg' },
+  { label:'Nigeria', tz:'Africa/Lagos' },
+];
+function appTimeZone(){
+  try{
+    const tz = data && data.settings && data.settings.timeZone;
+    if(tz && COUNTRY_ZONES.some(c=>c.tz===tz)) return tz;
+  }catch(e){}
+  return '';
+}
+// 0 = week starts Sunday (US), 1 = week starts Monday (most other countries).
+function appWeekStart(){
+  try{
+    const w = data && data.settings && data.settings.weekStart;
+    return w === 1 ? 1 : 0;
+  }catch(e){ return 0; }
+}
+// Y/M/D (and wall-clock H/M) of an instant in the selected country.
+function zonedParts(date){
+  const d = date || new Date();
+  const tz = appTimeZone();
+  if(!tz) return { y:d.getFullYear(), m:d.getMonth()+1, day:d.getDate(), h:d.getHours(), min:d.getMinutes() };
+  try{
+    const parts = new Intl.DateTimeFormat('en-CA',{ timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false }).formatToParts(d);
+    const g = t => { const p = parts.find(x=>x.type===t); return p ? Number(p.value) : 0; };
+    let h = g('hour'); if(h === 24) h = 0; // en-CA can emit 24:xx at midnight
+    return { y:g('year'), m:g('month'), day:g('day'), h, min:g('minute') };
+  }catch(e){
+    return { y:d.getFullYear(), m:d.getMonth()+1, day:d.getDate(), h:d.getHours(), min:d.getMinutes() };
+  }
+}
+// "Today" in the selected country, as a device-local Date at noon (noon
+// avoids DST-midnight edges when doing setDate() day arithmetic on it).
+function zoneTodayDate(){
+  const p = zonedParts();
+  return new Date(p.y, p.m-1, p.day, 12, 0, 0);
+}
+// Wall-clock minutes right now in the selected country (for reminders).
+function zoneNowMinutes(){
+  const p = zonedParts();
+  return p.h*60 + p.min;
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+
 function todayKey(d){
-  d = d || new Date();
+  if(!d){
+    // Bare todayKey() always means "today in the selected country".
+    const p = zonedParts();
+    return p.y+'-'+pad2(p.m)+'-'+pad2(p.day);
+  }
+  // Explicit dates stay pure: their Y/M/D are already fixed.
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 

@@ -460,7 +460,7 @@ function mascotPickLine(mood, ctx){
     if(c.achievableLine) return mascotResolveTokens(c.achievableLine, c);
     const roll = Math.random();
     if(roll < 0.15){
-      const h = new Date().getHours();
+      const h = zonedParts().h;
       const timeBank = h>=5&&h<12 ? 'morning' : h>=12&&h<17 ? 'afternoon' : h>=17&&h<22 ? 'night' : 'lateNight';
       return mascotResolveTokens(mascotPickFromPool(MASCOT_LINES[timeBank], timeBank), c);
     }
@@ -504,9 +504,9 @@ const DAY_HOUR_WEIGHTS = [
   1.01,0.96,0.92,0.83,0.69,0.58
 ];
 function todayProgressFraction(){
-  const now = new Date();
-  const h = now.getHours();
-  const minuteFrac = now.getMinutes()/60 + now.getSeconds()/3600;
+  const zp = zonedParts();
+  const h = zp.h;
+  const minuteFrac = zp.min/60 + new Date().getSeconds()/3600;
   const totalWeight = DAY_HOUR_WEIGHTS.reduce((a,b)=>a+b,0);
   let acc = 0;
   for(let i=0;i<h;i++) acc += DAY_HOUR_WEIGHTS[i];
@@ -515,13 +515,13 @@ function todayProgressFraction(){
 }
 
 function computeGlobalStreak(){
-  const now = new Date();
+  const now = zoneTodayDate();
   const todaySnap = getTodaySnapshot();
   let streak = 0;
   for(let d=0; d<365; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
     const key = todayKey(day);
-    const seconds = (key===todayKey(now)) ? todaySnap.total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
+    const seconds = (key===todayKey()) ? todaySnap.total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
     if(seconds>0) streak++;
     else break;
   }
@@ -533,7 +533,7 @@ function computeGlobalStreak(){
 // comparisons instead of piling on when someone's already struggling.
 function mascotBadDayStreak(){
   let streak = 0;
-  const now = new Date();
+  const now = zoneTodayDate();
   for(let d=1; d<=7; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
     const key = todayKey(day);
@@ -561,7 +561,7 @@ function mascotAchievableGoalLine(){
 }
 
 function mascotComputeMood(){
-  const now = new Date();
+  const now = zoneTodayDate();
   const todaySeconds = getTodaySnapshot().total;
 
   let recentTotal = 0;
@@ -1295,7 +1295,7 @@ function mascotSetupSuspicion(){
 // greeting, whenever there's something specific worth mentioning.
 function mascotShowYesterdayMemory(){
   try{
-    const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+    const yesterday = zoneTodayDate(); yesterday.setDate(yesterday.getDate()-1);
     const yKey = todayKey(yesterday);
     const yLog = (data.dailyLog && data.dailyLog[yKey]) ? data.dailyLog[yKey] : null;
     const todaySnap = getTodaySnapshot();
@@ -1372,7 +1372,7 @@ function mascotCooldownOk(cat){
 
 // ---------- Longest streak (scans real history) ----------
 function mascotLongestStreak(){
-  const now = new Date(); now.setHours(0,0,0,0);
+  const now = zoneTodayDate();
   let longest = 0, run = 0;
   for(let d=0; d<800; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
@@ -1386,7 +1386,7 @@ function mascotLongestStreak(){
 
 // ---------- Per-subject last-studied / neglect ----------
 function mascotDaysSinceSubject(subjectId){
-  const now = new Date(); now.setHours(0,0,0,0);
+  const now = zoneTodayDate();
   const log = data.dailyLog || {};
   for(let d=0; d<400; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
@@ -1439,7 +1439,7 @@ function mascotBuildContext(){
 
   return {
     user: { name: MASCOT_NAME },
-    now: { hour: new Date().getHours() },
+    now: { hour: zonedParts().h },
     focusMode: !!focusRef,
     session: {
       active: !!sessionRef,
@@ -1802,7 +1802,7 @@ function mascotLastStudiedMs(subjectId){
 
 // Trend: recent 3-day minutes vs previous 3-day minutes from dailyLog.
 function mascotSubjectTrend(daily, subjectId){
-  const now = new Date();
+  const now = zoneTodayDate();
   const w1 = {a:0, b:0};
   for(let i=0;i<3;i++){ // recent window
     const d = new Date(now); d.setDate(now.getDate()-i);
