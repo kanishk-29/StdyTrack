@@ -1106,3 +1106,138 @@
 }
 [data-theme="dark"] .dash-resume-btn{background:#090c0c!important}
 [data-theme="dark"]::-webkit-scrollbar-track{background:#010202!important}
+
+/* ==========================================================
+   LAYOUT FIXES — match mockup positioning exactly
+   ========================================================== */
+
+/* Scorecard: two-column layout matching mockup hero-grid */
+.scorecard{
+  display:grid!important;
+  grid-template-columns:1fr auto;
+  align-items:start;
+  gap:24px;
+  padding:38px 34px 32px!important;
+}
+.scorecard > div:first-child{
+  display:flex;flex-direction:column;gap:4px;
+}
+.scorecard-right{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  gap:12px!important;
+  margin-top:0!important;
+}
+.scorecard .streak{
+  order:-1;
+  margin-bottom:4px;
+}
+
+/* Activity panel: calendar positioned right on desktop */
+@media(min-width:921px){
+  .activity{
+    display:grid;
+    grid-template-columns:1fr min(46%,520px);
+    gap:0;
+    padding:34px!important;
+  }
+  .activity > *:not(.study-calendar-glass){
+    grid-column:1;
+  }
+  .study-calendar-glass{
+    grid-column:2!important;
+    grid-row:1/99;
+    position:relative!important;
+    right:auto!important;
+    top:auto!important;
+    width:100%!important;
+    margin:0!important;
+    align-self:start;
+  }
+}
+@media(max-width:920px){
+  .activity{
+    display:block!important;
+    padding:28px!important;
+  }
+  .study-calendar-glass{
+    position:relative!important;
+    right:auto!important;
+    top:auto!important;
+    width:100%!important;
+    margin:24px 0 0!important;
+  }
+}
+
+/* Calendar cells: ensure colors show */
+.study-calendar-glass .cal-day{
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:12px;
+  border-radius:8px;
+}
+.study-calendar-glass .cal-day.level-1,
+.study-calendar-glass .cal-day.l1{
+  background:linear-gradient(145deg,rgba(71,190,137,.34),rgba(71,190,137,.13))!important;
+  color:#2e7555!important;
+}
+.study-calendar-glass .cal-day.level-2,
+.study-calendar-glass .cal-day.l2{
+  background:linear-gradient(145deg,rgba(70,184,131,.45),rgba(70,184,131,.18))!important;
+  color:#277b59!important;
+}
+.study-calendar-glass .cal-day.level-3,
+.study-calendar-glass .cal-day.l3{
+  background:linear-gradient(145deg,rgba(91,123,232,.50),rgba(112,91,220,.23))!important;
+  color:#4f52aa!important;
+}
+.study-calendar-glass .cal-day.level-4,
+.study-calendar-glass .cal-day.l4{
+  background:linear-gradient(145deg,rgba(124,102,239,.68),rgba(67,171,218,.30))!important;
+  color:#403d89!important;
+}
+.study-calendar-glass .cal-day.today{
+  outline:2px solid rgba(221,114,95,.72)!important;
+  outline-offset:2px;
+}
+
+/* Today-time-wrap layout */
+.today-time-wrap{
+  display:flex!important;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+/* Quick grid: match mockup 5-column */
+.dash-quick-grid{
+  display:grid!important;
+  grid-template-columns:repeat(5,1fr)!important;
+  gap:12px!important;
+}
+
+/* Course cards: match mockup colored gradient tops */
+.dash-course-card:nth-child(5n+1) .dash-course-thumb{background:linear-gradient(160deg,#ffd30c,#8d7c32)!important}
+.dash-course-card:nth-child(5n+2) .dash-course-thumb{background:linear-gradient(160deg,#4666e1,#59658f)!important}
+.dash-course-card:nth-child(5n+3) .dash-course-thumb{background:linear-gradient(160deg,#27c967,#4a8b69)!important}
+.dash-course-card:nth-child(5n+4) .dash-course-thumb{background:linear-gradient(160deg,#22c7d6,#4f99a0)!important}
+.dash-course-card:nth-child(5n+5) .dash-course-thumb{background:linear-gradient(160deg,#ec4ea5,#9c4e77)!important}
+
+/* Priority list: match mockup red/purple */
+.dash-priority-item.urgent{
+  background:linear-gradient(90deg,#bd2d30,#eb4544)!important;
+  color:#fff!important;
+  border-radius:14px!important;
+  padding:0 16px!important;
+  min-height:48px!important;
+}
+.dash-priority-item.normal{
+  background:linear-gradient(90deg,#6350ba,#9a69d6)!important;
+  color:#fff!important;
+  border-radius:14px!important;
+  padding:0 16px!important;
+  min-height:48px!important;
+}
