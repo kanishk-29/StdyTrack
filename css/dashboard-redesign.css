@@ -154,6 +154,17 @@ body {
 /* ============================================================
    3. HERO SCORECARD (PROGRESS REPORT)
    ============================================================ */
+
+/* Reset old animated left-bar gradient — new design uses full-width glass surface */
+.scorecard-gradient {
+  display: none !important;
+}
+
+/* Override old header-search.css ::before top-shimmer — new ::after handles the sheen */
+.scorecard::before {
+  display: none !important;
+}
+
 .scorecard {
   position: relative;
   overflow: hidden;
@@ -200,6 +211,7 @@ body {
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--au-ink);
+  font-family: 'Inter', system-ui, sans-serif;
 }
 .scorecard .user-welcome {
   color: var(--au-muted);
@@ -218,10 +230,17 @@ body {
   font-weight: 900;
   letter-spacing: -0.035em;
   color: var(--au-ink);
+  /* Reset gradient-text from header-search.css */
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
   line-height: 1;
+  font-family: inherit;
 }
 .scorecard .big-score .slash {
   color: var(--au-subtle);
+  -webkit-text-fill-color: var(--au-subtle);
   font-weight: 400;
   margin: 0 4px;
 }
@@ -715,11 +734,40 @@ body {
   letter-spacing: -0.02em;
   color: var(--au-ink);
   margin: 0 0 14px;
+  font-family: 'Inter', system-ui, sans-serif;
 }
+
+/* Last saved timestamp in scorecard */
+.last-saved {
+  font-size: 11px;
+  color: var(--au-soft);
+  margin-top: 4px;
+}
+
+/* Courses empty state */
+.dash-courses-empty {
+  color: var(--au-muted);
+  font-size: 13px;
+  padding: 24px;
+  text-align: center;
+  background: var(--au-glass-soft);
+  border: 1px dashed var(--au-line);
+  border-radius: 16px;
+}
+
 .dash-courses-scroll {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
+}
+
+/* Override timer.css flex-scroll layout which may still win at large viewports */
+@media (min-width: 481px) {
+  .dash-courses-scroll {
+    display: grid !important;
+    overflow-x: visible !important;
+    flex-direction: unset !important;
+  }
 }
 .dash-course-card {
   position: relative;
@@ -745,7 +793,69 @@ body {
   overflow: hidden;
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
+  display: flex;
+  align-items: flex-end;
+  padding: 10px 12px;
 }
+.dash-course-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.04) 30%, rgba(0,0,0,0.42));
+  pointer-events: none;
+}
+.dash-course-thumb-label {
+  position: relative;
+  z-index: 2;
+  color: rgba(255,255,255,0.9);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dash-course-edit-wrap {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 3;
+}
+.dash-course-edit-btn {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: none; cursor: pointer;
+  background: rgba(0,0,0,0.38);
+  backdrop-filter: blur(4px);
+  color: rgba(255,255,255,0.8);
+  font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.16s ease, background 0.16s ease;
+}
+.dash-course-card:hover .dash-course-edit-btn,
+.dash-course-edit-wrap.menu-open .dash-course-edit-btn { opacity: 1; }
+.dash-course-edit-btn:hover { background: rgba(0,0,0,0.62); color: #fff; }
+.dash-course-edit-menu {
+  display: none;
+  position: absolute; top: 30px; left: 0;
+  background: var(--au-paper, #fff);
+  border: 1px solid var(--au-line);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  padding: 6px;
+  min-width: 154px;
+  flex-direction: column; gap: 2px;
+  backdrop-filter: blur(16px);
+  z-index: 10;
+}
+.dash-course-edit-wrap.menu-open .dash-course-edit-menu { display: flex; }
+.dash-course-edit-menu button {
+  display: flex; align-items: center; gap: 7px;
+  background: none; border: none; cursor: pointer;
+  text-align: left; padding: 7px 10px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; color: var(--au-ink);
+  white-space: nowrap;
+}
+.dash-course-edit-menu button:hover { background: var(--au-glass-soft); }
+.dash-course-edit-menu button.danger { color: #c94332; }
+
 .dash-course-pct {
   position: absolute;
   top: 10px;
@@ -1167,6 +1277,46 @@ body {
   background: rgba(255, 255, 255, 0.022) !important;
   border-color: rgba(255, 255, 255, 0.055) !important;
   box-shadow: none !important;
+}
+
+/* Dark Running Timer Banner */
+[data-theme="dark"] .running-timer-banner {
+  background: rgba(52, 30, 90, 0.68) !important;
+  border-color: rgba(122, 94, 255, 0.35) !important;
+  box-shadow: none !important;
+}
+[data-theme="dark"] .running-timer-banner.tier-warn {
+  background: rgba(80, 55, 10, 0.72) !important;
+  border-color: rgba(224, 171, 79, 0.45) !important;
+}
+[data-theme="dark"] .running-timer-banner.tier-alert {
+  background: rgba(90, 28, 14, 0.72) !important;
+  border-color: rgba(217, 96, 70, 0.50) !important;
+}
+
+/* Dark Edit Menu */
+[data-theme="dark"] .dash-course-edit-menu {
+  background: rgba(10, 14, 20, 0.96) !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.65) !important;
+}
+[data-theme="dark"] .dash-course-edit-menu button {
+  color: #f4f8fb !important;
+}
+[data-theme="dark"] .dash-course-edit-menu button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+[data-theme="dark"] .dash-course-edit-menu button.danger { color: #f87171 !important; }
+
+/* Dark empty states */
+[data-theme="dark"] .dash-courses-empty {
+  color: var(--au-muted) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Dark last-saved */
+[data-theme="dark"] .last-saved {
+  color: var(--au-soft) !important;
 }
 
 /* ============================================================
