@@ -115,6 +115,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <link rel="stylesheet" href="css/dashboard-redesign.css?v=71">
 <link rel="stylesheet" href="css/ultra-dark.css?v=71">
 <link rel="stylesheet" href="css/a11y.css?v=71">
+<link rel="stylesheet" href="css/back-nav.css?v=72">
 </head>
 <body>
 
@@ -946,6 +947,8 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 
 <div class="toast" id="toast"></div>
 
+<button type="button" id="navBackBtn" onclick="navBack()" aria-label="Go back" title="Go back">←</button>
+
 <script src="js/data.js?v=71"></script>
 <script src="js/demo.js?v=71"></script>
 <script src="js/today-and-folders.js?v=71"></script>
@@ -969,6 +972,7 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 <script src="js/init.js?v=71"></script>
 <script src="js/mascot.js?v=71"></script>
 <script src="js/login.js?v=71"></script>
+<script src="js/back-nav.js?v=72"></script>
 <script>
 // Micro-interactions: press states on quick tiles and course cards
 document.querySelectorAll('.dash-quick-tile, .dash-course-card, .dash-resume-btn').forEach(function(el){

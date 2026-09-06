@@ -1,0 +1,44 @@
+/* Unified back button:
+   one fixed, always-consistent back control that closes whatever surface is
+   open (modal, drawer, folder dashboard, subjects landing, focus, subject page)
+   and also works with the browser/hardware back button via history js. */
+#navBackBtn{
+  position:fixed;
+  left:16px;
+  bottom:max(88px, calc(env(safe-area-inset-bottom) + 84px));
+  z-index:3000;
+  width:46px; height:46px;
+  border-radius:16px;
+  border:1px solid rgba(35,43,61,.14);
+  background:rgba(255,252,248,.94);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  color:var(--ink,#232b3d);
+  font-family:'Inter',sans-serif;
+  font-size:20px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 18px rgba(35,43,61,.16);
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(10px) scale(.92);
+  pointer-events:none;
+  transition:opacity .18s ease, transform .18s ease, box-shadow .18s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+#navBackBtn.show{
+  opacity:1;
+  transform:none;
+  pointer-events:auto;
+}
+#navBackBtn:active{ transform:scale(.94); }
+#navBackBtn[title]::after{ display:none; }
+body.dark-mode #navBackBtn,
+html[data-theme="dark"] #navBackBtn{
+  background:rgba(30,36,48,.92);
+  color:#e6edf3;
+  border-color:rgba(255,255,255,.12);
+  box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+@media (prefers-reduced-motion: reduce){
+  #navBackBtn{ transition:none; }
+}
