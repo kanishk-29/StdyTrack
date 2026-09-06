@@ -141,24 +141,38 @@ function buildDemoData(){
     habitEntries[key] = { gym: i%3!==2, reading: i%4!==1, gymNote: i===0 ? 'Leg day + 20 min cardio' : '', readingNote: i===0 ? 'Chapter 3 of Deep Learning' : '' };
   }
 
-  // Priority planner — today's plan with two lecture-linked items + one free task.
+  // Priority planner — a full, realistic day: linked unfinished lectures
+  // (startable straight from the row), a completed lecture, and short free
+  // tasks spread across the semester + project subjects — so a reviewer
+  // instantly sees how a real day looked and feels the app "alive".
   const todayStr = demoDateKey(demoDaysAgo(0));
   const tomorrowStr = demoDateKey(demoDaysAgo(-1));
-  const dbs = subjects[1]; // Database
-  const dbsU = dbs.units[0];
+  const dbs = subjects[1]; const dbsU = dbs.units[0];  // Database · U1 ER & SQL
+  const dbsU2 = dbs.units[1];                          // Database · U2 Normalization
   const math = subjects[0]; const mathU = math.units[0];
-  // Point the "not done" plan item at an unfinished lecture, and the "done"
-  // item at a finished one, so the planner ↔ lecture completion stays truthful.
-  const pp1 = dbsU.lectures[dbsU.lectures.length - 1]; // DBMS Unit 1 last (incomplete)
-  const pp2 = mathU.lectures[0];                        // Math Unit 1 first (completed)
+  const mathU2 = math.units[1];                        // Math · U2 Statistics
+  // Point "not done" plan items at unfinished lectures and "done" items at
+  // finished ones, so the planner ↔ lecture completion stays truthful.
+  const pp1 = dbsU.lectures[dbsU.lectures.length - 1]; // DBMS U1 · Topic 4 (incomplete)
+  const pp2 = mathU.lectures[0];                       // Math U1 · Topic 1 (completed)
+  const pp3 = mathU2.lectures[mathU2.lectures.length - 1]; // Math U2 · Topic 3 (incomplete)
+  const pp4 = dbsU2.lectures[dbsU2.lectures.length - 1];   // DBMS U2 · Topic 2 (incomplete)
   const priorityPlanner = { byDate: {} };
   priorityPlanner.byDate[todayStr] = [
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Morning review — flash cards', done:true, link:null, estMinutes:20, level:'low', time:'08:00', type:'Task' },
     { id:'dp-'+Math.random().toString(36).slice(2,8), text: pp1.title, done:false, link:{ subjectId:dbs.id, unitId:dbsU.id, lectureId:pp1.id }, estMinutes:50, level:'high', time:'09:00', type:'Lecture' },
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text: pp3.title, done:false, link:{ subjectId:math.id, unitId:mathU2.id, lectureId:pp3.id }, estMinutes:45, level:'high', time:'10:30', type:'Lecture' },
     { id:'dp-'+Math.random().toString(36).slice(2,8), text: pp2.title, done:true, link:{ subjectId:math.id, unitId:mathU.id, lectureId:pp2.id }, estMinutes:60, level:'medium', time:'11:30', type:'Lecture' },
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Revise Design Patterns notes', done:false, link:null, estMinutes:30, level:'medium', time:'15:00', type:'Task' },
     { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Revise ER diagram symbols', done:false, link:null, estMinutes:30, level:'low', time:'16:00', type:'Task' },
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Normalization quick quiz', done:true, link:null, estMinutes:20, level:'medium', time:'17:00', type:'Task' },
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Portfolio — finish v1 styling', done:false, link:null, estMinutes:90, level:'high', time:'20:00', type:'Task' },
   ];
   priorityPlanner.byDate[tomorrowStr] = [
-    { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Start UML case study', done:false, link:null, estMinutes:45, level:'medium', time:'10:00', type:'Task' },
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text: pp4.title, done:false, link:{ subjectId:dbs.id, unitId:dbsU2.id, lectureId:pp4.id }, estMinutes:40, level:'high', time:'09:00', type:'Lecture' },
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Start UML case study', done:false, link:null, estMinutes:45, level:'medium', time:'10:30', type:'Task' },
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Deep Learning — chapter video + notes', done:false, link:null, estMinutes:60, level:'low', time:'14:00', type:'Task' },
+    { id:'dp-'+Math.random().toString(36).slice(2,8), text:'Weekly review & folder cleanup', done:false, link:null, estMinutes:25, level:'low', time:'18:00', type:'Task' },
   ];
 
   // Events — a couple of upcoming deadlines on the calendar.
