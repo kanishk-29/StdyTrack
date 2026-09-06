@@ -4,6 +4,10 @@
 
 /* ---- Full-screen glass subject page shell ---- */
 body.subject-page-active{ overflow:hidden; }
+/* Hide the mascot (floats bottom-right, z-200, clickable) on the subject
+   page — it can cover the right-aligned lecture ⋮ (three-dot) buttons on
+   narrower viewports and swallow their clicks. Rei returns when you exit. */
+body.subject-page-active .mascot-wrap{ display:none !important; }
 /* Lift the subject page's whole view (not just #main, whose z-index is
    trapped inside the #studyView stacking context) above any lingering
    overlay (My Subjects landing z70, folder dashboard z66), so its controls
