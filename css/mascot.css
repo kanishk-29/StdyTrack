@@ -5,9 +5,15 @@
     display:flex; flex-direction:column; align-items:center; gap:8px;
     font-family:'Inter',sans-serif;
     user-select:none;
+    /* Let clicks pass through the wrapper (incl. the bubble area) to any
+       controls it overlaps — Rei only intercepts touches on her own buttons. */
+    pointer-events:none;
     transition:left 1.8s cubic-bezier(.45,0,.2,1), top 1.8s cubic-bezier(.45,0,.2,1);
     will-change:left, top;
   }
+  .mascot-wrap .mascot-avatar-btn,
+  .mascot-wrap .mascot-close-btn,
+  .mascot-wrap .mascot-mini-btn{ pointer-events:auto; }
   .mascot-wrap.dragging{ transition:none; }
   .mascot-bubble{
     max-width:240px;
