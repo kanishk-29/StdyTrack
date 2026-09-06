@@ -2,7 +2,7 @@
 // All real data lives in localStorage, not in this cache ???????? this only
 // lets the app shell (html/css/js/icons) load when there's no connection.
 
-const CACHE_NAME = 'study-tracker-shell-v71';
+const CACHE_NAME = 'study-tracker-shell-v72';
 const APP_SHELL = [
   './',
   './index.html',
@@ -15,9 +15,8 @@ const APP_SHELL = [
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png',
-  './background.png',
-  './shrine-background.png',
-  './rei-avatar.png',
+  './shrine-background.jpg',
+  './rei-avatar-512.png',
   './css/base.css',
   './css/liquid-glass.css',
   './css/neumorphic-glass.css',

@@ -241,7 +241,7 @@ function showLoginScreen(){
     err.classList.remove('show', 'success');
   }
   const img = document.getElementById('loginMascotImg');
-  if(img) img.src = 'rei-avatar.png';
+  if(img) img.src = 'rei-avatar-512.png';
   screen.classList.add('show');
   lockLoginViewport();
   setupLoginCardTilt();

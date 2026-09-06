@@ -52,7 +52,7 @@
   /* ---- atmosphere layers (all behind the interactive card) ---- */
   .login-scene-bg{
     position:absolute; inset:0; z-index:-5;
-    background-image:url("../shrine-background.png");
+    background-image:url("../shrine-background.jpg");
     background-size:cover;
     background-position:center center;
     transform:translate3d(var(--px),var(--py),0) scale(1.018);
