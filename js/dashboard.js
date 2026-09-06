@@ -104,6 +104,8 @@ function jumpToSubject(subjectId){
   subjectPageOpen = true;
   renderAll();
   if(typeof closeSubjectsDrawer === 'function') closeSubjectsDrawer();
+  if(typeof closeMySubjectsLanding === 'function') closeMySubjectsLanding();
+  if(typeof closeFolderDashboard === 'function') closeFolderDashboard();
   if(typeof mascotOnSubjectOpen === 'function') mascotOnSubjectOpen(subjectId);
   document.body.classList.add('subject-page-active');
   // scroll the full-page shell into view on mobile after it is laid out

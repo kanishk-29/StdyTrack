@@ -2,11 +2,16 @@
    FULL-SCREEN GLASS SUBJECT PAGE — matching study-dashboard.html
    ============================================================ */
 
-/* ---- Drifting colour blobs (load-bearing for glass blur) ---- */
+/* ---- Full-screen glass subject page shell ---- */
 body.subject-page-active{ overflow:hidden; }
+/* Lift the subject page's whole view (not just #main, whose z-index is
+   trapped inside the #studyView stacking context) above any lingering
+   overlay (My Subjects landing z70, folder dashboard z66), so its controls
+   (lecture ⋮ menu, timers, OMR, etc.) are never covered/unclickable. */
+body.subject-page-active #studyView{ z-index:100; position:relative; }
 
 body.subject-page-active .main{
-  position:fixed; inset:0; z-index:45;
+  position:fixed; inset:0; z-index:90;
   margin:0; border-radius:0; border:none; padding:0;
   min-height:0; overflow:hidden;
   background:#eef0fa;
