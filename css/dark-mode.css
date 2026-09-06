@@ -274,6 +274,11 @@
 [data-theme="dark"] .running-timer-banner.tier-alert{ background:#3a1d1d; color:#f0c0b0; }
 [data-theme="dark"] .running-timer-banner{ background:linear-gradient(135deg, #3a2418, #381f2b); }
 [data-theme="dark"] .timer-pill.running{ background:linear-gradient(135deg, #2b1f2b, #241f38); }
+[data-theme="dark"] .dash-course-running{ border-color:#a78bfa; box-shadow:0 0 0 4px rgba(167,139,250,0.2); }
+[data-theme="dark"] .dash-course-running:hover{ box-shadow:0 0 0 4px rgba(167,139,250,0.3); }
+[data-theme="dark"] .dash-course-running-badge{ background:rgba(167,139,250,0.1); border-color:rgba(167,139,250,0.3); }
+[data-theme="dark"] .dash-course-running-text{ color:#c4b5fd; }
+[data-theme="dark"] .dash-course-next-running{ color:#c4b5fd; }
 
 /* ---- Yesterday trend chips (today header) ---- */
 [data-theme="dark"] .yd-trend.down{ background:rgba(193,80,46,0.18); color:#f0a891; }

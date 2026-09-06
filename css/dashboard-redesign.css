@@ -787,6 +787,37 @@ body {
   transform: translateY(-3px);
   box-shadow: var(--au-shadow-lift);
 }
+/* ---- Running-timer highlight on subject card ---- */
+.dash-course-running{
+  border:2px solid #7c5cff;
+  box-shadow:0 0 0 4px rgba(124,92,255,0.18), var(--au-shadow);
+}
+.dash-course-running:hover{
+  box-shadow:0 0 0 4px rgba(124,92,255,0.28), var(--au-shadow-lift);
+}
+.dash-course-running-badge{
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:8px; padding:5px 10px;
+  background:linear-gradient(135deg, rgba(124,92,255,0.12), rgba(167,139,250,0.12));
+  border:1px solid rgba(124,92,255,0.25);
+  border-radius:10px; width:fit-content;
+}
+.dash-course-running-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:#7c5cff;
+  animation:dashRunPulse 1.4s ease-in-out infinite;
+}
+@keyframes dashRunPulse{
+  0%,100%{ opacity:1; transform:scale(1); }
+  50%{ opacity:.45; transform:scale(1.4); }
+}
+.dash-course-running-text{
+  font-size:12px; font-weight:700; color:#5f3dea;
+  font-variant-numeric:tabular-nums;
+}
+.dash-course-next-running{
+  color:#5f3dea; font-weight:700;
+}
 .dash-course-thumb {
   height: 110px;
   position: relative;

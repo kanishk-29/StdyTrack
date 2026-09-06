@@ -194,9 +194,24 @@ function renderDashCourses(){
     el.innerHTML = `<div class="dash-courses-empty">Add a subject to see it here.</div>`;
     return;
   }
-  // Most recently studied subject first, so "Ongoing Subjects" tracks what
-  // you're actually working through right now instead of creation order.
-  const ordered = subjectsByRecency();
+  // Detect running timer and pull info for the running lecture
+  let runningSubjectId = null, runningLecture = null, runningUnit = null;
+  if(runningRef){
+    const rs = (data.subjects||[]).find(x=>x.id===runningRef.subjectId);
+    if(rs){
+      runningSubjectId = rs.id;
+      runningUnit = (Array.isArray(rs.units)?rs.units:[]).find(u=>u&&u.id===runningRef.unitId);
+      runningLecture = runningUnit
+        ? (Array.isArray(runningUnit.lectures)?runningUnit.lectures:[]).find(l=>l&&l.id===runningRef.lectureId)
+        : null;
+    }
+  }
+  // Most recently studied first, but running-timer subject always floats to the top
+  const ordered = subjectsByRecency().sort((a,b)=>{
+    if(a.id===runningSubjectId) return -1;
+    if(b.id===runningSubjectId) return 1;
+    return 0;
+  });
   el.innerHTML = ordered.map((s)=>{
     const globalIdx = Math.max(0, data.subjects.findIndex(x=>x.id===s.id));
     const color = SUBJECT_GRAPH_COLORS[globalIdx % SUBJECT_GRAPH_COLORS.length];
@@ -207,11 +222,22 @@ function renderDashCourses(){
       const l = (u && Array.isArray(u.lectures) ? u.lectures : []).find(x=>x && !x.completed);
       if(l){ nextLecture = l; break; }
     }
-    const nextLabel = nextLecture ? `Next: ${escapeHtml(nextLecture.title)}` : (c.total ? 'All done! 🎉' : 'No lectures yet');
+    const isRunning = s.id === runningSubjectId;
+    const nextLabel = isRunning && runningLecture
+      ? `<span class="dash-course-next-running">${escapeHtml(runningUnit?runningUnit.name:'')} → ${escapeHtml(runningLecture.title)}</span>`
+      : nextLecture ? `Next: ${escapeHtml(nextLecture.title)}` : (c.total ? 'All done! 🎉' : 'No lectures yet');
     const thumbStyle = s.image
       ? `background-image:url('${s.image}'); background-size:cover; background-position:center;`
       : `background:linear-gradient(135deg, ${color}, ${color}99);`;
-    return `<div class="dash-course-card" onclick="selectAndScroll('${s.id}')">
+    const liveSec = isRunning && runningLecture ? liveLectureSeconds(runningLecture) : 0;
+    const liveTimeStr = isRunning ? formatHuman(liveSec) : '';
+    const runningBadge = isRunning
+      ? `<div class="dash-course-running-badge">
+           <span class="dash-course-running-dot"></span>
+           <span class="dash-course-running-text">⏱ ${liveTimeStr}</span>
+         </div>`
+      : '';
+    return `<div class="dash-course-card${isRunning ? ' dash-course-running' : ''}" onclick="selectAndScroll('${s.id}')">
       <div class="dash-course-thumb" style="${thumbStyle}">
         <div class="dash-course-thumb-overlay"></div>
         <input type="file" accept="image/*" id="subjectImgInput-${s.id}" style="display:none" onchange="handleSubjectImage(event,'${s.id}')">
@@ -226,6 +252,7 @@ function renderDashCourses(){
         <span class="dash-course-thumb-label">${escapeHtml(s.name)}</span>
       </div>
       <div class="dash-course-body">
+        ${runningBadge}
         <div class="dash-course-name">${escapeHtml(s.name)}</div>
         <div class="dash-course-meta">${c.done}/${c.total} lectures · ${formatHuman(subjectSeconds(s))}</div>
         <div class="dash-course-progress-track"><div class="dash-course-progress-fill" style="width:${pct}%; background:${color};"></div></div>
