@@ -1077,6 +1077,10 @@ function mascotApplyPosition(x, y){
   mascotPos = c;
   wrap.style.left = c.x + 'px';
   wrap.style.top = c.y + 'px';
+  if(typeof mascotChatPosition === 'function'){
+    const chat = document.getElementById('mascotChat');
+    if(chat && !chat.hidden) mascotChatPosition();
+  }
 }
 function mascotInitPosition(){
   const wrap = document.getElementById('mascotWrap');
@@ -1616,32 +1620,52 @@ function mascotAIEnhance(moodKey, ctx, originalText){
 }
 
 // ---------- ASK REI (chat panel) ----------
-let mascotChatBusy = false;
+function mascotChatWire(){
+  if(mascotChatWired) return;
+  mascotChatWired = true;
+  const form = document.getElementById('mascotChatForm');
+  const input = document.getElementById('mascotChatInput');
+  if(form) form.addEventListener('submit', (ev)=>{
+    try{ ev.preventDefault(); ev.stopPropagation(); }catch(e){}
+    mascotChatSendMessage();
+  });
+  if(input) input.addEventListener('keydown', (ev)=>{
+    if(ev.key === 'Enter' && !ev.isComposing){
+      try{ ev.preventDefault(); ev.stopPropagation(); }catch(e){}
+      mascotChatSendMessage();
+    }
+  });
+}
+let mascotChatWired = false;
 function mascotChatOpen(){
   const panel = document.getElementById('mascotChat');
   const input = document.getElementById('mascotChatInput');
   if(!panel) return;
+  mascotChatWire();
   panel.hidden = false;
-  // Position guard: keep the panel on-screen regardless of where Rei was
-  // dragged. Flip below her when there isn't room above, and clamp her
-  // horizontal centre so the panel never spills off the viewport edges.
-  const wrap = document.getElementById('mascotWrap');
-  if(wrap){
-    const r = wrap.getBoundingClientRect();
-    const estH = 300;
-    panel.classList.toggle('below', r.top < estH);
-    const halfW = Math.min(160, Math.floor(Math.max(0, window.innerWidth - 24) / 2));
-    if(halfW > 0){
-      let centerX = r.left + r.width / 2;
-      centerX = Math.min(Math.max(centerX, halfW), Math.max(halfW, window.innerWidth - halfW));
-      panel.style.left = Math.round(centerX - r.left) + 'px';
-    }
-  }
+  mascotChatPosition();
   if(input){ input.focus(); }
   const logs = document.getElementById('mascotChatLogs');
   if(logs && !logs.children.length){
     mascotChatAdd('rei', "Ask me about your tracker — e.g. 'how many lectures left in DBMS?' or 'which subject am I ignoring?'");
   }
+}
+// Keep the panel on-screen wherever Rei is: flip below her when there isn't
+// room above, and clamp her horizontal centre so the panel never spills off
+// the viewport edges. Called on open and on every mascot move while visible,
+// so Rei's autonomous wandering can't drag the panel off-screen.
+function mascotChatPosition(){
+  const panel = document.getElementById('mascotChat');
+  const wrap = document.getElementById('mascotWrap');
+  if(!panel || panel.hidden || !wrap) return;
+  const r = wrap.getBoundingClientRect();
+  panel.classList.toggle('below', r.top < 460);
+  const halfW = Math.ceil((panel.offsetWidth || 340) / 2) + 10;
+  const minC = Math.min(halfW, window.innerWidth / 2);
+  const maxC = Math.max(halfW, window.innerWidth - halfW);
+  let centerX = r.left + r.width / 2;
+  centerX = Math.min(Math.max(centerX, minC), maxC);
+  panel.style.left = Math.round(centerX - r.left) + 'px';
 }
 function mascotChatClose(){
   const panel = document.getElementById('mascotChat');
@@ -1666,32 +1690,50 @@ function mascotChatAdd(role, text){
   logs.scrollTop = logs.scrollHeight;
   return div;
 }
-function mascotChatSend(ev){
-  if(ev && ev.preventDefault) ev.preventDefault();
+// Sending is serialised through a small queue: typing and pressing Enter while
+// an earlier answer is still pending no longer drops the question — it just
+// waits its turn, like a real chat client.
+const mascotChatQueue = [];
+let mascotChatProcessing = false;
+function mascotChatEnqueue(q){
+  mascotChatQueue.push(q);
+  mascotChatProcessNext();
+}
+async function mascotChatProcessNext(){
+  if(mascotChatProcessing || !mascotChatQueue.length) return;
+  mascotChatProcessing = true;
+  const q = mascotChatQueue.shift();
   const input = document.getElementById('mascotChatInput');
   const submit = document.querySelector('.mascot-chat-submit');
-  if(!input) return false;
-  const q = String(input.value||'').trim();
-  if(!q || mascotChatBusy) return false;
-  mascotChatBusy = true;
-  input.value = '';
-  mascotChatAdd('user', q);
   const typing = mascotChatAdd('rei', '…');
   typing.classList.add('typing');
   if(submit) submit.disabled = true;
-  mascotChatAnswer(q).then((ans) => {
-    typing.classList.remove('typing');
-    typing.textContent = ans;
-    mascotChatBusy = false;
-    if(submit) submit.disabled = false;
-    if(input) input.focus();
-  }).catch(() => {
-    typing.classList.remove('typing');
-    typing.textContent = "Hmm, I lost that one. Try again?";
-    mascotChatBusy = false;
-    if(submit) submit.disabled = false;
-  });
+  let ans = null;
+  try{ ans = await mascotChatAnswer(q); }catch(e){ ans = null; }
+  ans = (ans && String(ans).trim()) ? String(ans).trim() : "Hmm, I lost that one. Try again?";
+  typing.classList.remove('typing');
+  typing.textContent = ans;
+  mascotChatProcessing = false;
+  if(submit) submit.disabled = false;
+  if(input) input.focus();
+  if(mascotChatQueue.length) mascotChatProcessNext();
+}
+function mascotChatSendMessage(){
+  const input = document.getElementById('mascotChatInput');
+  if(!input) return false;
+  const q = String(input.value||'').trim();
+  if(!q) return false;
+  input.value = '';
+  mascotChatAdd('user', q);
+  mascotChatEnqueue(q);
   return false;
+}
+function mascotChatSend(ev){
+  try{
+    if(ev && ev.preventDefault) ev.preventDefault();
+    if(ev && ev.stopPropagation) ev.stopPropagation();
+  }catch(e){}
+  return mascotChatSendMessage();
 }
 // Local factual answerer — handles the specific, high-value intents without
 // needing the network. The Gemini version (rei-gemini.js) is tried FIRST by
@@ -1730,7 +1772,7 @@ function mascotChatAnswerLocal(q){
   // leading "<subject> lectures (left/remaining/total)" phrase.
   let subjName = null;
   let subjectMention = null;
-  const tailMatch = clean.match(/(?:in|for|of|on|left in|remaining in|about)\s+([a-z0-9][a-z0-9 &._'/-]*)$/);
+  const tailMatch = clean.match(/(?:\bin\b|\bfor\b|\bof\b|\bon\b|\bleft in\b|\bremaining in\b|\babout\b)\s+([a-z0-9][a-z0-9 &._'/-]*)$/);
   if(tailMatch && tailMatch[1] && !looksLikeQuestionWord(tailMatch[1])){
     subjName = tailMatch[1];
     subjectMention = tailMatch;

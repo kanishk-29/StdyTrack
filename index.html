@@ -212,13 +212,19 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <button class="mascot-mini-btn" id="mascotMiniBtn" onclick="toggleMascot()" title="Show study buddy">💬</button>
   <div class="mascot-chat" id="mascotChat" hidden>
     <div class="mascot-chat-head">
-      <span class="mascot-chat-title">Ask Rei</span>
-      <button type="button" class="mascot-chat-close" onclick="mascotChatClose()" title="Close">✕</button>
+      <div class="mascot-chat-id">
+        <span class="mascot-chat-dot" aria-hidden="true"></span>
+        <div class="mascot-chat-idtext">
+          <span class="mascot-chat-title">Rei</span>
+          <span class="mascot-chat-sub">Ask about your study data</span>
+        </div>
+      </div>
+      <button type="button" class="mascot-chat-close" onclick="mascotChatClose()" title="Close chat" aria-label="Close chat">✕</button>
     </div>
     <div class="mascot-chat-logs" id="mascotChatLogs"></div>
-    <form class="mascot-chat-form" id="mascotChatForm" onsubmit="return mascotChatSend(event)">
-      <input class="mascot-chat-input" id="mascotChatInput" type="text" placeholder="e.g. how many lectures left in DBMS?" autocomplete="off" maxlength="200">
-      <button class="mascot-chat-submit" type="submit">➤</button>
+    <form class="mascot-chat-form" id="mascotChatForm">
+      <input class="mascot-chat-input" id="mascotChatInput" type="text" placeholder="Ask Rei a question…" autocomplete="off" maxlength="200" aria-label="Ask Rei">
+      <button class="mascot-chat-submit" type="submit" aria-label="Send" title="Send">➤</button>
     </form>
   </div>
 </div>
@@ -968,7 +974,7 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script src="js/cloud-sync.js?v=71"></script>
-<script type="module" src="js/rei-gemini.js?v=76"></script>
+<script type="module" src="js/rei-gemini.js?v=77"></script>
 <script src="js/storage.js?v=71"></script>
 <script src="js/settings.js?v=71"></script>
 <script src="js/time-tracking.js?v=71"></script>
