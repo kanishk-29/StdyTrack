@@ -1045,9 +1045,14 @@ function mascotTap(){
     mascotPresentLine(poke.line, poke.imageKey);
     return;
   }
-  const ctx = mascotComputeMood();
-  mascotState.mood = ctx.mood;
-  mascotPresentLine(mascotPickLine(ctx.mood, ctx), mascotPickImageKey(ctx.mood, mascotActiveSubjectName()));
+  // A normal tap opens the Ask-Rei chat panel (drag still moves her, and the
+  // ✕ button closes it). Present a brief line so it doesn't feel silent.
+  mascotChatToggle();
+  if(document.getElementById('mascotChat') && !document.getElementById('mascotChat').hidden){
+    const ctx = mascotComputeMood();
+    mascotState.mood = ctx.mood;
+    mascotPresentLine(mascotPickLine(ctx.mood, ctx), mascotPickImageKey(ctx.mood, mascotActiveSubjectName()));
+  }
 }
 
 function toggleMascot(){
@@ -1610,7 +1615,230 @@ function mascotAIEnhance(moodKey, ctx, originalText){
   }catch(e){}
 }
 
-// ---------- Conversational AI (freeform, tracker-context aware) ----------
+// ---------- ASK REI (chat panel) ----------
+let mascotChatBusy = false;
+function mascotChatOpen(){
+  const panel = document.getElementById('mascotChat');
+  const input = document.getElementById('mascotChatInput');
+  if(!panel) return;
+  panel.hidden = false;
+  // Position guard: keep the panel on-screen regardless of where Rei was
+  // dragged. Flip below her when there isn't room above, and clamp her
+  // horizontal centre so the panel never spills off the viewport edges.
+  const wrap = document.getElementById('mascotWrap');
+  if(wrap){
+    const r = wrap.getBoundingClientRect();
+    const estH = 300;
+    panel.classList.toggle('below', r.top < estH);
+    const halfW = Math.min(160, Math.floor(Math.max(0, window.innerWidth - 24) / 2));
+    if(halfW > 0){
+      let centerX = r.left + r.width / 2;
+      centerX = Math.min(Math.max(centerX, halfW), Math.max(halfW, window.innerWidth - halfW));
+      panel.style.left = Math.round(centerX - r.left) + 'px';
+    }
+  }
+  if(input){ input.focus(); }
+  const logs = document.getElementById('mascotChatLogs');
+  if(logs && !logs.children.length){
+    mascotChatAdd('rei', "Ask me about your tracker — e.g. 'how many lectures left in DBMS?' or 'which subject am I ignoring?'");
+  }
+}
+function mascotChatClose(){
+  const panel = document.getElementById('mascotChat');
+  if(panel) panel.hidden = true;
+}
+function mascotChatToggle(){
+  const panel = document.getElementById('mascotChat');
+  if(!panel) return;
+  if(panel.hidden === false){
+    mascotChatClose();
+  } else {
+    mascotChatOpen();
+  }
+}
+function mascotChatAdd(role, text){
+  const logs = document.getElementById('mascotChatLogs');
+  if(!logs) return;
+  const div = document.createElement('div');
+  div.className = 'mascot-chat-msg ' + role;
+  div.textContent = text;
+  logs.appendChild(div);
+  logs.scrollTop = logs.scrollHeight;
+  return div;
+}
+function mascotChatSend(ev){
+  if(ev && ev.preventDefault) ev.preventDefault();
+  const input = document.getElementById('mascotChatInput');
+  const submit = document.querySelector('.mascot-chat-submit');
+  if(!input) return false;
+  const q = String(input.value||'').trim();
+  if(!q || mascotChatBusy) return false;
+  mascotChatBusy = true;
+  input.value = '';
+  mascotChatAdd('user', q);
+  const typing = mascotChatAdd('rei', '…');
+  typing.classList.add('typing');
+  if(submit) submit.disabled = true;
+  mascotChatAnswer(q).then((ans) => {
+    typing.classList.remove('typing');
+    typing.textContent = ans;
+    mascotChatBusy = false;
+    if(submit) submit.disabled = false;
+    if(input) input.focus();
+  }).catch(() => {
+    typing.classList.remove('typing');
+    typing.textContent = "Hmm, I lost that one. Try again?";
+    mascotChatBusy = false;
+    if(submit) submit.disabled = false;
+  });
+  return false;
+}
+// Local factual answerer — handles the specific, high-value intents without
+// needing the network. The Gemini version (rei-gemini.js) is tried FIRST by
+// mascotChatAnswer; this is the offline/unconfigured fallback.
+function mascotChatAnswerLocal(q){
+  const ctx = mascotBuildContext();
+  const clean = String(q||'').toLowerCase().trim();
+  const subs = (ctx && ctx.subjects) || [];
+
+  function findSubject(name){
+    const n = String(name||'').toLowerCase().trim().replace(/\?+$/,'');
+    if(!n) return null;
+    const norm = (s)=>String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+    const sn = norm(n);
+    const exact = subs.find(s => norm(s.name) === sn);
+    if(exact) return exact;
+    const includes = subs.find(s => norm(s.name).includes(sn));
+    if(includes) return includes;
+    if(sn.length >= 3){
+      const seq = subs.find(s => {
+        const target = norm(s.name);
+        let i = 0;
+        for(const ch of target){ if(ch === sn[i]) i++; if(i === sn.length) return true; }
+        return i === sn.length;
+      });
+      if(seq) return seq;
+    }
+    return null;
+  }
+  // Words that mean the captured phrase is NOT a subject name.
+  function looksLikeQuestionWord(phrase){
+    return /\b(how|what|which|why|when|where|can|could|tell|is|are|do|does|any|give|show|list|total|count)\b/.test(String(phrase||'').toLowerCase());
+  }
+
+  // Extract a subject name: trailing "… in/for/of/on <subject>" first, else a
+  // leading "<subject> lectures (left/remaining/total)" phrase.
+  let subjName = null;
+  let subjectMention = null;
+  const tailMatch = clean.match(/(?:in|for|of|on|left in|remaining in|about)\s+([a-z0-9][a-z0-9 &._'/-]*)$/);
+  if(tailMatch && tailMatch[1] && !looksLikeQuestionWord(tailMatch[1])){
+    subjName = tailMatch[1];
+    subjectMention = tailMatch;
+  } else {
+    const headMatch = clean.match(/^([a-z0-9][a-z0-9 &._'/-]*?)\s*(?:total|count)?\s*(?:lectures?|topics?|lessons?|units?)\b.*/);
+    if(headMatch && headMatch[1] && !looksLikeQuestionWord(headMatch[1])){
+      subjName = headMatch[1];
+      subjectMention = headMatch;
+    }
+  }
+  // "how is <subject> going/doing?" and a bare "<subject>" as a status shortcut.
+  if(!subjName){
+    const howState = clean.match(/^how\s+(?:is|are)\s+([a-z0-9][a-z0-9 &._'/-]*?)\s*(?:going|doing)?\s*\??$/);
+    if(howState && howState[1] && !looksLikeQuestionWord(howState[1])){ subjName = howState[1]; }
+  }
+  if(!subjName && !/^(hi|hello|hey|yo|thanks|thank you|bye|ok|okay|yes|no|help|start|stop|reset|clear)$/.test(clean)
+     && !/\b(how|what|which|why|when|where|should|can|could|do|does|is|are|any|recommend|tell|give|show|list|help|my|the|a|an)\b/.test(clean)
+     && /^[a-z0-9][a-z0-9 &._'/-]{1,24}\??$/.test(clean)){
+    subjName = clean.replace(/\?$/,'');
+  }
+
+  const lectureIntent = /(lectures?|topics?|lessons?|units?)\b|done|completed|finished|remaining|left|total|count/.test(clean);
+  const similarSubjects = (stub) => subs.filter(s => s.name.toLowerCase().includes(String(stub||'').slice(0,3).toLowerCase()));
+  const unknownSubjectLine = (name) => {
+    const similar = similarSubjects(name);
+    return similar.length
+      ? `I don't see "${name}", but you have: ${similar.map(s=>s.name).join(', ')}.`
+      : `I don't have a subject named "${name}". Your subjects: ${subs.length ? subs.map(s=>s.name).join(', ') : 'none yet'}.`;
+  };
+
+  // Subject-specific lecture question: "how many lectures left in DBMS?",
+  // "DBMS total lectures", "lectures remaining in DBMS".
+  if(subjName && lectureIntent){
+    const subj = findSubject(subjName);
+    if(subj){
+      const rem = subj.remaining || 0;
+      const done = subj.done || 0;
+      const total = done + rem;
+      if(/\b(done|completed|finished)\b/.test(clean)) return `${subj.name}: ${done} of ${total} lectures done (${subj.progressPct}% complete).`;
+      if(/\b(total|all|count)\b/.test(clean)) return `${subj.name}: ${total} lecture${total===1?'':'s'} in total.`;
+      return `${subj.name}: ${rem} lecture${rem===1?'':'s'} left (${done}/${total} done, ${subj.progressPct}% complete).`;
+    }
+    return unknownSubjectLine(subjName);
+  }
+
+  // Generic "how many lectures left?" with no subject → overall totals
+  if(!subjName && (/\b(lectures?|topics?|lessons?|units?)\b.*\b(left|remaining)\b/.test(clean))){
+    const totalRemaining = subs.reduce((a,b)=>a+(b.remaining||0),0);
+    const totalDone = subs.reduce((a,b)=>a+(b.done||0),0);
+    return totalRemaining ? `${totalRemaining} lecture${totalRemaining===1?'':'s'} left across ${subs.length} subject${subs.length===1?'':'s'} (${totalDone} done).`
+      : (subs.length ? `No lectures left to do — every subject is clear.` : `No subjects yet — add one and I'll count its lectures.`);
+  }
+
+  // "status of <subject>" / "about <subject>" / "how is <subject> going?" /
+  // and a bare "<subject>" as a shortcut to the same summary.
+  if(subjName){
+    const subj = findSubject(subjName);
+    if(subj){
+      const rem = subj.remaining || 0;
+      const done = subj.done || 0;
+      const total = done + rem;
+      let out = `${subj.name}: ${rem} lecture${rem===1?'':'s'} remaining (${done}/${total} done, ${subj.progressPct}% complete, ${subj.totalMin} min total).`;
+      if(subj.testAvg !== null) out += ` Recent test average: ${Math.round(subj.testAvg)}%.`;
+      if(subj.lastDays !== null && subj.lastDays >= 3) out += ` Last touched ${subj.lastDays} days ago.`;
+      return out;
+    }
+    return unknownSubjectLine(subjName);
+  }
+
+  // "any subject left" / "anything remaining" / "which subject should I study"
+  if(/(anything|any subject|what.*(left|next)|which.*(left|next)|what should i study|recommend)/i.test(clean)){
+    const rec = mascotRecommendNext(ctx);
+    if(rec){
+      return rec.days>=4
+        ? `I'd turn to ${rec.subject} — it's been ${rec.days} days, the clearest gap.`
+        : `Next move: ${rec.subject}.${rec.why ? ' ' + rec.why.charAt(0).toUpperCase() + rec.why.slice(1) + '.' : ''}`;
+    }
+    return subs.length ? `All subjects are in decent shape. Keep rotating.` : `No subjects on file yet. Add one first.`;
+  }
+
+  return null; // let Gemini answer, or fall back to mascotRespond-style
+}
+
+// Full answer path: try Gemini (with per-subject facts), else local answerer,
+// else the classic rule-based mascotRespond, else a generic deflection.
+async function mascotChatAnswer(question){
+  const ctx = mascotBuildContext();
+  // Local high-value intents can answer instantly without burning a Gemini
+  // call; get the factual answer synchronously for lecture-counting,
+  // then let Gemini refine only if the local handler didn't cover it.
+  const local = mascotChatAnswerLocal(String(question||''));
+  const useGemini = (typeof window.ReiAI !== 'undefined' && window.ReiAI && typeof window.ReiAI.answerChat === 'function');
+  if(local && !useGemini) return local;
+  if(local && !/(why|what|could|should|plan|pace|roadmap|strategy|how.*(fast|much|long|good))/i.test(String(question||''))) return local;
+  if(useGemini){
+    try{
+      const ai = await window.ReiAI.answerChat(String(question||''), ctx);
+      if(ai) return ai;
+    }catch(e){ /* fall through */ }
+  }
+  if(local) return local;
+  const legacy = mascotRespond(String(question||''));
+  if(legacy) return legacy;
+return `I didn't catch that. Try things like "how many lectures left in DBMS?" or "what should I study next?"`;
+}
+
+// ---------------------------------------------------------------- Fallback
+// Legal/factual non-AI path: what's in here answers without any network.
 function mascotRespond(userText){
   const q = (userText||'').toLowerCase();
   const ctx = mascotBuildContext();
@@ -1670,7 +1898,8 @@ function mascotRespond(userText){
   return mascotPickLine(moods[Math.floor(Math.random()*moods.length)], ctx);
 }
 
-// IANA: tap already covers empty; user-triggered question uses mascotRespond().
+// Legacy conversational fallback, reused by the chat when the Gemini path and
+// the factual answerer above both come up empty.
 
 // ---------- One-time day/event evaluation (called from startApp + interval) ----------
 function mascotPeriodicBrain(){

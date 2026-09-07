@@ -34,6 +34,27 @@ const REI_SYSTEM_PROMPT = [
   'event. Plain text only: no markdown, no emoji, no quotation marks, no hashtags.',
 ].join('\n');
 
+const REI_CHAT_SYSTEM_PROMPT = [
+  'You are Rei, the study mascot and personal study assistant in Study Tracker.',
+  'You answer a student\'s questions about their own study data. Be dry, blunt,',
+  'quietly warm, accurate, and concise.',
+  '',
+  'Below are the ONLY facts available about the student (and each subject):',
+  '  - name, totalMin studied, done lectures, remaining lectures, total lectures,',
+  '    progressPct, lastDays since studied, testAvg (or null), pace.',
+  'Also included: today study minutes + plan %, streak (current/longest),',
+  'last 7 days total, this month total, currently active session.',
+  '',
+  'Rules:',
+  '1. Answer ONLY from these facts. Never invent counts, grades, or dates.',
+  '2. If a question names a subject, find it by name (case-insensitive, ignore',
+  '   "dbms" -> "DBMS" matching). If it is not in the list, say you have no',
+  '   subject by that name and list what you do have.',
+  '3. Ask the question back in your own words and answer it directly with a',
+  '   short, concrete response (1-3 short sentences). No bullet lists.',
+  '4. Plain text only: no markdown, no emoji, no hashtags.',
+].join('\n');
+
 let reiReady = false;
 let reiFirebase = null;
 let reiAi = null;
@@ -165,7 +186,64 @@ async function reiSpeak(moodKey, ctx){
   return null;
 }
 
+// Chat URI for answering a user's freeform question about their tracker data.
+// Reuses the same App-Checked AI instance; returns null on any failure so the
+// caller falls back to the local rule-based answerer. The full subject list is
+// passed so the model can answer "how many lectures left in DBMS?" precisely.
+async function reiAnswerChat(question, ctx){
+  if(!question || !/\\S/.test(String(question))) return null;
+  if(!reiCanCall()) return null;
+  const now = Date.now();
+  try{ await reiInit(); }catch(e){ return null; }
+  if(!reiReady) return null;
+  reiLastCall = now;
+  reiHourCalls.push(now);
+  const c = ctx || {};
+  const s = c.streak || {}, st = c.stats || {}, sn = c.session || {};
+  const subjects = (c.subjects || []).map(x => ({
+    name: x.name || '(untitled)',
+    totalMin: x.totalMin || 0,
+    done: x.done || 0,
+    remaining: x.remaining || 0,
+    total: (x.done || 0) + (x.remaining || 0),
+    progressPct: x.progressPct || 0,
+    lastDays: x.lastDays || null,
+    testAvg: x.testAvg || null,
+    pace: x.pace || null,
+  }));
+  const facts = [
+    'Today: ' + ((c.today && (c.today.studyMinutes||0)) || 0) + ' min studied, ' + ((c.today && (c.today.planPct||0)) || 0) + '% of plan done',
+    'Streak: ' + (s.current || 0) + ' days (longest ' + (s.longest || 0) + ')',
+    'Last 7 days: ' + (st.weekMin||0) + ' min', 'This month: ' + (st.monthMin||0) + ' min',
+    'Active session: ' + (sn.active ? ((sn.subjectName||'a subject') + ' - ' + (sn.topic||'session')) : 'none'),
+    '',
+    'SUBJECTS:',
+  ];
+  (subjects.length ? subjects : [{name:'(no subjects yet)', totalMin:0, done:0, remaining:0, total:0, progressPct:0, lastDays:null, testAvg:null, pace:null}])
+    .forEach(x => {
+      facts.push('- ' + x.name + ': ' + x.totalMin + ' min, ' + x.done + '/' + x.total + ' lectures done, ' + x.remaining + ' remaining (' + x.progressPct + '% complete'
+        + (x.lastDays != null ? ', studied ' + x.lastDays + ' days ago' : '')
+        + (x.testAvg != null ? ', avg test ' + Math.round(x.testAvg) + '%' : '') + ')');
+    });
+  const prompt = (facts.join('\n') + '\n\nQuestion: ' + String(question).trim());
+  for(const name of REI_AI_MODELS){
+    try{
+      const model = reiAiApi.getGenerativeModel(reiAi, {
+        model: name,
+        systemInstruction: REI_CHAT_SYSTEM_PROMPT,
+        generationConfig: { temperature: 0.5, maxOutputTokens: 300, topP: 0.9 }
+      });
+      const result = await reiTimeout(model.generateContent(prompt), REI_AI_TIMEOUT * 1.6);
+      const text = result && result.response ? result.response.text() : '';
+      const clean = reiSanitize(text);
+      if(clean) return clean;
+    }catch(e){ /* try next model, then null */ }
+  }
+  return null;
+}
+
 window.ReiAI = {
   get ready(){ return reiReady; },
   speak: reiSpeak,
+  answerChat: reiAnswerChat,
 };
