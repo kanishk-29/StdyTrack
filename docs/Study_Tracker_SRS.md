@@ -7,7 +7,7 @@
 A Progressive Web App for Lecture Time-Tracking, Test-Score Analytics,
 Daily Habit Building and Exam Preparation
 
-Version 1.4
+Version 1.5
 
 7 September 2026
 
@@ -24,7 +24,7 @@ Version 1.4
 | Document Title | Software Requirements Specification — Study Tracker |
 | Document ID | ST-SRS-001 |
 | Project | Study Tracker (Web / PWA) |
-| Version | 1.4 |
+| Version | 1.5 |
 | Status | Final — Baseline |
 | Classification | Public — Portfolio Reference |
 | Author / Owner | Kanishk — Sole Developer & Product Owner |
@@ -42,6 +42,7 @@ Version 1.4
 | 1.2 | 4 September 2026 | Night-shrine login redesign with interactive scene (stars/snow/embers/parallax/glass-sheen), viewport scale-lock on mobile, settings slide-in drawer, phone card overflow fix (subject cards stack vertically ≤480px), null-guard hardening across 14 CRUD chains, SW cache query-string fallback, JSON-LD WebSite schema, deleted unused legacy files. | Kanishk |
 | 1.3 | 6 September 2026 | Ultra-dark dashboard port from reference mockup (css/ultra-dark.css): scorecard hero with stat pills, quick-action tiles, subject cards, priority/deadlines/revision panels, streak widget; contribution-calendar redesign as a 12-month strip (level thresholds 30/60/120 min, today ring/glow, Previous/Next-only navigation, instant scroll-restore fix); country/timezone engine (24 presets, week-start setting, zone-aware "today" everywhere); session-level global study timer with live calendar glow; visibility/SEO pass (SoftwareApplication + Article/Breadcrumb/FAQPage JSON-LD, `<noscript>` fallback, cross-linked guide pages, share button, retargeted title). Added FR-14.5/14.6, FR-5.4–5.7, modules 4.17–4.18; extended data model (settings, global-timer key) and NFR-18. | Kanishk |
 | 1.4 | 7 September 2026 | why-study-tracker.html full redesign: liquid-glass dark editorial theme, Three.js 3D stage, scroll-triggered IntersectionObserver reveals, chapter-rail navigation, Rei character integration, 7-chapter structure with "Built by Kanishk" footer. Running-timer badge on Ongoing Subjects (pulsing "⏱ Xm" indicator, pins running subject to top). Mascot avatar hidden on subject-page view to prevent z-index overlap with kebab menu. Back-navigation system (pushState/popState, back-nav.js/back-nav.css, 8 navigation flows). Global scrollbar hiding (scrollbar-width:none, webkit-scrollbar). Added FR-18.4, FR-13.5, IR-12. | Kanishk |
+| 1.5 | 7 September 2026 | SEO and marketing pass: why-study-tracker.html rewritten to emphasise unique organisational hierarchy (folders → subjects → units → lectures → notes) as core differentiator; added JSON-LD (Article, SoftwareApplication, BreadcrumbList), OG/Twitter meta, canonical URL, high-value keywords. index.html meta strengthened with hierarchy-focused descriptions. SRS scope updated to highlight the hierarchy as the core differentiator. | Kanishk |
 
 **Approval**
 
@@ -170,7 +171,10 @@ dashboard. An on-screen animated "mascot" reacts to study behaviour
 (streaks, procrastination, milestones) to add a gamified accountability
 layer. The product is designed to run entirely offline in the browser,
 with an optional cloud-sync layer (Firebase) for cross-device
-continuity. It is out of scope for this version to support multiple
+continuity. The unique organisational hierarchy — folders → subjects →
+units → lectures → notes — is the core differentiator: every kind of
+studying (college, personal, team) is structured the same way, in one
+system. It is out of scope for this version to support multiple
 concurrent users collaborating on the same subject, or any server-side
 grading/LMS integration.
 
@@ -770,10 +774,14 @@ functional scope but part of the deliverable:
   Techniques That Actually Work".
 
 - why-study-tracker.html — an editorial product journal explaining the
-  app's origin, problem statement, solution, engineering craft, and system
-  architecture; features a liquid-glass dark theme, Three.js 3D stage,
-  scroll-triggered reveals, chapter-rail navigation, and Rei character
-  integration.
+  app's origin, unique organisational hierarchy (folders → subjects →
+  units → lectures → notes), problem statement, solution, engineering
+  craft, and system architecture; features a liquid-glass dark theme,
+  Three.js 3D stage, scroll-triggered reveals, chapter-rail navigation,
+  and Rei character integration. Strongly SEO-optimised with JSON-LD
+  (Article, SoftwareApplication, BreadcrumbList), OG/Twitter meta, and
+  high-value keywords targeting "free study app", "study tracker",
+  "organize study time", "lecture notes", and "exam scores".
 
 All three pages are cross-linked with each other and with the home app, and
 carry JSON-LD structured data (Article + BreadcrumbList; the "why" page also
