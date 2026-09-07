@@ -1568,7 +1568,7 @@ function mascotUtter(moodKey, ctx, forcedLine){
   mascotRememberMessage(line);
   mascotState.mood = moodKey;
   mascotState.line = line;
-mascotState.imageKey = mascotPickImageKey(moodKey, ctx ? ctx.session.subjectName : mascotActiveSubjectName());
+mascotState.imageKey = mascotPickImageKey(moodKey, ctx && ctx.session ? ctx.session.subjectName : mascotActiveSubjectName());
   bubble.textContent = line;
   bubble.classList.add('show');
   mascotSetAvatar(mascotState.imageKey);
