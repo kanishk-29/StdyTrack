@@ -37,6 +37,13 @@
   a.blog{color:#6d5bb5;text-decoration:underline}
   .back{text-align:center;margin-top:50px}
   .back a{color:#6d5bb5;text-decoration:none;font-weight:600}
+  .faq{margin-top:48px}
+  .faq details{background:#ffffff;border:1px solid #e7e3f7;border-radius:12px;padding:16px 20px;margin:12px 0}
+  .faq summary{cursor:pointer;font-weight:700;color:#1c1a2e;font-size:17px;outline:none;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary:before{content:"▸ ";color:#6d5bb5}
+  .faq details[open] summary:before{content:"▾ "}
+  .faq p{margin:10px 0 4px;color:#3c3a52}
   @media(max-width:600px){ h1{font-size:26px} body{font-size:16px} table{font-size:14px} }
 </style>
 <script type="application/ld+json">
@@ -60,6 +67,44 @@
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Study Tracker", "item": "https://stdytrack.vercel.app/"},
     {"@type": "ListItem", "position": 2, "name": "Exam Prep", "item": "https://stdytrack.vercel.app/exam-prep"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How many days before an exam should I start studying?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Start as early as you can — ideally two to four weeks before the exam. Cover new material first, then spend the final days on active recall, practice questions, and mock tests. Even one focused week with a clear revision schedule beats last-minute cramming."}
+    },
+    {
+      "@type": "Question",
+      "name": "How do I make a revision schedule?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Count the days until each exam, break the syllabus into small topics, and divide the topics across those days. Leave the last two to three days for full mock tests and light review instead of new material, and prioritise exams that are sooner or worth more marks."}
+    },
+    {
+      "@type": "Question",
+      "name": "Is active recall better than re-reading notes?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. Testing yourself forces your brain to retrieve information, which strengthens memory. Re-reading feels useful but gives a comfortable illusion of knowing. Close your notes and recall the key points — what you can remember without notes is what you actually know."}
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use past papers to prepare for exams?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Past papers are the single best predictor of real exam questions. Do them under timed conditions, mark them strictly, and revise every question you got wrong. Repeated questions appear across most subjects, so this is high-value preparation."}
+    },
+    {
+      "@type": "Question",
+      "name": "How many hours a day should I study for an exam?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Two to four focused hours a day in short blocks with breaks is sustainable for most students. Quality matters more than length — active recall, practice questions, and reviewed mistakes in short sessions outperform long hours of passive re-reading."}
+    },
+    {
+      "@type": "Question",
+      "name": "What should I do the night before an exam?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Do a light 10-minute recall of key formulas and definitions, then stop. Sleep is more valuable than one more hour of review — your brain consolidates memories while you sleep, and a well-rested mind recalls better under pressure."}
+    }
   ]
 }
 </script>
@@ -121,6 +166,34 @@
 
   <div class="box">
     <p><strong>Keep your whole plan in one place.</strong> The free online <a class="blog" href="https://stdytrack.vercel.app/">Study Tracker</a> lets you organise subjects and units, save notes for each lecture, log study time with a timer, and record your exam scores to watch your progress improve.</p>
+  </div>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <details>
+      <summary>How many days before an exam should I start studying?</summary>
+      <p>Start as early as you can &mdash; ideally two to four weeks before. Cover new material first, then spend the final days on active recall, practice questions, and mock tests. Even one focused week on a clear schedule beats last-minute cramming.</p>
+    </details>
+    <details>
+      <summary>How do I make a revision schedule?</summary>
+      <p>Count the days until each exam, break the syllabus into small topics, and divide the topics across those days. Leave the last two to three days for full mock tests and light review, and prioritise exams that are sooner or worth more marks.</p>
+    </details>
+    <details>
+      <summary>Is active recall better than re-reading notes?</summary>
+      <p>Yes. Testing yourself forces your brain to retrieve information, which strengthens memory. Re-reading gives a comfortable illusion of knowing. Close your notes and recall the key points &mdash; what you can remember without notes is what you actually know.</p>
+    </details>
+    <details>
+      <summary>Should I use past papers to prepare for exams?</summary>
+      <p>Past papers are the single best predictor of real exam questions. Do them under timed conditions, mark them strictly, and revise every question you got wrong. Repeated questions appear across most subjects.</p>
+    </details>
+    <details>
+      <summary>How many hours a day should I study for an exam?</summary>
+      <p>Two to four focused hours a day in short blocks with breaks is sustainable for most students. Quality matters more than length &mdash; active recall and reviewed mistakes in short sessions outperform hours of passive re-reading.</p>
+    </details>
+    <details>
+      <summary>What should I do the night before an exam?</summary>
+      <p>Do a light 10-minute recall of key formulas and definitions, then stop. Sleep is more valuable than one more hour of review &mdash; your brain consolidates memories while you sleep, and a well-rested mind recalls better under pressure.</p>
+    </details>
   </div>
 
   <div class="back">

@@ -121,3 +121,28 @@ and a planner) without signing in or touching any real data.
 Every future push to your main branch auto-deploys. Since this is
 plain files with no build step, there's no risk of a build breaking —
 what you see locally is exactly what ships.
+
+## SEO / Search Console submission
+
+The site ships with SEO infrastructure already in place:
+
+- `robots.txt` → points crawlers at `sitemap.xml`.
+- `sitemap.xml` → the four public URLs with `lastmod` dates.
+- JSON-LD structured data: `Article`, `SoftwareApplication`,
+  `BreadcrumbList`, and (on the guide + showcase pages) `FAQPage`.
+  FAQ content is duplicated in visible page markup (required for the
+  rich result to be valid).
+
+To get the site indexed and monitored:
+
+1. Go to `https://search.google.com/search-console`.
+2. Add a **URL prefix** property: `https://stdytrack.vercel.app`
+   (or your custom domain).
+3. Verify ownership (DNS TXT or HTML tag — easy on Vercel).
+4. Under **Sitemaps**, submit `https://stdytrack.vercel.app/sitemap.xml`.
+5. Use **URL Inspection** on `/` to request indexing of the homepage.
+
+Because the live domain is `*.vercel.app` (a big shared subdomain),
+page-by-page indexing is slower than on a custom domain. A dedicated
+domain (e.g. `stdytrack.dev`) plus backlinks are the two highest-impact
+follow-ups for AI Overview visibility.

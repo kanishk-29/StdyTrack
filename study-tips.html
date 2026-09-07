@@ -34,6 +34,13 @@
   a.blog{color:#6d5bb5;text-decoration:underline}
   .back{text-align:center;margin-top:50px}
   .back a{color:#6d5bb5;text-decoration:none;font-weight:600}
+  .faq{margin-top:48px}
+  .faq details{background:#ffffff;border:1px solid #e7e3f7;border-radius:12px;padding:16px 20px;margin:12px 0}
+  .faq summary{cursor:pointer;font-weight:700;color:#1c1a2e;font-size:17px;outline:none;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary:before{content:"▸ ";color:#6d5bb5}
+  .faq details[open] summary:before{content:"▾ "}
+  .faq p{margin:10px 0 4px;color:#3c3a52}
   @media(max-width:600px){ h1{font-size:26px} body{font-size:16px} }
 </style>
 <script type="application/ld+json">
@@ -57,6 +64,39 @@
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Study Tracker", "item": "https://stdytrack.vercel.app/"},
     {"@type": "ListItem", "position": 2, "name": "Study Techniques", "item": "https://stdytrack.vercel.app/study-tips"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the best way to study effectively?",
+      "acceptedAnswer": {"@type": "Answer", "text": "The most effective study techniques combine active recall (testing yourself instead of re-reading), spaced repetition (reviewing material at growing intervals), and focused study sessions like the Pomodoro technique. Tracking your study time per subject also keeps you accountable and shows where your hours actually go."}
+    },
+    {
+      "@type": "Question",
+      "name": "Is spaced repetition better than cramming?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. Spaced repetition reviews material at increasing intervals (one day, three days, one week) so facts move into long-term memory. Cramming works for short-term recall but fades quickly, which is why spaced practice beats last-minute all-nighters in most exams."}
+    },
+    {
+      "@type": "Question",
+      "name": "How many hours a day should I study?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Consistency matters more than quantity. Most students see strong results with 2-4 focused hours a day in 25-50 minute blocks with breaks. Quality beats long sessions: active recall and spaced repetition in short sessions outperform hours of passive re-reading."}
+    },
+    {
+      "@type": "Question",
+      "name": "What is the Pomodoro technique and does it work?",
+      "acceptedAnswer": {"@type": "Answer", "text": "The Pomodoro technique is studying in focused blocks (usually 25 minutes) followed by short 5-minute breaks, with a longer break every four sessions. It works because short, time-boxed sessions reduce procrastination and keep concentration high without burnout."}
+    },
+    {
+      "@type": "Question",
+      "name": "How can a study tracker help me study better?",
+      "acceptedAnswer": {"@type": "Answer", "text": "A study tracker logs how much time you actually spend per subject, unit, and lecture, records your exam scores to show progress, and keeps your notes in one place. The visibility alone helps you spot subjects you are avoiding and plan more realistic revision."}
+    }
   ]
 }
 </script>
@@ -129,6 +169,30 @@
 
   <div class="box">
     <p><strong>Ready to put these into practice?</strong> Use the <a class="blog" href="https://stdytrack.vercel.app/">Study Tracker</a> to log study time by subject, save rich-text notes per lecture, and track your exam scores and progress over time. It&rsquo;s free.</p>
+  </div>
+
+  <h2 class="faq-title">Frequently Asked Questions</h2>
+  <div class="faq">
+    <details>
+      <summary>What is the best way to study effectively?</summary>
+      <p>The most effective methods combine active recall (testing yourself instead of re-reading), spaced repetition (reviewing at growing intervals), and focused sessions like the Pomodoro technique. Logging your study time per subject also keeps you accountable.</p>
+    </details>
+    <details>
+      <summary>Is spaced repetition better than cramming?</summary>
+      <p>Yes. Spaced repetition reviews material at increasing intervals so facts move into long-term memory. Cramming helps short-term recall but fades quickly, which is why spaced practice beats all-nighters in most exams.</p>
+    </details>
+    <details>
+      <summary>How many hours a day should I study?</summary>
+      <p>Consistency matters more than quantity. Most students see strong results with 2&ndash;4 focused hours a day in short, time-boxed blocks. Quality beats length: active recall and spaced repetition in short sessions outperform hours of passive re-reading.</p>
+    </details>
+    <details>
+      <summary>What is the Pomodoro technique and does it work?</summary>
+      <p>It&rsquo;s studying in focused blocks (usually 25 minutes) with short 5-minute breaks, and a longer break every four sessions. It works because short, time-boxed sessions reduce procrastination and keep concentration high.</p>
+    </details>
+    <details>
+      <summary>How can a study tracker help me study better?</summary>
+      <p>A study tracker logs how much time you spend per subject, unit, and lecture, records exam scores to show progress, and keeps notes in one place. The visibility alone helps you spot subjects you&rsquo;re avoiding and plan more realistic revision.</p>
+    </details>
   </div>
 
   <div class="back">

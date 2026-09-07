@@ -52,6 +52,39 @@
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Study Tracker free?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes — completely free. There is no premium tier, no subscription, and no account required to start. Install it as a PWA and use it offline."}
+    },
+    {
+      "@type": "Question",
+      "name": "Does Study Tracker work offline?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. Data is saved locally first (host storage, IndexedDB, or localStorage), so everything works without an internet connection. Cloud sync to a Firebase backend is optional and throttled to keep free-tier costs at zero."}
+    },
+    {
+      "@type": "Question",
+      "name": "What can I organize in Study Tracker?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Folders (semesters or projects), subjects, units, and lectures. Under each lecture you can track time, take rich-text notes, and attach tests. On top of that: a daily planner, habits, analytics, exam pacing, and a study mascot."}
+    },
+    {
+      "@type": "Question",
+      "name": "Does Study Tracker track study time?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes — a timer runs at the lecture level, plus a global study timer and a streak widget. Time is logged per subject, unit, and lecture automatically, and feeds the analytics dashboard."}
+    },
+    {
+      "@type": "Question",
+      "name": "Can I export my data from Study Tracker?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. The full dataset — every subject, log, note, and setting — is one JSON document. Backup and restore are built in, so you can move devices or keep a local copy at any time."}
+    }
+  ]
+}
+</script>
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Study Tracker">
 <meta property="og:title" content="Study Tracker — Free Study App for Organizing Subjects, Notes, Lectures & Exam Scores">
@@ -313,6 +346,19 @@ section:not(.doc-page){padding:108px 0}
   background:#fff;box-shadow:var(--shadow-soft);font-family:"Playfair Display",Georgia,serif;font-size:18px;line-height:1.6;color:var(--ink-2)
 }
 .statement .highlight{font-style:italic}
+.faq-why{margin-top:38px}
+.faq-why summary{
+  cursor:pointer;font-family:"Manrope",sans-serif;font-weight:800;font-size:13px;letter-spacing:.02em;
+  color:var(--ink);padding:16px 20px;border:1px solid #dfe4ed;border-radius:14px;background:#fff;
+  box-shadow:var(--shadow-soft);list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px
+}
+.faq-why summary::-webkit-details-marker{display:none}
+.faq-why summary:after{content:"+";color:var(--blue);font-weight:800;font-size:18px;line-height:1}
+.faq-why details[open] summary:after{content:"–"}
+.faq-why details{margin:12px 0}
+.faq-why details[open] summary{border-radius:14px 14px 0 0}
+.faq-why .faq-body{border:1px solid #dfe4ed;border-top:0;border-radius:0 0 14px 14px;background:#fff;padding:0 20px 18px;margin-top:-8px}
+.faq-why .faq-body p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.65}
 .where-now{
   margin-top:31px;padding:26px 28px;border:1px solid #dfe4ed;border-radius:18px;
   background:#fff;box-shadow:var(--shadow-soft)
@@ -2898,6 +2944,14 @@ nav a{transition:transform .35s ease,color .35s ease,background .35s ease}nav a:
 <div class="where-now reveal">
 <div class="section-label">WHERE IT STANDS NOW</div>
 <p><span class="highlight">I still use it every single day.</span> What began as a way to organize college, personal growth, research, and team work became a daily-driver PWA — installable, works offline, syncs across devices, and doesn't need an account to start. <strong><a href="https://stdytrack.vercel.app/" style="color:var(--blue);text-decoration:underline;text-underline-offset:3px;">Try the live demo →</a></strong></p>
+</div>
+<div class="faq-why reveal">
+<div class="section-label">COMMON QUESTIONS</div>
+<details><summary>Is Study Tracker free?</summary><div class="faq-body"><p>Yes — completely free. There is no premium tier, no subscription, and no account required to start. Install it as a PWA and use it offline.</p></div></details>
+<details><summary>Does it work offline?</summary><div class="faq-body"><p>Yes. Data is saved locally first (host storage, IndexedDB, or localStorage), so everything works without an internet connection. Cloud sync to a Firebase backend is optional and throttled to keep free-tier costs at zero.</p></div></details>
+<details><summary>What can I organize in it?</summary><div class="faq-body"><p>Folders (semesters or projects) → subjects → units → lectures. Under each lecture you can track time, take rich-text notes, and attach tests. On top of that: a daily planner, habits, analytics, exam pacing, and a study mascot.</p></div></details>
+<details><summary>Does it track study time?</summary><div class="faq-body"><p>Yes — a timer runs at the lecture level, plus a global study timer and a streak widget. Time is logged per subject, unit, and lecture automatically, and feeds the analytics dashboard.</p></div></details>
+<details><summary>Can I export my data?</summary><div class="faq-body"><p>Yes. The full dataset — every subject, log, note, and setting — is one JSON document. Backup and restore are built in, so you can move devices or keep a local copy at any time.</p></div></details>
 </div>
 </div>
 <div class="page-foot"><span><a href="https://stdytrack.vercel.app" target="_blank" rel="noopener noreferrer">stdytrack.vercel.app</a></span><span>07 / 07</span></div>
