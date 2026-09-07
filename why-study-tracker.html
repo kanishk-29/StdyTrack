@@ -306,6 +306,13 @@ section:not(.doc-page){padding:108px 0}
 .intent-block{margin-top:45px}
 .intent-block h3{font-size:28px;margin-bottom:9px}
 .intent-block p{color:var(--muted);font-size:14px;max-width:820px}
+.intent-block .system-map{margin-top:24px;color:var(--ink-2);font-family:"Playfair Display",Georgia,serif;font-size:20px;line-height:1.6}
+.intent-block .system-map-note{margin-top:14px;color:var(--muted);font-size:14px}
+.statement{
+  margin-top:34px;padding:26px 28px;border:1px solid #dfe4ed;border-radius:18px;
+  background:#fff;box-shadow:var(--shadow-soft);font-family:"Playfair Display",Georgia,serif;font-size:18px;line-height:1.6;color:var(--ink-2)
+}
+.statement .highlight{font-style:italic}
 .where-now{
   margin-top:31px;padding:26px 28px;border:1px solid #dfe4ed;border-radius:18px;
   background:#fff;box-shadow:var(--shadow-soft)
@@ -2783,6 +2790,7 @@ nav a{transition:transform .35s ease,color .35s ease,background .35s ease}nav a:
 <div class="solution-row reveal"><div class="solution-num">05</div><h3>Exam scores and pacing — know where you stand</h3><p>Record test scores per unit. Set an exam date and get a computed study pace — not just a countdown, but a plan.</p></div>
 <div class="solution-row reveal"><div class="solution-num">06</div><h3>Daily goals — plan before the pressure</h3><p>Set tomorrow's priorities tonight. Link goals to specific lectures. Wake up knowing exactly what needs attention.</p></div>
 </div>
+<div class="statement reveal">Honestly? No single feature here is magic.<br/><span class="highlight">The system design is.</span> Timer · notes · scores · planner · habits · analytics · exam pacing · search · mascot · offline · sync · timezone engine — one connected system around your actual academic structure.</div>
 <h3 class="transition-line reveal"><span class="highlight-orange">And then there was Rei.</span></h3>
 </div>
 <div class="page-foot"><span><a href="https://stdytrack.vercel.app" target="_blank" rel="noopener noreferrer">stdytrack.vercel.app</a></span><span>03 / 07</span></div>
@@ -2796,7 +2804,7 @@ nav a{transition:transform .35s ease,color .35s ease,background .35s ease}nav a:
 <div>
 <h2 data-key="THE HUMAN IDEA">A tracker tells you what happened. Rei makes you want to return.</h2>
 <p>Studying is often something you do alone. The system can record the hours, but it cannot change the fact that the work itself is usually done alone.</p>
-<p>Rei became a small, familiar presence inside Study Tracker. She reacts to patterns in your days, celebrates consistency, and notices when something has been quietly ignored.</p>
+<p>Rei is a named requirement, not a sticker. She computes a mood from your study behavior, reacts to specific events, and tracks a rapport score that grows as you do — with message cooldowns so she never repeats herself. It's a small feedback system engineered around a very human problem: <em>returning.</em></p>
 </div>
 </div>
 <div class="human-layout">
@@ -2844,8 +2852,9 @@ nav a{transition:transform .35s ease,color .35s ease,background .35s ease}nav a:
 <article class="craft-item reveal"><div class="craft-marker">05</div><div><h3>Offline mode that doesn't rot</h3><p>You've felt this bug before, even if you didn't know its name: an app updates, but your browser keeps serving yesterday's version anyway. No warning. No error. Just quiet, low-grade confusion. That's a stale cache — fixed here by stripping version numbers <em>before</em> the cache gets a say. New release ships, old cache can't argue back.</p></div></article>
 <article class="craft-item reveal"><div class="craft-marker">06</div><div><h3>Cost-aware cloud writes</h3><p>Not every keystroke deserves its own trip to the cloud — that's a fast way to burn through a free tier by lunchtime. So writes are throttled, capped at once every 15 seconds. But nothing gets left behind: one final write is always guaranteed to land. Cheap <span class="highlight">and</span> reliable — normally you only get to pick one.</p></div></article>
 <article class="craft-item reveal"><div class="craft-marker">07</div><div><h3>Storage that adapts</h3><p>Drop this thing anywhere and it figures out where to put your data without being asked — host storage if it exists, IndexedDB if it doesn't, localStorage if nothing else is left standing. No config screen. No setup wizard interrogating you about things the app should already know.</p></div></article>
+<article class="craft-item reveal"><div class="craft-marker">08</div><div><h3>Lecture notes that behave like a real document</h3><p>Most study apps advertise "rich-text notes" and mean a text box. Here, notes live inside a lecture — paginated, with highlighting, code blocks, hyperlinks, timestamps and freehand drawing with an eraser and a configurable stroke. Find notes across every page, export to Markdown, and inputs are HTML-sanitized on entry. That's closer to a document system than a notes field.</p></div></article>
 </div>
-<div class="principle reveal"><div class="section-label">THE PRINCIPLE</div><p>None of this photographs well. All of it is the actual reason this still feels solid a year in — not just for the first five impressed minutes.</p></div>
+<div class="principle reveal"><div class="section-label">THE PRINCIPLE</div><p>None of this photographs well. All of it is the actual reason this still feels solid a year in — not just for the first five impressed minutes. No single feature is magic. <span class="highlight">The combination is — a system, not a timer.</span></p></div>
 </div>
 <div class="page-foot"><span><a href="https://stdytrack.vercel.app" target="_blank" rel="noopener noreferrer">stdytrack.vercel.app</a></span><span>06 / 07</span></div>
 </section>
@@ -2883,6 +2892,8 @@ nav a{transition:transform .35s ease,color .35s ease,background .35s ease}nav a:
 <div class="intent-block reveal">
 <h3><span class="highlight">18 modules. One system. No framework.</span></h3>
 <p>Plain HTML. CSS. JavaScript. No build step. Every file has a job. The same clean hierarchy — folders, subjects, units, lectures — runs through all 18 modules, from time tracking to analytics to the mascot. The codebase is designed to stay understandable, even a year from now.</p>
+<p class="system-map">Subject → Unit → Lecture → Timer → Notes → Tests → Planner → Habits → Analytics → Exam pacing → Search → Mascot → Backup → Offline → Cloud sync → Timezone engine → Global timer.</p>
+<p class="system-map-note"><span class="highlight">No single step is a breakthrough. The chain is the point.</span> This is a system for modeling an entire academic workflow — not a Pomodoro with extra screens.</p>
 </div>
 <div class="where-now reveal">
 <div class="section-label">WHERE IT STANDS NOW</div>

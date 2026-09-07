@@ -7,7 +7,7 @@
 A Progressive Web App for Lecture Time-Tracking, Test-Score Analytics,
 Daily Habit Building and Exam Preparation
 
-Version 1.5
+Version 1.6
 
 7 September 2026
 
@@ -24,7 +24,7 @@ Version 1.5
 | Document Title | Software Requirements Specification — Study Tracker |
 | Document ID | ST-SRS-001 |
 | Project | Study Tracker (Web / PWA) |
-| Version | 1.5 |
+| Version | 1.6 |
 | Status | Final — Baseline |
 | Classification | Public — Portfolio Reference |
 | Author / Owner | Kanishk — Sole Developer & Product Owner |
@@ -43,6 +43,7 @@ Version 1.5
 | 1.3 | 6 September 2026 | Ultra-dark dashboard port from reference mockup (css/ultra-dark.css): scorecard hero with stat pills, quick-action tiles, subject cards, priority/deadlines/revision panels, streak widget; contribution-calendar redesign as a 12-month strip (level thresholds 30/60/120 min, today ring/glow, Previous/Next-only navigation, instant scroll-restore fix); country/timezone engine (24 presets, week-start setting, zone-aware "today" everywhere); session-level global study timer with live calendar glow; visibility/SEO pass (SoftwareApplication + Article/Breadcrumb/FAQPage JSON-LD, `<noscript>` fallback, cross-linked guide pages, share button, retargeted title). Added FR-14.5/14.6, FR-5.4–5.7, modules 4.17–4.18; extended data model (settings, global-timer key) and NFR-18. | Kanishk |
 | 1.4 | 7 September 2026 | why-study-tracker.html full redesign: liquid-glass dark editorial theme, Three.js 3D stage, scroll-triggered IntersectionObserver reveals, chapter-rail navigation, Rei character integration, 7-chapter structure with "Built by Kanishk" footer. Running-timer badge on Ongoing Subjects (pulsing "⏱ Xm" indicator, pins running subject to top). Mascot avatar hidden on subject-page view to prevent z-index overlap with kebab menu. Back-navigation system (pushState/popState, back-nav.js/back-nav.css, 8 navigation flows). Global scrollbar hiding (scrollbar-width:none, webkit-scrollbar). Added FR-18.4, FR-13.5, IR-12. | Kanishk |
 | 1.5 | 7 September 2026 | SEO and marketing pass: why-study-tracker.html rewritten to emphasise unique organisational hierarchy (folders → subjects → units → lectures → notes) as core differentiator; added JSON-LD (Article, SoftwareApplication, BreadcrumbList), OG/Twitter meta, canonical URL, high-value keywords. index.html meta strengthened with hierarchy-focused descriptions. SRS scope updated to highlight the hierarchy as the core differentiator. | Kanishk |
+| 1.6 | 7 September 2026 | Competitive positioning pass based on a review of current study/productivity apps (Study-Track, StudyTracker.co.in, StudyTracker.space, OneFightMore, Studylo, My Study Diary). No single product matches the full Study Tracker combination; differentiation is now framed honestly as **system design**, not a single feature. why-study-tracker.html updated: solution page gains a direct "the system design is the magic" statement; Rei reframed as a computed feedback system (mood, rapport, cooldowns) rather than decoration; Craft page adds lecture-notes depth (pagination, highlighting, code blocks, hyperlinks, timestamps, freehand drawing, Markdown export, sanitised re-import); System page gains the module chain (Subject → Unit → Lecture → Timer → Notes → Tests → Planner → Habits → Analytics → Exam pacing → Search → Mascot → Backup → Offline → Cloud sync → Timezone engine → Global timer) and a "the chain is the point" note. Scope updated to describe the unusual combination. | Kanishk |
 
 **Approval**
 
@@ -174,7 +175,15 @@ with an optional cloud-sync layer (Firebase) for cross-device
 continuity. The unique organisational hierarchy — folders → subjects →
 units → lectures → notes — is the core differentiator: every kind of
 studying (college, personal, team) is structured the same way, in one
-system. It is out of scope for this version to support multiple
+system. The unusual combination is what sets it apart from typical
+study apps: it is not primarily a Pomodoro/study-timer app, but a
+system for modelling an entire academic workflow — academic hierarchy,
+lecture-level time and notes, planner, habits, analytics, exam pacing,
+a feedback-driven mascot, offline-first persistence, optional cloud
+sync, a deliberate timezone engine, a global study timer, and
+backup/restore all operating as connected modules. Each individual
+feature overlaps with some existing product; the integrated combination
+does not. It is out of scope for this version to support multiple
 concurrent users collaborating on the same subject, or any server-side
 grading/LMS integration.
 
