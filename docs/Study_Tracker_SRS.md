@@ -7,9 +7,9 @@
 A Progressive Web App for Lecture Time-Tracking, Test-Score Analytics,
 Daily Habit Building and Exam Preparation
 
-Version 1.3
+Version 1.4
 
-6 September 2026
+7 September 2026
 
 **Prepared by: Kanishk**
 
@@ -24,11 +24,11 @@ Version 1.3
 | Document Title | Software Requirements Specification — Study Tracker |
 | Document ID | ST-SRS-001 |
 | Project | Study Tracker (Web / PWA) |
-| Version | 1.3 |
+| Version | 1.4 |
 | Status | Final — Baseline |
 | Classification | Public — Portfolio Reference |
 | Author / Owner | Kanishk — Sole Developer & Product Owner |
-| Issue Date | 6 September 2026 |
+| Issue Date | 7 September 2026 |
 | Standard Followed | IEEE Std 830-1998 (adapted for a solo-developer project) |
 
 **Revision History**
@@ -41,6 +41,7 @@ Version 1.3
 | 1.1 | 4 September 2026 | Folder-opening now renders a dedicated full-page folder dashboard (design port, css/folder-dashboard.css) instead of the in-drawer list; updated FR-6 and interface tracing, added the dashboard stylesheet to the module references. | Kanishk |
 | 1.2 | 4 September 2026 | Night-shrine login redesign with interactive scene (stars/snow/embers/parallax/glass-sheen), viewport scale-lock on mobile, settings slide-in drawer, phone card overflow fix (subject cards stack vertically ≤480px), null-guard hardening across 14 CRUD chains, SW cache query-string fallback, JSON-LD WebSite schema, deleted unused legacy files. | Kanishk |
 | 1.3 | 6 September 2026 | Ultra-dark dashboard port from reference mockup (css/ultra-dark.css): scorecard hero with stat pills, quick-action tiles, subject cards, priority/deadlines/revision panels, streak widget; contribution-calendar redesign as a 12-month strip (level thresholds 30/60/120 min, today ring/glow, Previous/Next-only navigation, instant scroll-restore fix); country/timezone engine (24 presets, week-start setting, zone-aware "today" everywhere); session-level global study timer with live calendar glow; visibility/SEO pass (SoftwareApplication + Article/Breadcrumb/FAQPage JSON-LD, `<noscript>` fallback, cross-linked guide pages, share button, retargeted title). Added FR-14.5/14.6, FR-5.4–5.7, modules 4.17–4.18; extended data model (settings, global-timer key) and NFR-18. | Kanishk |
+| 1.4 | 7 September 2026 | why-study-tracker.html full redesign: liquid-glass dark editorial theme, Three.js 3D stage, scroll-triggered IntersectionObserver reveals, chapter-rail navigation, Rei character integration, 7-chapter structure with "Built by Kanishk" footer. Running-timer badge on Ongoing Subjects (pulsing "⏱ Xm" indicator, pins running subject to top). Mascot avatar hidden on subject-page view to prevent z-index overlap with kebab menu. Back-navigation system (pushState/popState, back-nav.js/back-nav.css, 8 navigation flows). Global scrollbar hiding (scrollbar-width:none, webkit-scrollbar). Added FR-18.4, FR-13.5, IR-12. | Kanishk |
 
 **Approval**
 
@@ -387,6 +388,12 @@ At a high level, the system allows a user to:
   wheel and touch gestures shall not flip the month or hijack page scroll
   (the strip uses touch-action: pan-y).
 
+- IR-12: The application shall implement browser-history-based back navigation
+  using pushState/popState, supporting at least 8 navigation flows (subject page
+  back, folder dashboard back, My Subjects landing back, analytics overlay close,
+  login gate, planner detail, settings drawer, and search overlay) so the browser's
+  back button always returns the user to the previous logical view.
+
 **3.2 Hardware Interfaces**
 
 None. The application uses only standard browser input (touch, mouse,
@@ -565,6 +572,7 @@ js/calendar.js (drawer folder tiles), css/folder-dashboard.css*
 | FR-13.2 | The mascot shall react to specific events: task completion, starting/ending a focus session, a quiz being saved, a multi-day streak, or several days of neglect of a subject, each with a distinct message/animation. | Medium |
 | FR-13.3 | The system shall maintain a simple "respect"/rapport score for the mascot that adjusts based on user behaviour over time, influencing which message pool is drawn from. | Low |
 | FR-13.4 | The mascot shall avoid repeating the same message too frequently by enforcing per-message and per-context cooldowns. | Low |
+| FR-13.5 | The mascot avatar shall be hidden (display:none) when the user is viewing a subject page, to prevent overlapping with the subject page's back/kebab controls. | Medium |
 
 **4.14 Settings, Theme, Backup & Restore**
 
@@ -625,6 +633,7 @@ js/storage.js, js/demo.js*
 | FR-18.1 | The system shall provide a session-level study timer on the dashboard that starts and stops independently of any single lecture, displaying the running seconds live (formatCompactLive) and updating at least once per second. | Medium |
 | FR-18.2 | Running minutes from the global timer shall be persisted under a dedicated auxiliary key (study-tracker-real-study-minutes-v1) so the session survives a reload, and shall feed the calendar strip's intensity for the current day while active (and its accumulated total thereafter). | Medium |
 | FR-18.3 | The dashboard shall display a study-streak widget derived from consecutive days with logged study (computeCurrentStreak), alongside the strip and scorecard. | Medium |
+| FR-18.4 | When a lecture timer is running, the Ongoing Subjects section shall pin the running subject to the top of the list with a pulsing badge showing the elapsed minutes (e.g. "⏱ 12m") and the unit→lecture name in the "Next" slot; the badge shall disappear when the timer is stopped. | Medium |
 
 **5. Data Model**
 
@@ -760,8 +769,11 @@ functional scope but part of the deliverable:
 - study-tips.html — "How to Study Effectively: 15 Proven Study
   Techniques That Actually Work".
 
-- why-study-tracker.html — a product-marketing page explaining the app's
-  value proposition.
+- why-study-tracker.html — an editorial product journal explaining the
+  app's origin, problem statement, solution, engineering craft, and system
+  architecture; features a liquid-glass dark theme, Three.js 3D stage,
+  scroll-triggered reveals, chapter-rail navigation, and Rei character
+  integration.
 
 All three pages are cross-linked with each other and with the home app, and
 carry JSON-LD structured data (Article + BreadcrumbList; the "why" page also

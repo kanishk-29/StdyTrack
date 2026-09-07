@@ -81,7 +81,7 @@ individual file is unrelated to the reorder.
 ## Documentation
 
 - [Software Requirements Specification](./docs/Study_Tracker_SRS.md)
-  (IEEE 830-1998 adapted, v1.1, 4 Sept 2026) — also available as
+  (IEEE 830-1998 adapted, v1.4, 7 Sept 2026) — also available as
   [`docs/Study_Tracker_SRS.docx`](./docs/Study_Tracker_SRS.docx).
 
 ## Local preview
