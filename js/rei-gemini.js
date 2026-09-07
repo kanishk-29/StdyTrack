@@ -15,6 +15,12 @@ const REI_AI_MIN_INTERVAL = 45 * 1000;   // at most one call per 45s
 const REI_AI_MAX_PER_HOUR = 30;          // soft free-tier guardrail
 const REI_AI_TIMEOUT = 7000;             // give up after 7s, fall back
 const REI_AI_MAX_OUTPUT = 200;
+// App Check (mandatory for AI Logic since July 2026) uses an invisible
+// score-based reCAPTCHA Enterprise key — free tier, no billing, never shows
+// a challenge. The key below is the public site key (safe to embed); the
+// ENTERPRISE project/account config lives in the Firebase console App Check
+// settings, where the assessment happens server-side.
+const REI_RECAPTCHA_SITE_KEY = '6LciZq4tAAAAANU9mSZaGVVEtSgFE5LP74Xj-B2Y';
 const REI_SYSTEM_PROMPT = [
   'You are Rei, the study mascot in Study Tracker.',
   'You are dry, blunt, quietly warm, and you secretly grade the student with a',
@@ -80,6 +86,25 @@ function reiInit(){
     reiAppApi = app;
     reiAiApi = ai;
     reiFirebase = reiAppApi.initializeApp(cfg, 'rei-ai');
+    // App Check is required before AI Logic serves any request. If no site
+    // key is configured yet (console step pending), skip cleanly and keep the
+    // graceful non-AI fallback — nothing else changes.
+    const siteKey = REI_RECAPTCHA_SITE_KEY || (window.__REI_RECAPTCHA_KEY__ ? String(window.__REI_RECAPTCHA_KEY__) : '');
+    if(siteKey){
+      try{
+        const ac = await import(/* webpackIgnore: true */ 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app-check.js');
+        const appCheck = ac.initializeAppCheck
+          ? ac.initializeAppCheck(reiFirebase, {
+              provider: new ac.ReCaptchaEnterpriseProvider(siteKey),
+              isTokenAutoRefreshEnabled: true
+            })
+          : reiAppApi.initializeAppCheck(reiFirebase, {
+              provider: new reiAppApi.ReCaptchaEnterpriseProvider(siteKey),
+              isTokenAutoRefreshEnabled: true
+            });
+        void appCheck;
+      }catch(e){ /* no token -> AI calls fail server-side; app unaffected */ }
+    }
     reiAi = reiAiApi.getAI(reiFirebase, { backend: new reiAiApi.GoogleAIBackend() });
     reiReady = true;
   })();
