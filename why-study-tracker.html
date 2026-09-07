@@ -1114,44 +1114,6 @@ nav:before{
 }
 
 
-/* === User-provided visual assets === */
-.craft-item.featured-visual{
-  grid-template-columns:54px minmax(0,1fr) minmax(190px,270px);
-  align-items:center;
-}
-.featured-visual .craft-copy{min-width:0}
-.visual-square{
-  width:100%;aspect-ratio:1/1;border-radius:20px;overflow:hidden;
-  border:1px solid rgba(255,255,255,.94);
-  background:linear-gradient(145deg,#f7f8fb,#e9edf5);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.98),
-    inset 0 -1px 0 rgba(75,96,132,.06),
-    0 22px 55px rgba(30,53,94,.13);
-  position:relative;
-}
-.visual-square:after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(145deg,rgba(255,255,255,.30),transparent 42%,rgba(70,108,240,.06));
-}
-.visual-square img{
-  width:100%;height:100%;display:block;object-fit:cover;
-  object-position:center 43%;
-  transform:scale(1.02);
-  transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .5s ease;
-}
-.craft-item.featured-visual:hover .visual-square img{
-  transform:scale(1.055);
-}
-.visual-badge{
-  position:absolute;left:12px;bottom:12px;z-index:2;
-  padding:7px 10px;border-radius:999px;
-  background:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.9);
-  color:#3e5fd2;font:800 8px "Manrope",sans-serif;letter-spacing:.14em;text-transform:uppercase;
-  box-shadow:0 7px 20px rgba(36,57,92,.10);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-}
-
 .rei-visual{
   position:relative;display:flex;justify-content:center;align-items:flex-end;
   min-height:620px;overflow:hidden;border-radius:26px;
@@ -1207,14 +1169,10 @@ nav:before{
 .human-layout .human-quote{position:relative;z-index:2}
 
 @media(max-width:900px){
-  .craft-item.featured-visual{grid-template-columns:48px minmax(0,1fr)}
-  .featured-visual .visual-square{grid-column:2;max-width:270px;margin-top:18px}
   .human-layout{grid-template-columns:1fr;gap:34px}
   .rei-visual{min-height:610px}
 }
 @media(max-width:640px){
-  .craft-item.featured-visual{grid-template-columns:42px minmax(0,1fr);gap:15px}
-  .featured-visual .visual-square{grid-column:2;width:min(100%,290px)}
   .rei-visual{min-height:560px}
   .rei-visual img{width:auto;max-width:92%;max-height:545px}
 }
@@ -2882,7 +2840,7 @@ nav a{transition:transform .35s ease,color .35s ease,background .35s ease}nav a:
 <div><h2 data-key="THE ENGINEERING IDEA">Features get screenshots. This stuff gets ignored — right up until the day it quietly saves you.</h2></div>
 </div>
 <div class="craft-list">
-<article class="craft-item reveal featured-visual"><div class="craft-marker">01</div><div class="craft-copy"><h3>Two devices walk into a sync conflict</h3><p>Your phone says one thing. Your laptop says another. Someone has to lose — and there's no committee meeting about it. No merge attempt. No "pick a version" popup making you do the app's job for it. <span class="highlight">Whoever saved last, wins.</span> That's the whole rule. It's almost rude how simple it is. It's also exactly right.</p></div><div class="visual-square"><img src="study_tracker_01_ui_square.webp" alt="Study Tracker interface preview"><div class="visual-badge">Study Tracker</div></div></article>
+<article class="craft-item reveal"><div class="craft-marker">01</div><div><h3>Two devices walk into a sync conflict</h3><p>Your phone says one thing. Your laptop says another. Someone has to lose — and there's no committee meeting about it. No merge attempt. No "pick a version" popup making you do the app's job for it. <span class="highlight">Whoever saved last, wins.</span> That's the whole rule. It's almost rude how simple it is. It's also exactly right.</p></div></article>
 <article class="craft-item reveal"><div class="craft-marker">02</div><div><h3>14 null-guarded CRUD chains</h3><p>Here's a scenario nobody plans for: you're mid-edit on a lecture, and your other device deletes the subject underneath it — mid-conversation, so to speak. Your modal is now pointing at a ghost. The app is not allowed to panic about this. So all 14 lookup chains check, quietly, every time, whether the thing they're reaching for still exists. Nobody notices this. That's the point.</p></div></article>
 <article class="craft-item reveal"><div class="craft-marker">03</div><div><h3>One JSON document is the entire database</h3><p>No tables. No schemas. Not a single line of SQL anywhere in this system. Every subject, every log, every habit, every setting — one JSON blob, one key. It sounds like a shortcut. It's actually the whole trick: when there's nothing partial, there's nothing to untangle. That's why "newest write wins" gets to be that simple.</p></div></article>
 <article class="craft-item reveal"><div class="craft-marker">04</div><div><h3><span class="highlight">"Today" is computed, not assumed</span></h3><p>Most apps ask the device what day it is, shrug, and trust it. That's usually fine. Usually. Here, "today" is calculated — noon-anchored, timezone-aware, 24 presets deep — so the calendar can't flip at some arbitrary hour just because your phone thinks it's somewhere else. Logs, streaks, the planner, exam pacing — all reading off the same clock.</p></div></article>
