@@ -20,6 +20,8 @@ function renderAll(){
   renderMascot();
   const po = document.getElementById('progressOverlay');
   if(po && po.classList.contains('show')) renderProgressChart(chartRange);
+  const fd = document.getElementById('folderDashboard');
+  if(fd && fd.style.display !== 'none') renderFolderDashboard();
 }
 
 let prevDone = null, prevTotal = null;
