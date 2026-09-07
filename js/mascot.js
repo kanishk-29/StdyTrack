@@ -1575,6 +1575,39 @@ mascotState.imageKey = mascotPickImageKey(moodKey, ctx ? ctx.session.subjectName
   avatarBtn.classList.remove('bump');
   void avatarBtn.offsetWidth;
   avatarBtn.classList.add('bump');
+  // Optional live-AI enhancement: if ReiAI is available (online + free-tier
+  // Firebase AI Logic set up), give her a chance to improvise a line about
+  // this exact moment. The built-in line shows instantly; the AI line swaps
+  // in only if it arrives while the same bubble is still up — otherwise the
+  // fallback copy stays and nothing feels broken.
+  if(window.ReiAI && typeof window.ReiAI.speak === 'function' && !forcedLine){
+    mascotAIEnhance(moodKey, ctx, bubble.textContent);
+  }
+}
+
+// Fire-and-forget AI improv for the current utterance. Offline, unconfigured,
+// or erroring all resolve to no-op — the built-in banks keep full control.
+function mascotAIEnhance(moodKey, ctx, originalText){
+  try{
+    const moodAllow = ['proud','celebrate','happy','determined','sleepy','breakTime','quizFail','curious','neutral','milestone','annoyed','comeback'];
+    if(moodAllow.indexOf(moodKey) === -1) return;
+    if(ctx && ctx.today && !ctx.subjects) return; // require real context
+    window.ReiAI.speak(moodKey, ctx).then((aiLine) => {
+      if(!aiLine) return;
+      const bubble = document.getElementById('mascotBubble');
+      if(!bubble) return;
+      if(bubble.textContent !== originalText) return; // something else took over
+      if(typeof mascotIsRecent === 'function' && mascotIsRecent(aiLine)) return;
+      bubble.textContent = aiLine;
+      if(typeof mascotRememberMessage === 'function') mascotRememberMessage(aiLine);
+      const avatarBtn = document.getElementById('mascotAvatarBtn');
+      if(avatarBtn){
+        avatarBtn.classList.remove('bump');
+        void avatarBtn.offsetWidth;
+        avatarBtn.classList.add('bump');
+      }
+    }).catch(()=>{});
+  }catch(e){}
 }
 
 // ---------- Conversational AI (freeform, tracker-context aware) ----------

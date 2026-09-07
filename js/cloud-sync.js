@@ -39,6 +39,12 @@
 //  6. Paste your web config below. Leave FIREBASE_CONFIG as null to run purely
 //     on local device storage (like the app behaved before this file existed).
 //
+// OPTIONAL: live-AI mascot lines (js/rei-gemini.js). Tied to the same project.
+//  Firebase Console → AI Services → AI Logic → Get started → choose "Gemini
+//  Developer API" as the backend provider (free Spark plan, no billing). The
+//  Gemini key stays server-side in Firebase; nothing secret ships in the repo.
+//  Without this step nothing changes — Rei keeps using the built-in line banks.
+//
 // Deploying with Vercel: just build/serve this folder as a static site — the
 // Firebase SDK scripts are already loaded from the CDN in index.html, so no
 // bundling is needed. Auth state is remembered per browser automatically.
