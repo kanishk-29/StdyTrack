@@ -10,7 +10,7 @@
 // so that an offline device or a blocked CDN resolves to a clean no-op with
 // zero errors instead of an uncaught module-import failure.
 
-const REI_AI_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+const REI_AI_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];
 const REI_AI_MIN_INTERVAL = 45 * 1000;   // at most one call per 45s
 const REI_AI_MAX_PER_HOUR = 30;          // soft free-tier guardrail
 const REI_AI_TIMEOUT = 7000;             // give up after 7s, fall back
