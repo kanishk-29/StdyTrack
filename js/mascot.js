@@ -1750,69 +1750,6 @@ async function mascotChatAnswer(question){
   return null;
 }
 
-// ---------------------------------------------------------------- Fallback
-// Legal/factual non-AI path: what's in here answers without any network.
-function mascotRespond(userText){
-  const q = (userText||'').toLowerCase();
-  const ctx = mascotBuildContext();
-
-  if(/(how.*(do|am|i).*(doing|going)|how (am i|do i) (doing|going))/i.test(q) ||
-     /(debrief|status|report)/i.test(q)){
-    const min = ctx.today.studyMinutes;
-    const s = ctx.streak.current;
-    const done = ctx.subjects.reduce((a,b)=>a+b.done,0);
-    let line = `Today: ${min} min, streak ${s} day${s===1?'':'s'}, ${done} topic${done===1?'':'s'} done.`;
-    if(ctx.stats.weekMin > ctx.stats.monthMin*0.9) line += ` Your week is trending up.`;
-    if(ctx.neglected.length) line += ` Watch ${ctx.neglected[0].name} â€” it's neglected.`;
-    return line;
-  }
-  if(/(what (should|to) (study|do next)|recommend|next (move|step|subject)|study next)/i.test(q)){
-    const rec = mascotRecommendNext(ctx);
-    if(!rec) return `No subjects on file yet. Add one and I'll start advising.`;
-    if(rec.days>=4) return `I'd turn to ${rec.subject} â€” it's been ${rec.days} days, the clearest gap.`;
-    return `Next move: ${rec.subject}. ${rec.why ? rec.why[0].toUpperCase()+rec.why.slice(1)+'.' : ''}`;
-  }
-  if(/(why.*(behind|falling|fall|slow)|falling behind|struggl)/i.test(q)){
-    if(ctx.stats.weekMin < ctx.stats.monthMin*0.75) return `You've dipped below your usual pace this week. One weak day doesn't erase your trend â€” start with one good session.`;
-    if(ctx.today.studyMinutes < 120) return `Today's been light. Not a judgement â€” just a nudge. Pick the nearest subject and give it 25 focused minutes.`;
-    return `Honestly? You're not badly behind. Numbers look steady. Keep stacking.`;
-  }
-  if(/(what (am i|are) (good|strong) at|strength|best subject)/i.test(q)){
-    const best = [...ctx.subjects].filter(s=>s.testAvg!==null).sort((a,b)=>b.testAvg-a.testAvg)[0];
-    if(best) return `${best.name} is your strongest on record (avg ${Math.round(best.testAvg)}%). Keep feeding it â€” but don't starve the others.`;
-    const heavy = [...ctx.subjects].sort((a,b)=>b.totalMin-a.totalMin)[0];
-    return heavy ? `You've given ${heavy.name} the most time so far. That counts as a strength.` : `Not enough data to brag about you yet.`;
-  }
-  if(/(what (am i|are) (i )?ignoring|neglect|ignored|avoiding)/i.test(q)){
-    if(ctx.neglected.length) return `Ignoring ${ctx.neglected.map(n=>n.name).join(', ')}${ctx.neglected[0].lastDays>=5 ? ' for a while now' : ''}. I noticed.`;
-    return `Nothing glaring right now. Impressive.`;
-  }
-  if(/(what did i (study|do) today|today.*summary|today's)/i.test(q)){
-    const bySubj = Object.entries(ctx.today.bySubject||{})
-      .map(([id,sec])=>{ const s=(data.subjects||[]).find(x=>x.id===id); return s?`${s.name} ${Math.round(sec/60)}m`:null; })
-      .filter(Boolean);
-    if(!bySubj.length) return `Nothing recorded today yet. The timer's right there.`;
-    return `Today: ${bySubj.join(', ')} â€” ${ctx.today.studyMinutes} min total.`;
-  }
-  if(/(how was|how.*(week|week))/i.test(q)){
-    const w = ctx.stats.weekMin, m = ctx.stats.monthMin;
-    let verdict = w>=m*0.9 ? 'a strong week' : (w>=m*0.6 ? 'decent' : 'a quiet week');
-    const neg = ctx.neglected.map(n=>n.name).join(', ');
-    return `This week: ${w} min â€” that's ${verdict}.${neg ? ` Neglected: ${neg}.` : ''}`;
-  }
-  if(/(should i (keep|stop) studying|keep going|keep studying|stop for today)/i.test(q)){
-    if(ctx.session.active && ctx.session.durationMinutes >= (MASCOT_CONFIG.longSessionMin||75)){
-      return `You've been on this for ${ctx.session.durationMinutes} min. A short reset is sensible â€” then come back.`;
-    }
-    return ctx.today.studyMinutes>=300 ? `Today's already ${ctx.today.studyMinutes} min â€” that's plenty. Rest or do one small push.` : `You've got ${300-Math.max(0,ctx.today.studyMinutes)} min to a nice day-total. Worth one more session.`;
-  }
-  // fallback
-  const moods = ['annoyed','curious','neutral'];
-  return mascotPickLine(moods[Math.floor(Math.random()*moods.length)], ctx);
-}
-
-// Legacy conversational fallback, reused by the chat when the Gemini path and
-// the factual answerer above both come up empty.
 
 // ---------- One-time day/event evaluation (called from startApp + interval) ----------
 function mascotPeriodicBrain(){
@@ -1831,7 +1768,7 @@ function mascotPeriodicBrain(){
   const h = new Date().getHours();
   if(h>=22 && ctx.today.studyMinutes>=60){
     const key='eod_'+todayKey();
-    if(mascotLocalOnce(key)){ mascotLocalMark(key); mascotUtter('sleepy', ctx, `That's enough for today. ${ctx.today.studyMinutes} min logged â€” go recharge, ${ctx.user.name}.`); return; }
+    if(mascotLocalOnce(key)){ mascotLocalMark(key); mascotUtter('sleepy', ctx, `That's enough for today. ${ctx.today.studyMinutes} min logged — go recharge, ${ctx.user.name}.`); return; }
   }
 }
 let mascotLocalFlags = (()=>{ try{return JSON.parse(localStorage.getItem('studyMascotLocalFlags')||'{}');}catch(e){return{};} })();
@@ -1852,7 +1789,7 @@ function mascotOnQuizSaved(obtained, total, subjectId){
   const s = (data.subjects||[]).find(x=>x.id===subjectId);
   const line = pct>=75
     ? `${Math.round(pct)}% on ${s?`${s.name}: `:''}I'll allow bragging rights.`
-    : `${Math.round(pct)}%${s?` on ${s.name}`:''}. Not a disaster â€” review and retake. Promising? We'll see.`;
+    : `${Math.round(pct)}%${s?` on ${s.name}`:''}. Not a disaster — review and retake. Promising? We'll see.`;
   // avoid interrupting focus for a quiz reaction unless notable
   mascotUtter(pct>=90 ? 'celebrate' : (pct>=75?'happy':'quizFail'), ctx, line);
 }

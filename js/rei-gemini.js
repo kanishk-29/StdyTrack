@@ -192,7 +192,7 @@ async function reiSpeak(moodKey, ctx){
 // caller falls back to the local rule-based answerer. The full subject list is
 // passed so the model can answer "how many lectures left in DBMS?" precisely.
 async function reiAnswerChat(question, ctx){
-  if(!question || !/\\S/.test(String(question))) return null;
+  if(!question || !/\S/.test(String(question))) return null;
   if(!reiCanCall(true)) return null;
   const now = Date.now();
   try{ await reiInit(); }catch(e){ return null; }
