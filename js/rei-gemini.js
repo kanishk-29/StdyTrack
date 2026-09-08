@@ -76,9 +76,10 @@ function reiKillSwitch(){
   try{ return localStorage.getItem('studyReiAI') === '0'; }catch(e){ return true; }
 }
 
-function reiCanCall(){
+function reiCanCall(skipThrottle){
   if(typeof navigator !== 'undefined' && navigator.onLine === false) return false;
   if(reiKillSwitch()) return false;
+  if(skipThrottle) return true;
   const now = Date.now();
   if(now - reiLastCall < REI_AI_MIN_INTERVAL) return false;
   reiHourCalls = reiHourCalls.filter(t => now - t < 3600000);
@@ -192,7 +193,7 @@ async function reiSpeak(moodKey, ctx){
 // passed so the model can answer "how many lectures left in DBMS?" precisely.
 async function reiAnswerChat(question, ctx){
   if(!question || !/\\S/.test(String(question))) return null;
-  if(!reiCanCall()) return null;
+  if(!reiCanCall(true)) return null;
   const now = Date.now();
   try{ await reiInit(); }catch(e){ return null; }
   if(!reiReady) return null;
