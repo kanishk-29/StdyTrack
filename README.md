@@ -62,7 +62,8 @@ js/                    # loaded top-to-bottom in index.html — order matters,
   modals.js
   exam-date.js
   init.js                 # app bootstrap
-  mascot.js               # mascot behavior, dragging, tilt
+  mascot.js               # mascot behavior, dragging, tilt, Ask-Rei chat
+  rei-gemini.js           # optional live-AI bridge (Firebase AI Logic + Gemini)
   login.js                # login gate + service-worker registration
 ```
 
@@ -81,7 +82,7 @@ individual file is unrelated to the reorder.
 ## Documentation
 
 - [Software Requirements Specification](./docs/Study_Tracker_SRS.md)
-  (IEEE 830-1998 adapted, v1.8, 7 Sept 2026) — also available as
+  (IEEE 830-1998 adapted, v1.9, 8 Sept 2026) — also available as
   [`docs/Study_Tracker_SRS.docx`](./docs/Study_Tracker_SRS.docx).
 
 ## Local preview

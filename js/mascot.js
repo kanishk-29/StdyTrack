@@ -1339,8 +1339,8 @@ function mascotShowYesterdayMemory(){
 }
 
 // ============================================================
-// JARVIS-LEVEL MASCOT BRAIN â€” Observe â†’ Interpret â†’ Personalize â†’
-// Respond â†’ Optional action. Reads only real tracker data. It is a
+// JARVIS-LEVEL MASCOT BRAIN — Observe → Interpret → Personalize →
+// Respond → Optional action. Reads only real tracker data. It is a
 // behaviour-aware personality layer, NOT a quote generator.
 // ============================================================
 
@@ -1405,7 +1405,7 @@ function mascotDaysSinceSubject(subjectId){
   return 400;
 }
 
-// ---------- Context builder â€” a compact snapshot of the real tracker ----------
+// ---------- Context builder — a compact snapshot of the real tracker ----------
 function mascotBuildContext(){
   const snap = getTodaySnapshot();               // seconds incl. live
   const weekMin = (rangeTotal ? rangeTotal(7) : 0) / 60;
@@ -1731,13 +1731,6 @@ function mascotChatSendMessage(){
   mascotChatEnqueue(q);
   return false;
 }
-function mascotChatSend(ev){
-  try{
-    if(ev && ev.preventDefault) ev.preventDefault();
-    if(ev && ev.stopPropagation) ev.stopPropagation();
-  }catch(e){}
-  return mascotChatSendMessage();
-}
 // Chat answers come ONLY from Gemini. If the device is offline, a call fails,
 // or the model returns nothing, Rei stays silent — no canned lines, no rules.
 async function mascotChatAnswer(question){
@@ -1764,7 +1757,7 @@ function mascotPeriodicBrain(){
       return;
     }
   }
-  // end-of-day (after 22:00 with real study done) â€” once
+  // end-of-day (after 22:00 with real study done) — once
   const h = new Date().getHours();
   if(h>=22 && ctx.today.studyMinutes>=60){
     const key='eod_'+todayKey();
@@ -1776,7 +1769,7 @@ function mascotLocalOnce(k){ return !mascotLocalFlags[k]; }
 function mascotLocalMark(k){ try{ mascotLocalFlags[k]=1; localStorage.setItem('studyMascotLocalFlags', JSON.stringify(mascotLocalFlags)); }catch(e){} }
 
 // ============================================================
-// EVENT TRIGGERS â€” called from the app's action hooks
+// EVENT TRIGGERS — called from the app's action hooks
 // ============================================================
 
 // NOTE: mascotOnSessionStart / mascotOnSessionEnd live in the

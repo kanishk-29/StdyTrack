@@ -1,8 +1,11 @@
 // Rei live-AI enhancement via Firebase AI Logic (Gemini Developer API, free tier).
 //
-// Purely additive: if the console step hasn't been done, the device is
-// offline, a call fails, or the user sets localStorage studyReiAI = "0",
-// everything falls back to the built-in line banks exactly as before.
+// Purely additive. If the console step hasn't been done, the device is
+// offline, or a call fails:
+//   - Rei's ambient speech falls back to the built-in line banks as before;
+//   - the chat panel does NOT fall back — it answers only from Gemini and
+//     stays silent (shows nothing) when a call yields no answer.
+// A user can also opt out entirely via localStorage studyReiAI = "0".
 // The Firebase proxy holds the Gemini key server-side — nothing secret is
 // ever shipped in this file.
 //
@@ -130,7 +133,7 @@ function reiInit(){
     reiAi = reiAiApi.getAI(reiFirebase, { backend: new reiAiApi.GoogleAIBackend() });
     reiReady = true;
   })();
-  run.then(() => { reiInitPromise = run; });
+  reiInitPromise = run;
   run.catch(() => { reiInitPromise = null; reiReady = false; });
   return run;
 }
@@ -188,9 +191,10 @@ async function reiSpeak(moodKey, ctx){
 }
 
 // Chat URI for answering a user's freeform question about their tracker data.
-// Reuses the same App-Checked AI instance; returns null on any failure so the
-// caller falls back to the local rule-based answerer. The full subject list is
-// passed so the model can answer "how many lectures left in DBMS?" precisely.
+// Reuses the same App-Checked AI instance. Returns null on any failure and the
+// caller then keeps Rei silent (no fallback answers are shown). The full
+// subject list is passed so the model can answer "how many lectures left in
+// DBMS?" precisely.
 async function reiAnswerChat(question, ctx){
   if(!question || !/\S/.test(String(question))) return null;
   if(!reiCanCall(true)) return null;
