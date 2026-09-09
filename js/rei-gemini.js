@@ -197,10 +197,11 @@ async function reiSpeak(moodKey, ctx){
 // DBMS?" precisely.
 async function reiAnswerChat(question, ctx){
   if(!question || !/\S/.test(String(question))) return null;
-  if(!reiCanCall(true)) return null;
+  if(!reiCanCall(true)){ console.warn('[rei] chat skipped: throttled or unavailable'); return null; }
   const now = Date.now();
-  try{ await reiInit(); }catch(e){ return null; }
-  if(!reiReady) return null;
+  try{ await reiInit(); }
+  catch(e){ console.warn('[rei] chat: reiInit failed:', e && e.message ? e.message : e); return null; }
+  if(!reiReady){ console.warn('[rei] chat: ai not ready'); return null; }
   reiLastCall = now;
   reiHourCalls.push(now);
   const c = ctx || {};
@@ -242,7 +243,7 @@ async function reiAnswerChat(question, ctx){
       const text = result && result.response ? result.response.text() : '';
       const clean = reiSanitize(text);
       if(clean) return clean;
-    }catch(e){ /* try next model, then null */ }
+    }catch(e){ console.warn('[rei] chat model "'+name+'" failed:', e && e.message ? e.message : e); }
   }
   return null;
 }

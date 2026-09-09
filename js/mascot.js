@@ -1734,12 +1734,16 @@ function mascotChatSendMessage(){
 // Chat answers come ONLY from Gemini. If the device is offline, a call fails,
 // or the model returns nothing, Rei stays silent — no canned lines, no rules.
 async function mascotChatAnswer(question){
-  if(typeof window.ReiAI === 'undefined' || !window.ReiAI || typeof window.ReiAI.answerChat !== 'function') return null;
+  if(typeof window.ReiAI === 'undefined' || !window.ReiAI || typeof window.ReiAI.answerChat !== 'function'){
+    console.warn('[rei] chat: ReiAI not loaded yet');
+    return null;
+  }
   const ctx = mascotBuildContext();
   try{
     const ai = await window.ReiAI.answerChat(String(question||'').trim(), ctx);
+    if(!(ai && String(ai).trim())) console.warn('[rei] chat: gemini returned empty (null)');
     return (ai && String(ai).trim()) ? String(ai).trim() : null;
-  }catch(e){ /* offline or failed → silence */ }
+  }catch(e){ console.warn('[rei] chat failed:', e && e.message ? e.message : e); }
   return null;
 }
 
