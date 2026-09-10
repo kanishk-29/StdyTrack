@@ -1039,16 +1039,19 @@ function mythicalCheckGlyph(gidSeed){
    GLASS INTERACTIONS — 3D tilt, click ripple, count-up animations
    ====================================================================== */
 
-// 3D tilt on pointer move (for glass cards)
+// 2D follow on pointer move (for glass cards). Deliberately 2D (no
+// rotateX/rotateY/translateZ): a 3D transform on a backdrop-filter glass
+// card forces the browser to re-rasterize the blurred backdrop at a new
+// resolution on every hover mousemove, which reads as "the week/lecture
+// section goes blurry under the cursor". A plain translate stays crisp.
 function sdAttachTilt(el){
-  const strength = 10;
   function onMove(e){
     const r = el.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width;
     const py = (e.clientY - r.top) / r.height;
-    const rotY = (px - 0.5) * strength;
-    const rotX = (0.5 - py) * strength;
-    el.style.transform = `translateY(-4px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(8px)`;
+    const tx = ((px - 0.5) * 6).toFixed(1);
+    const ty = ((0.5 - py) * 6).toFixed(1);
+    el.style.transform = `translate(${tx}px, ${ty}px)`;
   }
   function onLeave(){ el.style.transform = ''; }
   el.addEventListener('mousemove', onMove);
