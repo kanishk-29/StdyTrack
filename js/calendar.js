@@ -1036,27 +1036,12 @@ function mythicalCheckGlyph(gidSeed){
 }
 
 /* ======================================================================
-   GLASS INTERACTIONS — 3D tilt, click ripple, count-up animations
+   GLASS INTERACTIONS — click ripple, count-up animations.
+   Pointer-move tilt was removed: transforming a backdrop-filter glass
+   surface on hover makes the browser re-rasterize the blurred backdrop on
+   every mousemove, which reads as a brief "blurry" moment under the cursor
+   even with a 2D translate. Hover feedback stays on box-shadow alone.
    ====================================================================== */
-
-// 2D follow on pointer move (for glass cards). Deliberately 2D (no
-// rotateX/rotateY/translateZ): a 3D transform on a backdrop-filter glass
-// card forces the browser to re-rasterize the blurred backdrop at a new
-// resolution on every hover mousemove, which reads as "the week/lecture
-// section goes blurry under the cursor". A plain translate stays crisp.
-function sdAttachTilt(el){
-  function onMove(e){
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width;
-    const py = (e.clientY - r.top) / r.height;
-    const tx = ((px - 0.5) * 6).toFixed(1);
-    const ty = ((0.5 - py) * 6).toFixed(1);
-    el.style.transform = `translate(${tx}px, ${ty}px)`;
-  }
-  function onLeave(){ el.style.transform = ''; }
-  el.addEventListener('mousemove', onMove);
-  el.addEventListener('mouseleave', onLeave);
-}
 
 // Click ripple (for .sd-ripple-host)
 function sdAttachRipple(el){
@@ -1090,10 +1075,6 @@ function sdCountUp(el, target, opts={}){
 // Wire up all glass interactions after renderMain()
 function sdWireInteractions(){
   if(!document.body.classList.contains('subject-page-active')) return;
-  // Tilt on glass stat cards and header
-  document.querySelectorAll('.sd-stat-card, .fsh-stat-card, .sd-exam-card, .unit').forEach(el=>{
-    if(!el.dataset.sdTiltBound){ sdAttachTilt(el); el.dataset.sdTiltBound = '1'; }
-  });
   // Ripple on CTA buttons
   document.querySelectorAll('.sd-ripple-host, .sd-footer-cta, .sd-back-btn').forEach(el=>{
     if(!el.dataset.sdRippleBound){ sdAttachRipple(el); el.dataset.sdRippleBound = '1'; }

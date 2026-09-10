@@ -156,7 +156,7 @@
     padding:12px 14px;
     transition:box-shadow .18s ease, transform .18s ease;
   }
-  .test-item:hover{ box-shadow:var(--sd-shadow-hover); transform:translateY(-2px); }
+  .test-item:hover{ box-shadow:var(--sd-shadow-hover); }
   .test-row{
     display:flex; align-items:center; gap:12px;
   }
