@@ -288,6 +288,8 @@ function sanitizeBackup(d){
     s.name = String(s.name || '').slice(0,200);
     s.icon = String(s.icon || '').slice(0,8).replace(/[<>&"'`]/g,'');
     s.color = /^#[0-9a-fA-F]{3,8}$/.test(s.color || '') ? s.color : '';
+    const simg = String(s.image || '');
+    s.image = /^(https?:\/\/|data:image\/)/i.test(simg) && simg.length <= 200000 ? simg : '';
     if(!Array.isArray(s.units)) s.units = [];
     s.units.forEach(u=>{
       if(!u || typeof u !== 'object') return;

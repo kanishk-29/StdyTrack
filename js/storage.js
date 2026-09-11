@@ -82,11 +82,18 @@ function normalizeLoadedData(parsed){
   data.subjects.forEach(s=>{
     if(!s || typeof s !== 'object') return;
     if(!Array.isArray(s.units)) s.units = [];
+    const simg = String(s.image || '');
+    s.image = /^(https?:\/\/|data:image\/)/i.test(simg) && simg.length <= 200000 ? simg : '';
     s.units.forEach(u=>{
       if(!u || typeof u !== 'object') return;
       if(!Array.isArray(u.tests)) u.tests = [];
       if(!Array.isArray(u.lectures)) u.lectures = [];
     });
+  });
+  (data.folders||[]).forEach(f=>{
+    if(!f || typeof f !== 'object') return;
+    const fimg = String(f.image || '');
+    f.image = /^(https?:\/\/|data:image\/)/i.test(fimg) && fimg.length <= 200000 ? fimg : '';
   });
   // Persist the one-time planner migration so the legacy {today,tomorrow} keys
   // are actually removed — otherwise they'd be re-appended on every page load.
