@@ -2039,12 +2039,23 @@ function renderFolderDashboard(){
       <section class="stats" id="statsGrid">${fdStatsHtml(folderName, subjects)}</section>
       <div class="section-head">
         <div class="section-title"><span class="section-icon">▦</span><span>Your Subjects · ${escapeHtml(folderName)}</span></div>
-        <div class="filters glass" id="filterBar">
-          <div class="filter-indicator" id="filterIndicator"></div>
-          <button class="active ripple-host" data-filter="all" onclick="fdSetFilter('all')">All</button>
-          <button class="ripple-host" data-filter="progress" onclick="fdSetFilter('progress')">In Progress</button>
-          <button class="ripple-host" data-filter="done" onclick="fdSetFilter('done')">Completed</button>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="filters glass" id="filterBar">
+            <div class="filter-indicator" id="filterIndicator"></div>
+            <button class="active ripple-host" data-filter="all" onclick="fdSetFilter('all')">All</button>
+            <button class="ripple-host" data-filter="progress" onclick="fdSetFilter('progress')">In Progress</button>
+            <button class="ripple-host" data-filter="done" onclick="fdSetFilter('done')">Completed</button>
+          </div>
+          <button type="button" class="fd-manage-btn" onclick="fdToggleManage()" title="Rename or delete subjects">⚙ Manage</button>
         </div>
+      </div>
+      <div class="fd-manage-wrap" id="fdManagePanel" style="display:none">
+        <div class="fd-manage-head">
+          <strong>⚙ Manage Subjects</strong>
+          <span>Rename or delete any subject in this folder — deleting is permanent.</span>
+          <button type="button" class="fd-manage-close" onclick="fdCloseManage()" aria-label="Close" title="Close">✕</button>
+        </div>
+        <div class="fd-manage-list" id="fdManageList"></div>
       </div>
       <div class="subject-list" id="subjectList"></div>
       <div class="add-card glass ripple-host" id="addSubjectCard" role="button" tabindex="0" aria-label="Add a subject" onclick="fdAddSubject()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();fdAddSubject();}">
@@ -2092,6 +2103,45 @@ function fdOpenSubject(id){
 function fdAddSubject(){ if(typeof openAddSubject === 'function') openAddSubject(); else if(typeof addSubject==='function') addSubject(); }
 function fdRenameSubject(subjectId){ if(typeof openEditSubject === 'function') openEditSubject(subjectId); }
 function fdDeleteSubject(subjectId){ if(typeof deleteSubject === 'function') deleteSubject(subjectId); }
+function fdToggleManage(){
+  const panel = document.getElementById('fdManagePanel');
+  if(!panel) return;
+  if(panel.style.display === 'none'){ fdRenderManage(); panel.style.display = ''; }
+  else panel.style.display = 'none';
+}
+function fdCloseManage(){
+  const p = document.getElementById('fdManagePanel');
+  if(p) p.style.display = 'none';
+}
+function fdRenderManage(){
+  const panel = document.getElementById('fdManagePanel');
+  const list = document.getElementById('fdManageList');
+  if(!panel || !list) return;
+  const subjects = fdGetSubjects(activeFolderFilter);
+  if(!subjects.length){
+    list.innerHTML = '<div class="fd-manage-empty">No subjects in this folder yet — add one below. ⬇</div>';
+    return;
+  }
+  list.innerHTML = subjects.map(s=>{
+    const c = countLectures(s);
+    const pct = c.total ? Math.round((c.done/c.total)*100) : 0;
+    const gi = Math.max(0, data.subjects.findIndex(x=>x && x.id===s.id));
+    const acc = FD_ACCENTS[gi % FD_ACCENTS.length];
+    return `<div class="fd-manage-row">
+      <div class="fd-manage-info">
+        <span class="fd-manage-thumb" style="background:${acc.grad};"></span>
+        <span class="fd-manage-name" title="${escapeAttr(s.name)}">${escapeHtml(s.name)}</span>
+        <span class="fd-manage-meta">${c.done}/${c.total} lectures · ${pct}% done</span>
+      </div>
+      <div class="fd-manage-actions">
+        <button type="button" class="fd-manage-act" title="Rename subject" onclick="fdManageRename('${escapeAttr(s.id)}')">✎ Rename</button>
+        <button type="button" class="fd-manage-act fd-manage-act-del" title="Delete subject" onclick="fdManageDelete('${escapeAttr(s.id)}')">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function fdManageRename(subjectId){ if(typeof openEditSubject === 'function') openEditSubject(subjectId); }
+function fdManageDelete(subjectId){ if(typeof deleteSubject === 'function') deleteSubject(subjectId); }
 function fdIsOpen(){
   const el = document.getElementById('folderDashboard');
   return !!(el && el.style.display !== 'none' && el.style.display !== '');

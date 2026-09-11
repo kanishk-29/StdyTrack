@@ -3555,3 +3555,89 @@
   #folderDashboard .fd-subject-actions{ opacity:1; transform:none; top:8px; right:8px; }
   #folderDashboard .fd-subject-actions button{ width:28px; height:28px; border-radius:9px; }
 }
+
+/* --- centralized Manage Subjects panel (rename/delete, with confirm) --- */
+#folderDashboard .fd-manage-btn{
+  border:1px solid rgba(255,255,255,.8);
+  background:rgba(255,255,255,.42);
+  backdrop-filter:blur(12px) saturate(160%);
+  -webkit-backdrop-filter:blur(12px) saturate(160%);
+  color:#3e3566;
+  font-size:.78rem;
+  font-weight:700;
+  padding:9px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  white-space:nowrap;
+  box-shadow:0 6px 16px rgba(82,68,148,.12), inset 0 1px 0 rgba(255,255,255,.85);
+  transition:transform .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+#folderDashboard .fd-manage-btn:hover{ transform:translateY(-1px); box-shadow:0 9px 22px rgba(82,68,148,.18), inset 0 1px 0 rgba(255,255,255,.9); }
+#folderDashboard .fd-manage-btn:focus-visible{ outline:2px solid rgba(124,92,255,.55); outline-offset:2px; }
+@media (hover:none), (pointer:coarse){ #folderDashboard .fd-manage-btn{ padding:8px 12px; font-size:.72rem; } }
+
+#folderDashboard .fd-manage-wrap{
+  position:relative;
+  z-index:5;
+  margin:0 5px 18px;
+  padding:16px;
+  border-radius:20px;
+  background:linear-gradient(120deg, rgba(255,255,255,.66), rgba(255,255,255,.34) 48%, rgba(255,255,255,.5));
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 14px 34px rgba(70,58,140,.10), inset 0 1px 0 rgba(255,255,255,.8);
+}
+#folderDashboard .fd-manage-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+#folderDashboard .fd-manage-head strong{ font-size:.95rem; color:#29224f; letter-spacing:-.01em; }
+#folderDashboard .fd-manage-head span{ flex:1; font-size:.72rem; color:var(--muted); }
+#folderDashboard .fd-manage-close{
+  border:0; cursor:pointer;
+  width:28px; height:28px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(120,90,255,.10); color:#4a3f80; font-size:.8rem; line-height:1;
+  transition:background .2s ease;
+}
+#folderDashboard .fd-manage-close:hover{ background:rgba(120,90,255,.18); }
+#folderDashboard .fd-manage-list{ display:flex; flex-direction:column; gap:8px; }
+#folderDashboard .fd-manage-row{
+  display:flex; align-items:center; gap:12px;
+  padding:9px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.5);
+  border:1px solid rgba(255,255,255,.65);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+}
+#folderDashboard .fd-manage-info{ flex:1; display:flex; align-items:center; gap:10px; min-width:0; }
+#folderDashboard .fd-manage-thumb{
+  width:34px; height:34px; border-radius:10px; flex:none;
+  box-shadow:3px 4px 8px rgba(55,47,112,.14), inset 0 1px 0 rgba(255,255,255,.5);
+}
+#folderDashboard .fd-manage-name{
+  font-weight:700; font-size:.86rem; color:#2c2550;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+#folderDashboard .fd-manage-meta{ font-size:.68rem; color:var(--muted); white-space:nowrap; }
+#folderDashboard .fd-manage-actions{ display:flex; gap:7px; flex:none; }
+#folderDashboard .fd-manage-act{
+  border:1px solid rgba(255,255,255,.8);
+  cursor:pointer;
+  background:rgba(124,92,255,.12);
+  color:#4d3f9e;
+  font-size:.72rem; font-weight:700;
+  padding:7px 12px; border-radius:999px;
+  transition:background .2s ease, transform .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+#folderDashboard .fd-manage-act:hover{ background:rgba(124,92,255,.2); transform:translateY(-1px); }
+#folderDashboard .fd-manage-act-del{ background:rgba(232,78,76,.11); color:#d84a48; }
+#folderDashboard .fd-manage-act-del:hover{ background:rgba(232,78,76,.2); }
+#folderDashboard .fd-manage-empty{ padding:14px; text-align:center; color:var(--muted); font-size:.82rem; border-radius:12px; background:rgba(255,255,255,.4); }
+@media (max-width:640px){
+  #folderDashboard .fd-manage-row{ flex-wrap:wrap; }
+  #folderDashboard .fd-manage-meta{ display:none; }
+}
