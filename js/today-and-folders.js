@@ -1729,7 +1729,7 @@ function mslApplySearch(q){
       empty = document.createElement('div'); empty.id='mslSearchEmpty'; empty.className='search-empty';
       grid.appendChild(empty);
     }
-    empty.innerHTML = `<div class="empty-icon">⌕</div><strong>No folders found</strong><span>No folder matches “${String(qq).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}”.</span><button type="button" onclick="mslClearSearch()">Create a folder</button>`;
+    empty.innerHTML = `<div class="empty-icon">⌕</div><strong>No folders found</strong><span>No folder matches “${escapeHtml(qq)}”.</span><button type="button" onclick="mslClearSearch()">Create a folder</button>`;
     const btn = empty.querySelector('button');
     if(btn) btn.onclick = openFolderCreateLanding;
   } else if(empty){ empty.remove(); }
