@@ -122,7 +122,7 @@ async function saveSubject(){
     const s = data.subjects.find(x=>x.id===editState.subjectId);
     if(s){ s.name = name; s.folderId = folderId; }
     closeModal('subjectOverlay');
-    renderAll();
+    if(typeof fdIsOpen === 'function' && fdIsOpen()) renderFolderDashboard(); else renderAll();
     saveData();
     showToast('Subject updated ✎');
     return;

@@ -3520,3 +3520,38 @@
 
 /* ensure the design's subject thumb shows a subtle icon underlay gradient */
 #folderDashboard .subject-thumb{ background-size:cover; background-position:center; }
+
+/* --- rename / delete actions on folder-dashboard subject cards --- */
+#folderDashboard .subject-card{ position:relative; }
+#folderDashboard .fd-subject-actions{
+  position:absolute;
+  top:10px; right:10px;
+  z-index:6;
+  display:flex; gap:6px;
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity .22s ease, transform .22s ease;
+}
+#folderDashboard .subject-card:hover .fd-subject-actions,
+#folderDashboard .subject-card:focus-within .fd-subject-actions,
+#folderDashboard .fd-subject-actions.show{ opacity:1; transform:none; }
+#folderDashboard .fd-subject-actions button{
+  border:none; cursor:pointer;
+  width:30px; height:30px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; line-height:1; padding:0;
+  background:rgba(var(--accent-rgb),.12);
+  color:rgba(var(--accent-rgb),.95);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 4px 12px rgba(20,16,50,.14), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:background .2s ease, transform .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+#folderDashboard .fd-subject-actions button:hover{ transform:translateY(-1px) scale(1.07); }
+#folderDashboard .fd-subject-actions button:focus-visible{ outline:2px solid rgba(124,92,255,.55); outline-offset:2px; }
+#folderDashboard .fd-subject-actions .fd-del-btn{ background:rgba(232,78,76,.13); color:#d84a48; }
+@media (hover:none), (pointer:coarse){
+  #folderDashboard .fd-subject-actions{ opacity:1; transform:none; top:8px; right:8px; }
+  #folderDashboard .fd-subject-actions button{ width:28px; height:28px; border-radius:9px; }
+}

@@ -1919,6 +1919,10 @@ function fdSubjectCardHtml(s, i){
         <div class="subject-next">🎯 Next: ${fdNextFor(s)}</div>
       </div>
       <div class="subject-go ripple-host" style="color:${acc.color};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="fd-subject-actions">
+        <button type="button" title="Rename subject" aria-label="Rename ${escapeAttr(s.name)}" onclick="event.stopPropagation(); fdRenameSubject('${escapeAttr(s.id)}')">✎</button>
+        <button type="button" class="fd-del-btn" title="Delete subject" aria-label="Delete ${escapeAttr(s.name)}" onclick="event.stopPropagation(); fdDeleteSubject('${escapeAttr(s.id)}')">🗑</button>
+      </div>
     </div>`;
 }
 
@@ -2086,6 +2090,12 @@ function fdOpenSubject(id){
   if(typeof jumpToSubject === 'function') jumpToSubject(id); else if(typeof switchToMain==='function') switchToMain();
 }
 function fdAddSubject(){ if(typeof openAddSubject === 'function') openAddSubject(); else if(typeof addSubject==='function') addSubject(); }
+function fdRenameSubject(subjectId){ if(typeof openEditSubject === 'function') openEditSubject(subjectId); }
+function fdDeleteSubject(subjectId){ if(typeof deleteSubject === 'function') deleteSubject(subjectId); }
+function fdIsOpen(){
+  const el = document.getElementById('folderDashboard');
+  return !!(el && el.style.display !== 'none' && el.style.display !== '');
+}
 function fdViewStats(){
   closeFolderDashboard();
   try{

@@ -196,7 +196,7 @@ function deleteSubject(subjectId){
       runningRef = null;
       stopTicking();
     }
-    renderAll();
+    if(typeof fdIsOpen === 'function' && fdIsOpen()) renderFolderDashboard(); else renderAll();
     saveData();
   });
 }
