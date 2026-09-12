@@ -1,8 +1,8 @@
-// Minimal offline cache for Study Tracker.
+﻿// Minimal offline cache for Study Tracker.
 // All real data lives in localStorage, not in this cache ???????? this only
 // lets the app shell (html/css/js/icons) load when there's no connection.
 
-const CACHE_NAME = 'study-tracker-shell-v91';
+const CACHE_NAME = 'study-tracker-shell-v93';
 const APP_SHELL = [
   './',
   './index.html',
@@ -42,6 +42,7 @@ const APP_SHELL = [
   './css/tooltip-footer.css',
   './css/modal.css',
   './css/today-planner.css',
+  './css/today-aura.css',
   './css/lecture-notes.css',
   './css/analytics.css',
   './css/focus-mode.css',
@@ -55,6 +56,7 @@ const APP_SHELL = [
   './js/data.js',
   './js/demo.js',
   './js/today-and-folders.js',
+  './js/today-redesign.js',
   './js/cloud-sync.js',
   './js/rei-gemini.js',
   './js/storage.js',

@@ -30,7 +30,7 @@ let closedFolderIds = new Set(); // folder ids currently collapsed in the sideba
 let editState = { subjectId:null, unitId:null, lectureId:null, mode:null };
 let expandedTests = new Set();
 let chartRange = 14;
-let currentView = 'study';
+let currentView = 'priority';
 let lbRange = 7;
 
 function toggleTestExpand(testId){
