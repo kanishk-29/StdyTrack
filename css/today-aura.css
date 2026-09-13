@@ -567,6 +567,15 @@
 #priorityView .nw-primary{background:linear-gradient(135deg,#7d5ae2,#6741cf);color:#fff;box-shadow:var(--nw-shadow-out-sm)}
 #priorityView .nw-focus-controls{display:flex;justify-content:center;gap:8px}
 
+/* Focus session duration chips */
+#priorityView .nw-focus-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:6px auto 4px;max-width:340px}
+#priorityView .nw-focus-chip{
+  border:1px solid var(--nw-liquid-border);background:rgba(255,255,255,.55);color:var(--nw-text-2);
+  border-radius:999px;padding:6px 13px;font-size:9px;font-weight:900;cursor:pointer;font-family:inherit;
+}
+#priorityView .nw-focus-chip:hover{border-color:var(--nw-purple);color:var(--nw-purple)}
+#priorityView .nw-focus-chip.active{background:var(--nw-purple);border-color:var(--nw-purple);color:#fff;box-shadow:var(--nw-shadow-out-sm)}
+
 /* ---------- DARK MODE ---------- */
 [data-theme="dark"] #priorityView{
   --nw-bg:#151821;

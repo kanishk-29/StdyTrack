@@ -15,6 +15,8 @@ let notesAutosaveTimer = null;
 // and tooltip preview keep working against the first page.
 let notesPages = [];
 let notesCurrentPage = 0;
+// ---- Focus session (strict countdown) ----
+let focusSession = { mode:'idle', totalSec:0, remainingSec:0, warnCount:0, timerId:null, digitsId:null, paused:false };
 
 function openNotesEditor(subjectId, unitId, lectureId){
   closeLectureMenus();
@@ -1024,6 +1026,173 @@ function toggleLectureMenu(lectureId){
   }
 }
 
+// ---- Focus session helpers ----
+function fuSecondsText(sec){
+  sec = Math.max(0, Math.floor(Number(sec) || 0));
+  const m = Math.floor(sec/60), s = sec%60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function fuFocusPct(){
+  const s = focusSession;
+  if(s.mode === 'done') return 100;
+  return s.totalSec ? Math.round((s.remainingSec / s.totalSec) * 100) : 0;
+}
+function updateFocusRing(){
+  const ring = document.getElementById('focusRing');
+  const pct = fuFocusPct();
+  if(ring) ring.style.background = 'conic-gradient(var(--green) 0 ' + pct + '%, rgba(255,255,255,.14) ' + pct + '% 100%)';
+  const txt = document.getElementById('focusTimerText');
+  if(txt) txt.textContent = fuSecondsText(focusSession.remainingSec);
+  const sub = document.getElementById('focusTimerSub');
+  if(sub) sub.textContent = focusSession.paused ? 'paused' : (focusSession.mode==='done' ? 'completed' : 'remaining');
+  const bar = document.getElementById('focusProgBar');
+  if(bar) bar.style.width = pct + '%';
+}
+function focusSessionRender(){
+  const box = document.getElementById('focusSession');
+  if(!box) return;
+  const s = focusSession;
+  if(s.mode === 'idle'){
+    box.innerHTML = `
+      <div class="focus-sess-head">
+        <div class="focus-sess-title"><b>Focus session</b><span>Pick your timer — strict, it won't let you skip early</span></div>
+      </div>
+      <div class="focus-chips">
+        ${[15,25,50,60,90].map(m=>'<button class="focus-chip" onclick="focusSessionStart('+m+')">'+m+' min</button>').join('')}
+        <span class="focus-custom">Custom <input id="focusCustomMin" type="number" min="1" max="300" step="5" value="50"> min</span>
+        <button class="focus-start" onclick="focusSessionStart(document.getElementById('focusCustomMin').value)">Start</button>
+      </div>`;
+    return;
+  }
+  if(s.mode === 'running' || s.mode === 'done'){
+    box.innerHTML = `
+      <div class="focus-sess-head">
+        <div class="focus-sess-title"><b>Focus session</b><span>${s.mode==='done' ? 'Complete — you can exit now 🎉' : (s.paused ? 'Paused — resume whenever you are ready' : 'Locked in — quitting early needs 2 warnings')}</span></div>
+        ${s.mode==='running' ? '<button class="focus-quit-btn" onclick="focusWarnExit()">Quit early</button>' : ''}
+      </div>
+      <div class="focus-count">
+        <div class="focus-ring" id="focusRing"><div class="focus-ring-in"><b id="focusTimerText"></b><span id="focusTimerSub">remaining</span></div></div>
+        <div class="focus-progress"><i id="focusProgBar"></i></div>
+        <div class="focus-count-actions">
+          ${s.mode==='running' ? '<button class="focus-pause" onclick="focusSessionPause()">'+ (s.paused ? 'Resume' : 'Pause') +'</button>' : ''}
+        </div>
+      </div>`;
+    updateFocusRing();
+    return;
+  }
+}
+function focusSessionStart(min){
+  min = Math.max(1, Math.min(300, parseInt(min,10) || 50));
+  const s = focusSession;
+  s.totalSec = min*60;
+  s.remainingSec = s.totalSec;
+  s.warnCount = 0;
+  s.mode = 'running';
+  s.paused = false;
+  clearFocusQuitBox();
+  if(s.timerId) clearInterval(s.timerId);
+  s.timerId = setInterval(focusSessionTick, 1000);
+  focusSessionRender();
+  updateFocusRing();
+  showToast(min + '-minute focus locked in. Stay with it.');
+}
+function focusSessionPause(){
+  const s = focusSession;
+  if(s.mode !== 'running' || s.mode === 'done') return;
+  s.paused = !s.paused;
+  focusSessionRender();
+}
+function focusSessionTick(){
+  const s = focusSession;
+  if(s.mode !== 'running' || s.paused) return;
+  s.remainingSec--;
+  if(s.remainingSec <= 0){
+    s.remainingSec = 0;
+    s.mode = 'done';
+    if(s.timerId){ clearInterval(s.timerId); s.timerId = null; }
+    updateFocusRing();
+    focusSessionRender();
+    showToast('Focus session complete 🎉');
+    if(typeof mascotCelebrate === 'function'){ try{ mascotCelebrate(); }catch(e){} }
+    return;
+  }
+  updateFocusRing();
+}
+function focusSessionReset(){
+  focusSessionStop();
+  focusSessionRender();
+}
+function focusSessionStop(){
+  const s = focusSession;
+  if(s.timerId){ clearInterval(s.timerId); s.timerId = null; }
+  fuStop();
+  s.mode = 'idle'; s.totalSec = 0; s.remainingSec = 0; s.warnCount = 0; s.paused = false;
+  clearFocusQuitBox();
+}
+function clearFocusQuitBox(){ const b = document.getElementById('focusQuitBox'); if(b) b.innerHTML = ''; }
+function focusQuitDismiss(){ clearFocusQuitBox(); }
+function focusWarnExit(){
+  const s = focusSession;
+  if(s.mode !== 'running'){ forceCloseFocusMode(); return; }
+  s.warnCount++;
+  if(s.warnCount < 3){
+    const box = document.getElementById('focusQuitBox');
+    if(box) box.innerHTML = `
+      <div class="fq-overlay">
+        <div class="fq-card">
+          <div class="fq-num">Warning ${s.warnCount} of 2</div>
+          <div class="fq-title">Focus is still running</div>
+          <div class="fq-sub">${fuSecondsText(s.remainingSec)} left. You can't skip this session until it completes.</div>
+          <div class="fq-actions">
+            <button class="fq-keep" onclick="focusQuitDismiss()">Keep focusing</button>
+            <button class="fq-quit" onclick="focusWarnExit()">Quit anyway</button>
+          </div>
+        </div>
+      </div>`;
+    showToast('Strict focus — you can\'t skip yet (warning ' + s.warnCount + ' of 2).');
+    return;
+  }
+  forceCloseFocusMode();
+}
+
+// ---- Universe placeholder (shown when a lecture has no playable video) ----
+function fuDigitsLine(){
+  let hex = '';
+  for(let i=0;i<6;i++) hex += (Math.floor(Math.random()*256)).toString(16).toUpperCase().padStart(2,'0') + ' ';
+  let bin = '';
+  for(let i=0;i<14;i++) bin += Math.round(Math.random());
+  let ts = '';
+  if(focusSession.mode === 'running' || focusSession.mode === 'done') ts = 'T-' + fuSecondsText(focusSession.mode === 'done' ? 0 : focusSession.remainingSec);
+  return hex.trim() + '\n' + bin + '\n' + (ts || 'SIG: LOCKED');
+}
+function fuStart(){
+  if(focusSession.digitsId) return;
+  const el = document.getElementById('fuDigits');
+  if(el) el.textContent = fuDigitsLine();
+  focusSession.digitsId = setInterval(function(){
+    const t = document.getElementById('fuDigits');
+    if(t) t.textContent = fuDigitsLine();
+  }, 900);
+}
+function fuStop(){
+  if(focusSession.digitsId){ clearInterval(focusSession.digitsId); focusSession.digitsId = null; }
+}
+function focusUniverseHtml(extra){
+  return `
+    <div class="focus-universe">
+      <i class="fu-star s1"></i><i class="fu-star s2"></i><i class="fu-star s3"></i><i class="fu-star s4"></i><i class="fu-star s5"></i>
+      <div class="fu-radar">
+        <i class="fu-ring"></i><i class="fu-ring"></i><i class="fu-ring"></i>
+        <i class="fu-sweep"></i>
+        <i class="fu-pulse p1"></i><i class="fu-pulse p2"></i><i class="fu-pulse p3"></i>
+        <b class="fu-core"></b>
+      </div>
+      <div class="fu-hud"><span>RADAR://ACTIVE</span><span>SYS.CORE v2.6</span><span>LSH: ${fuSecondsText(focusSession.totalSec || 0)}</span></div>
+      <div class="fu-digits" id="fuDigits"></div>
+      <div class="fu-center-label">${extra || 'No link attached — deep focus engaged'}</div>
+    </div>`;
+}
+
 function openFocusMode(subjectId, unitId, lectureId){
   rememberOpener('focusOverlay');
   const s = (data.subjects||[]).find(x=>x.id===subjectId);
@@ -1031,16 +1200,20 @@ function openFocusMode(subjectId, unitId, lectureId){
   const l = u ? (Array.isArray(u.lectures) ? u.lectures : []).find(x=>x && x.id===lectureId) : null;
   if(!l) return;
   focusRef = {subjectId, unitId, lectureId};
+  focusSessionReset();
   document.getElementById('focusSubjectUnit').textContent = `${s.name.toUpperCase()} · ${u.name.toUpperCase()}`;
   document.getElementById('focusTitle').textContent = l.title;
   const vidWrap = document.getElementById('focusVideoWrap');
   const ytId = getYouTubeId(l.link);
   if(ytId){
+    fuStop();
     vidWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0" title="${escapeAttr(l.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
   } else if(l.link){
-    vidWrap.innerHTML = `<div class="focus-no-video">This resource isn't a YouTube link.<br><a class="btn primary focus-open-btn" href="${escapeAttr(safeHref(l.link))}" target="_blank" rel="noopener">Open Resource ↗</a></div>`;
+    vidWrap.innerHTML = focusUniverseHtml('<a class="fu-link-btn" href="' + escapeAttr(safeHref(l.link)) + '" target="_blank" rel="noopener">Open Resource ↗</a>');
+    fuStart();
   } else {
-    vidWrap.innerHTML = `<div class="focus-no-video">No link attached to this lecture yet.</div>`;
+    vidWrap.innerHTML = focusUniverseHtml('<span class="fu-no-link-label">No link attached — deep focus engaged</span>');
+    fuStart();
   }
   renderFocusControls();
   document.getElementById('focusNotes').textContent = l.notes || '';
@@ -1066,6 +1239,14 @@ function renderFocusControls(){
 }
 
 function closeFocusMode(){
+  if(focusSession.mode === 'running'){
+    focusWarnExit();
+    return;
+  }
+  forceCloseFocusMode();
+}
+function forceCloseFocusMode(){
+  focusSessionStop();
   document.getElementById('focusOverlay').classList.remove('show');
   document.getElementById('focusVideoWrap').innerHTML = '';
   focusRef = null;

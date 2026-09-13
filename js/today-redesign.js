@@ -13,7 +13,7 @@
 
 let nwState = { active: null, weekAnchor: null, month: null, filter: 'all' };
 let nwEditMode = null; // { key, id } when the item modal is editing an existing item
-let nwSeconds = 1500, nwRunning = false, nwInterval = null;
+let nwSeconds = 1500, nwRunning = false, nwInterval = null, nwFocusMin = 25, nwWarns = 0;
 
 function nwEl(id){ return document.getElementById(id); }
 function nwPad(n){ return String(n).padStart(2, '0'); }
@@ -278,7 +278,7 @@ function renderPriorityPage(){
                 <div class="nw-focus-text">
                   <strong>Need a clean start?</strong>
                   <p>Start a short focus block and work only on the current item.</p>
-                  <button class="nw-focus-btn" onclick="nwFocusStart()">Start 25-minute focus</button>
+                  <button class="nw-focus-btn" onclick="nwFocusStart()">Start focus</button>
                 </div>
               </div>
             </div>
@@ -316,16 +316,18 @@ function renderPriorityPage(){
     <div class="nw-backdrop" id="nwFocusModal" onclick="if(event.target===this)nwCloseModal()">
       <div class="nw-modal nw-center">
         <div class="nw-modal-head">
-          <div style="text-align:left"><h2>Focus mode</h2><p>25 minutes. One outcome. Keep the rest of the dashboard out of your head.</p></div>
+          <div style="text-align:left"><h2>Focus mode</h2><p>Pick a session length. Strict mode — you can't skip before the timer completes.</p></div>
           <button class="nw-close" onclick="nwCloseModal()">×</button>
         </div>
-        <div class="nw-ring nw-ring-lg" id="nwFocusRing"><div class="nw-ring-center"><strong id="nwTimer">25:00</strong><span>FOCUS</span></div></div>
+        <div class="nw-focus-chips" id="nwFocusChips">${[15,25,50,60,90].map(function(m){ return '<button class="nw-focus-chip'+(m===nwFocusMin?' active':'')+'" data-min="'+m+'" onclick="nwFocusPick('+m+')">'+m+' min</button>'; }).join('')}</div>
+        <div class="nw-ring nw-ring-lg" id="nwFocusRing"><div class="nw-ring-center"><strong id="nwTimer">25:00</strong><span id="nwFocusLbl">FOCUS · 25 MIN</span></div></div>
         <div class="nw-focus-controls"><button class="nw-secondary" onclick="nwFocusReset()">Reset</button><button class="nw-primary" id="nwFocusPauseBtn" onclick="nwFocusPause()">Pause</button></div>
       </div>
     </div>
   </div>`;
 
   nwRenderAll();
+  if(nwRunning && nwInterval && nwEl('nwFocusModal')) nwEl('nwFocusModal').classList.add('open');
 }
 window.renderPriorityPage = renderPriorityPage;
 
@@ -749,21 +751,35 @@ function nwSaveItem(){
 }
 
 // ---------------- focus timer ----------------
+function nwFocusPick(min){
+  min = Math.max(1, Math.min(300, parseInt(min,10) || 25));
+  nwFocusMin = min;
+  nwSeconds = min*60;
+  nwRunning = false;
+  nwWarns = 0;
+  const chips = document.querySelectorAll('#nwFocusChips .nw-focus-chip');
+  for(let i=0;i<chips.length;i++) chips[i].classList.toggle('active', parseInt(chips[i].getAttribute('data-min')||'',10) === min);
+  nwFocusTimerRender();
+}
 function nwFocusTimerRender(){
   const t = nwEl('nwTimer');
   if(t) t.textContent = nwPad(Math.floor(Math.max(0,nwSeconds)/60)) + ':' + nwPad(Math.max(0,nwSeconds)%60);
+  const lbl = nwEl('nwFocusLbl');
+  if(lbl) lbl.textContent = 'FOCUS · ' + nwFocusMin + ' MIN';
   const ring = nwEl('nwFocusRing');
   if(ring){
-    const pct = Math.max(0, Math.min(100, ((1500 - nwSeconds) / 1500) * 100));
+    const pct = Math.max(0, Math.min(100, ((nwFocusMin*60 - nwSeconds) / (nwFocusMin*60)) * 100));
     ring.style.background = 'conic-gradient(#7654dd 0 ' + pct + '%,#dedfe6 ' + pct + '% 100%)';
   }
 }
-function nwFocusStart(){
+function nwFocusStart(min){
+  if(min && parseInt(min,10) !== nwFocusMin) nwFocusPick(min);
   const modal = nwEl('nwFocusModal');
   if(!modal) return;
   modal.classList.add('open');
   if(!nwInterval){
     nwRunning = true;
+    nwWarns = 0;
     const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = 'Pause';
     nwInterval = setInterval(function(){
       if(!nwRunning) return;
@@ -778,15 +794,38 @@ function nwFocusStart(){
   }
 }
 function nwFocusPause(){
-  if(nwSeconds <= 0){ nwSeconds = 1500; nwFocusTimerRender(); return; }
+  if(nwSeconds <= 0){ nwSeconds = nwFocusMin*60; nwFocusTimerRender(); return; }
   nwRunning = !nwRunning;
+  if(nwRunning) nwWarns = 0;
   const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = nwRunning ? 'Pause' : 'Resume';
 }
 function nwFocusReset(){
-  nwSeconds = 1500;
+  nwSeconds = nwFocusMin*60;
   nwRunning = false;
+  nwWarns = 0;
   nwFocusTimerRender();
-  const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = 'Resume';
+  const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = 'Pause';
+}
+function nwFocusWarn(){
+  if(nwRunning && nwSeconds > 0 && nwInterval){
+    nwWarns++;
+    if(nwWarns < 3){
+      if(typeof showToast === 'function') showToast('Strict focus — complete the session. Warning ' + nwWarns + ' of 2.');
+      const ring = nwEl('nwFocusRing');
+      if(ring){ ring.style.boxShadow = '0 0 0 3px rgba(255,90,90,.55)'; setTimeout(function(){ if(ring) ring.style.boxShadow = ''; }, 500); }
+      return false;
+    }
+  }
+  if(nwInterval){ clearInterval(nwInterval); nwInterval = null; }
+  nwRunning = false;
+  return true;
+}
+function nwCloseModal(){
+  const item = nwEl('nwItemModal'), focus = nwEl('nwFocusModal');
+  if(focus && focus.classList.contains('open') && !nwFocusWarn()) return;
+  if(item) item.classList.remove('open');
+  if(focus) focus.classList.remove('open');
+  nwEditMode = null;
 }
 
 // ---------------- global shortcuts ----------------
@@ -805,12 +844,10 @@ if(typeof window === 'object'){
   window.nwFocusStart = nwFocusStart;
   window.nwFocusPause = nwFocusPause;
   window.nwFocusReset = nwFocusReset;
+  window.nwFocusPick = nwFocusPick;
+  window.nwCloseModal = nwCloseModal;
 }
 
 document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape'){
-    if(nwEl('nwItemModal')) nwEl('nwItemModal').classList.remove('open');
-    if(nwEl('nwFocusModal')) nwEl('nwFocusModal').classList.remove('open');
-    nwEditMode = null;
-  }
+  if(e.key === 'Escape'){ nwCloseModal(); }
 });
