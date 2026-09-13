@@ -385,7 +385,7 @@ function nwRenderTasks(){
     row.innerHTML =
       '<button class="nw-check" onclick="nwToggleItem(\'' + x.key + '\',\'' + x.id + '\')">' + (x.done ? '✓' : '○') + '</button>' +
       '<div class="nw-task-body" onclick="nwOpenEdit(\'' + x.key + '\',\'' + x.id + '\')">' +
-        '<div class="nw-task-title">' + NW_TYPE_ICON[x.type] || '•' + ' ' + nwEsc(x.title) + '</div>' +
+        '<div class="nw-task-title">' + (NW_TYPE_ICON[x.type] || '•') + ' ' + nwEsc(x.title) + '</div>' +
         '<div class="nw-task-meta">' + (NW_TYPE_LABEL[x.type]||'Item') + (x.note ? ' · ' + nwEsc(x.note) : '') + '</div>' +
       '</div>' +
       '<div class="nw-task-time">' + nwTimeText(x.time) + '<span class="nw-task-duration">' + (x.duration||0) + ' min</span><button class="nw-task-del" title="Delete" onclick="nwDeleteItem(\'' + x.key + '\',\'' + x.id + '\')">✕</button></div>';

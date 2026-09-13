@@ -1513,7 +1513,7 @@ function mascotInsightEngine(ctx){
   return out;
 }
 
-// ---------- Hidden Study Mood Score (Â§9) ----------
+// ---------- Hidden Study Mood Score (§9) ----------
 function mascotComputeMoodScore(ctx){
   const c = ctx || mascotBuildContext();
   const P = MASCOT_CONFIG.moodPoints;

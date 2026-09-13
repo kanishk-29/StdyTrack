@@ -1,4 +1,4 @@
-﻿// Minimal offline cache for Study Tracker.
+// Minimal offline cache for Study Tracker.
 // All real data lives in localStorage, not in this cache ???????? this only
 // lets the app shell (html/css/js/icons) load when there's no connection.
 

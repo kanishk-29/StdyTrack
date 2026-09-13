@@ -68,7 +68,7 @@
       repeating-linear-gradient(transparent, transparent 27px, var(--paper-line) 28px),
       var(--paper);
     color:var(--ink);
-    font-family:'Inter',sans-serif;
+    font-family:'Inter','Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;
     min-height:100vh;
     min-height:100dvh;
     padding:
