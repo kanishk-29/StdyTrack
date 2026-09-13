@@ -753,6 +753,7 @@ function nwSaveItem(){
 // ---------------- focus timer ----------------
 function nwFocusPick(min){
   min = Math.max(1, Math.min(300, parseInt(min,10) || 25));
+  if(nwInterval){ clearInterval(nwInterval); nwInterval = null; }
   nwFocusMin = min;
   nwSeconds = min*60;
   nwRunning = false;
@@ -777,29 +778,33 @@ function nwFocusStart(min){
   const modal = nwEl('nwFocusModal');
   if(!modal) return;
   modal.classList.add('open');
-  if(!nwInterval){
-    nwRunning = true;
-    nwWarns = 0;
-    const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = 'Pause';
-    nwInterval = setInterval(function(){
-      if(!nwRunning) return;
-      nwSeconds--;
-      nwFocusTimerRender();
-      if(nwSeconds <= 0){
-        clearInterval(nwInterval); nwInterval = null; nwRunning = false;
-        const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = 'Restart';
-        showToast('Focus block complete. 🎉');
-      }
-    }, 1000);
+  nwRunning = true;
+  nwWarns = 0;
+  const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = 'Pause';
+  if(!nwInterval) nwInterval = setInterval(nwFocusTick, 1000);
+}
+function nwFocusTick(){
+  if(!nwRunning) return;
+  nwSeconds--;
+  nwFocusTimerRender();
+  if(nwSeconds <= 0){
+    if(nwInterval){ clearInterval(nwInterval); nwInterval = null; }
+    nwRunning = false;
+    const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = 'Restart';
+    showToast('Focus block complete. 🎉');
   }
 }
 function nwFocusPause(){
   if(nwSeconds <= 0){ nwSeconds = nwFocusMin*60; nwFocusTimerRender(); return; }
   nwRunning = !nwRunning;
-  if(nwRunning) nwWarns = 0;
+  if(nwRunning){
+    nwWarns = 0;
+    if(!nwInterval) nwInterval = setInterval(nwFocusTick, 1000);
+  }
   const pb = nwEl('nwFocusPauseBtn'); if(pb) pb.textContent = nwRunning ? 'Pause' : 'Resume';
 }
 function nwFocusReset(){
+  if(nwInterval){ clearInterval(nwInterval); nwInterval = null; }
   nwSeconds = nwFocusMin*60;
   nwRunning = false;
   nwWarns = 0;

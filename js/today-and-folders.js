@@ -886,8 +886,15 @@ function renderPriorityPage(){
 }
 
 // Live-refresh the Next Up countdown / ongoing status once a minute while
-// this tab is open, without needing the person to touch anything.
-setInterval(()=>{ if(currentView==='priority' && !document.hidden) renderPriorityPage(); }, 60000);
+// this tab is open, without needing the person to touch anything. Skip the
+// refresh while the add/edit item modal is open so an in-progress edit is
+// never wiped by the re-render.
+setInterval(()=>{
+  if(currentView==='priority' && !document.hidden){
+    const m = document.getElementById('nwItemModal');
+    if(!m || !m.classList.contains('open')) renderPriorityPage();
+  }
+}, 60000);
 
 function setChartRange(days, btn){
   chartRange = days;
