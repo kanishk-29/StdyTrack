@@ -123,13 +123,13 @@
   .login-logo{display:flex;align-items:center;gap:11px;text-shadow:0 4px 18px rgba(0,0,0,.4)}
   .login-logo-icon{
     width:44px;height:44px;border-radius:14px;
-    display:grid;place-items:center;
     background:rgba(12,25,48,.38);
     border:1px solid rgba(255,255,255,.18);
     backdrop-filter:blur(12px);
     -webkit-backdrop-filter:blur(12px);
-    font-size:18px;
   }
+  .login-logo-icon img,
+  .login-logo-icon{object-fit:cover;display:block}
   .login-logo-title{font-weight:700;font-size:15px}
   .login-logo-sub{font-size:10px;color:rgba(240,246,255,.72);margin-top:2px}
 
