@@ -1166,6 +1166,7 @@ function fuDigitsLine(){
   return hex.trim() + '\n' + bin + '\n' + (ts || 'SIG: LOCKED');
 }
 function fuStart(){
+  fuSatStart();
   if(focusSession.digitsId) return;
   const el = document.getElementById('fuDigits');
   if(el) el.textContent = fuDigitsLine();
@@ -1175,22 +1176,232 @@ function fuStart(){
   }, 900);
 }
 function fuStop(){
+  fuSatStop();
   if(focusSession.digitsId){ clearInterval(focusSession.digitsId); focusSession.digitsId = null; }
 }
 function focusUniverseHtml(extra){
   return `
     <div class="focus-universe">
-      <i class="fu-star s1"></i><i class="fu-star s2"></i><i class="fu-star s3"></i><i class="fu-star s4"></i><i class="fu-star s5"></i>
-      <div class="fu-radar">
-        <i class="fu-ring"></i><i class="fu-ring"></i><i class="fu-ring"></i>
-        <i class="fu-sweep"></i>
-        <i class="fu-pulse p1"></i><i class="fu-pulse p2"></i><i class="fu-pulse p3"></i>
-        <b class="fu-core"></b>
-      </div>
-      <div class="fu-hud"><span>RADAR://ACTIVE</span><span>SYS.CORE v2.6</span><span>LSH: ${fuSecondsText(focusSession.totalSec || 0)}</span></div>
+      <canvas id="fuSat"></canvas>
+      <div class="fu-hud"><span>SAT:// ORBIT STABLE</span><span>ALT 438KM · V 7.66KM/S</span><span>LSH: ${fuSecondsText(focusSession.totalSec || 0)}</span></div>
       <div class="fu-digits" id="fuDigits"></div>
       <div class="fu-center-label">${extra || 'No link attached — deep focus engaged'}</div>
     </div>`;
+}
+
+// ---- Satellite renderer — calm orbital view of a home planet ----
+let fuSatId = null, fuSatLast = null, fuSatT = 0;
+let fuStars = null, fuLand = null;
+const FU2PI = Math.PI * 2;
+
+function fuEnsureScene(){
+  if(!fuStars){
+    fuStars = [];
+    for(let i = 0; i < 110; i++){
+      fuStars.push({ x: Math.random() * 800, y: Math.random() * 450, r: 0.4 + Math.random() * 1.1, sp: 0.8 + Math.random() * 2.4, ph: Math.random() * FU2PI });
+    }
+  }
+  if(!fuLand){
+    fuLand = [];
+    const defs = [
+      { u: -0.50, v:  0.18, r: 0.30, steps: 28 },  // americas
+      { u:  0.30, v:  0.46, r: 0.36, steps: 30 },  // eurasia
+      { u:  0.56, v: -0.10, r: 0.21, steps: 22 },  // africa
+      { u: -0.10, v: -0.22, r: 0.16, steps: 18 },  // south america
+      { u: -0.30, v: -0.52, r: 0.10, steps: 14 }   // australia
+    ];
+    for(const d of defs){
+      const pts = [];
+      for(let k = 0; k < d.steps; k++){
+        const a = (k / d.steps) * FU2PI;
+        const jr = 1 + (Math.random() - 0.5) * 0.3;
+        const u = Math.max(-1.45, Math.min(1.45, d.u + Math.cos(a) * d.r * jr));
+        const v = Math.max(-1.40, Math.min(1.40, d.v + Math.sin(a) * d.r * 0.72 * jr));
+        pts.push({ u, v });
+      }
+      fuLand.push({ pts });
+    }
+  }
+}
+function fuMap(u, v, cx, cy, R){
+  return [ cx + R * Math.cos(v) * Math.sin(u), cy + R * Math.sin(v) ];
+}
+function fuSatDraw(ctx, W, H, t){
+  const cx = W * 0.60, cy = H * 0.52, R = Math.min(W, H) * 0.36;
+
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#05081a'); bg.addColorStop(0.55, '#0a122c'); bg.addColorStop(1, '#02040b');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+  const nebT = ctx.createRadialGradient(W * 0.14, H * 0.16, 8, W * 0.14, H * 0.16, W * 0.52);
+  nebT.addColorStop(0, 'rgba(96,190,255,.10)'); nebT.addColorStop(1, 'rgba(96,190,255,0)');
+  ctx.fillStyle = nebT; ctx.fillRect(0, 0, W, H);
+  const nebV = ctx.createRadialGradient(W * 0.92, H * 0.78, 8, W * 0.92, H * 0.78, W * 0.46);
+  nebV.addColorStop(0, 'rgba(150,120,255,.07)'); nebV.addColorStop(1, 'rgba(150,120,255,0)');
+  ctx.fillStyle = nebV; ctx.fillRect(0, 0, W, H);
+
+  for(let i = 0; i < fuStars.length; i++){
+    const s = fuStars[i];
+    ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(t * s.sp + s.ph));
+    ctx.fillStyle = s.r > 1.0 ? '#cdeaff' : '#ffffff';
+    ctx.beginPath(); ctx.arc(s.x * W / 800, s.y * H / 450, s.r, 0, FU2PI); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  const rot = t * 0.055, cloudRot = t * 0.085, spin = -1.05;
+
+  const atmo = ctx.createRadialGradient(cx, cy, R * 0.72, R * 0.86, R * 1.22);
+  atmo.addColorStop(0, 'rgba(120,190,255,.34)');
+  atmo.addColorStop(0.62, 'rgba(100,170,255,.12)');
+  atmo.addColorStop(1, 'rgba(100,170,255,0)');
+  ctx.fillStyle = atmo;
+  ctx.beginPath(); ctx.arc(cx, cy, R * 1.02, 0, FU2PI); ctx.fill();
+
+  const body = ctx.createRadialGradient(cx - R * 0.4, cy - R * 0.45, R * 0.1, cx, cy, R);
+  body.addColorStop(0, '#5b8fe0');
+  body.addColorStop(0.45, '#244f9e');
+  body.addColorStop(0.8, '#122c68');
+  body.addColorStop(1, '#081a44');
+  ctx.fillStyle = body;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, FU2PI); ctx.fill();
+
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, FU2PI); ctx.clip();
+
+  ctx.save();
+  ctx.translate(cx, cy); ctx.rotate(spin); ctx.translate(-cx, -cy);
+  for(const l of fuLand){
+    ctx.beginPath();
+    let first = true;
+    for(const p of l.pts){
+      const pt = fuMap(p.u + rot, p.v, cx, cy, R);
+      if(first){ ctx.moveTo(pt[0], pt[1]); first = false; } else ctx.lineTo(pt[0], pt[1]);
+    }
+    ctx.closePath();
+    const lg = ctx.createLinearGradient(cx - R * 0.3, cy - R * 0.4, cx + R * 0.3, cy + R * 0.4);
+    lg.addColorStop(0, 'rgba(132,196,120,.92)');
+    lg.addColorStop(0.6, 'rgba(74,132,86,.92)');
+    lg.addColorStop(1, 'rgba(46,90,64,.92)');
+    ctx.fillStyle = lg; ctx.fill();
+  }
+  ctx.globalAlpha = 0.16;
+  ctx.fillStyle = '#ffffff';
+  for(let i = 0; i < 12; i++){
+    const cu = ((i * 0.71) + cloudRot) % Math.PI - 0.5;
+    const cvm = Math.sin(i * 1.7) * 0.8;
+    const cr = 0.12 + (i % 3) * 0.05 + Math.sin(t * 0.4 + i) * 0.02;
+    ctx.beginPath();
+    for(let k = 0; k < 20; k++){
+      const a = (k / 20) * FU2PI;
+      const xx = cx + R * Math.cos(cvm) * Math.sin(cu + Math.cos(a) * cr * 0.6);
+      const yy = cy + R * Math.sin(cvm + Math.sin(a) * cr * 0.6);
+      if(k === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+    }
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  ctx.beginPath();
+  for(let i = -3; i <= 3; i++){
+    const v = i * 0.42;
+    ctx.moveTo(cx + R * Math.cos(v) * Math.sin(-0.45), cy + R * Math.sin(v));
+    for(let k = 0; k <= 20; k++){
+      const u = -0.45 + (k / 20) * 0.9;
+      const pt = fuMap(u, v, cx, cy, R);
+      ctx.lineTo(pt[0], pt[1]);
+    }
+  }
+  for(let k = 1; k <= 5; k++){
+    const u = -0.75 + (k / 6) * 1.5;
+    ctx.moveTo(cx + R * Math.cos(1.45) * Math.sin(u), cy - R * 0.985);
+    for(let i2 = 0; i2 <= 16; i2++){
+      const v = -1.45 + (i2 / 16) * 2.9;
+      const pt = fuMap(u, v, cx, cy, R);
+      ctx.lineTo(pt[0], pt[1]);
+    }
+  }
+  ctx.strokeStyle = 'rgba(150,190,255,.16)'; ctx.lineWidth = 0.7; ctx.stroke();
+  ctx.restore();
+
+  const rim = ctx.createRadialGradient(cx - R * 0.42, cy - R * 0.42, R * 0.15, cx, cy, R * 1.02);
+  rim.addColorStop(0, 'rgba(255,255,255,.16)');
+  rim.addColorStop(0.3, 'rgba(255,255,255,0)');
+  rim.addColorStop(1, 'rgba(10,20,60,.35)');
+  ctx.fillStyle = rim;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, FU2PI); ctx.fill();
+
+  const a = R * 1.58, b = R * 1.12, oth = 0.55;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(oth);
+  ctx.beginPath(); ctx.ellipse(0, 0, a, b, 0, 0, FU2PI);
+  ctx.strokeStyle = 'rgba(140,220,255,.22)'; ctx.lineWidth = 1; ctx.stroke();
+  const th = t * 0.5;
+  const sx = Math.cos(th) * a, sy = Math.sin(th) * b;
+  const th2 = th + 0.01;
+  const dx = Math.cos(th2) * a - sx, dy = Math.sin(th2) * b - sy;
+  ctx.restore();
+  const cosO = Math.cos(oth), sinO = Math.sin(oth);
+  const pxx = cx + cosO * sx - sinO * sy, pyy = cy + sinO * sx + cosO * sy;
+  const tang = Math.atan2(dy, dx) + Math.PI / 2 + oth;
+  const rel = 0.72;
+  const bx = pxx + (cx - pxx) * rel, by = pyy + (cy - pyy) * rel;
+  const wt = Math.sin(t * 2.2) * 0.5 + 0.5;
+  ctx.beginPath();
+  ctx.moveTo(pxx + (cx - pxx) * 0.08, pyy + (cy - pyy) * 0.08);
+  ctx.lineTo(bx - 7, by);
+  ctx.lineTo(bx + 7, by);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(120,235,255,' + (0.10 + 0.06 * wt) + ')';
+  ctx.fill();
+
+  ctx.save(); ctx.translate(pxx, pyy); ctx.rotate(tang);
+  ctx.fillStyle = '#cfefff';
+  ctx.shadowColor = 'rgba(120,225,255,.7)'; ctx.shadowBlur = 10;
+  ctx.fillRect(-4, -2, 8, 4);
+  ctx.fillStyle = '#8fb9ff'; ctx.shadowBlur = 4;
+  ctx.fillRect(-9, -1.4, 4, 2.8);
+  ctx.fillRect(5, -1.4, 4, 2.8);
+  ctx.fillStyle = '#1a3f8f'; ctx.fillRect(-6.8, -2, 3, 1);
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(-6.8, 1, 3, 1);
+  ctx.fillStyle = '#8fb9ff'; ctx.fillRect(5, -2, 3, 1);
+  ctx.fillStyle = '#eaf6ff';
+  ctx.beginPath(); ctx.arc(0, 0, 2, 0, FU2PI); ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+
+  const grd = ctx.createRadialGradient(W * 0.5, H * 0.5, H * 0.12, W * 0.5, H * 0.5, H * 0.72);
+  grd.addColorStop(0, 'rgba(2,4,12,0)');
+  grd.addColorStop(1, 'rgba(2,4,12,.42)');
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+}
+function fuSatStart(){
+  const cv = document.getElementById('fuSat');
+  if(!cv || typeof cv.getContext !== 'function' || fuSatId) return;
+  const ctx = cv.getContext('2d');
+  if(!ctx || typeof ctx.createRadialGradient !== 'function') return;
+  fuEnsureScene();
+  let reduced = false;
+  if(typeof matchMedia === 'function'){ try{ reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){} }
+  const draw = (now) => {
+    if(fuSatLast == null) fuSatLast = now;
+    const dt = Math.min(0.1, (now - fuSatLast) / 1000);
+    fuSatLast = now;
+    fuSatT += dt;
+    const r = cv.parentElement ? cv.parentElement.getBoundingClientRect() : { width: 440, height: 248 };
+    const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+    const W = Math.max(40, Math.round(r.width)), H = Math.max(40, Math.round(r.height));
+    const cw = Math.round(W * dpr), ch = Math.round(H * dpr);
+    if(cv.width !== cw || cv.height !== ch){ cv.width = cw; cv.height = ch; }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    fuSatDraw(ctx, W, H, fuSatT);
+    if(reduced) return;
+    fuSatId = requestAnimationFrame(draw);
+  };
+  fuSatId = requestAnimationFrame(draw);
+}
+function fuSatStop(){
+  if(fuSatId){ cancelAnimationFrame(fuSatId); fuSatId = null; }
+  fuSatLast = null;
 }
 
 function openFocusMode(subjectId, unitId, lectureId){
