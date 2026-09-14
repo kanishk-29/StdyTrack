@@ -1250,7 +1250,7 @@ function fuSatDraw(ctx, W, H, t){
 
   const rot = t * 0.055, cloudRot = t * 0.085, spin = -1.05;
 
-  const atmo = ctx.createRadialGradient(cx, cy, R * 0.72, R * 0.86, R * 1.22);
+  const atmo = ctx.createRadialGradient(cx, cy, R * 0.72, cx, cy, R * 1.22);
   atmo.addColorStop(0, 'rgba(120,190,255,.34)');
   atmo.addColorStop(0.62, 'rgba(100,170,255,.12)');
   atmo.addColorStop(1, 'rgba(100,170,255,0)');
@@ -1393,7 +1393,7 @@ function fuSatStart(){
     const cw = Math.round(W * dpr), ch = Math.round(H * dpr);
     if(cv.width !== cw || cv.height !== ch){ cv.width = cw; cv.height = ch; }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    fuSatDraw(ctx, W, H, fuSatT);
+    try{ fuSatDraw(ctx, W, H, fuSatT); }catch(e){}
     if(reduced) return;
     fuSatId = requestAnimationFrame(draw);
   };
