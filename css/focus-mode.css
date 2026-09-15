@@ -306,3 +306,77 @@
     background:rgba(80,200,255,.08); letter-spacing:1px;
   }
   .fu-link-btn:hover{ background:rgba(80,200,255,.18); }
+
+  /* ================================================
+     IMMERSIVE FOCUS — the whole screen becomes the
+     universe (no link) or the video (linked lecture).
+     A slim HUD sits on top with a right-side countdown.
+  ================================================ */
+  .focus-overlay.mode-immersive{
+    padding:0;
+    background:#030409;
+    align-items:stretch;
+    justify-content:stretch;
+  }
+  .focus-overlay.mode-immersive .focus-panel{
+    max-width:none; width:100%; height:100%; max-height:none;
+    padding:0; margin:0; border:0; border-radius:0;
+    background:transparent; box-shadow:none;
+    backdrop-filter:none; -webkit-backdrop-filter:none;
+    display:block; overflow:hidden;
+  }
+  .focus-overlay.mode-immersive .focus-panel::before,
+  .focus-overlay.mode-immersive .focus-panel::after{ display:none; }
+  .focus-overlay.mode-immersive .focus-header{
+    position:absolute; top:0; left:0; right:0; z-index:6;
+    margin:0; padding:16px 20px;
+    pointer-events:none;
+    background:linear-gradient(180deg, rgba(3,6,16,.7), transparent);
+  }
+  .focus-overlay.mode-immersive .focus-header h3{ color:#ecf4ff; }
+  .focus-overlay.mode-immersive .focus-header .eyebrow{ color:rgba(150,225,255,.8); }
+  .focus-overlay.mode-immersive .focus-header .slide-close{ pointer-events:auto; }
+  .focus-overlay.mode-immersive .focus-video-wrap{
+    position:absolute; inset:0; width:100%; height:100%;
+    aspect-ratio:auto; flex:none; min-height:0;
+    border-radius:0; background:#030409;
+  }
+  .focus-overlay.mode-immersive .focus-notes{ display:none; }
+  .focus-overlay.mode-immersive .focus-controls{
+    position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
+    z-index:6; margin:0; justify-content:center; gap:14px;
+    background:rgba(8,14,28,.5); border:1px solid rgba(120,200,255,.18);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  }
+  .focus-overlay.mode-immersive .focus-session{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    z-index:7; width:min(520px,92vw); margin:0;
+  }
+  .focus-overlay.mode-immersive.focus-running .focus-session{ display:none; }
+  .focus-overlay.mode-immersive .focus-quit-box{ position:absolute; inset:0; z-index:9; }
+
+  /* Right-side countdown rail — just the numbers ticking backwards */
+  .focus-timer-rail{ display:none; }
+  .focus-overlay.mode-immersive.focus-running .focus-timer-rail{
+    display:flex; position:absolute; right:22px; top:50%; transform:translateY(-50%);
+    flex-direction:column; align-items:flex-end; gap:4px;
+    z-index:6; pointer-events:none; text-align:right;
+  }
+  .ftr-num{
+    font-family:'JetBrains Mono',monospace; font-weight:700;
+    font-size:clamp(30px, 6.5vw, 56px); line-height:1;
+    color:#e2f5ff; letter-spacing:2px;
+    text-shadow:0 0 20px rgba(90,220,255,.6), 0 0 4px rgba(255,255,255,.5);
+  }
+  .ftr-label{
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:3px; text-transform:uppercase; color:rgba(140,255,230,.75);
+  }
+  .focus-overlay.mode-immersive .fu-center-label{
+    top:auto; bottom:76px; right:20px;
+  }
+  @media (max-width:480px){
+    .focus-overlay.mode-immersive .focus-video-wrap{ inset:0; }
+    .ftr-num{ font-size:clamp(24px, 9vw, 40px); }
+    .focus-overlay.mode-immersive .focus-timer-rail{ right:14px; }
+  }

@@ -1047,6 +1047,12 @@ function updateFocusRing(){
   if(sub) sub.textContent = focusSession.paused ? 'paused' : (focusSession.mode==='done' ? 'completed' : 'remaining');
   const bar = document.getElementById('focusProgBar');
   if(bar) bar.style.width = pct + '%';
+  const railNum = document.getElementById('focusRailNum');
+  if(railNum) railNum.textContent = fuSecondsText(focusSession.mode === 'done' ? 0 : focusSession.remainingSec);
+  const railLbl = document.getElementById('focusRailLabel');
+  if(railLbl) railLbl.textContent = focusSession.mode === 'done' ? 'completed' : (focusSession.paused ? 'paused' : 'remaining');
+  const ov = document.getElementById('focusOverlay');
+  if(ov) ov.classList.toggle('focus-running', focusSession.mode === 'running' || focusSession.mode === 'done');
 }
 function focusSessionRender(){
   const box = document.getElementById('focusSession');
@@ -1234,6 +1240,11 @@ function fuSatDraw(ctx, W, H, t){
   const prog = done ? 1 : run ? (1 - s.remainingSec / Math.max(1, s.totalSec)) : 0;
   const cx = W * 0.60, cy = H * 0.52;
   const appear = (fuBH && fuBH.active) ? fuEase((t - fuBH.birth) / 2.2) : 0;
+  // The black hole's whole life spans the chosen session: a longer session grows
+  // a bigger hole, and it collapses away exactly when the countdown hits zero.
+  const durMin = Math.max(1, (s.totalSec || 0) / 60);
+  const sizeK = 0.7 + 0.8 * Math.min(1, durMin / 90);
+  const endFade = 1 - fuEase(Math.max(0, Math.min(1, (prog - 0.94) / 0.06)));
 
   const bg = ctx.createLinearGradient(0, 0, 0, H);
   bg.addColorStop(0, '#070b22'); bg.addColorStop(0.55, '#0a1130'); bg.addColorStop(1, '#030409');
@@ -1277,7 +1288,7 @@ function fuSatDraw(ctx, W, H, t){
   const inInsp = prog >= B_START && prog < B_MERGE;
   const mergedF = Math.max(0, Math.min(1, (prog - B_MERGE) / (1 - B_MERGE)));
 
-  const bhO = sc * 0.42 * appear;
+  const bhO = sc * 0.42 * appear * sizeK;
   const primR = bhO * (0.55 + 0.30 * prog + 0.25 * insp);
   const orbR = bhO * (1.9 - 1.15 * insp);
   const orbA = t * 1.25 + insp * 30;
@@ -1336,6 +1347,20 @@ function fuSatDraw(ctx, W, H, t){
         px = sx + dx2 * k2;
         py = sy + dy2 * k2;
       }
+    }
+    // Gravitational-wave ripple washing over the field: every star gets nudged
+    // as the wave passes (steady ripples during the inspiral, a sharp pulse at
+    // the moment the two holes collide).
+    let wDisp = 0;
+    if(inInsp){
+      wDisp = Math.sin(d * 0.045 - t * 5) * (2.6 * insp) * Math.max(0, 1 - d / (sc * 3.4));
+    } else if(mergedF > 0){
+      const front = bhO * (1.1 + mergedF * 3.0);
+      wDisp = Math.exp(-Math.abs(d - front) / Math.max(20, bhO)) * 8 * (1 - mergedF);
+    }
+    if(wDisp !== 0 && d > 0.001){
+      px += (dx / d) * wDisp;
+      py += (dy / d) * wDisp;
     }
     ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(t * (st.kind === 1 ? 1.5 : 2.2) + st.ph));
     ctx.fillStyle = st.kind === 2 ? '#ffe9b8' : (st.kind === 1 ? '#cde3ff' : '#ffffff');
@@ -1431,8 +1456,8 @@ function fuSatDraw(ctx, W, H, t){
     ctx.restore();
   };
 
-  if(appear > 0.001){
-    const al = fuEase(Math.min(1, appear * 1.4));
+  if(appear > 0.001 && endFade > 0.001){
+    const al = fuEase(Math.min(1, appear * 1.4)) * endFade;
 
     if(inInsp){
       const pr = (0.5 + 0.5 * Math.sin(t * 3)) * bhO * 1.6;
@@ -1529,7 +1554,11 @@ function openFocusMode(subjectId, unitId, lectureId){
   }
   renderFocusControls();
   document.getElementById('focusNotes').textContent = l.notes || '';
-  document.getElementById('focusOverlay').classList.add('show');
+  const ov = document.getElementById('focusOverlay');
+  ov.classList.add('mode-immersive');
+  ov.classList.toggle('mode-video', !!ytId);
+  ov.classList.toggle('mode-universe', !ytId);
+  ov.classList.add('show');
   if(typeof mascotOnFocusEnter === 'function') mascotOnFocusEnter(subjectId, unitId, lectureId);
 }
 
@@ -1559,7 +1588,9 @@ function closeFocusMode(){
 }
 function forceCloseFocusMode(){
   focusSessionStop();
-  document.getElementById('focusOverlay').classList.remove('show');
+  const ov = document.getElementById('focusOverlay');
+  ov.classList.remove('show');
+  ov.classList.remove('mode-immersive', 'mode-video', 'mode-universe', 'focus-running');
   document.getElementById('focusVideoWrap').innerHTML = '';
   focusRef = null;
   restoreOpener('focusOverlay');
