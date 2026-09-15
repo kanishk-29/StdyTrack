@@ -1095,6 +1095,7 @@ function focusSessionStart(min){
   s.warnCount = 0;
   s.mode = 'running';
   s.paused = false;
+  s.committed = false;
   clearFocusQuitBox();
   if(s.timerId) clearInterval(s.timerId);
   s.timerId = setInterval(focusSessionTick, 1000);
@@ -1119,10 +1120,11 @@ function focusSessionTick(){
     s.remainingSec = 0;
     s.mode = 'done';
     if(s.timerId){ clearInterval(s.timerId); s.timerId = null; }
+    const banked = focusCommitTimeToLecture();
     updateFocusRing();
     focusSessionRender();
     if(typeof renderFocusControls === 'function') renderFocusControls();
-    showToast('Focus session complete 🎉');
+    showToast('Focus session complete 🎉' + (banked > 0 ? ' · ' + formatHuman(banked) + ' added to lecture time' : ''));
     if(typeof mascotCelebrate === 'function'){ try{ mascotCelebrate(); }catch(e){} }
     return;
   }
@@ -1136,7 +1138,7 @@ function focusSessionStop(){
   const s = focusSession;
   if(s.timerId){ clearInterval(s.timerId); s.timerId = null; }
   fuStop();
-  s.mode = 'idle'; s.totalSec = 0; s.remainingSec = 0; s.warnCount = 0; s.paused = false;
+  s.mode = 'idle'; s.totalSec = 0; s.remainingSec = 0; s.warnCount = 0; s.paused = false; s.committed = false;
   clearFocusQuitBox();
 }
 function clearFocusQuitBox(){ const b = document.getElementById('focusQuitBox'); if(b) b.innerHTML = ''; }
@@ -1592,7 +1594,37 @@ function closeFocusMode(){
   }
   forceCloseFocusMode();
 }
+// Bank the focus session's elapsed time into the lecture's tracked seconds
+// and daily log. Returns the number of focus-seconds that were banked (0 if
+// nothing was added — session was idle, already committed, or banked via the
+// lecture's own manual timer which stopTimer() handled).
+function focusCommitTimeToLecture(){
+  const s = focusSession;
+  const ref = focusRef;
+  if(!ref || s.committed) return 0;
+  const l = getLecture(ref.subjectId, ref.unitId, ref.lectureId);
+  let sec = 0;
+  if(s.mode === 'done'){
+    sec = s.totalSec || 0;
+  } else if(s.mode === 'running'){
+    sec = Math.max(0, (s.totalSec || 0) - (s.remainingSec || 0));
+  }
+  if(sec <= 0) return 0;
+  s.committed = true;
+  if(l && l.timerStart && runningRef && runningRef.lectureId === ref.lectureId){
+    stopTimer();
+    return sec;
+  }
+  if(l){
+    l.seconds = (l.seconds || 0) + sec;
+    addToDailyLog(ref.subjectId, sec);
+    saveData();
+    try{ renderToday(); renderScorecard(); }catch(e){}
+  }
+  return sec;
+}
 function forceCloseFocusMode(){
+  const banked = focusCommitTimeToLecture();
   focusSessionStop();
   const ov = document.getElementById('focusOverlay');
   ov.classList.remove('show');
@@ -1600,6 +1632,7 @@ function forceCloseFocusMode(){
   document.getElementById('focusVideoWrap').innerHTML = '';
   focusRef = null;
   restoreOpener('focusOverlay');
+  if(banked > 0) showToast(formatHuman(banked) + ' of focus added to lecture time ✓');
   if(typeof mascotOnFocusExit === 'function') mascotOnFocusExit();
 }
 
