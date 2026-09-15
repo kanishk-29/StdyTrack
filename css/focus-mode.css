@@ -218,11 +218,11 @@
   .focus-done{ text-align:center; }
 
   /* Strict-exit warning box — overlays the whole focus panel */
-  .focus-quit-box{ position:absolute; inset:0; z-index:6; }
+  .focus-quit-box{ position:absolute; inset:0; z-index:6; pointer-events:none; }
   .fq-overlay{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     background:rgba(15,18,26,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-    border-radius:22px; padding:20px;
+    border-radius:22px; padding:20px; pointer-events:auto;
   }
   .fq-card{
     background:var(--glass-bg-heavy); border:1px solid var(--glass-border); border-radius:16px;
