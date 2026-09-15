@@ -1287,6 +1287,7 @@ function fuSatDraw(ctx, W, H, t){
   const spin = t * (inInsp ? 1.9 : 0.9) + insp * 18;
   const ringR = primR;
   const lensR = primR * 2.6;
+  const secLensR = secR * 2.6;
 
   const total = fuStars.length;
   const eatD = appear * prog;
@@ -1325,6 +1326,16 @@ function fuSatDraw(ctx, W, H, t){
       const k = nd / Math.max(0.001, d);
       px = cx + dx * k;
       py = cy + dy * k;
+    }
+    if(inInsp){
+      const dx2 = px - sx, dy2 = py - sy;
+      const d2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+      if(d2 < secLensR && secLensR > 0.01){
+        const nd2 = secR * 1.06 + (secLensR - secR * 1.06) * (d2 / secLensR) * (d2 / secLensR);
+        const k2 = nd2 / Math.max(0.001, d2);
+        px = sx + dx2 * k2;
+        py = sy + dy2 * k2;
+      }
     }
     ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(t * (st.kind === 1 ? 1.5 : 2.2) + st.ph));
     ctx.fillStyle = st.kind === 2 ? '#ffe9b8' : (st.kind === 1 ? '#cde3ff' : '#ffffff');
