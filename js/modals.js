@@ -70,6 +70,8 @@ document.addEventListener('keydown', (e)=>{
     if(has === locked) return;
     locked = has;
     document.body.style.overflowY = has ? 'hidden' : '';
+    document.documentElement.style.overflowY = has ? 'hidden' : '';
+    document.documentElement.style.overscrollBehaviorY = has ? 'contain' : '';
   }
   if(window.MutationObserver){
     var mo = new MutationObserver(refreshLock);

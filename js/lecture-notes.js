@@ -1343,47 +1343,90 @@ function fuSatDraw(ctx, W, H, t){
   }
   ctx.globalAlpha = 1;
 
-  const fuDrawHole = (hx, hy, hr, rotN, br) => {
-    const rr = hr * 1.06;
+  const fuDrawHole = (hx, hy, hr, rotN, br, cph) => {
+    const shadowR = hr * 0.62;
+    const photonR = hr;
+    const diskIn  = hr * 1.12;
+    const diskOut = hr * 2.55;
+    const glowR   = hr * 3.3;
+    const clumpA  = (cph == null ? rotN : cph);
+    ctx.save();
+    ctx.translate(hx, hy);
+
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
-    const halo = ctx.createRadialGradient(hx, hy, hr * 0.1, hx, hy, hr * 2.3);
-    halo.addColorStop(0, 'rgba(255,196,130,' + (0.30 * br) + ')');
-    halo.addColorStop(0.42, 'rgba(255,150,90,' + (0.11 * br) + ')');
-    halo.addColorStop(1, 'rgba(255,150,90,0)');
-    ctx.fillStyle = halo; ctx.fillRect(hx - hr * 2.5, hy - hr * 2.5, hr * 5, hr * 5);
-    ctx.globalCompositeOperation = 'source-over';
-
-    ctx.beginPath(); ctx.arc(hx, hy, rr * 1.5, 0, FU2PI);
-    ctx.strokeStyle = 'rgba(140,190,255,' + (0.12 * br) + ')';
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
-    ctx.beginPath(); ctx.arc(hx, hy, rr, 0, FU2PI);
-    ctx.strokeStyle = 'rgba(255,225,185,' + (0.18 + 0.6 * br) + ')';
-    ctx.lineWidth = 1.1 + 1.5 * br;
-    ctx.stroke();
-
-    ctx.save(); ctx.translate(hx, hy); ctx.rotate(rotN);
-    ctx.globalCompositeOperation = 'lighter';
-    for(let k = 0; k < 5; k++){
-      const rr2 = rr * (1.03 + k * 0.24);
-      const bf = 0.5 + 0.5 * Math.cos(rotN * (1 + k * 0.5) + k * 2.1);
-      ctx.globalAlpha = br * (0.10 + 0.14 * k * bf);
-      ctx.beginPath();
-      ctx.ellipse(0, 0, rr2, rr2 * (0.34 + 0.05 * k), 0, 0, FU2PI);
-      ctx.strokeStyle = 'rgb(' + Math.round(255 - 20 * bf) + ',' + Math.round(180 + 60 * bf) + ',' + Math.round(110 + 60 * bf) + ')';
-      ctx.lineWidth = 1.1 + k * 0.45;
-      ctx.stroke();
-    }
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.beginPath(); ctx.ellipse(0, 0, rr * 1.05, rr * 0.5, 0, -0.8, 0.8);
-    ctx.strokeStyle = 'rgba(255,242,205,' + (0.5 * br) + ')';
-    ctx.lineWidth = 1.4;
-    ctx.stroke();
+    const halo = ctx.createRadialGradient(0, 0, hr * 0.25, 0, 0, glowR);
+    halo.addColorStop(0, 'rgba(255,180,95,' + (0.42 * br) + ')');
+    halo.addColorStop(0.3, 'rgba(255,130,70,' + (0.16 * br) + ')');
+    halo.addColorStop(1, 'rgba(255,130,70,0)');
+    ctx.fillStyle = halo; ctx.fillRect(-glowR, -glowR, glowR * 2, glowR * 2);
     ctx.restore();
 
-    ctx.beginPath(); ctx.arc(hx, hy, hr * 0.58, 0, FU2PI);
+    ctx.save();
+    ctx.rotate(rotN);
+    ctx.scale(1, 0.34);
+    const dg = ctx.createLinearGradient(0, -diskOut, 0, diskOut);
+    dg.addColorStop(0, 'rgba(255,160,90,0)');
+    dg.addColorStop(0.34, 'rgba(255,120,50,' + (0.10 * br) + ')');
+    dg.addColorStop(0.46, 'rgba(255,150,70,' + (0.18 * br) + ')');
+    dg.addColorStop(0.52, 'rgba(255,205,140,' + (0.34 * br) + ')');
+    dg.addColorStop(0.58, 'rgba(255,246,220,' + (0.60 * br) + ')');
+    dg.addColorStop(0.64, 'rgba(255,180,100,' + (0.24 * br) + ')');
+    dg.addColorStop(0.74, 'rgba(255,120,50,' + (0.10 * br) + ')');
+    dg.addColorStop(1, 'rgba(255,90,40,0)');
+    ctx.fillStyle = dg;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, diskOut, diskOut, 0, 0, FU2PI);
+    ctx.ellipse(0, 0, diskIn, diskIn, 0, 0, FU2PI);
+    ctx.fill('evenodd');
+
+    ctx.lineWidth = hr * 0.05;
+    ctx.strokeStyle = 'rgba(255,240,210,' + (0.16 * br) + ')';
+    ctx.beginPath(); ctx.ellipse(0, 0, diskIn * 1.06, diskIn * 1.06, 0, 0, FU2PI); ctx.stroke();
+    for(let b = 1; b <= 5; b++){
+      const bk = b / 6;
+      const rad = diskIn + (diskOut - diskIn) * (0.16 + 0.84 * bk * bk);
+      ctx.lineWidth = 1.1 + bk * 1.8;
+      ctx.strokeStyle = 'rgba(' + Math.round(255 - 30 * bk) + ',' + Math.round(150 + 70 * bk) + ',' + Math.round(70 + 20 * bk) + ',' + ((0.05 + 0.05 * bk) * br) + ')';
+      ctx.beginPath(); ctx.ellipse(0, 0, rad, rad, 0, 0, FU2PI); ctx.stroke();
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.85 * br;
+    ctx.strokeStyle = '#fff7e8';
+    ctx.lineWidth = hr * 0.16;
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(0, 0, diskIn * 1.28, clumpA + 0.28, clumpA + 1.05); ctx.stroke();
+    ctx.globalAlpha = 0.42 * br;
+    ctx.lineWidth = hr * 0.10;
+    ctx.beginPath(); ctx.arc(0, 0, diskIn * 1.28, clumpA + 2.85, clumpA + 3.5); ctx.stroke();
+    ctx.restore();
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = 'rgba(255,170,105,' + (0.13 * br) + ')';
+    ctx.lineWidth = hr * 0.10;
+    ctx.beginPath(); ctx.arc(0, 0, photonR * 1.1, 0, FU2PI); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,236,205,' + (0.85 * br) + ')';
+    ctx.lineWidth = hr * 0.022;
+    ctx.beginPath(); ctx.arc(0, 0, photonR, 0, FU2PI); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.38 * br) + ')';
+    ctx.lineWidth = hr * 0.010;
+    ctx.beginPath(); ctx.arc(0, 0, photonR * 0.99, 0, FU2PI); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,246,224,' + (0.25 * br) + ')';
+    ctx.lineWidth = hr * 0.016;
+    ctx.beginPath(); ctx.arc(0, 0, photonR, 0.9, 2.3); ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,190,120,' + (0.14 * br) + ')';
+    ctx.lineWidth = hr * 0.02;
+    ctx.beginPath(); ctx.ellipse(0, hr * 0.08, shadowR * 0.42, shadowR * 0.17, 0, 0, FU2PI); ctx.stroke();
+    ctx.restore();
+
+    ctx.beginPath(); ctx.arc(0, 0, shadowR, 0, FU2PI);
     ctx.fillStyle = '#000'; ctx.fill();
     ctx.restore();
   };
@@ -1402,8 +1445,8 @@ function fuSatDraw(ctx, W, H, t){
       ctx.restore();
     }
 
-    if(inInsp) fuDrawHole(sx, sy, secR, spin + 1.7, al * 0.85);
-    fuDrawHole(cx, cy, primR, spin, al);
+    if(inInsp) fuDrawHole(sx, sy, secR, spin + 0.75, al * 0.85, t * 3.3 + 0.9);
+    fuDrawHole(cx, cy, primR, spin, al, t * 2.7);
 
     if(mergedF > 0){
       const fl = Math.exp(-mergedF * 4.2);
