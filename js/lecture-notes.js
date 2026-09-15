@@ -1101,13 +1101,15 @@ function focusSessionStart(min){
   if(typeof fuBHStart === 'function') fuBHStart();
   focusSessionRender();
   updateFocusRing();
+  if(typeof renderFocusControls === 'function') renderFocusControls();
   showToast(min + '-minute focus locked in. Stay with it.');
 }
 function focusSessionPause(){
   const s = focusSession;
-  if(s.mode !== 'running' || s.mode === 'done') return;
+  if(s.mode !== 'running') return;
   s.paused = !s.paused;
   focusSessionRender();
+  if(typeof renderFocusControls === 'function') renderFocusControls();
 }
 function focusSessionTick(){
   const s = focusSession;
@@ -1119,6 +1121,7 @@ function focusSessionTick(){
     if(s.timerId){ clearInterval(s.timerId); s.timerId = null; }
     updateFocusRing();
     focusSessionRender();
+    if(typeof renderFocusControls === 'function') renderFocusControls();
     showToast('Focus session complete 🎉');
     if(typeof mascotCelebrate === 'function'){ try{ mascotCelebrate(); }catch(e){} }
     return;
@@ -1568,6 +1571,8 @@ function renderFocusControls(){
   if(!l) return;
   const isRunning = !!l.timerStart;
   const liveSec = liveLectureSeconds(l);
+  const sess = focusSession;
+  const immersive = document.getElementById('focusOverlay').classList.contains('mode-immersive');
   const controls = document.getElementById('focusControls');
   controls.innerHTML = `
     <div class="timer-pill large ${isRunning?'running':(liveSec>0?'has-time':'')}">
@@ -1575,6 +1580,7 @@ function renderFocusControls(){
       <span class="timer-time" id="focusTimerDisplay">${isRunning ? formatCompactLive(liveSec) : formatHuman(liveSec)}</span>
       ${isRunning ? ekgLine('focus') : ''}
     </div>
+    ${(immersive && sess.mode === 'running') ? `<button class="focus-pause" onclick="focusSessionPause();" title="${sess.paused?'Resume session':'Pause session'}">${sess.paused ? '▶ Resume' : '⏸ Pause'}</button>` : ''}
     <div class="omr ${l.completed?'done':''}" onclick="sparkAt(this,'${l.completed?'var(--ink-soft)':'var(--green)'}'); toggleLecture('${focusRef.subjectId}','${focusRef.unitId}','${focusRef.lectureId}'); renderFocusControls();" title="Mark ${l.completed?'incomplete':'complete'}">${l.completed ? mythicalCheckGlyph('focus-'+focusRef.lectureId) : ''}</div>
   `;
 }

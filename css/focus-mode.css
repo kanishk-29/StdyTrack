@@ -378,5 +378,5 @@
   @media (max-width:480px){
     .focus-overlay.mode-immersive .focus-video-wrap{ inset:0; }
     .ftr-num{ font-size:clamp(24px, 9vw, 40px); }
-    .focus-overlay.mode-immersive .focus-timer-rail{ right:14px; }
+    .focus-overlay.mode-immersive.focus-running .focus-timer-rail{ right:14px; }
   }
