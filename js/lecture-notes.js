@@ -1239,16 +1239,17 @@ function fuSatDraw(ctx, W, H, t){
   bg.addColorStop(0, '#070b22'); bg.addColorStop(0.55, '#0a1130'); bg.addColorStop(1, '#030409');
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
+  const dimA = 1 - prog * 0.45;
   const neb = (x, y, r, c) => {
     const g = ctx.createRadialGradient(x, y, 6, x, y, r);
     g.addColorStop(0, c); g.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   };
-  neb(W * 0.22, H * 0.16, W * 0.55, 'rgba(130,160,255,.10)');
-  neb(W * 0.86, H * 0.78, W * 0.48, 'rgba(210,120,240,.07)');
-  neb(W * 0.08, H * 0.88, W * 0.40, 'rgba(70,230,210,.05)');
+  neb(W * 0.22, H * 0.16, W * 0.55, 'rgba(130,160,255,' + (0.10 * dimA) + ')');
+  neb(W * 0.86, H * 0.78, W * 0.48, 'rgba(210,120,240,' + (0.07 * dimA) + ')');
+  neb(W * 0.08, H * 0.88, W * 0.40, 'rgba(70,230,210,' + (0.05 * dimA) + ')');
 
-  const sc = Math.min(W, H) * 0.62, rot = t * 0.018;
+  const sc = Math.min(W, H) * 0.64, rot = t * 0.018;
   for(let p = 0; p < 2; p++){
     for(let a = 0; a < 2; a++){
       const ang0 = a * Math.PI + rot;
@@ -1259,22 +1260,34 @@ function fuSatDraw(ctx, W, H, t){
         const y = cy + Math.sin(ang0 + rr / sc * 2.6) * rr * 0.62;
         if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
-      ctx.strokeStyle = p ? 'rgba(150,180,255,.05)' : 'rgba(120,160,255,.09)';
+      ctx.strokeStyle = p ? 'rgba(150,180,255,' + (0.05 * dimA) + ')' : 'rgba(120,160,255,' + (0.09 * dimA) + ')';
       ctx.lineWidth = p ? 3.4 : 1.1;
       ctx.stroke();
     }
   }
 
   const bulg = ctx.createRadialGradient(cx, cy, 2, cx, cy, sc * 0.30);
-  bulg.addColorStop(0, 'rgba(255,226,182,' + (0.30 - 0.24 * appear) + ')');
-  bulg.addColorStop(0.5, 'rgba(255,190,140,.10)');
+  bulg.addColorStop(0, 'rgba(255,226,182,' + Math.max(0, (0.30 - 0.24 * appear) * dimA) + ')');
+  bulg.addColorStop(0.5, 'rgba(255,190,140,' + (0.10 * dimA) + ')');
   bulg.addColorStop(1, 'rgba(255,190,140,0)');
   ctx.fillStyle = bulg; ctx.fillRect(0, 0, W, H);
 
-  const bhO = sc * 0.20 * (0.72 + 0.35 * prog);
-  const bhH = bhO * 0.58;
-  const ringR = bhO;
-  const lensR = bhO * 2.9;
+  const B_START = 0.28, B_MERGE = 0.85;
+  const insp = Math.max(0, Math.min(1, (prog - B_START) / (B_MERGE - B_START)));
+  const inInsp = prog >= B_START && prog < B_MERGE;
+  const mergedF = Math.max(0, Math.min(1, (prog - B_MERGE) / (1 - B_MERGE)));
+
+  const bhO = sc * 0.42 * appear;
+  const primR = bhO * (0.55 + 0.30 * prog + 0.25 * insp);
+  const orbR = bhO * (1.9 - 1.15 * insp);
+  const orbA = t * 1.25 + insp * 30;
+  const sx = cx + Math.cos(orbA) * orbR;
+  const sy = cy + Math.sin(orbA) * orbR * 0.82;
+  const secR = bhO * Math.max(0.10, 0.40 * (1 - insp * 0.35));
+  const spin = t * (inInsp ? 1.9 : 0.9) + insp * 18;
+  const ringR = primR;
+  const lensR = primR * 2.6;
+
   const total = fuStars.length;
   const eatD = appear * prog;
   const eatN = eatD > 0 ? Math.floor(fuEase(eatD) * total) : 0;
@@ -1287,14 +1300,14 @@ function fuSatDraw(ctx, W, H, t){
   ctx.globalAlpha = 1;
   for(let i = 0; i < total; i++){
     const st = fuStars[i];
-    const sx = st.x * kx, sy = st.y * ky;
+    const sx0 = st.x * kx, sy0 = st.y * ky;
     const baseR = st.r * (st.kind === 1 ? 1.15 : st.kind === 2 ? 1.3 : 1);
     if(i < eatN){
       const f0 = fuBH.eatAt[i];
       const u = f0 != null && f0 <= t ? Math.min(1, (t - f0) / FU_FALL) : 1;
       if(u >= 1) continue;
       const e = u * u * u;
-      const exx = sx + (cx - sx) * e, eyy = sy + (cy - sy) * e;
+      const exx = sx0 + (cx - sx0) * e, eyy = sy0 + (cy - sy0) * e;
       const swa = u * 2.1;
       const ddx = exx - cx, ddy = eyy - cy;
       ctx.globalAlpha = (1 - u) * (0.7 + 0.3 * Math.abs(Math.sin(t * 2 + st.ph)));
@@ -1304,9 +1317,9 @@ function fuSatDraw(ctx, W, H, t){
       ctx.fill();
       continue;
     }
-    const dx = sx - cx, dy = sy - cy;
+    const dx = sx0 - cx, dy = sy0 - cy;
     const d = Math.sqrt(dx * dx + dy * dy);
-    let px = sx, py = sy;
+    let px = sx0, py = sy0;
     if(appear > 0 && d < lensR && lensR > 0.01){
       const nd = ringR + (lensR - ringR) * (d / lensR) * (d / lensR);
       const k = nd / Math.max(0.001, d);
@@ -1319,42 +1332,87 @@ function fuSatDraw(ctx, W, H, t){
   }
   ctx.globalAlpha = 1;
 
-  if(appear > 0.001){
-    const al = fuEase(Math.min(1, appear * 1.4));
+  const fuDrawHole = (hx, hy, hr, rotN, br) => {
+    const rr = hr * 1.06;
     ctx.save();
-    ctx.shadowColor = 'rgba(255,215,160,.8)'; ctx.shadowBlur = 16 * al;
-    ctx.beginPath(); ctx.arc(cx, cy, ringR, 0, FU2PI);
-    ctx.strokeStyle = 'rgba(255,225,180,' + (0.10 + 0.72 * al) + ')';
-    ctx.lineWidth = 1.6 + 1.6 * appear;
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.beginPath(); ctx.arc(cx, cy, ringR * 1.5, 0, FU2PI);
-    ctx.strokeStyle = 'rgba(150,190,255,' + (0.10 * al) + ')';
+    ctx.globalCompositeOperation = 'lighter';
+    const halo = ctx.createRadialGradient(hx, hy, hr * 0.1, hx, hy, hr * 2.3);
+    halo.addColorStop(0, 'rgba(255,196,130,' + (0.30 * br) + ')');
+    halo.addColorStop(0.42, 'rgba(255,150,90,' + (0.11 * br) + ')');
+    halo.addColorStop(1, 'rgba(255,150,90,0)');
+    ctx.fillStyle = halo; ctx.fillRect(hx - hr * 2.5, hy - hr * 2.5, hr * 5, hr * 5);
+    ctx.globalCompositeOperation = 'source-over';
+
+    ctx.beginPath(); ctx.arc(hx, hy, rr * 1.5, 0, FU2PI);
+    ctx.strokeStyle = 'rgba(140,190,255,' + (0.12 * br) + ')';
     ctx.lineWidth = 0.8;
     ctx.stroke();
-    ctx.restore();
+    ctx.beginPath(); ctx.arc(hx, hy, rr, 0, FU2PI);
+    ctx.strokeStyle = 'rgba(255,225,185,' + (0.18 + 0.6 * br) + ')';
+    ctx.lineWidth = 1.1 + 1.5 * br;
+    ctx.stroke();
 
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(0.42);
-    for(let k = 0; k < 3; k++){
-      const rr = ringR * (1.0 + k * 0.42);
-      ctx.beginPath(); ctx.ellipse(0, 0, rr, rr * 0.42, 0, 0, FU2PI);
-      ctx.strokeStyle = 'rgba(255,170,90,' + Math.max(0.02, (0.20 - k * 0.045) * al) + ')';
-      ctx.lineWidth = 1.6 + k * 0.7;
+    ctx.save(); ctx.translate(hx, hy); ctx.rotate(rotN);
+    ctx.globalCompositeOperation = 'lighter';
+    for(let k = 0; k < 5; k++){
+      const rr2 = rr * (1.03 + k * 0.24);
+      const bf = 0.5 + 0.5 * Math.cos(rotN * (1 + k * 0.5) + k * 2.1);
+      ctx.globalAlpha = br * (0.10 + 0.14 * k * bf);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, rr2, rr2 * (0.34 + 0.05 * k), 0, 0, FU2PI);
+      ctx.strokeStyle = 'rgb(' + Math.round(255 - 20 * bf) + ',' + Math.round(180 + 60 * bf) + ',' + Math.round(110 + 60 * bf) + ')';
+      ctx.lineWidth = 1.1 + k * 0.45;
       ctx.stroke();
     }
-    ctx.restore();
-
-    ctx.beginPath(); ctx.arc(cx, cy, bhH + (appear * 2.0), 0, FU2PI);
-    ctx.fillStyle = '#000'; ctx.fill();
-    ctx.beginPath(); ctx.arc(cx, cy, bhH * 1.12, 0, FU2PI);
-    ctx.strokeStyle = 'rgba(14,20,46,.9)'; ctx.lineWidth = 3; ctx.stroke();
-
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(0.42);
-    ctx.beginPath(); ctx.ellipse(0, 0, ringR * 1.6, ringR * 0.67, 0, -0.35, 0.9);
-    ctx.strokeStyle = 'rgba(255,200,130,' + (0.32 * al) + ')';
-    ctx.lineWidth = 2.2;
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.beginPath(); ctx.ellipse(0, 0, rr * 1.05, rr * 0.5, 0, -0.8, 0.8);
+    ctx.strokeStyle = 'rgba(255,242,205,' + (0.5 * br) + ')';
+    ctx.lineWidth = 1.4;
     ctx.stroke();
     ctx.restore();
+
+    ctx.beginPath(); ctx.arc(hx, hy, hr * 0.58, 0, FU2PI);
+    ctx.fillStyle = '#000'; ctx.fill();
+    ctx.restore();
+  };
+
+  if(appear > 0.001){
+    const al = fuEase(Math.min(1, appear * 1.4));
+
+    if(inInsp){
+      const pr = (0.5 + 0.5 * Math.sin(t * 3)) * bhO * 1.6;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.beginPath(); ctx.arc(cx, cy, pr, 0, FU2PI);
+      ctx.strokeStyle = 'rgba(180,220,255,' + (0.10 * insp) + ')';
+      ctx.lineWidth = 0.9;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    if(inInsp) fuDrawHole(sx, sy, secR, spin + 1.7, al * 0.85);
+    fuDrawHole(cx, cy, primR, spin, al);
+
+    if(mergedF > 0){
+      const fl = Math.exp(-mergedF * 4.2);
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const flash = ctx.createRadialGradient(cx, cy, 2, cx, cy, bhO * 3.2);
+      flash.addColorStop(0, 'rgba(255,240,220,' + (0.85 * fl) + ')');
+      flash.addColorStop(0.4, 'rgba(255,180,120,' + (0.35 * fl) + ')');
+      flash.addColorStop(1, 'rgba(255,160,110,0)');
+      ctx.fillStyle = flash; ctx.fillRect(cx - bhO * 3.4, cy - bhO * 3.4, bhO * 6.8, bhO * 6.8);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.restore();
+      for(let k = 0; k < 3; k++){
+        const rw = bhO * (1.1 + mergedF * (3.4 + k * 1.1));
+        ctx.beginPath(); ctx.arc(cx, cy, rw, 0, FU2PI);
+        ctx.strokeStyle = 'rgba(190,225,255,' + (0.34 * Math.max(0, 1 - mergedF * (1.6 + k * 0.4))) + ')';
+        ctx.lineWidth = 1.3 - k * 0.3;
+        ctx.stroke();
+      }
+    }
   }
 
   const grd = ctx.createRadialGradient(W * 0.5, H * 0.5, H * 0.12, W * 0.5, H * 0.5, H * 0.72);
