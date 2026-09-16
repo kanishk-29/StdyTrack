@@ -50,6 +50,11 @@ function getTodaySnapshot(){
       snap.bySubject[runningRef.subjectId] = (snap.bySubject[runningRef.subjectId]||0) + delta;
     }
   }
+  const focusAdd = focusContributionSec();
+  if(focusAdd > 0){
+    snap.total += focusAdd;
+    snap.bySubject[focusRef.subjectId] = (snap.bySubject[focusRef.subjectId]||0) + focusAdd;
+  }
   return snap;
 }
 
@@ -129,14 +134,27 @@ function stopTicking(){
   uiTickHandle = null; checkpointHandle = null;
 }
 function updateLiveTick(){
-  if(!runningRef) return;
+  const focusLive = !!(focusRef && focusSession.mode === 'running' && !focusSession.committed && !focusSession.paused);
+  if(!runningRef && !focusLive) return;
   if(document.hidden) return; // background tab: skip DOM writes, checkpoint still runs
-  const l = getLecture(runningRef.subjectId, runningRef.unitId, runningRef.lectureId);
-  if(!l || !l.timerStart) return;
-  const el = document.getElementById('timer-'+runningRef.lectureId);
-  if(el) el.textContent = formatCompactLive(liveLectureSeconds(l));
-  const focusEl = document.getElementById('focusTimerDisplay');
-  if(focusEl && focusRef && focusRef.lectureId===runningRef.lectureId) focusEl.textContent = formatCompactLive(liveLectureSeconds(l));
+  if(runningRef){
+    const l = getLecture(runningRef.subjectId, runningRef.unitId, runningRef.lectureId);
+    if(l && l.timerStart){
+      const el = document.getElementById('timer-'+runningRef.lectureId);
+      if(el) el.textContent = formatCompactLive(liveLectureSeconds(l));
+      const focusEl = document.getElementById('focusTimerDisplay');
+      if(focusEl && focusRef && focusRef.lectureId===runningRef.lectureId) focusEl.textContent = formatCompactLive(liveLectureSeconds(l));
+    }
+  }
+  if(focusLive){
+    const fl = getLecture(focusRef.subjectId, focusRef.unitId, focusRef.lectureId);
+    if(fl && !fl.timerStart){
+      const el = document.getElementById('timer-'+focusRef.lectureId);
+      if(el) el.textContent = formatCompactLive(liveLectureSeconds(fl));
+      const focusEl = document.getElementById('focusTimerDisplay');
+      if(focusEl) focusEl.textContent = formatCompactLive(liveLectureSeconds(fl));
+    }
+  }
   const todayEl = document.getElementById('todayTotal');
   if(todayEl) todayEl.textContent = formatHuman(getTodaySnapshot().total);
   renderRunningBanner();

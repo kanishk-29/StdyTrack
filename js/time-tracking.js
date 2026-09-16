@@ -140,9 +140,23 @@ function formatHuman(sec){
   return sec>0 ? `${sec}s` : '0m';
 }
 
+// Live focus-seconds that should show as if already banked: only while a focus
+// session is actively counting down on this lecture and no manual timer is
+// running on it (a manual timer covers the same wall-clock and banks it on
+// stop). 0 otherwise, so the display never double-counts.
+function focusContributionSec(){
+  const s = focusSession;
+  if(!focusRef || !s || s.mode !== 'running' || s.committed) return 0;
+  const l = getLecture(focusRef.subjectId, focusRef.unitId, focusRef.lectureId);
+  if(!l || l.timerStart) return 0;
+  return Math.max(0, (s.totalSec||0) - (s.remainingSec||0));
+}
+
 function liveLectureSeconds(l){
   if(!l || typeof l !== 'object') return 0;
-  return (l.seconds||0) + (l.timerStart ? Math.floor((Date.now()-l.timerStart)/1000) : 0);
+  let sec = (l.seconds||0) + (l.timerStart ? Math.floor((Date.now()-l.timerStart)/1000) : 0);
+  if(!l.timerStart && focusRef && focusRef.lectureId === l.id) sec += focusContributionSec();
+  return sec;
 }
 function unitSeconds(u){
   if(!u || !Array.isArray(u.lectures)) return 0;

@@ -1100,6 +1100,7 @@ function focusSessionStart(min){
   if(s.timerId) clearInterval(s.timerId);
   s.timerId = setInterval(focusSessionTick, 1000);
   if(typeof fuBHStart === 'function') fuBHStart();
+  if(typeof startTicking === 'function') startTicking();
   focusSessionRender();
   updateFocusRing();
   if(typeof renderFocusControls === 'function') renderFocusControls();
@@ -1120,6 +1121,7 @@ function focusSessionTick(){
     s.remainingSec = 0;
     s.mode = 'done';
     if(s.timerId){ clearInterval(s.timerId); s.timerId = null; }
+    if(!runningRef && typeof stopTicking === 'function') stopTicking();
     const banked = focusCommitTimeToLecture();
     updateFocusRing();
     focusSessionRender();
@@ -1619,6 +1621,8 @@ function focusCommitTimeToLecture(){
     l.seconds = (l.seconds || 0) + sec;
     addToDailyLog(ref.subjectId, sec);
     saveData();
+    const rowEl = document.getElementById('timer-'+ref.lectureId);
+    if(rowEl) rowEl.textContent = (l.timerStart ? formatCompactLive : formatHuman)(liveLectureSeconds(l));
     try{ renderToday(); renderScorecard(); }catch(e){}
   }
   return sec;
@@ -1626,6 +1630,7 @@ function focusCommitTimeToLecture(){
 function forceCloseFocusMode(){
   const banked = focusCommitTimeToLecture();
   focusSessionStop();
+  if(!runningRef && typeof stopTicking === 'function') stopTicking();
   const ov = document.getElementById('focusOverlay');
   ov.classList.remove('show');
   ov.classList.remove('mode-immersive', 'mode-video', 'mode-universe', 'focus-running');
