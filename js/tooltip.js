@@ -99,7 +99,7 @@ function lectureRow(subjectId, unitId, l, idx){
   const liveSec = liveLectureSeconds(l);
   const timerHtml = `
     <div class="timer-pill ${isRunning?'running':(liveSec>0?'has-time':'')}">
-      <button class="timer-btn" onclick="sparkAt(this,'${isRunning?'var(--sd-pink)':'var(--sd-blue)'}'); toggleTimer('${subjectId}','${unitId}','${l.id}')" title="${isRunning?'Stop timer':'Start timer'}">${isRunning?'⏸':'▶'}</button>
+      <button class="timer-btn" onclick="sparkAt(this,'${isRunning?'var(--sd-pink)':'var(--sd-blue)'}'); toggleTimer(${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)})" title="${isRunning?'Stop timer':'Start timer'}">${isRunning?'⏸':'▶'}</button>
       <span class="timer-time" id="timer-${l.id}">${isRunning ? formatCompactLive(liveSec) : formatHuman(liveSec)}</span>
       ${isRunning ? ekgLine(l.id) : ''}
     </div>`;
@@ -107,10 +107,10 @@ function lectureRow(subjectId, unitId, l, idx){
     <div class="lecture ${l.completed?'done':''} ${l.priority?'priority':''}" id="lecture-${l.id}" style="--i:${idx||0}">
       ${l.completed ? lecturePetalsHtml(idx||0) : ''}
       <div class="omr ${l.completed?'done':''}" id="omr-${l.id}"
-           onclick="handleOmrClick(event,'${subjectId}','${unitId}','${l.id}','${l.completed?'var(--sd-ink-soft)':'var(--sd-blue)'}')"
-           onmouseenter="lectureHoverStart(event,'${subjectId}','${unitId}','${l.id}',${l.completed?'true':'false'})"
+           onclick="handleOmrClick(event,${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)},'${l.completed?'var(--sd-ink-soft)':'var(--sd-blue)'}')"
+           onmouseenter="lectureHoverStart(event,${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)},${l.completed?'true':'false'})"
            onmouseleave="lectureHoverEnd()"
-           ontouchstart="lectureHoldStart(event,'${subjectId}','${unitId}','${l.id}',${l.completed?'true':'false'})"
+           ontouchstart="lectureHoldStart(event,${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)},${l.completed?'true':'false'})"
            ontouchend="lectureHoldEnd()" ontouchcancel="lectureHoldEnd()"
            title="${l.completed?'Hover a few seconds to see study date · click to mark incomplete':'Mark complete'}">${l.completed ? mythicalCheckGlyph(l.id) : lectureIconChar(l)}</div>
       ${thumbHtml}
@@ -120,7 +120,7 @@ function lectureRow(subjectId, unitId, l, idx){
           ${(l.plannedDate && !l.completed) ? `<span class="lecture-planned-flag" title="Planned for ${escapeAttr(formatPlanDateShort(l.plannedDate))}">📅</span>` : ''}
           <span class="lecture-title">${escapeHtml(l.title)}</span>
           ${linkHtml}
-          ${(l.richNotes && l.richNotes.replace(/<[^>]*>/g,'').trim()) ? `<span class="lecture-notes-flag" title="Open notes" onclick="event.stopPropagation(); openNotesEditor('${subjectId}','${unitId}','${l.id}')">📝</span>` : ''}
+          ${(l.richNotes && l.richNotes.replace(/<[^>]*>/g,'').trim()) ? `<span class="lecture-notes-flag" title="Open notes" onclick="event.stopPropagation(); openNotesEditor(${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)})">📝</span>` : ''}
         </div>
         ${notesHtml}
       </div>
@@ -132,14 +132,14 @@ function lectureRow(subjectId, unitId, l, idx){
         </div>
         ${timerHtml}
         <div class="lecture-kebab-wrap" onclick="event.stopPropagation()">
-          <button type="button" class="lecture-kebab-btn" title="Lecture options" onclick="toggleLectureMenu('${l.id}')">⋮</button>
+          <button type="button" class="lecture-kebab-btn" title="Lecture options" onclick="toggleLectureMenu(${jsq(l.id)})">⋮</button>
           <div class="lecture-kebab-menu" id="lectureMenu-${l.id}">
-            <button type="button" onclick="closeLectureMenus(); toggleLecturePriority('${subjectId}','${unitId}','${l.id}')">${l.priority ? '🔥 Remove priority' : '🚩 Mark priority'}</button>
-            ${l.plannedDate ? `<button type="button" onclick="closeLectureMenus(); unplanLecture('${subjectId}','${unitId}','${l.id}')">📅 Remove from plan (${escapeHtml(formatPlanDateShort(l.plannedDate))})</button>` : ''}
-            <button type="button" onclick="closeLectureMenus(); openNotesEditor('${subjectId}','${unitId}','${l.id}')">📝 ${l.richNotes && l.richNotes.replace(/<[^>]*>/g,'').trim() ? 'Open notes' : 'Add notes'}</button>
-            <button type="button" onclick="closeLectureMenus(); openFocusMode('${subjectId}','${unitId}','${l.id}')">⛶ Focus mode</button>
-            <button type="button" onclick="closeLectureMenus(); openEditLecture('${subjectId}','${unitId}','${l.id}')">✎ Edit</button>
-            <button type="button" class="danger" onclick="closeLectureMenus(); deleteLecture('${subjectId}','${unitId}','${l.id}')">✕ Delete</button>
+            <button type="button" onclick="closeLectureMenus(); toggleLecturePriority(${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)})">${l.priority ? '🔥 Remove priority' : '🚩 Mark priority'}</button>
+            ${l.plannedDate ? `<button type="button" onclick="closeLectureMenus(); unplanLecture(${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)})">📅 Remove from plan (${escapeHtml(formatPlanDateShort(l.plannedDate))})</button>` : ''}
+            <button type="button" onclick="closeLectureMenus(); openNotesEditor(${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)})">📝 ${l.richNotes && l.richNotes.replace(/<[^>]*>/g,'').trim() ? 'Open notes' : 'Add notes'}</button>
+            <button type="button" onclick="closeLectureMenus(); openFocusMode(${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)})">⛶ Focus mode</button>
+            <button type="button" onclick="closeLectureMenus(); openEditLecture(${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)})">✎ Edit</button>
+            <button type="button" class="danger" onclick="closeLectureMenus(); deleteLecture(${jsq(subjectId)},${jsq(unitId)},${jsq(l.id)})">✕ Delete</button>
           </div>
         </div>
       </div>

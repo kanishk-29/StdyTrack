@@ -66,7 +66,7 @@ function renderCalPlanPopover(){
     ? items.map(it=>`
       <div class="cpp-item ${it.completed?'done':''}">
         <span class="cpp-item-text" title="${escapeAttr(it.subjectName+' — '+it.title)}">${escapeHtml(it.subjectName)} · ${escapeHtml(it.title)}</span>
-        <button type="button" class="cpp-item-remove" onclick="unplanLecture('${it.subjectId}','${it.unitId}','${it.lectureId}')" title="Remove from plan">✕</button>
+        <button type="button" class="cpp-item-remove" onclick="unplanLecture(${jsq(it.subjectId)},${jsq(it.unitId)},${jsq(it.lectureId)})" title="Remove from plan">✕</button>
       </div>`).join('')
     : `<div class="cpp-empty">Nothing planned yet</div>`;
   pop.innerHTML = `
@@ -195,19 +195,19 @@ function subjectCardHtml(s, i){
   const thumbStyle = s.image
     ? `background-image:url('${s.image}'); background-size:cover; background-position:center;`
     : `background:linear-gradient(135deg, ${color}, ${color}99);`;
-  return `<div class="dash-course-card subject-tile-card${s.id===activeSubjectId?' active':''}" style="animation-delay:${i*0.05}s" onclick="jumpToSubject('${s.id}')">
+  return `<div class="dash-course-card subject-tile-card${s.id===activeSubjectId?' active':''}" style="animation-delay:${i*0.05}s" onclick="jumpToSubject(${jsq(s.id)})">
     <div class="dash-course-thumb" style="${thumbStyle}">
       <div class="dash-course-thumb-overlay"></div>
-      <input type="file" accept="image/*" id="subjectImgInput-${s.id}" style="display:none" onchange="handleSubjectImage(event,'${s.id}')">
+      <input type="file" accept="image/*" id="subjectImgInput-${s.id}" style="display:none" onchange="handleSubjectImage(event,${jsq(s.id)})">
       <div class="dash-course-edit-wrap">
-        <button class="dash-course-edit-btn" title="Edit cover image" onclick="event.stopPropagation(); toggleCoverMenu('${s.id}')">✎</button>
+        <button class="dash-course-edit-btn" title="Edit cover image" onclick="event.stopPropagation(); toggleCoverMenu(${jsq(s.id)})">✎</button>
         <div class="dash-course-edit-menu" id="coverMenu-${s.id}">
-          <button onclick="event.stopPropagation(); closeCoverMenus(); openEditSubject('${s.id}')">✎ Rename subject</button>
-          <button onclick="event.stopPropagation(); closeCoverMenus(); document.getElementById('subjectImgInput-${s.id}').click()">🖼️ ${s.image?'Change image':'Add image'}</button>
-          ${s.image ? `<button class="danger" onclick="event.stopPropagation(); closeCoverMenus(); removeSubjectImage('${s.id}')">🗑️ Remove image</button>` : ''}
+          <button onclick="event.stopPropagation(); closeCoverMenus(); openEditSubject(${jsq(s.id)})">✎ Rename subject</button>
+          <button onclick="event.stopPropagation(); closeCoverMenus(); document.getElementById(${jsq('subjectImgInput-'+s.id)}).click()">🖼️ ${s.image?'Change image':'Add image'}</button>
+          ${s.image ? `<button class="danger" onclick="event.stopPropagation(); closeCoverMenus(); removeSubjectImage(${jsq(s.id)})">🗑️ Remove image</button>` : ''}
         </div>
       </div>
-      <button class="subject-del subject-del-tile" title="Delete subject" onclick="event.stopPropagation(); deleteSubject('${s.id}')">✕</button>
+      <button class="subject-del subject-del-tile" title="Delete subject" onclick="event.stopPropagation(); deleteSubject(${jsq(s.id)})">✕</button>
       <span class="dash-course-pct">${pct}% Complete</span>
       <span class="dash-course-thumb-label">${escapeHtml(s.name)}</span>
     </div>
@@ -217,9 +217,9 @@ function subjectCardHtml(s, i){
       <div class="dash-course-progress-track"><div class="dash-course-progress-fill" style="width:${pct}%; background:${color};"></div></div>
       <div class="dash-course-footer">
         <span class="dash-course-next">🕒 ${nextLabel}</span>
-        <button class="dash-resume-btn" onclick="event.stopPropagation(); resumeSubject('${s.id}')">▶ Resume</button>
+        <button class="dash-resume-btn" onclick="event.stopPropagation(); resumeSubject(${jsq(s.id)})">▶ Resume</button>
       </div>
-      <select class="subject-folder-select" onclick="event.stopPropagation()" onchange="reassignSubjectFolder('${s.id}', this.value, this)"></select>
+      <select class="subject-folder-select" onclick="event.stopPropagation()" onchange="reassignSubjectFolder(${jsq(s.id)}, this.value, this)"></select>
     </div>
   </div>`;
 }
@@ -260,15 +260,15 @@ function drawerFolderTileHtml(folder, idx){
         <span class="drawer-folder-stat"><span class="drawer-folder-stat-ic">◷</span> ${timeStr} Time</span>
       </div>`
     : `<div class="drawer-folder-no-topic">📁 No topics added yet</div>`;
-  return `<div class="drawer-folder-tile${folder.image?' has-image':''}" onclick="activeFolderFilter='${folder.id}'; stopFolderClock(); if(typeof openFolderDashboard==='function') openFolderDashboard(); else renderSidebar();">
+  return `<div class="drawer-folder-tile${folder.image?' has-image':''}" onclick="activeFolderFilter=${jsq(folder.id)}; stopFolderClock(); if(typeof openFolderDashboard==='function') openFolderDashboard(); else renderSidebar();">
     <div class="drawer-folder-img" style="${thumbStyle}">${thumbInner}
       <div class="pp-folder-tile-edit-wrap drawer-folder-edit-wrap">
-        <input type="file" accept="image/*" id="folderImgInput-${folder.id}" style="display:none" onchange="handleFolderImage(event,'${folder.id}')">
-        <button type="button" class="pp-folder-tile-edit" title="${folder.image?'Change image':'Add image'}" onclick="event.stopPropagation(); toggleFolderCoverMenu('${folder.id}')">🖼️</button>
+        <input type="file" accept="image/*" id="folderImgInput-${folder.id}" style="display:none" onchange="handleFolderImage(event,${jsq(folder.id)})">
+        <button type="button" class="pp-folder-tile-edit" title="${folder.image?'Change image':'Add image'}" onclick="event.stopPropagation(); toggleFolderCoverMenu(${jsq(folder.id)})">🖼️</button>
         <div class="pp-folder-tile-edit-menu" id="folderCoverMenu-${folder.id}">
-          <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); renameFolder('${folder.id}')">✎ Rename folder</button>
-          <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); document.getElementById('folderImgInput-${folder.id}').click()">🖼️ ${folder.image?'Change image':'Add image'}</button>
-          ${folder.image ? `<button type="button" class="danger" onclick="event.stopPropagation(); closeFolderCoverMenus(); removeFolderImage('${folder.id}')">🗑️ Remove image</button>` : ''}
+          <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); renameFolder(${jsq(folder.id)})">✎ Rename folder</button>
+          <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); document.getElementById(${jsq('folderImgInput-'+folder.id)}).click()">🖼️ ${folder.image?'Change image':'Add image'}</button>
+          ${folder.image ? `<button type="button" class="danger" onclick="event.stopPropagation(); closeFolderCoverMenus(); removeFolderImage(${jsq(folder.id)})">🗑️ Remove image</button>` : ''}
         </div>
       </div>
     </div>
@@ -318,18 +318,18 @@ function drawerSubjectCardHtml(s, i){
     : `background:linear-gradient(135deg, ${pal.bar} 0%, ${pal.bar}cc 100%);`;
   const thumbInner = s.image ? '' : `<span style="font-size:30px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));">${iconLetter}</span>`;
   // hidden folder select kept for JS but not visible — reference has no visible select
-  return `<div class="ds-card${s.id===activeSubjectId?' active':''}" style="animation-delay:${i*0.05}s" onclick="jumpToSubject('${s.id}')">
+  return `<div class="ds-card${s.id===activeSubjectId?' active':''}" style="animation-delay:${i*0.05}s" onclick="jumpToSubject(${jsq(s.id)})">
     <div class="ds-thumb" style="${thumbStyle}">${thumbInner}
-      <button class="ds-del subject-del" title="Delete subject" onclick="event.stopPropagation(); deleteSubject('${s.id}')">✕</button>
+      <button class="ds-del subject-del" title="Delete subject" onclick="event.stopPropagation(); deleteSubject(${jsq(s.id)})">✕</button>
     </div>
     <div class="ds-body">
       <div class="ds-top">
         <span class="ds-pill" style="background:${pal.pillBg}; color:${pal.pillColor};">${escapeHtml(pillText)}</span>
         <div class="ds-menu-wrap" onclick="event.stopPropagation()">
-          <button class="ds-menu" title="Options" onclick="toggleSubjectMenu('${s.id}')">⋮</button>
+          <button class="ds-menu" title="Options" onclick="toggleSubjectMenu(${jsq(s.id)})">⋮</button>
           <div class="ds-subject-menu" id="subjectMenu-${s.id}">
-            <button type="button" onclick="closeSubjectMenus(); openEditSubject('${s.id}')">✎ Rename subject</button>
-            <button type="button" class="danger" onclick="closeSubjectMenus(); deleteSubject('${s.id}')">✕ Delete subject</button>
+            <button type="button" onclick="closeSubjectMenus(); openEditSubject(${jsq(s.id)})">✎ Rename subject</button>
+            <button type="button" class="danger" onclick="closeSubjectMenus(); deleteSubject(${jsq(s.id)})">✕ Delete subject</button>
           </div>
         </div>
       </div>
@@ -346,9 +346,9 @@ function drawerSubjectCardHtml(s, i){
         <span class="ds-pct-inline">${pct}%</span>
       </div>
       <div class="ds-next">🎓 ${nextLabel}</div>
-      <select class="subject-folder-select" style="display:none" onclick="event.stopPropagation()" onchange="reassignSubjectFolder('${s.id}', this.value, this)"></select>
+      <select class="subject-folder-select" style="display:none" onclick="event.stopPropagation()" onchange="reassignSubjectFolder(${jsq(s.id)}, this.value, this)"></select>
     </div>
-    <button class="ds-resume" title="Open" style="background:${pal.arrowBg}; color:${pal.arrowColor}; border-color:${pal.arrowBg};" onclick="event.stopPropagation(); jumpToSubject('${s.id}')">→</button>
+    <button class="ds-resume" title="Open" style="background:${pal.arrowBg}; color:${pal.arrowColor}; border-color:${pal.arrowBg};" onclick="event.stopPropagation(); jumpToSubject(${jsq(s.id)})">→</button>
   </div>`;
 }
 function renderSidebar(){
@@ -750,7 +750,7 @@ function renderMain(){
     examSub = 'Plan your study schedule';
   }
   const examHtml = `
-    <div class="sd-exam-card" onclick="openSetExamDate('${subject.id}')">
+    <div class="sd-exam-card" onclick="openSetExamDate(${jsq(subject.id)})">
       <div class="sd-exam-icon ${examIconCls}">📅</div>
       <div class="sd-exam-text">
         <div class="sd-exam-title">${escapeHtml(examTitle)}</div>
@@ -808,7 +808,7 @@ function renderMain(){
       <div class="sd-title-block">
         <div class="sd-title-row">
           <h2 class="sd-title">${escapeHtml(subject.name)} <span class="sd-sparkle">✨</span></h2>
-          <button type="button" class="sd-rename-btn" title="Rename subject" onclick="openEditSubject('${subject.id}')">✎</button>
+          <button type="button" class="sd-rename-btn" title="Rename subject" onclick="openEditSubject(${jsq(subject.id)})">✎</button>
         </div>
         <div class="sd-subtitle">Master concepts. Ace every exam.</div>
       </div>
@@ -862,7 +862,7 @@ function renderMain(){
       : pct===0 ? `Let's get started on this week's lectures.`
       : `Keep going — you're ${Math.round(pct)}% through this week's lectures.`;
     html += `<div class="unit ${u.open?'open':''}" data-unit="${u.id}" style="--unit-accent:${accent}; animation-delay:${i*0.05}s">
-      <div class="unit-head" onclick="toggleUnit('${subject.id}','${u.id}')">
+      <div class="unit-head" onclick="toggleUnit(${jsq(subject.id)},${jsq(u.id)})">
         ${unitPetalsHtml(i)}
         <div class="unit-head-top">
           <div class="unit-head-left">
@@ -878,10 +878,10 @@ function renderMain(){
               <span class="unit-pct-label">Complete</span>
             </div>
             <div class="unit-kebab-wrap" onclick="event.stopPropagation()">
-              <button type="button" class="unit-kebab-btn" title="Week options" onclick="toggleUnitMenu('${u.id}')">⋮</button>
+              <button type="button" class="unit-kebab-btn" title="Week options" onclick="toggleUnitMenu(${jsq(u.id)})">⋮</button>
               <div class="unit-kebab-menu" id="unitMenu-${u.id}">
-                <button type="button" onclick="closeUnitMenus(); openEditUnit('${subject.id}','${u.id}')">✎ Rename week</button>
-                <button type="button" class="danger" onclick="closeUnitMenus(); deleteUnit('${subject.id}','${u.id}')">✕ Delete week</button>
+                <button type="button" onclick="closeUnitMenus(); openEditUnit(${jsq(subject.id)},${jsq(u.id)})">✎ Rename week</button>
+                <button type="button" class="danger" onclick="closeUnitMenus(); deleteUnit(${jsq(subject.id)},${jsq(u.id)})">✕ Delete week</button>
               </div>
             </div>
             <span class="unit-toggle">▾</span>
@@ -903,15 +903,15 @@ function renderMain(){
           <div class="unit-curriculum-label">Course Curriculum</div>
           <div class="unit-curriculum-controls" onclick="event.stopPropagation()">
             <div class="unit-sort-wrap">
-              <button type="button" class="unit-sort-btn" onclick="toggleUnitSortMenu('${u.id}')">Sort by ${unitSortMode[u.id]==='az' ? 'Name' : 'Order'} <span>⌄</span></button>
+              <button type="button" class="unit-sort-btn" onclick="toggleUnitSortMenu(${jsq(u.id)})">Sort by ${unitSortMode[u.id]==='az' ? 'Name' : 'Order'} <span>⌄</span></button>
               <div class="unit-sort-menu" id="unitSortMenu-${u.id}">
-                <button type="button" onclick="setUnitSort('${u.id}','order')">Sort by Order</button>
-                <button type="button" onclick="setUnitSort('${u.id}','az')">Sort by Name (A–Z)</button>
+                <button type="button" onclick="setUnitSort(${jsq(u.id)},'order')">Sort by Order</button>
+                <button type="button" onclick="setUnitSort(${jsq(u.id)},'az')">Sort by Name (A–Z)</button>
               </div>
             </div>
             <div class="unit-view-toggle">
-              <button type="button" class="${unitViewMode[u.id]!=='grid'?'active':''}" title="List view" onclick="setUnitView('${u.id}','list')">☰</button>
-              <button type="button" class="${unitViewMode[u.id]==='grid'?'active':''}" title="Grid view" onclick="setUnitView('${u.id}','grid')">▦</button>
+              <button type="button" class="${unitViewMode[u.id]!=='grid'?'active':''}" title="List view" onclick="setUnitView(${jsq(u.id)},'list')">☰</button>
+              <button type="button" class="${unitViewMode[u.id]==='grid'?'active':''}" title="Grid view" onclick="setUnitView(${jsq(u.id)},'grid')">▦</button>
             </div>
           </div>
         </div>
@@ -919,10 +919,10 @@ function renderMain(){
           ${sortedLectures(u).map((l,li) => lectureRow(subject.id, u.id, l, li)).join('')}
         </div>
         <div class="lecture-add-row">
-          <button class="add-lecture-btn" onclick="openAddLecture('${subject.id}','${u.id}')">+ Add lecture</button>
+          <button class="add-lecture-btn" onclick="openAddLecture(${jsq(subject.id)},${jsq(u.id)})">+ Add lecture</button>
         </div>
         <div class="bulk-add-row">
-          <button class="add-lecture-btn bulk" onclick="openBulkAdd('${subject.id}','${u.id}')">≡ Bulk Add</button>
+          <button class="add-lecture-btn bulk" onclick="openBulkAdd(${jsq(subject.id)},${jsq(u.id)})">≡ Bulk Add</button>
         </div>
         <div class="tests-section">
           <div class="tests-row-header">
@@ -934,12 +934,12 @@ function renderMain(){
             <span class="tests-avg-badge">Avg ${formatPct(unitTestAvg(u))} <span>⌄</span></span>
           </div>
           ${(u.tests && u.tests.length) ? u.tests.map((t,ti)=>testRow(subject.id,u.id,t,ti)).join('') : ''}
-          <button class="add-test-btn" onclick="openAddTest('${subject.id}','${u.id}')">+ Add test score</button>
+          <button class="add-test-btn" onclick="openAddTest(${jsq(subject.id)},${jsq(u.id)})">+ Add test score</button>
         </div>
       </div>
     </div>`;
   });
-  html += `<button class="add-unit-btn" onclick="openAddUnit('${subject.id}')">+ Add unit</button>`;
+  html += `<button class="add-unit-btn" onclick="openAddUnit(${jsq(subject.id)})">+ Add unit</button>`;
 
 
   const quote = pickMotivationQuote(subject.id);

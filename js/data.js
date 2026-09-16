@@ -66,3 +66,8 @@ function closeProgressSlide(){
   document.getElementById('progressOverlay').classList.remove('show');
   restoreOpener('progressOverlay');
 }
+
+function jsq(v){
+  v = String(v == null ? '' : v);
+  return "'" + v.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\r\n]/g, ' ').replace(/&/g, '&amp;').replace(/"/g, '&quot;') + "'";
+}

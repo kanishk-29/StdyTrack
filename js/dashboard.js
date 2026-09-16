@@ -54,7 +54,7 @@ function renderRunningBanner(force){
       </div>
     </div>
     <div class="rtb-actions">
-      <button class="rtb-view-btn" onclick="openFocusMode('${runningRef.subjectId}','${runningRef.unitId}','${runningRef.lectureId}')">View</button>
+      <button class="rtb-view-btn" onclick="openFocusMode(${jsq(runningRef.subjectId)},${jsq(runningRef.unitId)},${jsq(runningRef.lectureId)})">View</button>
       <button class="rtb-stop-btn" onclick="stopTimer()">⏸ Stop</button>
     </div>
   `;
@@ -237,15 +237,15 @@ function renderDashCourses(){
            <span class="dash-course-running-text">⏱ ${liveTimeStr}</span>
          </div>`
       : '';
-    return `<div class="dash-course-card${isRunning ? ' dash-course-running' : ''}" onclick="selectAndScroll('${s.id}')">
+    return `<div class="dash-course-card${isRunning ? ' dash-course-running' : ''}" onclick="selectAndScroll(${jsq(s.id)})">
       <div class="dash-course-thumb" style="${thumbStyle}">
         <div class="dash-course-thumb-overlay"></div>
-        <input type="file" accept="image/*" id="subjectImgInput-${s.id}" style="display:none" onchange="handleSubjectImage(event,'${s.id}')">
+        <input type="file" accept="image/*" id="subjectImgInput-${s.id}" style="display:none" onchange="handleSubjectImage(event,${jsq(s.id)})">
         <div class="dash-course-edit-wrap">
-          <button class="dash-course-edit-btn" title="Edit cover image" onclick="event.stopPropagation(); toggleCoverMenu('${s.id}')">✎</button>
+          <button class="dash-course-edit-btn" title="Edit cover image" onclick="event.stopPropagation(); toggleCoverMenu(${jsq(s.id)})">✎</button>
           <div class="dash-course-edit-menu" id="coverMenu-${s.id}">
-            <button onclick="event.stopPropagation(); closeCoverMenus(); document.getElementById('subjectImgInput-${s.id}').click()">🖼️ ${s.image?'Change image':'Add image'}</button>
-            ${s.image ? `<button class="danger" onclick="event.stopPropagation(); closeCoverMenus(); removeSubjectImage('${s.id}')">🗑️ Remove image</button>` : ''}
+            <button onclick="event.stopPropagation(); closeCoverMenus(); document.getElementById(${jsq('subjectImgInput-'+s.id)}).click()">🖼️ ${s.image?'Change image':'Add image'}</button>
+            ${s.image ? `<button class="danger" onclick="event.stopPropagation(); closeCoverMenus(); removeSubjectImage(${jsq(s.id)})">🗑️ Remove image</button>` : ''}
           </div>
         </div>
         <span class="dash-course-pct">${pct}% Complete</span>
@@ -258,7 +258,7 @@ function renderDashCourses(){
         <div class="dash-course-progress-track"><div class="dash-course-progress-fill" style="width:${pct}%; background:${color};"></div></div>
         <div class="dash-course-footer">
           <span class="dash-course-next">🕒 ${nextLabel}</span>
-          <button class="dash-resume-btn resume" onclick="event.stopPropagation(); resumeSubject('${s.id}')">▶ Resume</button>
+          <button class="dash-resume-btn resume" onclick="event.stopPropagation(); resumeSubject(${jsq(s.id)})">▶ Resume</button>
         </div>
       </div>
     </div>`;
@@ -419,7 +419,7 @@ function renderDashPriority(){
   // up/down arrows there) rather than re-sorting by completion here.
   el.innerHTML = items.map(({s,u,l})=>{
     const icon = l.completed ? mythicalCheckGlyph(l.id+'-dash') : lectureIconChar(l);
-    return `<div class="dash-priority-row ${l.completed?'is-done':''}" onclick="jumpToLecture('${s.id}','${u.id}','${l.id}')">
+    return `<div class="dash-priority-row ${l.completed?'is-done':''}" onclick="jumpToLecture(${jsq(s.id)},${jsq(u.id)},${jsq(l.id)})">
       <span class="dash-priority-icon">${icon}</span>
       <div class="dash-priority-info">
         <div class="dash-priority-name">${escapeHtml(l.title)}</div>
@@ -449,7 +449,7 @@ function renderDashDeadlines(){
     else if(pacing.daysLeft<=7){ urgency='warn'; label=`${pacing.daysLeft}d left`; }
     else { label=`${pacing.daysLeft}d left`; }
     const dateLabel = new Date(pacing.examDate+'T00:00:00').toLocaleDateString(undefined,{month:'short', day:'numeric', year:'numeric'});
-    return `<div class="dash-deadline-row" onclick="selectAndScroll('${s.id}')">
+    return `<div class="dash-deadline-row" onclick="selectAndScroll(${jsq(s.id)})">
       <span class="dash-deadline-dot" style="${shinyDotStyle(color)}"></span>
       <div class="dash-deadline-info">
         <div class="dash-deadline-name">${escapeHtml(s.name)}</div>
@@ -473,7 +473,7 @@ function renderRevisionPanel(){
       <div class="revision-list">
         ${weak.map(w=>{
           const cls = w.avg<50 ? 'critical' : 'warn';
-          return `<div class="revision-item" onclick="jumpToUnit('${w.subjectId}','${w.unitId}')">
+          return `<div class="revision-item" onclick="jumpToUnit(${jsq(w.subjectId)},${jsq(w.unitId)})">
             <div>
               <div class="revision-item-name">${escapeHtml(w.unitName)}</div>
               <div class="revision-item-sub">${escapeHtml(w.subjectName)} · ${w.count} test${w.count>1?'s':''}</div>

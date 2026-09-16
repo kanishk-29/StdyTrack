@@ -1578,12 +1578,12 @@ function renderFocusControls(){
   const controls = document.getElementById('focusControls');
   controls.innerHTML = `
     <div class="timer-pill large ${isRunning?'running':(liveSec>0?'has-time':'')}">
-      <button class="timer-btn" onclick="sparkAt(this,'${isRunning?'var(--pencil)':'var(--green)'}'); toggleTimer('${focusRef.subjectId}','${focusRef.unitId}','${focusRef.lectureId}'); renderFocusControls();" title="${isRunning?'Stop timer':'Start timer'}">${isRunning?'⏸':'▶'}</button>
+      <button class="timer-btn" onclick="sparkAt(this,'${isRunning?'var(--pencil)':'var(--green)'}'); toggleTimer(${jsq(focusRef.subjectId)},${jsq(focusRef.unitId)},${jsq(focusRef.lectureId)}); renderFocusControls();" title="${isRunning?'Stop timer':'Start timer'}">${isRunning?'⏸':'▶'}</button>
       <span class="timer-time" id="focusTimerDisplay">${isRunning ? formatCompactLive(liveSec) : formatHuman(liveSec)}</span>
       ${isRunning ? ekgLine('focus') : ''}
     </div>
     ${(immersive && sess.mode === 'running') ? `<button class="focus-pause" onclick="focusSessionPause();" title="${sess.paused?'Resume session':'Pause session'}">${sess.paused ? '▶ Resume' : '⏸ Pause'}</button>` : ''}
-    <div class="omr ${l.completed?'done':''}" onclick="sparkAt(this,'${l.completed?'var(--ink-soft)':'var(--green)'}'); toggleLecture('${focusRef.subjectId}','${focusRef.unitId}','${focusRef.lectureId}'); renderFocusControls();" title="Mark ${l.completed?'incomplete':'complete'}">${l.completed ? mythicalCheckGlyph('focus-'+focusRef.lectureId) : ''}</div>
+    <div class="omr ${l.completed?'done':''}" onclick="sparkAt(this,'${l.completed?'var(--ink-soft)':'var(--green)'}'); toggleLecture(${jsq(focusRef.subjectId)},${jsq(focusRef.unitId)},${jsq(focusRef.lectureId)}); renderFocusControls();" title="Mark ${l.completed?'incomplete':'complete'}">${l.completed ? mythicalCheckGlyph('focus-'+focusRef.lectureId) : ''}</div>
   `;
 }
 
@@ -1655,8 +1655,8 @@ function testRow(subjectId, unitId, t, idx){
           <span class="test-pct">${Math.round(pct)}%</span>
         </div>
         <div class="test-actions" onclick="event.stopPropagation()">
-          <button class="icon-btn" title="Edit" onclick="openEditTest('${subjectId}','${unitId}','${t.id}')">✎</button>
-          <button class="icon-btn" title="Delete" onclick="deleteTest('${subjectId}','${unitId}','${t.id}')">✕</button>
+          <button class="icon-btn" title="Edit" onclick="openEditTest(${jsq(subjectId)},${jsq(unitId)},${jsq(t.id)})">✎</button>
+          <button class="icon-btn" title="Delete" onclick="deleteTest(${jsq(subjectId)},${jsq(unitId)},${jsq(t.id)})">✕</button>
         </div>
       </div>
       <div class="test-stats-row">
@@ -1664,7 +1664,7 @@ function testRow(subjectId, unitId, t, idx){
         <div class="test-stat"><b>${t.obtained}</b><span>Your Score</span></div>
         <div class="test-stat"><b>${Math.round(pct)}%</b><span>Accuracy</span></div>
       </div>
-      ${hasQ ? `<button class="test-details-btn" onclick="toggleTestExpand('${t.id}')">${isOpen?'▾ Hide details':'📈 View Details'}</button>` : ''}
+      ${hasQ ? `<button class="test-details-btn" onclick="toggleTestExpand(${jsq(t.id)})">${isOpen?'▾ Hide details':'📈 View Details'}</button>` : ''}
       ${(hasQ && isOpen) ? `<div class="test-questions">${escapeHtml(t.questions)}</div>` : ''}
     </div>`;
 }

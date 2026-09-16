@@ -128,12 +128,12 @@ function folderTileInnerHtml(folder){
   const pct = total ? Math.round((done/total)*100) : 0;
   return `
     <div class="pp-folder-tile-edit-wrap">
-      <input type="file" accept="image/*" id="folderImgInput-${folder.id}" style="display:none" onchange="handleFolderImage(event,'${folder.id}')">
-      <button type="button" class="pp-folder-tile-edit" title="${folder.image?'Change image':'Add image'}" onclick="event.stopPropagation(); toggleFolderCoverMenu('${folder.id}')">✎</button>
+      <input type="file" accept="image/*" id="folderImgInput-${folder.id}" style="display:none" onchange="handleFolderImage(event,${jsq(folder.id)})">
+      <button type="button" class="pp-folder-tile-edit" title="${folder.image?'Change image':'Add image'}" onclick="event.stopPropagation(); toggleFolderCoverMenu(${jsq(folder.id)})">✎</button>
       <div class="pp-folder-tile-edit-menu" id="folderCoverMenu-${folder.id}">
-        <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); renameFolder('${folder.id}')">✎ Rename folder</button>
-        <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); document.getElementById('folderImgInput-${folder.id}').click()">🖼️ ${folder.image?'Change image':'Add image'}</button>
-        ${folder.image ? `<button type="button" class="danger" onclick="event.stopPropagation(); closeFolderCoverMenus(); removeFolderImage('${folder.id}')">🗑️ Remove image</button>` : ''}
+        <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); renameFolder(${jsq(folder.id)})">✎ Rename folder</button>
+        <button type="button" onclick="event.stopPropagation(); closeFolderCoverMenus(); document.getElementById(${jsq('folderImgInput-'+folder.id)}).click()">🖼️ ${folder.image?'Change image':'Add image'}</button>
+        ${folder.image ? `<button type="button" class="danger" onclick="event.stopPropagation(); closeFolderCoverMenus(); removeFolderImage(${jsq(folder.id)})">🗑️ Remove image</button>` : ''}
       </div>
     </div>
     <span class="pp-folder-tile-icon">${folder.icon}</span>
@@ -146,7 +146,7 @@ function ppFolderCardHtml(){
   foldersEnsure();
   const unsortedCount = subjectsInFolder(null).length;
   const tiles = data.folders.map(f=>{
-    return `<div class="pp-folder-tile${f.image?' has-image':''}" onclick="openFolderFromCard('${f.id}')"${folderTileStyle(f)}>${folderTileInnerHtml(f)}</div>`;
+    return `<div class="pp-folder-tile${f.image?' has-image':''}" onclick="openFolderFromCard(${jsq(f.id)})"${folderTileStyle(f)}>${folderTileInnerHtml(f)}</div>`;
   });
   if(unsortedCount){
     tiles.push(`<button type="button" class="pp-folder-tile muted" onclick="openFolderFromCard('')">
@@ -421,7 +421,7 @@ function ppItemRow(key, item, readOnly){
     return `<div class="pp-row ${status} readonly">
       <div class="pp-row-icon ${status}" title="${item.done?'Completed':'Not completed'}">${iconHtml}</div>
       <div class="pp-row-mid">
-        <div class="pp-row-top" ${linked?`onclick="openPriorityItemLink('${item.link.subjectId}','${item.link.unitId}','${item.link.lectureId}')"`:''}>
+        <div class="pp-row-top" ${linked?`onclick="openPriorityItemLink(${jsq(item.link.subjectId)},${jsq(item.link.unitId)},${jsq(item.link.lectureId)})"`:''}>
           <span class="pp-row-title ${item.done?'strike':''}">${escapeHtml(item.text)}</span>
           <span class="pp-row-tag">${escapeHtml((item.type||'Lecture').toUpperCase())}</span>
         </div>
@@ -433,9 +433,9 @@ function ppItemRow(key, item, readOnly){
     </div>`;
   }
   return `<div class="pp-row ${status}">
-    <div class="pp-row-icon ${status}" onclick='togglePriorityItemDone("${key}","${item.id}")' title="${item.done?'Mark not done':'Mark done'}">${iconHtml}</div>
+    <div class="pp-row-icon ${status}" onclick="togglePriorityItemDone(${jsq(key)},${jsq(item.id)})" title="${item.done?'Mark not done':'Mark done'}">${iconHtml}</div>
     <div class="pp-row-mid">
-      <div class="pp-row-top" ${linked?`onclick="openPriorityItemLink('${item.link.subjectId}','${item.link.unitId}','${item.link.lectureId}')"`:''}>
+      <div class="pp-row-top" ${linked?`onclick="openPriorityItemLink(${jsq(item.link.subjectId)},${jsq(item.link.unitId)},${jsq(item.link.lectureId)})"`:''}>
         <span class="pp-row-title ${item.done?'strike':''}">${escapeHtml(item.text)}</span>
         <span class="pp-row-tag">${escapeHtml((item.type||'Lecture').toUpperCase())}</span>
       </div>
@@ -443,8 +443,8 @@ function ppItemRow(key, item, readOnly){
       ${doneSubHtml}
     </div>
     ${timeHtml}
-    <button type="button" class="pp-row-star ${starred?'active':''}" onclick="event.stopPropagation(); togglePriorityStar('${key}','${item.id}')" title="${starred?'Unstar':'Mark high priority'}">${starred?'★':'☆'}</button>
-    <button type="button" class="pp-row-del" onclick="event.stopPropagation(); deletePriorityItem('${key}','${item.id}')" title="Delete">✕</button>
+    <button type="button" class="pp-row-star ${starred?'active':''}" onclick="event.stopPropagation(); togglePriorityStar(${jsq(key)},${jsq(item.id)})" title="${starred?'Unstar':'Mark high priority'}">${starred?'★':'☆'}</button>
+    <button type="button" class="pp-row-del" onclick="event.stopPropagation(); deletePriorityItem(${jsq(key)},${jsq(item.id)})" title="Delete">✕</button>
   </div>`;
 }
 
@@ -659,7 +659,7 @@ function ppNextUpHtml(){
     ${item.time?`<div class="pp-nextup-time">${formatTimeLabel(item.time)}</div>`:''}
     <div class="pp-nextup-name">${escapeHtml(item.text)} <span class="pp-nextup-tag">${escapeHtml((item.type||'Lecture').toUpperCase())}</span></div>
     <div class="pp-nextup-sub"><span>🕐</span>${countdown||"Whenever you're ready"}</div>
-    <button type="button" class="pp-nextup-btn" onclick="startFocusFromPlanner('${item.id}')">▶ Start Focus</button>
+    <button type="button" class="pp-nextup-btn" onclick="startFocusFromPlanner(${jsq(item.id)})">▶ Start Focus</button>
   </div>`;
 }
 
@@ -687,7 +687,7 @@ function ppEventRowHtml(e){
       <span class="pp-event-date">${label}</span>
       <span class="pp-event-title">${escapeHtml(e.title)}</span>
     </div>
-    <button type="button" class="pp-event-del" onclick="deleteEvent('${e.id}')" title="Remove">✕</button>
+    <button type="button" class="pp-event-del" onclick="deleteEvent(${jsq(e.id)})" title="Remove">✕</button>
   </div>`;
 }
 function ppEventsCardHtml(kind){
@@ -1523,12 +1523,12 @@ function mslFolderCardHtml(folder, idx){
   const orb = folder.orb || pal.orb;
   return `<article class="folder" data-name="${escapeHtml(folder.name||'Untitled')}" role="button" tabindex="0"
     style="--accent:${accent};--folder-bg:${fbg};--orb:${orb};--i:${idx}"
-    onclick="openFolderFromLanding('${folder.id}')">
+    onclick="openFolderFromLanding(${jsq(folder.id)})">
     <div class="folder-top"><div class="folder-icon">${mslFolderIconHtml(idx)}</div><span class="count">${countLabel}</span></div>
     <h4>${escapeHtml(folder.name||'Untitled')}</h4>
     <p>${mslFolderDesc(folder)}</p>
     <div class="folder-meta"><span>${subCount} subject${subCount===1?'':'s'}</span><i>·</i><span>${topicCount} topic${topicCount===1?'':'s'}</span></div>
-    <button class="open" aria-label="Open ${escapeHtml(folder.name||'folder')}" onclick="event.stopPropagation(); openFolderFromLanding('${folder.id}')">→</button>
+    <button class="open" aria-label="Open ${escapeHtml(folder.name||'folder')}" onclick="event.stopPropagation(); openFolderFromLanding(${jsq(folder.id)})">→</button>
   </article>`;
 }
 function mslFoldersHtml(){
@@ -1572,7 +1572,7 @@ function mslRecentHtml(){
     const f = r.id === '' ? null : getFolder(r.id);
     const nm = (f ? f.name : r.name) || r.name || 'Unsorted';
     const cnt = (r.id === '' ? subjectsInFolder(null) : (f ? subjectsInFolder(f.id) : [])).length;
-    html += `<div class="recent-item" style="cursor:pointer" onclick="openFolderFromLanding('${r.id}')"><div class="recent-icon">${mslFolderIconHtml(i)}</div><div><strong>${escapeHtml(nm)}</strong><small>${cnt} subjects</small></div></div>`;
+    html += `<div class="recent-item" style="cursor:pointer" onclick="openFolderFromLanding(${jsq(r.id)})"><div class="recent-icon">${mslFolderIconHtml(i)}</div><div><strong>${escapeHtml(nm)}</strong><small>${cnt} subjects</small></div></div>`;
   });
   return html;
 }
