@@ -1206,6 +1206,7 @@ function focusUniverseHtml(extra){
 // ---- Universe placeholder — a calm spiral galaxy a black hole slowly devours ----
 let fuSatId = null, fuSatLast = null, fuSatT = 0;
 let fuStars = null, fuBH = null;
+let fuShoot = null, fuEjecta = null;
 const FU2PI = Math.PI * 2;
 const FU_FALL = 1.5;
 function fuEase(x){ return x < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x); }
@@ -1239,6 +1240,8 @@ function fuBHStart(){
   fuBH.birth = fuSatT || 0.0001;
   fuBH.eatAt = [];
   fuBH.last = 0;
+  fuEjecta = null;  // fresh debris cloud for this session's collision
+  fuShoot = null;   // clear any in-flight shooting star
 }
 function fuSatDraw(ctx, W, H, t){
   const s = focusSession;
@@ -1263,9 +1266,28 @@ function fuSatDraw(ctx, W, H, t){
     g.addColorStop(0, c); g.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   };
-  neb(W * 0.22, H * 0.16, W * 0.55, 'rgba(130,160,255,' + (0.10 * dimA) + ')');
-  neb(W * 0.86, H * 0.78, W * 0.48, 'rgba(210,120,240,' + (0.07 * dimA) + ')');
-  neb(W * 0.08, H * 0.88, W * 0.40, 'rgba(70,230,210,' + (0.05 * dimA) + ')');
+  // Nebulae drift slowly on their own orbits so the sky never feels static
+  const drift = (bx, by, amp, sp, ph) => [
+    bx + Math.cos(t * sp + ph) * amp,
+    by + Math.sin(t * sp * 0.83 + ph * 1.7) * amp * 0.6
+  ];
+  const n1 = drift(W * 0.22, H * 0.16, W * 0.045, 0.050, 1.2);
+  const n2 = drift(W * 0.86, H * 0.78, W * 0.050, 0.042, 3.4);
+  const n3 = drift(W * 0.08, H * 0.88, W * 0.040, 0.030, 5.1);
+  neb(n1[0], n1[1], W * 0.55, 'rgba(130,160,255,' + (0.11 * dimA) + ')');
+  neb(n2[0], n2[1], W * 0.48, 'rgba(210,120,240,' + (0.08 * dimA) + ')');
+  neb(n3[0], n3[1], W * 0.40, 'rgba(70,230,210,' + (0.06 * dimA) + ')');
+  // Warm rim light around the galaxy core — it breathes as you focus
+  const breathe = 0.5 + 0.5 * Math.sin(t * 0.7);
+  neb(cx, cy, Math.min(W, H) * (1.35 + 0.12 * breathe), 'rgba(255,170,110,' + (0.055 * dimA * (0.6 + 0.4 * breathe)) + ')');
+  // Faint teal→violet aurora washing across the sky
+  const aurY = H * (0.12 + 0.06 * Math.sin(t * 0.09));
+  const aur = ctx.createLinearGradient(0, aurY - H * 0.22, 0, aurY + H * 0.22);
+  aur.addColorStop(0, 'rgba(46,220,200,0)');
+  aur.addColorStop(0.42, 'rgba(46,220,200,' + (0.028 * dimA) + ')');
+  aur.addColorStop(0.58, 'rgba(160,120,255,' + (0.032 * dimA) + ')');
+  aur.addColorStop(1, 'rgba(160,120,255,0)');
+  ctx.fillStyle = aur; ctx.fillRect(0, 0, W, H);
 
   const sc = Math.min(W, H) * 0.64, rot = t * 0.018;
   for(let p = 0; p < 2; p++){
@@ -1283,6 +1305,29 @@ function fuSatDraw(ctx, W, H, t){
       ctx.stroke();
     }
   }
+
+  // Dust lanes — dark grooves tracing the arms give the galaxy depth
+  ctx.strokeStyle = 'rgba(3,2,13,' + (0.36 * (1 - prog * 0.4)) + ')';
+  ctx.lineWidth = sc * 0.030;
+  for(let p = 0; p < 2; p++){
+    for(let a = 0; a < 2; a++){
+      const ang0 = a * Math.PI + rot + (p ? 3.55 : 0.41);
+      ctx.beginPath();
+      for(let i = 0; i <= 30; i++){
+        const rr = (i / 30) * sc * 0.94;
+        const x = cx + Math.cos(ang0 + rr / sc * 2.9) * rr;
+        const y = cy + Math.sin(ang0 + rr / sc * 2.9) * rr * 0.62;
+        if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+  }
+  // Soft dark shroud across the disk plane — gradient edges, never a hard cutoff line
+  const shroud = ctx.createLinearGradient(0, cy - sc * 0.72, 0, cy + sc * 0.72);
+  shroud.addColorStop(0, 'rgba(8,5,24,0)');
+  shroud.addColorStop(0.5, 'rgba(8,5,24,' + (0.20 * (1 - prog * 0.4)) + ')');
+  shroud.addColorStop(1, 'rgba(8,5,24,0)');
+  ctx.fillStyle = shroud; ctx.fillRect(0, 0, W, H);
 
   const bulg = ctx.createRadialGradient(cx, cy, 2, cx, cy, sc * 0.30);
   bulg.addColorStop(0, 'rgba(255,226,182,' + Math.max(0, (0.30 - 0.24 * appear) * dimA) + ')');
@@ -1317,6 +1362,25 @@ function fuSatDraw(ctx, W, H, t){
   const kx = W / 800, ky = H / 450;
 
   ctx.globalAlpha = 1;
+
+  // Occasional shooting star streaking across the sky
+  if(fuShoot && (t - fuShoot.t0) > 1.25) fuShoot = null;
+  if(!fuShoot && Math.random() < 0.004){
+    fuShoot = { t0: t, x0: W * (0.15 + Math.random() * 0.65), y0: H * (0.08 + Math.random() * 0.3), dx: 130 + Math.random() * 110, dy: 45 + Math.random() * 55 };
+  }
+  if(fuShoot){
+    const st2 = (t - fuShoot.t0) / 1.25;
+    if(st2 >= 0 && st2 <= 1){
+      const x0 = fuShoot.x0 + fuShoot.dx * st2, y0 = fuShoot.y0 + fuShoot.dy * st2;
+      const tl = fuShoot.dx * 0.16, ty = fuShoot.dy * 0.16;
+      const gr2 = ctx.createLinearGradient(x0, y0, x0 - tl, y0 - ty);
+      gr2.addColorStop(0, 'rgba(255,255,255,' + (0.8 * (1 - st2)) + ')');
+      gr2.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.strokeStyle = gr2; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0 - tl, y0 - ty); ctx.stroke();
+    }
+  }
+
   for(let i = 0; i < total; i++){
     const st = fuStars[i];
     const sx0 = st.x * kx, sy0 = st.y * ky;
@@ -1369,8 +1433,17 @@ function fuSatDraw(ctx, W, H, t){
       px += (dx / d) * wDisp;
       py += (dy / d) * wDisp;
     }
-    ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(t * (st.kind === 1 ? 1.5 : 2.2) + st.ph));
+    const tw = 0.35 + 0.65 * Math.abs(Math.sin(t * (st.kind === 1 ? 1.5 : 2.2) + st.ph));
+    ctx.globalAlpha = tw;
     ctx.fillStyle = st.kind === 2 ? '#ffe9b8' : (st.kind === 1 ? '#cde3ff' : '#ffffff');
+    // Soft bloom around the brighter stars — cheap glow, no extra gradients
+    if(baseR >= 1.0){
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.10 * tw * (st.kind === 2 ? 0.85 : 1);
+      ctx.beginPath(); ctx.arc(px, py, baseR * 3.4, 0, FU2PI); ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = tw;
+    }
     ctx.beginPath(); ctx.arc(px, py, baseR, 0, FU2PI); ctx.fill();
   }
   ctx.globalAlpha = 1;
@@ -1397,20 +1470,28 @@ function fuSatDraw(ctx, W, H, t){
     ctx.save();
     ctx.rotate(rotN);
     ctx.scale(1, 0.34);
-    const dg = ctx.createLinearGradient(0, -diskOut, 0, diskOut);
-    dg.addColorStop(0, 'rgba(255,160,90,0)');
-    dg.addColorStop(0.34, 'rgba(255,120,50,' + (0.10 * br) + ')');
-    dg.addColorStop(0.46, 'rgba(255,150,70,' + (0.18 * br) + ')');
-    dg.addColorStop(0.52, 'rgba(255,205,140,' + (0.34 * br) + ')');
-    dg.addColorStop(0.58, 'rgba(255,246,220,' + (0.60 * br) + ')');
-    dg.addColorStop(0.64, 'rgba(255,180,100,' + (0.24 * br) + ')');
-    dg.addColorStop(0.74, 'rgba(255,120,50,' + (0.10 * br) + ')');
-    dg.addColorStop(1, 'rgba(255,90,40,0)');
+    // Doppler beaming: the approaching side is hotter & brighter, the
+    // receding side cools toward violet — the disk looks alive, not flat
+    const dg = ctx.createLinearGradient(-diskOut, 0, diskOut, 0);
+    dg.addColorStop(0.00, 'rgba(255,240,205,' + (0.20 * br) + ')');
+    dg.addColorStop(0.20, 'rgba(255,175,115,' + (0.32 * br) + ')');
+    dg.addColorStop(0.42, 'rgba(255,120,60,' + (0.18 * br) + ')');
+    dg.addColorStop(0.50, 'rgba(110,70,225,' + (0.13 * br) + ')');
+    dg.addColorStop(0.62, 'rgba(170,115,255,' + (0.22 * br) + ')');
+    dg.addColorStop(0.82, 'rgba(255,150,90,' + (0.28 * br) + ')');
+    dg.addColorStop(1.00, 'rgba(255,220,170,' + (0.13 * br) + ')');
     ctx.fillStyle = dg;
     ctx.beginPath();
     ctx.ellipse(0, 0, diskOut, diskOut, 0, 0, FU2PI);
     ctx.ellipse(0, 0, diskIn, diskIn, 0, 0, FU2PI);
     ctx.fill('evenodd');
+    // Super-hot inner rim hugging the photon sphere
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineWidth = hr * 0.05;
+    ctx.strokeStyle = 'rgba(255,248,230,' + (0.45 * br) + ')';
+    ctx.beginPath(); ctx.ellipse(0, 0, diskIn * 1.03, diskIn * 1.03, 0, 0, FU2PI); ctx.stroke();
+    ctx.restore();
 
     ctx.lineWidth = hr * 0.05;
     ctx.strokeStyle = 'rgba(255,240,210,' + (0.16 * br) + ')';
@@ -1491,6 +1572,25 @@ function fuSatDraw(ctx, W, H, t){
       ctx.fillStyle = flash; ctx.fillRect(cx - bhO * 3.4, cy - bhO * 3.4, bhO * 6.8, bhO * 6.8);
       ctx.globalCompositeOperation = 'source-over';
       ctx.restore();
+      // Ejecta — a spray of hot debris thrown out at the instant of collision
+      if(!fuEjecta){
+        fuEjecta = [];
+        for(let k = 0; k < 30; k++){
+          fuEjecta.push({ ang: Math.random() * FU2PI, spd: 0.5 + Math.random() * 0.95, len: 14 + Math.random() * 40 });
+        }
+      }
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      for(const e of fuEjecta){
+        const dist = e.spd * mergedF * bhO * 6.4;
+        if(dist <= 0) continue;
+        const x2 = cx + Math.cos(e.ang) * dist, y2 = cy + Math.sin(e.ang) * dist * 0.82;
+        const x1 = cx + Math.cos(e.ang) * Math.max(0, dist - e.len), y1 = cy + Math.sin(e.ang) * Math.max(0, dist - e.len) * 0.82;
+        ctx.strokeStyle = 'rgba(255,212,150,' + (0.5 * (1 - mergedF)) + ')';
+        ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      }
+      ctx.restore();
       for(let k = 0; k < 3; k++){
         const rw = bhO * (1.1 + mergedF * (3.4 + k * 1.1));
         ctx.beginPath(); ctx.arc(cx, cy, rw, 0, FU2PI);
@@ -1501,9 +1601,10 @@ function fuSatDraw(ctx, W, H, t){
     }
   }
 
-  const grd = ctx.createRadialGradient(W * 0.5, H * 0.5, H * 0.12, W * 0.5, H * 0.5, H * 0.72);
+  const grd = ctx.createRadialGradient(W * 0.5, H * 0.52, H * 0.18, W * 0.5, H * 0.52, Math.max(W, H) * 0.78);
   grd.addColorStop(0, 'rgba(2,4,12,0)');
-  grd.addColorStop(1, 'rgba(2,4,12,.42)');
+  grd.addColorStop(0.6, 'rgba(3,6,18,0.12)');
+  grd.addColorStop(1, 'rgba(1,2,10,0.52)');
   ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
 }
 function fuSatStart(){

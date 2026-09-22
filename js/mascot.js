@@ -1801,6 +1801,34 @@ function mascotOnFocusExit(){
   mascotUtter('happy', ctx, `Focus lifted. Keep the momentum in your pocket.`);
 }
 
+// Called when a focus session countdown completes — Rei celebrates the
+// finished deep-work block. 'celebrate' is a loud mood, so she still speaks
+// even though focus mode is active (same policy as mascotFireEvent).
+function mascotCelebrate(){
+  mascotLastInteraction = Date.now();
+  const ctx = mascotBuildContext();
+  let title = '';
+  let mins = 0;
+  // Pull the lecture that was just focused + the block length that completed.
+  try{
+    if(typeof focusRef !== 'undefined' && focusRef){
+      const s = (data.subjects||[]).find(x=>x.id===focusRef.subjectId);
+      const u = s && (s.units||[]).find(x=>x.id===focusRef.unitId);
+      const l = u && (u.lectures||[]).find(x=>x.id===focusRef.lectureId);
+      if(l && l.title) title = l.title;
+    }
+  }catch(e){}
+  try{
+    if(typeof focusSession !== 'undefined' && focusSession && focusSession.totalSec){
+      mins = Math.round(focusSession.totalSec / 60);
+    }
+  }catch(e){}
+  const line = title
+    ? (mins ? `"${title}" — ${mins} min, locked in to the end. Clean block.` : `"${title}" — locked in to the very end. Clean block.`)
+    : (mins ? `${mins} min of straight focus. Milestone. Actually impressive.` : 'Milestone. Actually impressive.');
+  mascotUtter('celebrate', ctx, line);
+}
+
 // Focus-guardian breather reminder during long focused sessions (driven by
 // the 60s ambient tick, not intrusive).
 function mascotFocusBreather(){
