@@ -542,7 +542,14 @@ function nwShiftWeek(delta){
   nwRenderWeekProgress();
 }
 function nwShiftMonth(delta){
-  nwState.month.setMonth((nwState.month || new Date()).getMonth() + delta);
+  // setMonth() overflows on the day of month: Jan 31 + 1 => Feb 31 => Mar 3,
+  // which silently skips February. Step to the 1st, shift, then restore a
+  // day-of-month that actually exists in the target month.
+  const cur = nwState.month || new Date();
+  const day = cur.getDate();
+  const d = new Date(cur.getFullYear(), cur.getMonth() + delta, 1);
+  d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+  nwState.month = d;
   nwRenderCalendar();
 }
 function nwSetFilter(f){
@@ -665,13 +672,6 @@ function nwOpenEdit(key, id){
   nwEl('nwItemDuration').value = item.duration || 0;
   nwEl('nwItemNote').value = item.note || '';
   nwEl('nwItemModal').classList.add('open');
-}
-
-function nwCloseModal(){
-  const item = nwEl('nwItemModal'), focus = nwEl('nwFocusModal');
-  if(item) item.classList.remove('open');
-  if(focus) focus.classList.remove('open');
-  nwEditMode = null;
 }
 
 function nwSaveItem(){

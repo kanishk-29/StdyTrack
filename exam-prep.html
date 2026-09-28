@@ -34,6 +34,9 @@
   table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}
   th,td{border:1px solid #e7e3f7;padding:9px 12px;text-align:left}
   th{background:#f0ecff;color:#3a3560}
+  /* Screen-reader-only text (table captions, labels) that must not affect layout. */
+  .vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;
+      overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
   a.blog{color:#6d5bb5;text-decoration:underline}
   .back{text-align:center;margin-top:50px}
   .back a{color:#6d5bb5;text-decoration:none;font-weight:600}
@@ -135,11 +138,16 @@
   <div class="box">
     <h3>A simple two-week revision plan</h3>
     <table>
-      <tr><th>Week</th><th>What to do</th></tr>
+      <caption class="vh">Week-by-week revision schedule for a two-week exam plan</caption>
+      <thead>
+      <tr><th scope="col">Week</th><th scope="col">What to do</th></tr>
+      </thead>
+      <tbody>
       <tr><td>Week 1</td><td>Cover all topics, one at a time. Make concise notes and flashcards.</td></tr>
       <tr><td>Days 1&ndash;3 (week 2)</td><td>Active recall on every topic. Re-do the hardest ones.</td></tr>
       <tr><td>Day 4&ndash;5 (week 2)</td><td>Practice with past papers under exam conditions.</td></tr>
       <tr><td>Day 6&ndash;7</td><td>Mocks, review mistakes, and lighter revision. Rest well.</td></tr>
+      </tbody>
     </table>
   </div>
 

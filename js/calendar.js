@@ -158,7 +158,7 @@ function unplanLecture(subjectId, unitId, lectureId){
   const key = l.plannedDate;
   delete l.plannedDate;
   l.priority = false;
-  if(key && data.priorityPlanner && data.priorityPlanner.byDate[key]){
+  if(key && data.priorityPlanner && data.priorityPlanner.byDate && Array.isArray(data.priorityPlanner.byDate[key])){
     data.priorityPlanner.byDate[key] = data.priorityPlanner.byDate[key].filter(i=>!(i.link && i.link.lectureId===lectureId));
   }
   saveData();
@@ -499,7 +499,7 @@ function computeGroupStreak(subjectIds){
   for(let d=0; d<365; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
     const key = todayKey(day);
-    const isToday = key===todayKey();
+    const isToday = d===0; // key===todayKey() is loop-invariant
     const bySubject = isToday ? (todaySnap.bySubject||{}) : ((data.dailyLog && data.dailyLog[key] && data.dailyLog[key].bySubject) ? data.dailyLog[key].bySubject : {});
     const seconds = subjectIds.reduce((a,id)=>a+(bySubject[id]||0), 0);
     if(seconds>0) streak++; else break;

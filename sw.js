@@ -1,8 +1,17 @@
 // Minimal offline cache for Study Tracker.
 // All real data lives in localStorage, not in this cache ???????? this only
 // lets the app shell (html/css/js/icons) load when there's no connection.
+//
+// Deliberately NOT precached: the large rasters - shrine-background.webp,
+// rei-avatar-288.webp, assets/stdytrackimg-132.webp, assets/mascot-fallback.webp.
+// They are login-screen art, so a visitor who is already signed in never sees a
+// byte of them, yet precaching forced ~2 MB of them onto every first visit.
+// The fetch handler below is network-first and stores every response it sees,
+// so each image lands in the cache the first time it is actually displayed and
+// is available offline from then on. The icons stay in the shell because
+// index.html and manifest.json reference them unconditionally.
 
-const CACHE_NAME = 'study-tracker-shell-v111';
+const CACHE_NAME = 'study-tracker-shell-v115';
 const APP_SHELL = [
   './',
   './index.html',
@@ -15,9 +24,6 @@ const APP_SHELL = [
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png',
-  './shrine-background.jpg',
-  './rei-avatar-512.png',
-  './assets/stdytrackimg.png',
   './css/base.css',
   './css/fonts.css',
   './fonts/inter-var.woff2',

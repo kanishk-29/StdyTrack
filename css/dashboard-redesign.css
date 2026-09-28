@@ -219,12 +219,6 @@ body {
   max-width: 580px;
   line-height: 1.55;
 }
-.scorecard-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
 .scorecard .big-score {
   font-size: clamp(32px, 4.2vw, 46px);
   font-weight: 900;
@@ -399,135 +393,6 @@ body {
   -webkit-backdrop-filter: blur(20px);
   padding: 22px 22px 18px;
 }
-.calendar-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-.calendar-kicker {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  color: #1a7f5a;
-  text-transform: uppercase;
-}
-.calendar-month {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--au-ink);
-  letter-spacing: -0.02em;
-}
-.calendar-nav {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-.cal-nav-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid var(--au-line);
-  background: var(--au-glass);
-  box-shadow: var(--au-shadow-soft);
-  color: var(--au-ink);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.cal-nav-btn:hover {
-  background: #fff;
-  transform: scale(1.08);
-}
-.cal-today-btn {
-  width: auto;
-  border-radius: 999px;
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.calendar-total {
-  font-size: 12px;
-  color: var(--au-muted);
-}
-.calendar-total strong {
-  color: #1a7f5a;
-  font-weight: 800;
-  margin-right: 4px;
-}
-
-/* Weekday column headers */
-.calendar-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--au-soft);
-  margin-bottom: 8px;
-}
-
-/* 42-day Calendar Grid */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-}
-.cal-day {
-  position: relative;
-  aspect-ratio: 1;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-.cal-day:not(.muted-day):hover {
-  transform: translateY(-2px) scale(1.06);
-  z-index: 5;
-}
-.cal-day.muted-day {
-  opacity: 0.25;
-  cursor: default;
-}
-
-/* Luminous Emerald Study Levels */
-.cal-day.study-none {
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  color: var(--au-soft);
-}
-.cal-day.study-light {
-  background: #d2f4e3;
-  border: 1px solid rgba(44, 216, 138, 0.35);
-  color: #126344;
-}
-.cal-day.study-steady {
-  background: #7de8b5;
-  border: 1px solid rgba(37, 162, 111, 0.45);
-  color: #0d4e34;
-}
-.cal-day.study-strong {
-  background: #34d48c;
-  border: 1px solid rgba(26, 127, 90, 0.55);
-  color: #083b26;
-  box-shadow: 0 0 10px rgba(52, 212, 140, 0.35);
-}
-.cal-day.study-deep {
-  background: #17bb71;
-  border: 1px solid #149c5e;
-  color: #fff;
-  font-weight: 800;
-  box-shadow: 0 0 16px rgba(23, 187, 113, 0.55);
-}
 
 /* Today outline */
 .cal-day.today {
@@ -552,56 +417,10 @@ body {
   0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
   50% { box-shadow: 0 0 16px 4px rgba(37, 211, 102, 0.65); }
 }
-
-/* Future day lecture planning badge */
-.cal-day.is-future {
-  border: 1px dashed rgba(95, 97, 217, 0.38);
-  background: rgba(255, 255, 255, 0.3);
-  color: var(--au-soft);
-}
 .cal-day.is-future.has-plan {
   border: 1px solid var(--au-indigo);
   background: rgba(95, 97, 217, 0.12);
   color: var(--au-indigo);
-}
-.cal-day.is-future .cpp-count {
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  min-width: 14px;
-  height: 14px;
-  padding: 0 3px;
-  border-radius: 999px;
-  background: var(--au-indigo);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 900;
-  line-height: 14px;
-  text-align: center;
-  pointer-events: none;
-}
-
-/* Calendar legend footer */
-.calendar-foot {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 14px;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--au-soft);
-  flex-wrap: wrap;
-}
-.calendar-foot span {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.legend-dot {
-  display: inline-block;
-  width: 9px;
-  height: 9px;
-  border-radius: 3px;
 }
 .legend-dot.none { background: rgba(255, 255, 255, 0.55); border: 1px solid rgba(0,0,0,0.06); }
 .legend-dot.l1 { background: #d2f4e3; }
@@ -877,6 +696,14 @@ body {
   z-index: 10;
 }
 .dash-course-edit-wrap.menu-open .dash-course-edit-menu { display: flex; }
+/* The menu hangs off the edit button, which sits inside .dash-course-thumb —
+   a 72px box with overflow:hidden. That clipped the menu to ~34px, so
+   "Remove image" (the 2nd item) was never painted and could not be clicked.
+   Let the open card escape its own clip and lift above its siblings. The :has()
+   selectors are (0,3,0), which outranks the plain (0,1,0) rules in
+   timer.css and ultra-dark.css regardless of stylesheet order. */
+.dash-course-thumb:has(> .dash-course-edit-wrap.menu-open) { overflow: visible; }
+.dash-course-card:has(.dash-course-edit-wrap.menu-open) { overflow: visible; z-index: 6; }
 .dash-course-edit-menu button {
   display: flex; align-items: center; gap: 7px;
   background: none; border: none; cursor: pointer;
@@ -1197,50 +1024,6 @@ body {
     0 0 24px rgba(73, 255, 145, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.045),
     inset 0 -18px 50px rgba(0, 0, 0, 0.22) !important;
-}
-[data-theme="dark"] .calendar-month {
-  color: #f4f8fb !important;
-}
-[data-theme="dark"] .cal-nav-btn {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  color: #e9f1f5 !important;
-}
-[data-theme="dark"] .cal-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
-}
-[data-theme="dark"] .cal-day.study-none {
-  background: rgba(255, 255, 255, 0.035) !important;
-  border-color: rgba(255, 255, 255, 0.04) !important;
-  color: #6f7b7e !important;
-}
-[data-theme="dark"] .cal-day.study-light {
-  background: rgba(37, 134, 95, 0.45) !important;
-  border-color: rgba(37, 134, 95, 0.65) !important;
-  color: #7de8b5 !important;
-}
-[data-theme="dark"] .cal-day.study-steady {
-  background: rgba(37, 162, 111, 0.65) !important;
-  border-color: rgba(37, 162, 111, 0.85) !important;
-  color: #d2f4e3 !important;
-}
-[data-theme="dark"] .cal-day.study-strong {
-  background: rgba(44, 216, 138, 0.80) !important;
-  border-color: #2cd88a !important;
-  color: #032b1a !important;
-  font-weight: 800;
-  box-shadow: 0 0 12px rgba(44, 216, 138, 0.45) !important;
-}
-[data-theme="dark"] .cal-day.study-deep {
-  background: #49ff9b !important;
-  border-color: #73ffaf !important;
-  color: #022013 !important;
-  font-weight: 900;
-  box-shadow: 0 0 20px rgba(73, 255, 155, 0.75) !important;
-}
-[data-theme="dark"] .cal-day.is-future {
-  background: rgba(255, 255, 255, 0.02) !important;
-  border-color: rgba(255, 255, 255, 0.06) !important;
 }
 [data-theme="dark"] .cal-tooltip {
   background: rgba(12, 17, 27, 0.94) !important;

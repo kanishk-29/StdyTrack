@@ -121,7 +121,7 @@ function handleSearch(){
   (data.subjects||[]).forEach(s=>{
     (s.units||[]).forEach(u=>{
       (u.lectures||[]).forEach(l=>{
-        if(l.title.toLowerCase().includes(q)){
+        if(String(l.title||'').toLowerCase().includes(q)){
           matches.push({type:'lecture', subjectId:s.id, unitId:u.id, lectureId:l.id, title:l.title, sub:`${s.name} · ${u.name}`});
         }
       });
@@ -130,7 +130,7 @@ function handleSearch(){
           matches.push({type:'test', subjectId:s.id, unitId:u.id, testId:t.id, title:t.name||'Test', sub:`${s.name} · ${u.name} · Test score`});
         }
       });
-      if(u.name.toLowerCase().includes(q)){
+      if(String(u.name||'').toLowerCase().includes(q)){
         matches.push({type:'unit', subjectId:s.id, unitId:u.id, title:u.name, sub:`${s.name} · Unit`});
       }
     });

@@ -27,12 +27,8 @@
       -webkit-backdrop-filter:none !important;
     }
     /* Decorative petals/orbs fully hide so they don't linger frozen on screen */
-    .unit-petals span,
-    .login-petals span{ opacity:0 !important; display:none; }
-    .login-orb{ display:none; }
-    .login-scan-line,
+    .unit-petals span{ opacity:0 !important; display:none; }
     .login-eyebrow-dot{ display:none; }
     .login-card{ animation:none !important; }
-    .mascot-avatar-btn,
-    .login-mascot{ animation:none !important; }
+    .mascot-avatar-btn{ animation:none !important; }
   }

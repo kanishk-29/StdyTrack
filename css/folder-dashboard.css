@@ -58,7 +58,6 @@
     linear-gradient(135deg,#f7f8ff,#fff,#f7f9ff);
 }
 
-
 #folderDashboard .blobs{
   position:fixed;
   inset:-18%;
@@ -68,7 +67,6 @@
   filter:saturate(132%);
   transform:translateZ(0);
 }
-
 
 #folderDashboard .blobs::before{
   content:"";
@@ -97,7 +95,6 @@
   animation:riverMain 25s steps(30,end) infinite;
 }
 
-
 #folderDashboard .blobs::after{
   content:"";
   position:absolute;
@@ -123,7 +120,6 @@
   animation:riverMain2 32s steps(30,end) infinite;
 }
 
-
 #folderDashboard .blob{
   position:absolute;
   border-radius:58% 42% 52% 48%;
@@ -132,7 +128,6 @@
   mix-blend-mode:multiply;
   will-change:transform;
 }
-
 
 #folderDashboard .blob-1{
   width:1120px;
@@ -155,7 +150,6 @@
   animation:river1 20s steps(24,end) infinite;
 }
 
-
 #folderDashboard .blob-2{
   width:1250px;
   height:155px;
@@ -176,7 +170,6 @@
 
   animation:river2 23s steps(24,end) infinite;
 }
-
 
 #folderDashboard .blob-3{
   width:1320px;
@@ -199,7 +192,6 @@
   animation:river3 26s steps(24,end) infinite;
 }
 
-
 #folderDashboard .blob-4{
   width:1080px;
   height:150px;
@@ -220,36 +212,6 @@
   animation:river4 21s steps(24,end) infinite;
 }
 
-@keyframes riverMain{
-  0%,100%{transform:translate3d(-5%,0,0) rotate(-7deg) scaleX(1)}
-  50%{transform:translate3d(10%,3%,0) rotate(-3deg) scaleX(1.07)}
-}
-
-@keyframes riverMain2{
-  0%,100%{transform:translate3d(-4%,0,0) rotate(5deg) scaleX(1)}
-  50%{transform:translate3d(8%,-2%,0) rotate(1deg) scaleX(1.09)}
-}
-
-@keyframes river1{
-  0%,100%{transform:translate3d(-25px,0,0) rotate(-17deg) scaleX(1)}
-  50%{transform:translate3d(210px,70px,0) rotate(-9deg) scaleX(1.15)}
-}
-
-@keyframes river2{
-  0%,100%{transform:translate3d(25px,0,0) rotate(12deg) scaleX(1)}
-  50%{transform:translate3d(-230px,75px,0) rotate(7deg) scaleX(1.13)}
-}
-
-@keyframes river3{
-  0%,100%{transform:translate3d(-35px,15px,0) rotate(8deg) scaleX(1)}
-  50%{transform:translate3d(230px,-70px,0) rotate(3deg) scaleX(1.12)}
-}
-
-@keyframes river4{
-  0%,100%{transform:translate3d(25px,0,0) rotate(-10deg) scaleX(1)}
-  50%{transform:translate3d(-210px,-65px,0) rotate(-5deg) scaleX(1.14)}
-}
-
 #folderDashboard .app{
   position:relative;
   --surface-glow:rgba(255,255,255,.35);
@@ -259,7 +221,6 @@
   padding:32px 24px 70px;
   perspective:1400px;
 }
-
 
 #folderDashboard .glass{
   position:relative;
@@ -297,8 +258,6 @@
   /* depth is established above; keep the material soft rather than plastic */
 }
 
-
-
 #folderDashboard .glass .material-sheen{
   position:absolute;
   inset:-30%;
@@ -313,30 +272,6 @@
 
 @media (hover:none){#folderDashboard .glass:hover .material-sheen{transform:none}
 }
-
-
-#folderDashboard .glass{
-  --glass-opacity:.40;
-  --glass-tint:255,255,255;
-  --glass-accent:115,86,255;
-  --glass-accent-alpha:.08;
-  background:
-    linear-gradient(135deg,
-      rgba(255,255,255,.50),
-      rgba(255,255,255,.17) 42%,
-      rgba(255,255,255,.31) 72%,
-      rgba(255,255,255,.16));
-  backdrop-filter:blur(17px) saturate(175%) contrast(103%);
-  -webkit-backdrop-filter:blur(17px) saturate(175%) contrast(103%);
-  border:1px solid rgba(255,255,255,.78);
-  box-shadow:
-    0 24px 62px rgba(67,56,140,.105),
-    0 8px 20px rgba(67,56,140,.055),
-    inset 0 1px 0 rgba(255,255,255,.98),
-    inset 1px 0 0 rgba(255,255,255,.54),
-    inset -1px -1px 0 rgba(73,61,135,.045);
-}
-
 
 #folderDashboard .glass-liquid{
   position:absolute!important;
@@ -375,7 +310,6 @@
   animation:glassCurrent 15s cubic-bezier(.45,.05,.55,.95) infinite alternate;
 }
 
-
 #folderDashboard .glass-reflection{
   position:absolute!important;
   z-index:1!important;
@@ -396,7 +330,6 @@
   opacity:.70;
 }
 
-
 #folderDashboard .glass-edge{
   position:absolute!important;
   z-index:3!important;
@@ -411,34 +344,14 @@
     inset 0 -22px 40px rgba(var(--glass-accent),.018);
 }
 
-
 #folderDashboard .glass > :not(.glass-liquid):not(.glass-reflection):not(.glass-edge):not(.material-sheen){
   position:relative;
   z-index:4;
 }
 
-
 #folderDashboard .header.glass, #folderDashboard .banner.glass{ --glass-accent-alpha:.045; }
 
 #folderDashboard .clock.glass, #folderDashboard .filters.glass, #folderDashboard .modal.glass{ --glass-accent-alpha:.035; }
-
-
-#folderDashboard .filters.glass{
-  background:rgba(255,255,255,.32);
-  backdrop-filter:blur(12px) saturate(170%);
-  -webkit-backdrop-filter:blur(12px) saturate(170%);
-}
-
-
-#folderDashboard .subject-card{
-  --glass-accent:115,86,255;
-  background:
-    linear-gradient(125deg,
-      rgba(255,255,255,.58),
-      rgba(255,255,255,.25) 44%,
-      rgba(255,255,255,.40) 74%,
-      rgba(255,255,255,.22));
-}
 
 #folderDashboard .subject-card .glass-liquid{
   inset:-50% -20%!important;
@@ -446,7 +359,6 @@
   opacity:1;
   animation:subjectCurrent 12s ease-in-out infinite alternate;
 }
-
 
 #folderDashboard .subject-card .glass-reflection{
   background:
@@ -459,29 +371,6 @@
       rgba(255,255,255,.25));
 }
 
-
-#folderDashboard .subject-thumb{
-  box-shadow:
-    10px 13px 25px rgba(63,52,122,.18),
-    -6px -6px 15px rgba(255,255,255,.90),
-    inset 0 1px 0 rgba(255,255,255,.78),
-    inset 1px 0 0 rgba(255,255,255,.34);
-}
-
-
-#folderDashboard .subject-go, #folderDashboard .clock, #folderDashboard .stat-icon, #folderDashboard .view-stats, #folderDashboard .add-plus{
-  box-shadow:
-    7px 9px 20px rgba(78,66,139,.12),
-    -6px -6px 15px rgba(255,255,255,.90),
-    inset 1px 1px 0 rgba(255,255,255,.95);
-}
-
-#folderDashboard .subject-go:active, #folderDashboard .view-stats:active, #folderDashboard .btn:active{
-  box-shadow:
-    inset 4px 5px 12px rgba(84,72,143,.13),
-    inset -4px -4px 12px rgba(255,255,255,.94);
-}
-
 @keyframes glassCurrent{
   0%{transform:translate3d(-2%,1%,0) rotate(-7deg) scale(1)}
   50%{transform:translate3d(4%,-3%,0) rotate(-3deg) scale(1.05)}
@@ -492,7 +381,6 @@
   0%{transform:translate3d(-4%,0,0) rotate(-9deg) scale(1)}
   100%{transform:translate3d(8%,4%,0) rotate(-2deg) scale(1.10)}
 }
-
 
 #folderDashboard .header{
   display:flex;
@@ -581,7 +469,6 @@
   text-transform:uppercase;
   letter-spacing:.04em;
 }
-
 
 #folderDashboard .stats{
   display:grid;
@@ -747,7 +634,6 @@
 
 #folderDashboard .flame{animation:flicker 1.6s ease-in-out infinite}
 
-
 #folderDashboard .section-head{
   position:relative;
   display:flex;
@@ -839,7 +725,6 @@
 
 #folderDashboard .filters button.active{color:#fff}
 
-
 #folderDashboard .subject-list{
   display:flex;
   flex-direction:column;
@@ -893,7 +778,6 @@
 #folderDashboard .subject-card{
   filter:drop-shadow(0 10px 22px rgba(var(--accent-rgb),.035));
 }
-
 
 #folderDashboard .subject-card::before{
   content:"";
@@ -1044,13 +928,6 @@
     0 4px 10px rgba(90,75,160,.06);
 }
 
-#folderDashboard .subject-name{
-  margin:0 0 8px;
-  font-size:1.1rem;
-  font-weight:750;
-  letter-spacing:-.025em;
-}
-
 #folderDashboard .subject-meta{
   display:flex;
   gap:15px;
@@ -1058,12 +935,6 @@
   font-size:.77rem;
   color:var(--muted);
   margin-bottom:11px;
-}
-
-#folderDashboard .subject-meta span{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
 }
 
 #folderDashboard .progress-row{
@@ -1183,7 +1054,6 @@
   height:21px;
 }
 
-
 #folderDashboard .banner{
   margin-top:26px;
   padding:21px 25px;
@@ -1252,7 +1122,6 @@
   color:var(--soft);
   font-style:italic;
 }
-
 
 #folderDashboard .add-card{
   display:flex;
@@ -1447,7 +1316,6 @@
     inset 0 1px 0 rgba(255,255,255,.40);
 }
 
-
 #folderDashboard .ripple-host{
   position:relative;
   overflow:hidden;
@@ -1465,7 +1333,6 @@
 @keyframes rippleOut{
   to{transform:scale(2.6);opacity:0}
 }
-
 
 @keyframes dropIn{
   from{opacity:0;transform:translateY(-12px)}
@@ -1523,7 +1390,6 @@
   100%{transform:scale(1);color:var(--text)}
 }
 
-
 @keyframes riverMain{
   0%,100%{transform:translate3d(-3%,0,0) rotate(-5deg) scale(1)}
   50%{transform:translate3d(8%,7%,0) rotate(-2deg) scale(1.08)}
@@ -1567,11 +1433,6 @@
   mix-blend-mode:screen;
 }
 
-@keyframes riverGlow{
-  0%{transform:translate3d(-2%,0,0) scale(1)}
-  100%{transform:translate3d(7%,5%,0) scale(1.08)}
-}
-
 @media (max-width:850px){#folderDashboard .app{padding:22px 16px 55px}
 #folderDashboard .stats{grid-template-columns:repeat(2,1fr)}
 #folderDashboard .header{align-items:flex-start}
@@ -1604,7 +1465,6 @@
   }
 }
 
-
 #folderDashboard{
   --neu:
     3px 4px 10px rgba(74,63,132,.075),
@@ -1617,17 +1477,6 @@
   --neu-dark-soft:rgba(74,63,132,.075);
   --neu-light-soft:rgba(255,255,255,.78);
 }
-
-
-#folderDashboard .glass{
-  box-shadow:
-    0 24px 62px rgba(67,56,140,.095),
-    0 7px 19px rgba(67,56,140,.045),
-    inset 0 1px 0 rgba(255,255,255,.98),
-    inset 1px 0 0 rgba(255,255,255,.50),
-    inset -1px -1px 0 rgba(73,61,135,.035);
-}
-
 
 #folderDashboard .subject-go, #folderDashboard .clock, #folderDashboard .stat-icon, #folderDashboard .view-stats, #folderDashboard .add-plus{
   background:
@@ -1645,7 +1494,6 @@
   border-color:rgba(255,255,255,.72);
 }
 
-
 #folderDashboard .stat-icon{
   background:
     linear-gradient(
@@ -1655,7 +1503,6 @@
     ) !important;
 }
 
-
 #folderDashboard .clock{
   box-shadow:
     4px 5px 13px rgba(74,63,132,.065),
@@ -1663,60 +1510,11 @@
     inset 1px 1px 0 rgba(255,255,255,.86);
 }
 
-
-#folderDashboard .subject-go{
-  background:
-    radial-gradient(
-      circle at 32% 27%,
-      rgba(255,255,255,.68),
-      rgba(255,255,255,.27) 58%,
-      rgba(255,255,255,.19)
-    );
-  box-shadow:
-    4px 6px 13px rgba(74,63,132,.075),
-    -3px -3px 10px rgba(255,255,255,.78),
-    inset 1px 1px 0 rgba(255,255,255,.90);
-}
-
-#folderDashboard .subject-go:hover{
-  box-shadow:
-    6px 8px 16px rgba(74,63,132,.09),
-    -4px -4px 11px rgba(255,255,255,.84),
-    0 0 22px rgba(var(--accent-rgb),.10),
-    inset 1px 1px 0 rgba(255,255,255,.92);
-}
-
-
 #folderDashboard .subject-go:active, #folderDashboard .view-stats:active, #folderDashboard .btn:active{
   box-shadow:
     inset 2px 3px 8px rgba(74,63,132,.075),
     inset -2px -2px 8px rgba(255,255,255,.78);
 }
-
-
-#folderDashboard .stat-icon{
-  box-shadow:
-    3px 4px 9px rgba(74,63,132,.06),
-    -3px -3px 8px rgba(255,255,255,.75),
-    inset 1px 1px 0 rgba(255,255,255,.86);
-}
-
-
-#folderDashboard .view-stats{
-  box-shadow:
-    3px 4px 10px rgba(74,63,132,.065),
-    -3px -3px 9px rgba(255,255,255,.76),
-    inset 1px 1px 0 rgba(255,255,255,.86);
-}
-
-
-#folderDashboard .add-plus{
-  box-shadow:
-    3px 4px 9px rgba(74,63,132,.08),
-    -3px -3px 8px rgba(255,255,255,.76),
-    inset 1px 1px 0 rgba(255,255,255,.35);
-}
-
 
 #folderDashboard .filters{
   background:
@@ -1726,47 +1524,6 @@
     inset 2px 3px 8px rgba(74,63,132,.065),
     inset -2px -2px 8px rgba(255,255,255,.76);
 }
-
-#folderDashboard .filter-indicator{
-  box-shadow:
-    0 5px 13px rgba(115,86,255,.20),
-    inset 0 1px 0 rgba(255,255,255,.50);
-}
-
-
-#folderDashboard .subject-thumb{
-  box-shadow:
-    6px 8px 16px rgba(63,52,122,.11),
-    -4px -4px 11px rgba(255,255,255,.80),
-    inset 0 1px 0 rgba(255,255,255,.72),
-    inset 1px 0 0 rgba(255,255,255,.28);
-}
-
-
-#folderDashboard .subject-card{
-  box-shadow:
-    0 24px 58px rgba(67,56,140,.085),
-    0 7px 18px rgba(67,56,140,.045),
-    inset 0 1px 0 rgba(255,255,255,.98),
-    inset 1px 0 0 rgba(255,255,255,.52),
-    inset -1px -1px 0 rgba(73,61,135,.035);
-}
-
-#folderDashboard .subject-card:hover{
-  box-shadow:
-    0 29px 66px rgba(67,56,140,.12),
-    0 9px 22px rgba(67,56,140,.055),
-    0 0 40px rgba(var(--accent-rgb),.065),
-    inset 0 1px 0 rgba(255,255,255,1);
-}
-
-
-#folderDashboard .progress-track{
-  box-shadow:
-    inset 1px 2px 5px rgba(80,68,143,.065),
-    inset -1px -1px 3px rgba(255,255,255,.70);
-}
-
 
 #folderDashboard .btn-ghost{
   box-shadow:none;
@@ -1778,16 +1535,12 @@
     inset -2px -2px 6px rgba(255,255,255,.70);
 }
 
-
 #folderDashboard .glass .material-sheen{
   opacity:.92;
 }
 
-
 @media (prefers-reduced-motion:reduce){#folderDashboard .glass .material-sheen{transform:none!important}
 }
-
-
 
 #folderDashboard .glass-bubble{
   position:relative;
@@ -1826,7 +1579,6 @@
     border-color .24s ease;
 }
 
-
 #folderDashboard .glass-bubble::before{
   content:"";
   position:absolute;
@@ -1847,7 +1599,6 @@
 
   opacity:.85;
 }
-
 
 #folderDashboard .glass-bubble::after{
   content:"";
@@ -1873,12 +1624,10 @@
   opacity:.65;
 }
 
-
 #folderDashboard .glass-bubble > *{
   position:relative;
   z-index:2;
 }
-
 
 #folderDashboard .subject-go{
   width:58px;
@@ -1923,7 +1672,6 @@
   justify-content:center;
 }
 
-
 #folderDashboard .subject-go::before{
   content:"";
   position:absolute;
@@ -1942,7 +1690,6 @@
   opacity:.9;
   pointer-events:none;
 }
-
 
 #folderDashboard .subject-go::after{
   content:"";
@@ -1967,7 +1714,6 @@
   pointer-events:none;
 }
 
-
 #folderDashboard .subject-go svg{
   position:relative;
   z-index:3;
@@ -1977,7 +1723,6 @@
   filter:
     drop-shadow(0 1px 2px rgba(255,255,255,.75));
 }
-
 
 #folderDashboard .subject-go:hover{
   transform:translateY(-3px) scale(1.075);
@@ -2000,7 +1745,6 @@
     inset 1px 1px 0 rgba(255,255,255,.96);
 }
 
-
 #folderDashboard .subject-go:active{
   transform:scale(.96);
 
@@ -2010,11 +1754,9 @@
     0 1px 4px rgba(65,54,125,.045);
 }
 
-
 #folderDashboard .view-stats, #folderDashboard .add-plus, #folderDashboard .btn-primary{
   position:relative;
 }
-
 
 #folderDashboard .view-stats{
   background:
@@ -2039,7 +1781,6 @@
     inset 1px 1px 0 rgba(255,255,255,.92) !important;
 }
 
-
 #folderDashboard .add-plus{
   background:
     radial-gradient(
@@ -2056,7 +1797,6 @@
     inset 1px 1px 0 rgba(255,255,255,.90) !important;
 }
 
-
 #folderDashboard .btn-primary{
   background:
     linear-gradient(
@@ -2071,7 +1811,6 @@
     0 8px 18px rgba(115,86,255,.17),
     inset 0 1px 0 rgba(255,255,255,.42) !important;
 }
-
 
 #folderDashboard .stat-icon{
   background:
@@ -2090,7 +1829,6 @@
     inset 1px 1px 0 rgba(255,255,255,.86);
 }
 
-
 #folderDashboard .filters{
   box-shadow:
     inset 1px 2px 6px rgba(74,63,132,.045),
@@ -2103,9 +1841,8 @@
     inset 0 1px 0 rgba(255,255,255,.54);
 }
 
-
 #folderDashboard .subject-card{
-  --card-accent:var(--accent-violet);
+  --card-accent:#7356ff;
   --card-accent-rgb:115,86,255;
 
   position:relative;
@@ -2158,7 +1895,6 @@
     background .34s ease;
 }
 
-
 #folderDashboard .subject-card::before{
   content:"";
   position:absolute;
@@ -2189,7 +1925,6 @@
     opacity .35s ease;
 }
 
-
 #folderDashboard .subject-card::after{
   content:"";
   position:absolute;
@@ -2211,7 +1946,6 @@
 
   mix-blend-mode:screen;
 }
-
 
 #folderDashboard .subject-card .subject-body::before{
   content:"";
@@ -2237,12 +1971,10 @@
   pointer-events:none;
 }
 
-
 #folderDashboard .subject-card > *{
   position:relative;
   z-index:4;
 }
-
 
 #folderDashboard .subject-thumb{
   position:relative;
@@ -2270,7 +2002,6 @@
     box-shadow .38s ease;
 }
 
-
 #folderDashboard .subject-thumb::before{
   content:"";
   position:absolute;
@@ -2288,7 +2019,6 @@
       rgba(255,255,255,.13) 100%
     );
 }
-
 
 #folderDashboard .subject-thumb::after{
   content:"";
@@ -2330,7 +2060,6 @@
 #folderDashboard .subject-card:hover .subject-thumb::after{
   left:128%;
 }
-
 
 #folderDashboard .subject-body{
   min-width:0;
@@ -2395,7 +2124,6 @@
 #folderDashboard .subject-meta span svg{
   opacity:.72;
 }
-
 
 #folderDashboard .progress-track{
   position:relative;
@@ -2477,13 +2205,11 @@
   color:var(--card-accent);
 }
 
-
 #folderDashboard .subject-next{
   margin-top:1px;
   font-size:.76rem;
   color:var(--soft);
 }
-
 
 #folderDashboard .subject-go{
   align-self:center;
@@ -2522,7 +2248,6 @@
     inset 1px 1px 0 rgba(255,255,255,.96) !important;
 }
 
-
 #folderDashboard .subject-card:hover{
   transform:translateY(-5px);
 
@@ -2549,12 +2274,10 @@
   transform:rotate(-9deg) translate3d(4%,2%,0) scale(1.08);
 }
 
-
 @keyframes progressSheen{
   0%{transform:translateX(-150%)}
   45%,100%{transform:translateX(430%)}
 }
-
 
 @media(max-width:720px){#folderDashboard .subject-card{
     grid-template-columns:88px minmax(0,1fr) 48px;
@@ -2594,8 +2317,6 @@
     height:44px;
   }
 }
-
-
 
 #folderDashboard{
   background:
@@ -2655,7 +2376,6 @@
 
 #folderDashboard .blob-4{width:1220px;height:120px;right:-360px;bottom:1%;}
 
-
 #folderDashboard .glass{
   background:
     linear-gradient(125deg,
@@ -2678,7 +2398,6 @@
   opacity:1 !important;
   filter:blur(15px) saturate(180%) !important;
 }
-
 
 #folderDashboard .glass-reflection{
   opacity:.92 !important;
@@ -2708,7 +2427,6 @@
   background:linear-gradient(110deg,transparent 34%,rgba(255,255,255,.22) 48%,transparent 62%) !important;
 }
 
-
 #folderDashboard{
   --neu:
     3px 4px 10px rgba(74,63,132,.055),
@@ -2724,7 +2442,6 @@
     -3px -3px 9px rgba(255,255,255,.70),
     inset 1px 1px 0 rgba(255,255,255,.88) !important;
 }
-
 
 #folderDashboard .subject-list{gap:22px;}
 
@@ -2868,7 +2585,6 @@
       transparent) !important;
 }
 
-
 #folderDashboard .subject-card:hover::before{
   transform:rotate(-7deg) translate3d(7%,3%,0) scale(1.12) !important;
 }
@@ -2880,7 +2596,6 @@
 #folderDashboard .subject-card:hover .subject-go{
   transform:translateY(-4px) scale(1.09) !important;
 }
-
 
 @media(max-width:720px){#folderDashboard .subject-card{
     grid-template-columns:96px minmax(0,1fr) 50px !important;
@@ -2900,7 +2615,6 @@
 #folderDashboard .subject-thumb{width:76px !important;height:76px !important;}
 #folderDashboard .subject-go{width:44px !important;height:44px !important;}
 }
-
 
 #folderDashboard .subject-card{
   --accent-soft:rgba(var(--accent-rgb),.10);
@@ -2961,7 +2675,6 @@
   box-shadow:0 31px 68px rgba(63,52,130,.11),0 9px 23px rgba(63,52,130,.045),0 0 42px rgba(var(--accent-rgb),.10),inset 0 1px 0 rgba(255,255,255,1) !important;
 }
 
-
 #folderDashboard .glass{position:relative;overflow:hidden;}
 
 #folderDashboard .glass::before{
@@ -2974,9 +2687,7 @@
   background:linear-gradient(120deg,rgba(255,255,255,.18),transparent 45%);
 }
 
-
 #folderDashboard .glass > *{position:relative;z-index:6;}
-
 
 #folderDashboard .glass .glass-reflection{
   transform:translate3d(calc((var(--cursor-x,50) - 50) * .18px),calc((var(--cursor-y,50) - 50) * .12px),0);
@@ -2986,7 +2697,6 @@
 #folderDashboard .subject-card::before, #folderDashboard .subject-card::after{z-index:1;}
 
 #folderDashboard .subject-card .subject-thumb, #folderDashboard .subject-card .subject-body, #folderDashboard .subject-card .subject-go{z-index:2;}
-
 
 #folderDashboard .glass{
   position:relative;
@@ -3035,7 +2745,6 @@
 
 #folderDashboard .glass > *{position:relative;z-index:4;}
 
-
 #folderDashboard .subject-card{
   border-bottom-color:rgba(var(--accent-rgb),.12) !important;
 }
@@ -3049,7 +2758,6 @@
 @media (prefers-reduced-motion: reduce){#folderDashboard .glass::before, #folderDashboard .glass::after{transition:none !important;}
 }
 
-
 #folderDashboard{
   --glass-l1-alpha:.25;
   --glass-l1-blur:15px;
@@ -3061,20 +2769,17 @@
   --glass-l4-blur:8px;
 }
 
-
 #folderDashboard .filters.glass{
   background:rgba(255,255,255,var(--glass-l1-alpha)) !important;
   backdrop-filter:blur(var(--glass-l1-blur)) saturate(160%) !important;
   -webkit-backdrop-filter:blur(var(--glass-l1-blur)) saturate(160%) !important;
 }
 
-
 #folderDashboard .stat-card.glass, #folderDashboard .subject-card.glass, #folderDashboard .add-card.glass{
   background:rgba(255,255,255,var(--glass-l2-alpha)) !important;
   backdrop-filter:blur(var(--glass-l2-blur)) saturate(175%) !important;
   -webkit-backdrop-filter:blur(var(--glass-l2-blur)) saturate(175%) !important;
 }
-
 
 #folderDashboard .subject-card.glass{
   background:
@@ -3084,20 +2789,17 @@
       rgba(var(--accent-rgb),.045) 100%) !important;
 }
 
-
 #folderDashboard .header.glass, #folderDashboard .banner.glass, #folderDashboard .modal.glass{
   background:rgba(255,255,255,var(--glass-l3-alpha)) !important;
   backdrop-filter:blur(var(--glass-l3-blur)) saturate(180%) !important;
   -webkit-backdrop-filter:blur(var(--glass-l3-blur)) saturate(180%) !important;
 }
 
-
 #folderDashboard .clock.glass, #folderDashboard .view-stats, #folderDashboard .add-plus, #folderDashboard .subject-go, #folderDashboard .subject-tag{
   background:rgba(255,255,255,var(--glass-l4-alpha)) !important;
   backdrop-filter:blur(var(--glass-l4-blur)) saturate(185%) !important;
   -webkit-backdrop-filter:blur(var(--glass-l4-blur)) saturate(185%) !important;
 }
-
 
 #folderDashboard .subject-go{
   background:
@@ -3108,14 +2810,12 @@
       rgba(255,255,255,.64)) !important;
 }
 
-
 #folderDashboard .subject-tag{
   background:
     linear-gradient(135deg,
       rgba(255,255,255,.74),
       rgba(var(--accent-rgb),.08)) !important;
 }
-
 
 #folderDashboard .glass-level-1{background:rgba(255,255,255,var(--glass-l1-alpha)) !important;backdrop-filter:blur(var(--glass-l1-blur)) saturate(160%) !important;-webkit-backdrop-filter:blur(var(--glass-l1-blur)) saturate(160%) !important;}
 
@@ -3124,7 +2824,6 @@
 #folderDashboard .glass-level-3{background:rgba(255,255,255,var(--glass-l3-alpha)) !important;backdrop-filter:blur(var(--glass-l3-blur)) saturate(180%) !important;-webkit-backdrop-filter:blur(var(--glass-l3-blur)) saturate(180%) !important;}
 
 #folderDashboard .glass-level-4{background:rgba(255,255,255,var(--glass-l4-alpha)) !important;backdrop-filter:blur(var(--glass-l4-blur)) saturate(185%) !important;-webkit-backdrop-filter:blur(var(--glass-l4-blur)) saturate(185%) !important;}
-
 
 #folderDashboard .glass{
   isolation:isolate;
@@ -3135,19 +2834,16 @@
   pointer-events:none;
 }
 
-
 #folderDashboard button:focus-visible, #folderDashboard [role="button"]:focus-visible, #folderDashboard .add-card:focus-visible{
   outline:2px solid rgba(124,92,255,.55);
   outline-offset:3px;
   box-shadow:0 0 0 4px rgba(124,92,255,.10), var(--neu, 3px 4px 10px rgba(74,63,132,.055), -3px -3px 9px rgba(255,255,255,.70));
 }
 
-
 @media (hover:none), (pointer:coarse){#folderDashboard .tilt{transform:none !important;}
 #folderDashboard .subject-card:hover, #folderDashboard .subject-card:hover .subject-thumb, #folderDashboard .subject-card:hover .subject-go{transform:none !important;}
 #folderDashboard .glass .material-sheen{opacity:.55 !important;transform:none !important;}
 }
-
 
 @media (prefers-reduced-motion:reduce){#folderDashboard *, #folderDashboard *::before, #folderDashboard *::after{
     animation-duration:.01ms !important;
@@ -3159,7 +2855,6 @@
 #folderDashboard .glass .material-sheen{transform:none !important;}
 }
 
-
 @supports not ((backdrop-filter:blur(4px)) or (-webkit-backdrop-filter:blur(4px))){#folderDashboard .glass{background:rgba(255,255,255,.82) !important;}
 #folderDashboard .glass-level-1{background:rgba(255,255,255,.86) !important;}
 #folderDashboard .glass-level-2{background:rgba(255,255,255,.90) !important;}
@@ -3167,11 +2862,9 @@
 #folderDashboard .glass-level-4{background:rgba(255,255,255,.97) !important;}
 }
 
-
 #folderDashboard .glass > .glass-liquid, #folderDashboard .glass > .glass-reflection, #folderDashboard .glass > .glass-edge, #folderDashboard .glass > .material-sheen{z-index:1 !important;}
 
 #folderDashboard .glass > :not(.glass-liquid):not(.glass-reflection):not(.glass-edge):not(.material-sheen){z-index:4;}
-
 
 #folderDashboard.modal-open{overflow:hidden;}
 
@@ -3192,7 +2885,6 @@
 
 @media (max-width:640px){#folderDashboard .design-credit{margin-top:14px;font-size:.62rem}
 }
-
 
 #folderDashboard .subject-go{
   position:relative !important;
@@ -3259,7 +2951,6 @@
   transform:translateY(-1px) scale(1.04);
   box-shadow:0 9px 20px rgba(115,86,255,.28),inset 0 1px 0 rgba(255,255,255,.48) !important;
 }
-
 
 #folderDashboard, #folderDashboard{width:100%;max-width:100%;overflow-x:hidden;}
 
@@ -3395,7 +3086,6 @@
 #folderDashboard .add-card:hover .add-plus{transform:none;}
 }
 
-
 @media (max-width:700px){#folderDashboard{scroll-behavior:auto}
 #folderDashboard .blobs{
     filter:none!important;
@@ -3465,7 +3155,6 @@
   }
 }
 
-
 @media (hover:none) and (pointer:coarse){#folderDashboard .subject-card:hover, #folderDashboard .subject-card:hover .subject-thumb, #folderDashboard .subject-go:hover, #folderDashboard .view-stats:hover, #folderDashboard .stat-card:hover, #folderDashboard .add-card:hover{
     transform:none!important;
   }
@@ -3474,9 +3163,7 @@
   }
 }
 
-
 #folderDashboard #filterBar{position:relative; z-index:20; isolation:isolate;}
-
 
 #folderDashboard #filterBar > .filter-indicator{
   position:absolute !important;
@@ -3498,7 +3185,6 @@
   user-select:none;
   -webkit-user-select:none;
 }
-
 
 /* --- added back control (not part of original design; needed for app routing) --- */
 #folderDashboard .fd-back{

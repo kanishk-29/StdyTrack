@@ -168,7 +168,6 @@
     transition:transform .25s cubic-bezier(.34,1.56,.64,1);
   }
   .test-item:hover .test-icon{ transform:scale(1.1) rotate(-6deg); }
-  .test-caret{ font-size:9px; color:var(--sd-ink-soft); flex-shrink:0; width:10px; }
   .test-mid{ flex:1; min-width:0; }
   .test-name-row{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
   .test-name{ font-weight:700; font-size:13.5px; color:var(--sd-ink); }
@@ -244,6 +243,7 @@
     background:linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
     transform:translateX(-160%);
   }
+  @keyframes sdShimmerSweep{ 0%{transform:translateX(-160%)} 100%{transform:translateX(300%)} }
   .sd-footer-cta:hover::after{ animation:sdShimmerSweep 1s ease; }
   .sd-footer-cta:hover{ transform:translateY(-2px) scale(1.03); box-shadow:0 6px 16px -4px rgba(124,92,255,0.5); }
   .sd-footer-cta:active{ transform:translateY(0) scale(0.98); }

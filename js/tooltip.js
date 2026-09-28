@@ -167,7 +167,9 @@ function toggleLecturePriority(subjectId, unitId, lectureId){
     }
   } else {
     Object.keys(data.priorityPlanner.byDate).forEach(key=>{
-      data.priorityPlanner.byDate[key] = data.priorityPlanner.byDate[key].filter(i => !(i.link && i.link.lectureId === lectureId));
+      const arr = data.priorityPlanner.byDate[key];
+      if(!Array.isArray(arr)) return; // corrupt-import guard
+      data.priorityPlanner.byDate[key] = arr.filter(i => !(i.link && i.link.lectureId === lectureId));
     });
     if(l.plannedDate) delete l.plannedDate;
   }

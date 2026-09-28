@@ -1,13 +1,4 @@
-/* Priority planner / Today page: hero, date strip, plan + progress cards, quick actions, month calendar, events, quote, carry-over banner */
-  /* ---------- PRIORITY PLANNER ---------- */
-  .priority-planner-panel{ max-width:480px; }
-  .pp-hint{
-    font-size:12px; color:var(--ink-soft); line-height:1.5;
-    margin:10px 0 4px; padding:10px 12px;
-    background:var(--glass-bg-light); border:1px solid var(--glass-border-subtle); border-radius:10px;
-    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-  }
-  .pp-hint strong{ color:var(--ink); }
+
 
   /* ---- date strip: horizontally scrollable, today first, no past days ---- */
   .pp-datestrip-wrap{ display:flex; align-items:center; gap:8px; margin-top:14px; }
@@ -17,8 +8,6 @@
     -webkit-overflow-scrolling:touch;
     overscroll-behavior-x:contain;
   }
-  .pp-datestrip::-webkit-scrollbar{ height:4px; }
-  .pp-datestrip::-webkit-scrollbar-thumb{ background:var(--border); border-radius:4px; }
   .pp-date-chip{
     flex-shrink:0; width:46px; scroll-snap-align:start;
     display:flex; flex-direction:column; align-items:center; gap:2px;
@@ -27,67 +16,18 @@
     backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
     transition:all .15s ease;
   }
-  .pp-date-chip:hover{ border-color:var(--violet); }
-  .pp-date-chip.is-today{ border-color:var(--violet); }
-  .pp-date-chip.selected{
-    background:linear-gradient(135deg, var(--violet) 0%, #5f3dea 100%);
-    border-color:transparent; box-shadow:0 4px 12px -5px rgba(95,61,234,0.55);
-  }
   .pp-date-chip-wk{ font-size:9px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; }
-  .pp-date-chip.selected .pp-date-chip-wk{ color:rgba(255,255,255,0.85); }
   .pp-date-chip-num{ font-size:15px; font-weight:800; color:var(--ink); }
-  .pp-date-chip.selected .pp-date-chip-num{ color:#fff; }
   .pp-date-chip-dot{
     position:absolute; bottom:3px; width:4px; height:4px; border-radius:50%;
     background:var(--violet);
   }
-  .pp-date-chip.selected .pp-date-chip-dot{ background:#fff; }
   .pp-datestrip-jump{
     flex-shrink:0; width:118px; height:32px; padding:0 8px; border-radius:8px;
     border:1px solid var(--glass-border-subtle); background:var(--glass-bg-light); color:var(--ink-soft);
     font-family:'Inter',sans-serif; font-size:11px; cursor:pointer;
     backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
   }
-
-  .pp-active-col{ margin-top:4px; }
-  .pp-col-header{
-    display:flex; align-items:center; justify-content:space-between; gap:8px;
-    margin-bottom:10px;
-  }
-  .pp-col-title-wrap{ display:flex; align-items:center; gap:6px; min-width:0; }
-  .pp-col-title{ font-weight:700; font-size:13.5px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pp-col-header-right{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
-  .pp-col-count{
-    font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700;
-    color:var(--ink-faint); background:var(--paper); border:1px solid var(--border);
-    padding:3px 10px; border-radius:20px; white-space:nowrap;
-  }
-
-  .pp-list{ display:flex; flex-direction:column; gap:8px; }
-  .pp-empty{
-    display:flex; flex-direction:column; align-items:center; gap:6px;
-    font-size:11.5px; color:var(--ink-faint);
-    padding:22px 14px; text-align:center;
-    background:var(--paper); border:1px dashed var(--border); border-radius:12px;
-  }
-  .pp-empty-icon{ font-size:26px; opacity:0.65; margin-bottom:2px; }
-  .pp-empty-sub{ font-style:italic; }
-
-  /* Pending items: light card, drag handle, checkbox, tag + meta row.
-     Completed items: filled gradient bar with strikethrough + timestamp,
-     mirroring the same red(pending)/purple(done) language used elsewhere
-     in the app so this list still reads as "real lectures, not a to-do
-     clone". */
-  .pp-item{
-    display:flex; flex-direction:column; gap:0;
-    border-radius:12px; padding:9px 10px;
-    border:1px solid var(--border);
-    background:var(--card);
-    box-shadow:var(--shadow);
-    transition:opacity .15s ease, transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-  }
-  .pp-item:hover{ transform:translateY(-1px); border-color:var(--violet); }
-  .pp-item-top{ display:flex; align-items:center; gap:8px; }
   .pp-item.done{
     border:none;
     background:linear-gradient(120deg, rgba(38,55,155,0.85) 0%, rgba(88,60,195,0.8) 50%, rgba(120,60,188,0.78) 100%);
@@ -96,80 +36,17 @@
   .pp-item.done:hover{ transform:none; border-color:transparent; }
   .pp-item.done .pp-item-text{ text-decoration:line-through; opacity:0.9; }
   .pp-item.done .pp-item-tag{ background:rgba(255,255,255,0.22); color:#fff; }
-
-  .pp-item-arrows{ display:flex; flex-direction:column; gap:0; flex-shrink:0; opacity:0.5; transition:opacity .15s ease; }
-  .pp-item:hover .pp-item-arrows{ opacity:1; }
-  .pp-item-arrows button{
-    width:16px; height:11px; border:none; background:none; cursor:pointer;
-    color:var(--ink-faint); font-size:7px; line-height:1;
-    display:flex; align-items:center; justify-content:center;
-    border-radius:3px; transition:background .12s ease, color .12s ease;
-  }
   .pp-item.done .pp-item-arrows button{ color:rgba(255,255,255,0.7); }
-  .pp-item-arrows button:hover{ background:var(--violet-soft); color:var(--violet); }
   .pp-item.done .pp-item-arrows button:hover{ background:rgba(255,255,255,0.22); color:#fff; }
-  .pp-item-arrows button:disabled{ opacity:0.3; cursor:default; }
-  .pp-item-arrows button:disabled:hover{ background:none; }
-
-  .pp-item-check{
-    width:19px; height:19px; border-radius:6px; flex-shrink:0; cursor:pointer;
-    border:1.5px solid var(--border); background:var(--paper);
-    display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--violet); font-weight:700;
-    transition:background .15s ease, border-color .15s ease;
-  }
   .pp-item.done .pp-item-check{ border-color:rgba(255,255,255,0.55); background:rgba(255,255,255,0.28); color:#fff; }
-  .pp-item-check:hover{ border-color:var(--violet); }
-
-  .pp-item-text{
-    flex:1; min-width:0; font-size:12.5px; font-weight:600; color:var(--ink);
-    word-break:break-word; cursor:pointer;
-  }
   .pp-item.done .pp-item-text{ color:#fff; }
-  .pp-item-text:hover{ text-decoration:underline; }
-  .pp-item-link-icon{ font-size:10px; margin-right:3px; opacity:0.7; }
-
-  .pp-item-tag{
-    flex-shrink:0; font-size:9.5px; font-weight:800; letter-spacing:0.3px;
-    color:var(--violet); background:var(--violet-soft);
-    padding:2.5px 7px; border-radius:6px; text-transform:uppercase;
-  }
-
-  .pp-item-meta{
-    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-    margin:6px 0 0 27px; font-size:10.5px; color:var(--ink-soft);
-  }
   .pp-item.done .pp-item-meta{ color:rgba(255,255,255,0.85); }
-  .pp-item-time{ display:flex; align-items:center; gap:3px; }
-  .pp-item-chip{
-    font-size:9.5px; font-weight:800; padding:2.5px 8px; border-radius:20px;
-  }
   .pp-item-chip.high{ color:#b8341f; background:#fde8e4; }
   .pp-item-chip.medium{ color:#b06a04; background:#fdf1de; }
   .pp-item-chip.low{ color:#1b7a4d; background:#e2f7ec; }
   .pp-item.done .pp-item-chip{ background:rgba(255,255,255,0.22); color:#fff; }
-
-  .pp-item-del{
-    flex-shrink:0; width:20px; height:20px; border:none; background:none;
-    color:var(--ink-faint); font-size:11px; cursor:pointer; border-radius:6px;
-    opacity:0; transition:background .12s ease, color .12s ease, opacity .12s ease;
-  }
-  .pp-item:hover .pp-item-del{ opacity:1; }
-  .pp-item-del:hover{ background:rgba(217,60,50,0.14); color:#d93c32; }
   .pp-item.done .pp-item-del{ color:rgba(255,255,255,0.75); }
   .pp-item.done .pp-item-del:hover{ background:rgba(255,255,255,0.22); color:#fff; }
-
-  .pp-item-done-sub{
-    margin:5px 0 0 27px; font-size:10px; color:rgba(255,255,255,0.85);
-    display:flex; align-items:center; gap:4px;
-  }
-
-  .pp-rollover-btn{
-    width:100%; margin-top:14px; padding:11px;
-    border:1.5px dashed var(--border); border-radius:12px;
-    background:transparent; color:var(--violet); font-weight:600; font-size:12px;
-    cursor:pointer; transition:all .18s ease;
-  }
-  .pp-rollover-btn:hover{ border-color:var(--violet); background:var(--violet-soft); }
 
   .pp-link-toggle{
     width:100%; margin-bottom:10px; padding:9px;
@@ -179,7 +56,6 @@
     cursor:pointer; transition:all .15s ease; box-shadow:0 4px 12px -5px rgba(95,61,234,0.55);
     display:flex; align-items:center; justify-content:center; gap:6px;
   }
-  .pp-link-toggle:hover{ transform:translateY(-1px); box-shadow:0 6px 16px -5px rgba(95,61,234,0.65); }
   .pp-link-toggle .pp-link-caret{ font-size:9px; opacity:0.85; }
   .pp-link-picker{
     display:none; flex-direction:column; gap:6px;
@@ -190,73 +66,12 @@
     padding:8px 9px; border:1.5px solid var(--border); border-radius:8px;
     font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); background:var(--card);
   }
-  .pp-link-picker-row{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
   .pp-link-picker button{
     padding:8px; border:none; border-radius:8px;
     background:var(--violet); color:#fff; font-weight:700; font-size:12px; cursor:pointer;
   }
-  .pp-link-picker button:hover{ background:var(--violet-deep, #5a3fc0); }
-
-  /* ---------- STUDY STATS + QUICK ACTIONS + FOCUS CARD ---------- */
-  .pp-stats-card{
-    margin-top:16px; padding:14px; border-radius:14px;
-    border:1px solid var(--border); background:var(--paper);
-    display:flex; align-items:center; justify-content:space-around; gap:10px;
-  }
-  .pp-stats-title{
-    font-weight:700; font-size:12px; color:var(--ink);
-    display:flex; align-items:center; gap:6px; margin-bottom:12px;
-  }
-  .pp-ring-wrap{ position:relative; width:64px; height:64px; flex-shrink:0; }
-  .pp-ring-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
-  .pp-ring-track{ fill:none; stroke:var(--border); stroke-width:6; }
-  .pp-ring-fill{ fill:none; stroke:var(--violet); stroke-width:6; stroke-linecap:round; transition:stroke-dashoffset .5s ease; }
-  .pp-ring-label{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-size:13px; font-weight:800; color:var(--ink);
-  }
-  .pp-stat-mini{ display:flex; flex-direction:column; align-items:center; gap:2px; }
-  .pp-stat-mini-val{ font-size:17px; font-weight:800; color:var(--ink); }
   .pp-stat-mini-val.green{ color:var(--sd-green,#16a34a); }
-  .pp-stat-mini-label{ font-size:9.5px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.3px; }
-
-  .pp-quick-actions{
-    margin-top:16px; padding:12px 14px; border-radius:14px;
-    border:1px solid var(--border); background:var(--card);
-  }
-  .pp-qa-title{ font-weight:700; font-size:12px; color:var(--ink); margin-bottom:8px; }
-  .pp-qa-row{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:6px 2px; font-size:11.5px; color:var(--ink-soft);
-    border:none; background:none; width:100%; cursor:pointer; border-radius:7px;
-    transition:background .12s ease;
-  }
-  .pp-qa-row:hover{ background:var(--paper); color:var(--ink); }
-  .pp-qa-row .pp-qa-left{ display:flex; align-items:center; gap:7px; }
-  .pp-qa-row .pp-qa-val{ font-weight:800; font-family:'JetBrains Mono',monospace; font-size:11px; }
   .pp-qa-row .pp-qa-val.warn{ color:#c0392b; }
-
-  .pp-focus-card{
-    margin-top:16px; padding:14px; border-radius:14px;
-    border:1px solid var(--border);
-    background:linear-gradient(135deg, var(--violet-soft) 0%, #eef6ff 100%);
-  }
-  .pp-focus-title{ font-weight:700; font-size:12.5px; color:var(--ink); display:flex; align-items:center; gap:6px; margin-bottom:3px; }
-  .pp-focus-sub{ font-size:11px; color:var(--ink-soft); line-height:1.4; margin-bottom:10px; }
-  .pp-focus-btn{
-    width:100%; padding:9px; border:none; border-radius:9px;
-    background:var(--violet); color:#fff; font-weight:700; font-size:12px; cursor:pointer;
-    transition:background .15s ease;
-  }
-  .pp-focus-btn:hover{ background:var(--violet-deep,#5a3fc0); }
-
-  .pp-protip{
-    margin-top:16px; padding:13px 14px; border-radius:14px;
-    border:1px solid var(--border); background:var(--paper);
-    display:flex; align-items:flex-start; gap:10px; font-size:11.5px; color:var(--ink-soft); line-height:1.5;
-  }
-  .pp-protip-star{ font-size:15px; flex-shrink:0; }
-  .pp-protip strong{ color:var(--ink); }
 
   /* ========================================================
      "TODAY" PAGE — full tab (greeting, hero, plan, calendar,
@@ -364,7 +179,7 @@
     background:var(--violet); color:#fff; font-weight:700; font-size:12.5px; cursor:pointer;
     box-shadow:0 6px 16px -6px rgba(124,92,191,0.55);
   }
-  .pp-hero-btn:hover{ background:var(--violet-deep,#5a3fc0); }
+  .pp-hero-btn:hover{ background:var(--violet-deep); }
   .pp-hero-art{ font-size:64px; flex-shrink:0; opacity:0.9; filter:drop-shadow(0 8px 14px rgba(124,92,191,0.3)); }
 
   /* ---- date strip ---- */
@@ -445,7 +260,7 @@
     padding:9px; border:none; border-radius:9px;
     background:var(--violet); color:#fff; font-weight:700; font-size:12px; cursor:pointer;
   }
-  .pp-link-picker button:hover{ background:var(--violet-deep,#5a3fc0); }
+  .pp-link-picker button:hover{ background:var(--violet-deep); }
 
   .pp-list{ display:flex; flex-direction:column; gap:8px; }
   .pp-row{
@@ -610,7 +425,7 @@
     width:100%; padding:10px; border:none; border-radius:10px; background:var(--violet);
     color:#fff; font-weight:700; font-size:12px; cursor:pointer;
   }
-  .pp-nextup-btn:hover{ background:var(--violet-deep,#5a3fc0); }
+  .pp-nextup-btn:hover{ background:var(--violet-deep); }
 
   /* ---- quote card ---- */
   .pp-quote-card{ text-align:center; padding:20px 18px; }

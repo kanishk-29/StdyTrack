@@ -30,14 +30,24 @@
        browsers). Panning/scrolling still works. */
     touch-action:pan-x pan-y;
     opacity:0; pointer-events:none;
-    transition:opacity .4s ease;
+    /* visibility:hidden (not just opacity:0) while gated, so the hidden login
+       screen is out of the a11y tree and out of the tab order. Without it the
+       pre-login DOM exposed a second <main>, a second <h1>, and a focusable
+       set of controls that screen-reader and keyboard users could reach. */
+    visibility:hidden;
+    transition:opacity .4s ease, visibility 0s linear .4s;
     isolation:isolate;
     background:#071326;
     color:var(--ink);
     font-family:"DM Sans",sans-serif;
   }
-  .login-screen.show{ opacity:1; pointer-events:auto; }
-  .login-screen.hide{ opacity:0; pointer-events:none; }
+  /* Cancel the 400ms visibility delay when showing, so the panel is visible for
+     the whole fade-in rather than only after it. */
+  .login-screen.show{
+    opacity:1; pointer-events:auto; visibility:visible;
+    transition:opacity .4s ease, visibility 0s linear 0s;
+  }
+  .login-screen.hide{ opacity:0; pointer-events:none; visibility:hidden; }
   .login-screen::-webkit-scrollbar{ display:none; width:0; height:0; }
   .login-screen{ overscroll-behavior:contain; }
 
@@ -52,7 +62,7 @@
   /* ---- atmosphere layers (all behind the interactive card) ---- */
   .login-scene-bg{
     position:absolute; inset:0; z-index:-5;
-    background-image:url("../shrine-background.jpg");
+    background-image:url("../shrine-background.webp");
     background-size:cover;
     background-position:center center;
     transform:translate3d(var(--px),var(--py),0) scale(1.018);

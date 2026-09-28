@@ -42,7 +42,7 @@
     }
     var ov = document.querySelector('.overlay.show');
     if(ov) return { tag:'overlay-'+ov.id, close:function(){ if(typeof closeModal==='function') closeModal(ov.id); } };
-    if(window.subjectPageOpen === true) return { tag:'subject', close:function(){ if(typeof exitSubjectPage==='function') exitSubjectPage(); } };
+    if(typeof subjectPageOpen !== 'undefined' && subjectPageOpen === true) return { tag:'subject', close:function(){ if(typeof exitSubjectPage==='function') exitSubjectPage(); } };
     if(typeof currentView !== 'undefined' && currentView && currentView !== 'study') return { tag:'view-'+currentView, close:function(){ if(typeof showView==='function') showView('study'); } };
     return null;
   }
@@ -140,7 +140,7 @@
   if(typeof origShowView === 'function'){
     window.showView = function(view){
       if(suppress) return origShowView.apply(this, arguments);
-      var prev = window.currentView;
+      var prev = (typeof currentView !== 'undefined') ? currentView : null;
       var r = origShowView.apply(this, arguments);
       if(prev !== view && (view === 'priority' || view === 'habits')) pushNav();
       else if(prev !== view && (prev === 'priority' || prev === 'habits') && view === 'study') collapseTop();

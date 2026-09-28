@@ -115,8 +115,14 @@ async function checkpoint(){
       // mascot every 30s while a timer runs.
       renderScorecard();
       renderToday();
-      renderCalendar();
       renderDashboard();
+      // renderCalendar() is deliberately NOT called here. It rebuilds all 12
+      // month panels (~371 cells, ~700 toLocaleDateString calls, a full data
+      // scan per future cell) and the only thing a 30s commit changes on it is
+      // the day heat level, whose thresholds are 30/60/120 minutes apart
+      // (monthCalLevel). renderAll() and the global-study tick already repaint
+      // it on a 30s floor, so skipping it here removes a ~10-30ms freeze that
+      // used to land every 30 seconds for as long as a timer ran.
       saveData();
     }
   }

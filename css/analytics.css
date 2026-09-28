@@ -105,13 +105,6 @@
     font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#7d8590; margin-top:3px;
   }
   .ac-header-actions{ display:flex; align-items:center; gap:6px; }
-  .ac-back-btn{
-    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
-    padding:5px 10px; border-radius:20px;
-    border:1px solid rgba(255,255,255,0.12); background:#0d0d0d; color:#9aa4b2;
-    cursor:pointer; transition:all .15s ease; white-space:nowrap;
-  }
-  .ac-back-btn:hover{ border-color:rgba(255,255,255,0.3); color:#e6edf3; }
   .slide-header h3{
     font-family:'Neuton',serif;
     font-size:20px;

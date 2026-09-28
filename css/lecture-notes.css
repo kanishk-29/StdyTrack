@@ -304,7 +304,7 @@
   }
   .notes-page-action:hover:not(:disabled){ background:var(--violet-soft); }
   .notes-page-action:active:not(:disabled){ transform:scale(0.94); }
-  .notes-page-action.danger{ color:var(--red, #e23b3b); }
+  .notes-page-action.danger{ color:var(--red); }
   .notes-page-action.danger:hover:not(:disabled){ background:rgba(226,59,59,0.12); }
   .notes-page-action:disabled{ opacity:0.38; cursor:default; color:var(--ink-soft); }
   /* ---- Footer ---- */

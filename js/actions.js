@@ -95,6 +95,7 @@ async function toggleLecture(subjectId, unitId, lectureId){
   // instead of it silently drifting out of date.
   if(data.priorityPlanner && data.priorityPlanner.byDate){
     Object.values(data.priorityPlanner.byDate).forEach(arr=>{
+      if(!Array.isArray(arr)) return; // corrupt-import guard: never let a bad shape abort renderAll/saveData
       arr.forEach(item=>{
         if(item.link && item.link.lectureId === lectureId) item.done = l.completed;
       });

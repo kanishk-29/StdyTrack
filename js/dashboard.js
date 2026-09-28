@@ -62,11 +62,16 @@ function renderRunningBanner(force){
 
 function computeCurrentStreak(){
   const now = zoneTodayDate();
+  // todayKey() and getTodaySnapshot() are loop-invariant: d===0 always resolves
+  // to today's key, so hoisting them keeps the 365-iteration walk from paying for
+  // a timezone conversion and a data walk on every step.
+  const todayK = todayKey();
+  const todayTotal = getTodaySnapshot().total;
   let streak = 0;
   for(let d=0; d<365; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
     const key = todayKey(day);
-    const seconds = (key===todayKey()) ? getTodaySnapshot().total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
+    const seconds = (d===0) ? todayTotal : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
     if(seconds>0) streak++;
     else break;
   }
@@ -542,6 +547,11 @@ const MONTH_NAMES = ['January','February','March','April','May','June','July','A
 const WEEK_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 let monthCalMonth = zoneTodayDate().getMonth();
 
+// Minutes studied on a calendar day: lecture-timer seconds (today uses the live
+// snapshot, other days the stored daily log) plus global study minutes.
+// renderCalendar() resolves all 12 months in a single pass and now inlines this
+// per day, so the hoisted global-study/today-snapshot values are resolved once
+// per rebuild instead of once per cell. Kept as the single-day form of the rule.
 function monthCalMinutesFor(key, todayK, todaySnap){
   let mins = 0;
   if(key === todayK){
@@ -587,6 +597,17 @@ function goToMonth(month){
   if(nextBtn) nextBtn.disabled = monthCalMonth === 11;
 }
 
+// Memoised Intl.DateTimeFormat for the calendar cell labels. toLocaleDateString()
+// builds a fresh formatter on every call, and renderCalendar() formats ~740 dates
+// per rebuild.
+const _calDateFmt = new Map();
+function calDateFmt(opts){
+  const k = opts.weekday + '|' + opts.month + '|' + opts.day + '|' + (opts.year || '');
+  let f = _calDateFmt.get(k);
+  if(f === undefined){ f = new Intl.DateTimeFormat(undefined, opts); _calDateFmt.set(k, f); }
+  return f;
+}
+
 function renderCalendar(){
   const track = document.getElementById('studyMonthTrack');
   const viewport = document.getElementById('studyMonthViewport');
@@ -598,6 +619,28 @@ function renderCalendar(){
   const studyingNow = !!runningRef || globalStudyRunning;
   const prevBtn = document.getElementById('studyMonthPrev');
   const nextBtn = document.getElementById('studyMonthNext');
+
+  // ---- Per-render lookups, hoisted out of the cell loop -------------------
+  // getPlannedLecturesForDate() walks every subject -> unit -> lecture, and the
+  // cell loop used to call it once per future cell (~365 times) — a full nested
+  // scan of the whole dataset per cell. One pass builds the counts instead.
+  const plannedCounts = new Map();
+  try{
+    (data && data.subjects ? data.subjects : []).forEach(s=>{
+      (s.units||[]).forEach(u=>{
+        (u.lectures||[]).forEach(l=>{
+          if(l && l.plannedDate) plannedCounts.set(l.plannedDate, (plannedCounts.get(l.plannedDate)||0) + 1);
+        });
+      });
+    });
+  }catch(e){}
+  // One localStorage read per rebuild, not one per evaluation of today.
+  let globalToday = 0;
+  try{ const g = JSON.parse(localStorage.getItem(GLOBAL_STUDY_KEY) || '{}') || {}; globalToday = Math.max(0, Number(g[todayK]) || 0); }catch(e){}
+  const fmtShort = calDateFmt({ weekday:'short', month:'short', day:'numeric' });
+  const fmtLong  = calDateFmt({ weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  const todayMins = (todaySnap.total || 0) / 60 + globalToday;
+  const dailyLog = (data && data.dailyLog) || {};
 
   track.innerHTML = '';
   for(let month = 0; month < 12; month++){
@@ -612,10 +655,15 @@ function renderCalendar(){
     const firstDowIndex = (first.getDay() - weekStart + 7) % 7;
     const weeks = Math.ceil((firstDowIndex + daysInMonth) / 7);
 
+    // Minutes for every real day, resolved once: the "active days" count and
+    // the cell loop both need it and both used to recompute it independently.
+    const dayMins = new Array(daysInMonth + 1);
     let active = 0;
     for(let day = 1; day <= daysInMonth; day++){
-      const d = new Date(year, month, day);
-      if(monthCalMinutesFor(todayKey(d), todayK, todaySnap) > 0) active++;
+      const key = todayKey(new Date(year, month, day));
+      const mins = (key === todayK) ? todayMins : (dailyLog[key] ? (dailyLog[key].total || 0) / 60 : 0);
+      dayMins[day] = mins;
+      if(mins > 0) active++;
     }
 
     const head = document.createElement('div');
@@ -647,31 +695,31 @@ function renderCalendar(){
       } else {
         const d = new Date(year, month, dayNumber);
         const key = todayKey(d);
-        const mins = monthCalMinutesFor(key, todayK, todaySnap);
+        const mins = dayMins[dayNumber];
         const level = monthCalLevel(mins);
         cell.classList.add(level ? 'l' + level : 'none');
         cell.dataset.date = key;
         cell.setAttribute('role', 'gridcell');
         const isFuture = key > todayK;
         if(isFuture){
-          const planned = getPlannedLecturesForDate(key).length;
+          const planned = plannedCounts.get(key) || 0;
           if(planned) cell.classList.add('has-plan');
           cell.setAttribute('onclick', `showCalPlanPopover(event,'${key}')`);
-          cell.title = d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) + (planned ? ` — ${planned} planned` : ' — Plan lectures for this day');
+          cell.title = fmtShort.format(d) + (planned ? ` — ${planned} planned` : ' — Plan lectures for this day');
           cell.setAttribute('aria-label', cell.title);
         } else {
           cell.setAttribute('onmouseenter', `showCalTooltip(event,'${key}')`);
           cell.setAttribute('onmouseleave', 'hideCalTooltip()');
           cell.setAttribute('onclick', `showCalTooltip(event,'${key}',true)`);
-          cell.title = d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) + ' — ' + Math.floor(mins) + ' min studied';
-          cell.setAttribute('aria-label', d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + ' — ' + (level ? 'Study level ' + level : 'No study logged'));
+          cell.title = fmtShort.format(d) + ' — ' + Math.floor(mins) + ' min studied';
+          cell.setAttribute('aria-label', fmtLong.format(d) + ' — ' + (level ? 'Study level ' + level : 'No study logged'));
           if(level) cell.classList.add('real-study');
           if(mins >= 120) cell.classList.add('high-glow');
           if(key === todayK){
             cell.classList.add('today');
             if(studyingNow){
               cell.classList.add('is-studying');
-              cell.title = d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) + ' — Studying now';
+              cell.title = fmtShort.format(d) + ' — Studying now';
             }
           }
         }
@@ -797,12 +845,19 @@ let globalStudyRunning = false;
 let globalStudyTimerId = null;
 let globalStudyStartedAt = 0;
 let globalStudyBaseSeconds = 0;
+let globalStudyLastCalRender = 0;
 
 function getGlobalStudyData(){
   try { return JSON.parse(localStorage.getItem(GLOBAL_STUDY_KEY) || '{}') || {}; }
   catch(e){ return {}; }
 }
-function saveGlobalStudyData(d){ localStorage.setItem(GLOBAL_STUDY_KEY, JSON.stringify(d)); }
+function saveGlobalStudyData(d){
+  // Wrapped because setItem throws in Safari private mode / on quota errors,
+  // and this is called from a 1s interval — an unguarded throw would spam an
+  // uncaught error every tick and silently lose the running total.
+  try { localStorage.setItem(GLOBAL_STUDY_KEY, JSON.stringify(d)); }
+  catch(e){}
+}
 function globalStudyMinutesFor(k){ return Math.max(0, Number((getGlobalStudyData())[k]) || 0); }
 function todayStudyKey(){ return todayKey(); }
 function globalStudyLevel(mins){
@@ -824,6 +879,7 @@ function toggleGlobalStudyTimer(){
     globalStudyStartedAt = Date.now();
     globalStudyBaseSeconds = globalStudyMinutesFor(key) * 60;
     btn.classList.add('active');
+    btn.setAttribute('aria-pressed','true');
     label.textContent = 'Pause studying';
     globalStudyTimerId = setInterval(()=>{
       const elapsed = (Date.now() - globalStudyStartedAt) / 1000;
@@ -832,7 +888,15 @@ function toggleGlobalStudyTimer(){
       data[key] = Math.max(globalStudyMinutesFor(key), totalSeconds / 60);
       saveGlobalStudyData(data);
       updateGlobalStudyUI();
-      renderCalendar();
+      // renderCalendar() rebuilds all 12 month panels (~365 day cells) from
+      // scratch, so running it every tick is pure waste. The only thing it
+      // paints that changes here is the per-day heat level, whose thresholds
+      // are >=30 minutes apart — a 30s floor is always imperceptible.
+      const now2 = Date.now();
+      if(now2 - globalStudyLastCalRender >= 30000){
+        globalStudyLastCalRender = now2;
+        renderCalendar();
+      }
     }, 1000);
   } else {
     const elapsed = (Date.now() - globalStudyStartedAt) / 1000;
@@ -843,6 +907,7 @@ function toggleGlobalStudyTimer(){
     clearInterval(globalStudyTimerId);
     globalStudyTimerId = null;
     btn.classList.remove('active');
+    btn.setAttribute('aria-pressed','false');
     label.textContent = 'Start studying';
     updateGlobalStudyUI();
     renderCalendar();

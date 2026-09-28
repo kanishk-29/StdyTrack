@@ -50,19 +50,6 @@ body.subject-page-active .subject-page-inner{
 }
 @keyframes sdPageIn{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:translateY(0);} }
 
-/* ---- Shared glass surface (from reference) ---- */
-.glass-surface{
-  background:rgba(255,255,255,0.38);
-  border:1px solid rgba(255,255,255,0.75);
-  border-radius:22px;
-  backdrop-filter:blur(22px) saturate(180%);
-  -webkit-backdrop-filter:blur(22px) saturate(180%);
-  box-shadow:
-    0 14px 38px rgba(90,70,160,0.20), 0 2px 6px rgba(90,70,160,0.08),
-    inset 1px 1px 1px rgba(255,255,255,0.9),
-    inset -1px -1px 1px rgba(140,120,220,0.12);
-}
-
 /* ---- Back button ---- */
 .sd-back-row{ display:flex; margin-bottom:6px; }
 .sd-back-btn{
@@ -174,10 +161,9 @@ body.subject-page-active .subject-page-inner{
   transition:transform .25s cubic-bezier(.34,1.56,.64,1);
 }
 .sd-stat-card:hover .sd-stat-icon{ transform:scale(1.16) rotate(-6deg); }
-.sd-stat-icon.violet{ background:#f1edff; }
-.sd-stat-icon.green{ background:#e7f9ee; }
-.sd-stat-icon.orange{ background:#fff1e0; }
-.sd-stat-icon.blue{ background:#e9f1ff; }
+/* NOTE: the four sd-stat-icon colour variants used to live here
+   (.violet/.green/.orange/.blue), but calendar.js paints each stat icon with an
+   inline background instead, so the classes were never applied. Removed. */
 .sd-stat-sub{ font-size:11px; color:#8b8fa3; }
 .sd-stat-value{ font-size:1.5rem; font-weight:700; color:#1f2333; }
 
@@ -204,9 +190,12 @@ body.subject-page-active .subject-page-inner{
 .sd-streak-dots span{
   width:9px; height:9px; border-radius:50%;
   background:linear-gradient(135deg, #ff9a52, #ff5d7a);
-  opacity:0; animation:sdPopIn .3s ease forwards;
+  opacity:0; animation:sdDetailIn .3s ease forwards;
 }
-@keyframes sdPopIn{ to{ opacity:1; } }
+/* Renamed from `sdPopIn`: tooltip-footer.css (loaded later) defines a springy
+   scale(.6)->scale(1) `sdPopIn`, and last-one-wins meant this simple fade was
+   silently running the other file's keyframes. */
+@keyframes sdDetailIn{ to{ opacity:1; } }
 
 /* ---- Exam pacing card ---- */
 .sd-exam-card{
@@ -221,7 +210,6 @@ body.subject-page-active .subject-page-inner{
   animation:sdFadeUp .5s ease .42s both;
   transition:transform .18s ease, box-shadow .18s ease;
 }
-.sd-exam-card:hover{ box-shadow:0 12px 32px rgba(90,70,160,0.22); }
 .sd-exam-icon{
   width:44px; height:44px; border-radius:14px; flex-shrink:0;
   display:flex; align-items:center; justify-content:center; font-size:18px;
@@ -229,12 +217,8 @@ body.subject-page-active .subject-page-inner{
   box-shadow:4px 4px 8px rgba(148,132,204,0.45), -4px -4px 8px rgba(255,255,255,0.95);
   transition:transform .25s cubic-bezier(.34,1.56,.64,1);
 }
-.sd-exam-card:hover .sd-exam-icon{ transform:scale(1.12) rotate(-6deg); }
-.sd-exam-icon.warn{ background:#fff1e0; }
 .sd-exam-icon.critical{ background:#ffe6d6; animation:sdPulse 1s ease-in-out infinite; }
 @keyframes sdPulse{ 0%,100%{ box-shadow:4px 4px 8px rgba(148,132,204,0.45), -4px -4px 8px rgba(255,255,255,0.95); } 50%{ box-shadow:4px 4px 8px rgba(148,132,204,0.45), -4px -4px 8px rgba(255,255,255,0.95), 0 0 0 4px rgba(255,90,90,0.2); } }
-.sd-exam-icon.past{ background:#ffe6d6; }
-.sd-exam-text{ flex:1; min-width:0; }
 .sd-exam-title{ font-size:14px; font-weight:700; color:#1f2333; }
 .sd-exam-sub{ font-size:12px; color:#8b8fa3; margin-top:1px; }
 .sd-exam-chevron{ font-size:18px; color:#c1c4d6; flex-shrink:0; }
@@ -270,7 +254,6 @@ body.subject-page-active .subject-page-inner{
   box-shadow:0 6px 18px rgba(90,70,160,0.12);
   transition:all .18s ease;
 }
-.add-unit-btn:hover{ background:rgba(124,92,255,0.06); border-color:#7c5cff; }
 
 /* ---- Footer quote ---- */
 .sd-footer-quote{
@@ -304,13 +287,6 @@ body.subject-page-active .subject-page-inner{
   transform:scale(0); pointer-events:none; animation:sdRippleOut .6s ease-out forwards;
 }
 @keyframes sdRippleOut{ to{ transform:scale(2.6); opacity:0; } }
-
-/* ---- 3D tilt effect ---- */
-.sd-tilt{
-  transform-style:preserve-3d;
-  transition:transform .12s ease-out, box-shadow .3s ease;
-  will-change:transform;
-}
 
 /* ---- Filter tabs (Your Subjects) ---- */
 .fs-head-row{
@@ -397,7 +373,7 @@ body.subject-page-active .subject-page-inner{
   display:flex; align-items:center; justify-content:center;
   background:#f1edff; color:#7c5cff;
   font-size:18px; font-weight:700; cursor:pointer;
-  box-shadow:var(--shadow-inset-light, 4px 4px 8px rgba(148,132,204,0.45), -4px -4px 8px rgba(255,255,255,0.95));
+  box-shadow: 4px 4px 8px rgba(148,132,204,0.45), -4px -4px 8px rgba(255,255,255,0.95);
   border:1px solid transparent;
   transition:transform .2s ease, box-shadow .2s ease;
 }
@@ -531,11 +507,6 @@ body.subject-page-active .unit:hover{
   border-style:solid; background:rgba(255,255,255,0.35);
   border-color:rgba(140,120,220,0.3); color:#5b5e78;
 }
-
-/* ---- Tests section (glass) ---- */
-.tests-section{
-  margin-top:20px; padding-top:18px; border-top:1px solid rgba(255,255,255,0.6);
-}
 .tests-row-header{
   display:flex; align-items:center; gap:12px; padding:12px 14px;
   border-radius:16px; margin-bottom:10px;
@@ -547,7 +518,6 @@ body.subject-page-active .unit:hover{
   background:rgba(255,255,255,0.5);
   box-shadow:4px 4px 8px rgba(148,132,204,0.45), -4px -4px 8px rgba(255,255,255,0.95);
 }
-.tests-titles{ flex:1; }
 .tests-title{ font-size:11px; font-weight:700; letter-spacing:0.8px; color:#1f2333; text-transform:uppercase; }
 .tests-subtitle{ font-size:11.5px; color:#8b8fa3; }
 .tests-avg-badge{
@@ -564,21 +534,7 @@ body.subject-page-active .unit:hover{
   -webkit-backdrop-filter:blur(8px);
   transition:transform .18s ease, box-shadow .18s ease;
 }
-.test-item:hover{ box-shadow:0 8px 24px rgba(90,70,160,0.15); }
-.test-score-badge{
-  width:34px; height:34px; border-radius:50%; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(135deg, #7c5cff, #a78bfa);
-  color:#fff; font-size:12px; font-weight:700;
-}
 .test-name{ font-weight:700; font-size:13.5px; color:#1f2333; flex:1; min-width:0; }
-.test-date{ font-size:10px; color:#8b8fa3; }
-.test-remove{
-  width:24px; height:24px; border-radius:50%; border:none;
-  background:rgba(124,92,255,0.1); color:#7c5cff; font-size:11px;
-  cursor:pointer; transition:all .18s ease;
-}
-.test-remove:hover{ background:#ff5d7a; color:#fff; }
 
 /* ---- Folder back button ---- */
 .folder-back-btn{

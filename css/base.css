@@ -9,11 +9,14 @@
     --ink-faint:#9a9483;
     --amber:#d9a441;
     --amber-deep:#b9832a;
+    --amber-soft:#fbf1de;
     --green:#3f7d5c;
     --green-soft:#e6efe8;
     --pencil:#c1502e;
+    --red:#c0392f;
     --violet:#7c5cbf;
     --violet-soft:#efe9f9;
+    --violet-deep:#5a3fc0;
     --teal:#2f8f8a;
     --teal-soft:#e4f3f2;
     --rose:#c05a7a;
@@ -46,12 +49,6 @@
     --sd-shadow:0 1px 2px rgba(31,35,51,0.04), 0 10px 28px rgba(31,35,51,0.06);
     --sd-shadow-hover:0 4px 10px rgba(31,35,51,0.06), 0 16px 36px rgba(31,35,51,0.1);
   }
-  .accent-1{ --accent:var(--amber); --accent-deep:var(--amber-deep); }
-  .accent-2{ --accent:var(--teal); --accent-deep:#236b67; }
-  .accent-3{ --accent:var(--violet); --accent-deep:#5f409e; }
-  .accent-4{ --accent:var(--green); --accent-deep:#2e5c44; }
-  .accent-5{ --accent:var(--pencil); --accent-deep:#9c3d21; }
-
   html{
     -webkit-text-size-adjust:100%;
     text-size-adjust:100%;

@@ -50,13 +50,6 @@
     display:block;
     margin-bottom:4px;
   }
-  .scorecard h1{
-    font-family:'Neuton',serif;
-    font-weight:700;
-    font-size:28px;
-    margin:0;
-    letter-spacing:-0.3px;
-  }
   .user-welcome{
     margin-top:6px;
     font-size:12.5px; color:var(--ink-soft);
@@ -65,41 +58,6 @@
   }
   .user-welcome.show{ display:flex; }
   .user-welcome b{ color:var(--violet, #6f52e0); font-weight:700; }
-  .scorecard-right{ text-align:right; }
-  .big-score{
-    font-family:'JetBrains Mono',monospace;
-    font-size:38px;
-    font-weight:700;
-    line-height:1;
-    background:linear-gradient(135deg, var(--ink) 0%, var(--violet) 100%);
-    -webkit-background-clip:text;
-    background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
-  .big-score .slash{
-    -webkit-text-fill-color:var(--ink-faint);
-    margin:0 3px; font-weight:400;
-  }
-  .score-label{
-    font-size:10.5px;
-    letter-spacing:1.5px;
-    color:var(--ink-faint);
-    font-family:'JetBrains Mono',monospace;
-    margin-top:2px;
-  }
-  .percent-badge{
-    display:inline-block;
-    margin-top:8px;
-    padding:3px 12px;
-    border-radius:20px;
-    background:var(--green-soft);
-    color:var(--green);
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:13px;
-    box-shadow:0 0 0 0 rgba(63,125,92,0.4);
-    animation:badgePulse 2.4s ease infinite;
-  }
   @keyframes badgePulse{
     0%{ box-shadow:0 0 0 0 rgba(63,125,92,0.35); }
     70%{ box-shadow:0 0 0 8px rgba(63,125,92,0); }

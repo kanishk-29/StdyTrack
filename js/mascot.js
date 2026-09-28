@@ -521,7 +521,7 @@ function computeGlobalStreak(){
   for(let d=0; d<365; d++){
     const day = new Date(now); day.setDate(day.getDate()-d);
     const key = todayKey(day);
-    const seconds = (key===todayKey()) ? todaySnap.total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
+    const seconds = (d===0) ? todaySnap.total : ((data.dailyLog && data.dailyLog[key]) ? data.dailyLog[key].total : 0);
     if(seconds>0) streak++;
     else break;
   }
@@ -864,6 +864,7 @@ function mascotSetAvatar(imageKey){
   if(mascotLastRenderedImageSrc === src) return;
   mascotLastRenderedImageSrc = src;
   avatarBtn.innerHTML = `<div class="mascot-tilt-inner"><img src="${src}" alt="study buddy" draggable="false"></div>`;
+  mascotInvalidateTiltNodes(); // the cached tilt/shadow targets just changed
 }
 
 function renderMascot(){
@@ -1111,10 +1112,24 @@ function mascotWander(){
 // pasted flat on top of it. Not an actual 3D model — just perspective +
 // a light "camera" that tracks the pointer, applied to an inner wrapper
 // so it never fights the existing float/bump keyframe animations.
+// The tilt target is rebuilt whenever the mascot image swaps (avatarBtn.innerHTML
+// is reassigned), so the node is cached and invalidated explicitly. This runs on
+// the idle-sway rAF at ~30fps plus every cursor move — a querySelector per frame
+// is pure waste once the element is known.
+let mascotTiltInnerEl = null;
+let mascotShadowEl = null;
+function mascotInvalidateTiltNodes(){
+  mascotTiltInnerEl = null;
+  mascotShadowEl = null;
+}
 function mascotApplyTilt(rotX, rotY, scale, shadowX, shadowScale, shadowOpacity){
-  const inner = document.querySelector('#mascotAvatarBtn .mascot-tilt-inner');
+  if(mascotTiltInnerEl === null){
+    mascotTiltInnerEl = document.querySelector('#mascotAvatarBtn .mascot-tilt-inner');
+    if(mascotTiltInnerEl) mascotShadowEl = document.getElementById('mascotGroundShadow');
+  }
+  const inner = mascotTiltInnerEl;
   if(inner) inner.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${scale})`;
-  const shadow = document.getElementById('mascotGroundShadow');
+  const shadow = mascotShadowEl;
   if(shadow){
     shadow.style.transform = `translateX(calc(-50% + ${shadowX}px)) scale(${shadowScale})`;
     shadow.style.opacity = shadowOpacity;

@@ -267,6 +267,7 @@ function priorityLinkedLectureIds(){
   ppEnsure();
   const ids = new Set();
   Object.values(data.priorityPlanner.byDate).forEach(arr=>{
+    if(!Array.isArray(arr)) return; // corrupt-import guard
     arr.forEach(i=>{ if(i.link) ids.add(i.link.lectureId); });
   });
   return ids;
@@ -1717,7 +1718,7 @@ function mslManageRowHtml(id, name, iconHtml, cnt, isUnsorted){
   return `<div class="manage-row">
     <div class="manage-row-icon">${isUnsorted ? '<span style="font-size:18px;">📂</span>' : iconHtml}</div>
     <div class="manage-row-name"><strong>${escapeHtml(name)}</strong><small>${cnt} subject${cnt===1?'':'s'}</small></div>
-    <button class="manage-rename" type="button" title="Rename ${escapeAttr(name)}" onclick="mslManageRename('${escapeAttr(id)}')">✎ <span>Rename</span></button>
+    <button class="manage-rename" type="button" title="Rename ${escapeAttr(name)}" onclick="mslManageRename(${jsq(id)})">✎ <span>Rename</span></button>
   </div>`;
 }
 function mslApplySearch(q){
@@ -1907,7 +1908,7 @@ function fdSubjectCardHtml(s, i){
   const style = `--accent:${acc.color}; --accent-rgb:${rgb}; --glass-accent:${rgb}; --accent-soft:rgba(${rgb},.10); --accent-glow:rgba(${rgb},.20); --accent-tint:rgba(${rgb},.055); --accent-border:rgba(${rgb},.22); --accent-gradient:linear-gradient(135deg,${acc.color},${acc.color}99); animation-delay:${i*0.08}s;`;
   const tagStyle = `background:${acc.color}22; color:${acc.color};`;
   return `
-    <div class="subject-card glass tilt" style="${style}" data-id="${escapeAttr(s.id)}" onclick="fdOpenSubject('${escapeAttr(s.id)}')" role="button" tabindex="0" aria-label="Open ${escapeAttr(s.name)}">
+    <div class="subject-card glass tilt" style="${style}" data-id="${escapeAttr(s.id)}" onclick="fdOpenSubject(${jsq(s.id)})" role="button" tabindex="0" aria-label="Open ${escapeAttr(s.name)}">
       <div class="subject-thumb" style="background:${acc.grad};"></div>
       <div class="subject-body">
         <span class="subject-tag" style="${tagStyle}">${escapeHtml(fdBadgeFor(s))}</span>
@@ -1927,8 +1928,8 @@ function fdSubjectCardHtml(s, i){
       </div>
       <div class="subject-go ripple-host" style="color:${acc.color};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
       <div class="fd-subject-actions">
-        <button type="button" title="Rename subject" aria-label="Rename ${escapeAttr(s.name)}" onclick="event.stopPropagation(); fdRenameSubject('${escapeAttr(s.id)}')">✎</button>
-        <button type="button" class="fd-del-btn" title="Delete subject" aria-label="Delete ${escapeAttr(s.name)}" onclick="event.stopPropagation(); fdDeleteSubject('${escapeAttr(s.id)}')">🗑</button>
+        <button type="button" title="Rename subject" aria-label="Rename ${escapeAttr(s.name)}" onclick="event.stopPropagation(); fdRenameSubject(${jsq(s.id)})">✎</button>
+        <button type="button" class="fd-del-btn" title="Delete subject" aria-label="Delete ${escapeAttr(s.name)}" onclick="event.stopPropagation(); fdDeleteSubject(${jsq(s.id)})">🗑</button>
       </div>
     </div>`;
 }
@@ -2141,8 +2142,8 @@ function fdRenderManage(){
         <span class="fd-manage-meta">${c.done}/${c.total} lectures · ${pct}% done</span>
       </div>
       <div class="fd-manage-actions">
-        <button type="button" class="fd-manage-act" title="Rename subject" onclick="fdManageRename('${escapeAttr(s.id)}')">✎ Rename</button>
-        <button type="button" class="fd-manage-act fd-manage-act-del" title="Delete subject" onclick="fdManageDelete('${escapeAttr(s.id)}')">🗑 Delete</button>
+        <button type="button" class="fd-manage-act" title="Rename subject" onclick="fdManageRename(${jsq(s.id)})">✎ Rename</button>
+        <button type="button" class="fd-manage-act fd-manage-act-del" title="Delete subject" onclick="fdManageDelete(${jsq(s.id)})">🗑 Delete</button>
       </div>
     </div>`;
   }).join('');

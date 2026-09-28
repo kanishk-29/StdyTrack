@@ -57,15 +57,6 @@ body{
   -webkit-backdrop-filter:blur(20px);
   box-shadow:var(--neo-shadow);
 }
-
-/* ---- STARTING PART: scorecard header ---- */
-.scorecard{
-  background:
-    radial-gradient(circle at 78% 16%,rgba(129,108,241,.16),transparent 25%),
-    linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.32));
-  border:1px solid var(--neo-line);
-  box-shadow:var(--neo-shadow);
-}
 .scorecard h1,
 .page-title{
   font-family:Georgia,"Times New Roman",serif;
@@ -76,17 +67,6 @@ body{
   background:linear-gradient(180deg,#497ecf,#8a5ce5,#27c967,#4a8b69);
   background-size:100% 320%;
 }
-
-/* ---- ONGOING SUBJECT: gradient-topped glass cards ---- */
-.dash-course-card{
-  border:1px solid var(--neo-line);
-  border-radius:22px;
-  background:linear-gradient(135deg,rgba(255,255,255,.60),rgba(255,255,255,.32));
-  box-shadow:var(--neo-shadow-soft);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-}
-.dash-course-card:hover{ box-shadow:var(--neo-shadow); }
 /* Thumb keeps each subject's own color gradient (JS sets it inline via
    dashboard.js), matching the design file's per-color subject tops. */
 .dash-course-thumb-label{ color:#fff; font-weight:800; }
@@ -95,42 +75,12 @@ body{
   color:#fff;
   border-radius:999px;
 }
-.dash-course-progress-track{
-  border-radius:999px;
-  background:rgba(122,105,170,.12);
-  box-shadow:inset 1px 1px 3px rgba(90,100,115,.18), inset -1px -1px 2px rgba(255,255,255,.6);
-}
-.dash-course-progress-fill{ border-radius:999px; }
-
-/* ---- QUICK TILES: neumorphic pills ---- */
-.dash-quick-tile{
-  border:1px solid var(--neo-line);
-  border-radius:18px;
-  background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.30));
-  box-shadow:var(--neo-shadow-soft);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-}
 .dash-quick-tile:hover{ box-shadow:var(--neo-shadow); transform:translateY(-1px); }
-
-/* ---- PRIORITY / DEADLINES / REVISION ---- */
-.dash-priority-row{
-  border-radius:16px;
-  box-shadow:0 10px 20px rgba(180,60,60,.22);
-}
 .dash-deadline-row,.revision-item{
   border:1px solid var(--neo-line);
   background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.30));
   border-radius:16px;
   box-shadow:var(--neo-shadow-soft);
-}
-
-/* ---- TODAY total / streak ---- */
-.today-total{
-  background:linear-gradient(135deg,#25865f,#22c7d6);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
 }
 
 /* ---- NAV PILLS (view switcher / chips) ---- */

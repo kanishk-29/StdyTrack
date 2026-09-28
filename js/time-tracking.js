@@ -69,12 +69,31 @@ function appWeekStart(){
   }catch(e){ return 0; }
 }
 // Y/M/D (and wall-clock H/M) of an instant in the selected country.
+// The formatter is memoised per time zone: constructing an Intl.DateTimeFormat
+// is expensive (~50-100x a formatToParts call) and zonedParts() runs inside
+// 365-iteration streak loops and once per calendar cell, so rebuilding it every
+// call was the single hottest allocation in the dashboard render path.
+const _zonedFmtCache = new Map();
+function zonedFormatter(tz){
+  let f = _zonedFmtCache.get(tz);
+  if(f === undefined){
+    try{
+      f = new Intl.DateTimeFormat('en-CA',{ timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false });
+    }catch(e){
+      f = null; // unsupported zone - never retried, callers fall back to local time
+    }
+    _zonedFmtCache.set(tz, f);
+  }
+  return f;
+}
 function zonedParts(date){
   const d = date || new Date();
   const tz = appTimeZone();
   if(!tz) return { y:d.getFullYear(), m:d.getMonth()+1, day:d.getDate(), h:d.getHours(), min:d.getMinutes() };
+  const fmt = zonedFormatter(tz);
+  if(!fmt) return { y:d.getFullYear(), m:d.getMonth()+1, day:d.getDate(), h:d.getHours(), min:d.getMinutes() };
   try{
-    const parts = new Intl.DateTimeFormat('en-CA',{ timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false }).formatToParts(d);
+    const parts = fmt.formatToParts(d);
     const g = t => { const p = parts.find(x=>x.type===t); return p ? Number(p.value) : 0; };
     let h = g('hour'); if(h === 24) h = 0; // en-CA can emit 24:xx at midnight
     return { y:g('year'), m:g('month'), day:g('day'), h, min:g('minute') };

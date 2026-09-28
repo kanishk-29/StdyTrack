@@ -31,7 +31,7 @@
     box-shadow:var(--glass-shadow-deep);
     animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);
     --modal-accent: var(--amber);
-    --modal-accent-soft: var(--amber-soft, #fbf1de);
+    --modal-accent-soft: var(--amber-soft);
     position:relative;
     overflow:hidden;
     /* Tall modals (settings is the tallest) must stay reachable on short

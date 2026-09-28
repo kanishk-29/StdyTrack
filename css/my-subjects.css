@@ -385,7 +385,6 @@
 }
 #subjectsLanding .folder:hover .folder-icon{ transform:translateY(-2px) rotate(-1deg); box-shadow:0 15px 27px rgba(75,55,35,.14), inset 1px 1px 4px rgba(255,255,255,.35); }
 #subjectsLanding .folder-icon{ transition:transform .3s cubic-bezier(.2,.75,.25,1), box-shadow .3s ease; }
-#subjectsLanding .inherited{ }
 
 /* performance hardening + supports fallback */
 @supports not ((backdrop-filter:blur(1px))){

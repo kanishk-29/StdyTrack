@@ -113,8 +113,6 @@
     font-family:'JetBrains Mono',monospace; font-size:10.5px;
     color:var(--ink-faint); margin-top:2px;
   }
-
-  .dash-block{ margin-bottom:24px; }
   .dash-block-header{
     display:flex; align-items:center; justify-content:space-between;
     margin-bottom:12px;
@@ -197,7 +195,6 @@
     color:var(--ink);
     white-space:nowrap;
   }
-  .dash-course-edit-menu button:hover{ background:var(--paper-line); }
   .dash-course-edit-menu button.danger{ color:var(--pencil); }
   .dash-course-edit-menu button.danger:hover{ background:#fbeee2; }
   .dash-course-pct{
@@ -215,7 +212,6 @@
     font-size:10px; font-weight:700; letter-spacing:0.5px;
     text-transform:uppercase;
   }
-  .dash-course-body{ padding:12px 14px 14px; }
   .dash-course-name{
     font-family:'Neuton',serif; font-weight:700; font-size:15px;
     color:var(--ink); margin-bottom:2px;

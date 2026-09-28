@@ -420,7 +420,7 @@ function renderHabitsPage(){
   chartWrap.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
       ${gridHtml}
-      <path d="${areaPath}" fill="rgba(47,143,138,0.15)"/>
+      <path class="habit-chart-area" d="${areaPath}"/>
       <path class="habit-chart-line" d="${linePath}"/>
       ${dots}
       ${dayLabels}

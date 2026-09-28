@@ -87,33 +87,33 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="StudyTracker">
 <link rel="stylesheet" href="css/fonts.css">
-<link rel="stylesheet" href="css/base.css?v=99">
-<link rel="stylesheet" href="css/liquid-glass.css?v=99">
-<link rel="stylesheet" href="css/neumorphic-glass.css?v=99">
-<link rel="stylesheet" href="css/habit-tracker.css?v=99">
-<link rel="stylesheet" href="css/header-search.css?v=99">
-<link rel="stylesheet" href="css/today-calendar.css?v=99">
-<link rel="stylesheet" href="css/calendar-popover.css?v=99">
-<link rel="stylesheet" href="css/timer.css?v=99">
-<link rel="stylesheet" href="css/sidebar.css?v=99">
-<link rel="stylesheet" href="css/my-subjects.css?v=99">
-  <link rel="stylesheet" href="css/folder-dashboard.css?v=99">
-<link rel="stylesheet" href="css/subject-detail.css?v=99">
-<link rel="stylesheet" href="css/exam-pacing.css?v=99">
-<link rel="stylesheet" href="css/tooltip-footer.css?v=99">
-<link rel="stylesheet" href="css/modal.css?v=99">
-<link rel="stylesheet" href="css/today-planner.css?v=99">
-<link rel="stylesheet" href="css/today-aura.css?v=99">
-<link rel="stylesheet" href="css/lecture-notes.css?v=99">
-<link rel="stylesheet" href="css/analytics.css?v=99">
-<link rel="stylesheet" href="css/focus-mode.css?v=107">
-<link rel="stylesheet" href="css/login.css?v=99">
-<link rel="stylesheet" href="css/mascot.css?v=99">
-<link rel="stylesheet" href="css/dark-mode.css?v=99">
-<link rel="stylesheet" href="css/dashboard-redesign.css?v=99">
-<link rel="stylesheet" href="css/ultra-dark.css?v=99">
-<link rel="stylesheet" href="css/a11y.css?v=99">
-<link rel="stylesheet" href="css/back-nav.css?v=99">
+<link rel="stylesheet" href="css/base.css?v=115">
+<link rel="stylesheet" href="css/liquid-glass.css?v=115">
+<link rel="stylesheet" href="css/neumorphic-glass.css?v=115">
+<link rel="stylesheet" href="css/habit-tracker.css?v=115">
+<link rel="stylesheet" href="css/header-search.css?v=115">
+<link rel="stylesheet" href="css/today-calendar.css?v=115">
+<link rel="stylesheet" href="css/calendar-popover.css?v=115">
+<link rel="stylesheet" href="css/timer.css?v=115">
+<link rel="stylesheet" href="css/sidebar.css?v=115">
+<link rel="stylesheet" href="css/my-subjects.css?v=115">
+  <link rel="stylesheet" href="css/folder-dashboard.css?v=115">
+<link rel="stylesheet" href="css/subject-detail.css?v=115">
+<link rel="stylesheet" href="css/exam-pacing.css?v=115">
+<link rel="stylesheet" href="css/tooltip-footer.css?v=115">
+<link rel="stylesheet" href="css/modal.css?v=115">
+<link rel="stylesheet" href="css/today-planner.css?v=115">
+<link rel="stylesheet" href="css/today-aura.css?v=115">
+<link rel="stylesheet" href="css/lecture-notes.css?v=115">
+<link rel="stylesheet" href="css/analytics.css?v=115">
+<link rel="stylesheet" href="css/focus-mode.css?v=115">
+<link rel="stylesheet" href="css/login.css?v=115">
+<link rel="stylesheet" href="css/mascot.css?v=115">
+<link rel="stylesheet" href="css/dark-mode.css?v=115">
+<link rel="stylesheet" href="css/dashboard-redesign.css?v=115">
+<link rel="stylesheet" href="css/ultra-dark.css?v=115">
+<link rel="stylesheet" href="css/a11y.css?v=115">
+<link rel="stylesheet" href="css/back-nav.css?v=115">
 </head>
 <body>
 
@@ -149,7 +149,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <div class="login-stage" id="loginStage">
     <header class="login-header">
       <div class="login-logo">
-        <img class="login-logo-icon" src="./assets/stdytrackimg.png" alt="Study Tracker logo" draggable="false">
+        <img class="login-logo-icon" src="./assets/stdytrackimg-132.webp" width="44" height="44" alt="Study Tracker logo" draggable="false" decoding="async">
         <div>
           <div class="login-logo-title">Study Tracker</div>
           <div class="login-logo-sub">Organize. Focus. Achieve.</div>
@@ -164,7 +164,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
         <div class="login-glass-sheen" aria-hidden="true"></div>
         <div class="login-top">
           <div class="login-avatar">
-            <img class="avatar login-mascot" id="loginMascotImg" src="rei-avatar-512.png" alt="Rei" draggable="false">
+            <img class="avatar login-mascot" id="loginMascotImg" src="rei-avatar-288.webp" width="92" height="92" alt="Rei" draggable="false" decoding="async">
           </div>
           <div class="login-welcome-kicker"><span class="login-eyebrow-dot"></span>Access Checkpoint</div>
         </div>
@@ -237,7 +237,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 <div class="app">
   <div class="storage-banner" id="storageBanner" style="display:none">
     <span class="storage-banner-text">📱 Running standalone on this device — your data saves locally in the browser. For extra safety, tap <b>⬇ Backup</b> now and then to download a copy.</span>
-    <button class="storage-banner-close" onclick="dismissStorageBanner()">✕</button>
+    <button class="storage-banner-close" onclick="dismissStorageBanner()" title="Dismiss" aria-label="Dismiss notification">✕</button>
   </div>
   <div class="view-switcher">
     <button class="view-btn active" id="viewStudyBtn" onclick="showView('study')">📚 Study Tracker</button>
@@ -294,7 +294,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <div class="activity-label">TODAY</div>
       <div class="today-time-wrap">
         <div class="today-time" id="todayTotal">0m</div>
-        <button type="button" class="live-study-control" id="liveStudyToggle" onclick="toggleGlobalStudyTimer()">
+        <button type="button" class="live-study-control" id="liveStudyToggle" aria-pressed="false" onclick="toggleGlobalStudyTimer()">
           <span class="live-study-dot-ui"></span>
           <span id="liveStudyLabel">Start studying</span>
         </button>
@@ -304,13 +304,13 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <div class="topic-strip" id="todaySubjects"></div>
       <div class="activity-copy today-yesterday" id="yesterdayLine"></div>
 
-      <div class="study-calendar-glass contribution-calendar" id="calTerminal" aria-label="Study contribution calendar">
+      <div class="study-calendar-glass contribution-calendar" id="calTerminal" role="group" aria-label="Study contribution calendar">
         <div class="month-calendar-shell">
-          <div class="month-calendar-viewport" id="studyMonthViewport" tabindex="0" aria-label="Scrollable monthly study calendar">
+          <div class="month-calendar-viewport" id="studyMonthViewport" tabindex="0" role="group" aria-label="Scrollable monthly study calendar">
             <div class="month-calendar-track" id="studyMonthTrack"></div>
           </div>
           <div class="month-calendar-footer">
-            <div class="month-calendar-nav" aria-label="Calendar month navigation"><button type="button" class="month-nav-btn" id="studyMonthPrev" aria-label="Previous month">← <span>Previous</span></button><button type="button" class="month-nav-btn" id="studyMonthNext" aria-label="Next month"><span>Next</span> →</button></div>
+            <div class="month-calendar-nav" role="group" aria-label="Calendar month navigation"><button type="button" class="month-nav-btn" id="studyMonthPrev" aria-label="Previous month">← <span>Previous</span></button><button type="button" class="month-nav-btn" id="studyMonthNext" aria-label="Next month"><span>Next</span> →</button></div>
             <div class="month-legend">
               <span>Less</span>
               <i class="month-legend-cell none"></i>
@@ -365,7 +365,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
     <aside class="sidebar subjects-drawer" id="sidebar">
       <div class="drawer-header">
         <span class="eyebrow">MY SUBJECTS</span>
-        <button class="slide-close" onclick="closeSubjectsDrawer()">✕</button>
+        <button class="slide-close" onclick="closeSubjectsDrawer()" title="Close subjects" aria-label="Close subjects">✕</button>
       </div>
       <div class="drawer-body" id="sidebarList"></div>
     </aside>
@@ -377,9 +377,9 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
 
   <div id="habitsView" class="view-page hidden">
     <div class="habit-shell">
-      <section class="habit-card">
+      <section class="habit-card habit-hero">
         <div class="habit-header">
-          <div>
+          <div class="habit-head-text">
             <span class="eyebrow">DAILY HABITS</span>
             <h2 class="habit-title">Gym & Reading Tracker</h2>
             <div class="habit-subtitle">Mark each day as you go and keep your streak alive.</div>
@@ -413,7 +413,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <section class="habit-card">
         <div class="habit-chart-wrap" id="habitChartWrap"></div>
         <div class="habit-legend">
-          <span><i style="background:var(--teal);"></i> Consistency</span>
+          <span><i></i> Consistency</span>
         </div>
       </section>
     </div>
@@ -435,11 +435,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <div class="modal">
     <h3 id="subjectModalTitle">New Subject</h3>
     <div class="field">
-      <label>SUBJECT NAME</label>
+      <label for="subjectNameInput">SUBJECT NAME</label>
       <input type="text" id="subjectNameInput" placeholder="e.g. Database Management System">
     </div>
     <div class="field">
-      <label>FOLDER</label>
+      <label for="subjectFolderInput">FOLDER</label>
       <select id="subjectFolderInput" onchange="if(this.value==='__new__') promptNewFolder(this)"></select>
     </div>
     <div class="modal-actions">
@@ -460,7 +460,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
     </div>
     <div class="field">
-      <label>🏷️ Unit name</label>
+      <label for="unitNameInput">🏷️ Unit name</label>
       <input type="text" id="unitNameInput" placeholder="e.g. Unit 3 - Normalization">
     </div>
     <div class="modal-actions">
@@ -482,11 +482,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
     </div>
     <div class="field">
-      <label>📌 Lecture title</label>
+      <label for="lectureTitleInput">📌 Lecture title</label>
       <input type="text" id="lectureTitleInput" placeholder="e.g. L1 - Introduction to ER Model">
     </div>
     <div class="field">
-      <label>🔗 Link (video / resource)</label>
+      <label for="lectureLinkInput">🔗 Link (video / resource)</label>
       <input type="text" id="lectureLinkInput" placeholder="https://..." oninput="updateLinkPreview()">
       <div class="link-preview" id="linkPreview">
         <img id="linkPreviewImg" src="" alt="" onerror="this.style.display='none'">
@@ -495,11 +495,11 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
     </div>
     <div class="field">
-      <label>📝 Notes</label>
+      <label for="lectureNotesInput">📝 Notes</label>
       <textarea id="lectureNotesInput" placeholder="Anything to remember about this lecture..."></textarea>
     </div>
     <div class="field" id="lectureTimeField" style="display:none">
-      <label>⏱ Time logged</label>
+      <label for="lectureHoursInput">⏱ Time logged</label>
       <div class="time-edit-row">
         <div class="time-edit-input">
           <input type="number" id="lectureHoursInput" min="0" max="999" placeholder="0">
@@ -530,23 +530,23 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
     </div>
     <div class="field">
-      <label>🏷️ Test name (optional)</label>
+      <label for="testNameInput">🏷️ Test name (optional)</label>
       <input type="text" id="testNameInput" placeholder="e.g. Unit Test 1">
     </div>
     <div class="field-row">
       <div class="field">
-        <label>✅ Marks obtained</label>
+        <label for="testObtainedInput">✅ Marks obtained</label>
         <input type="number" id="testObtainedInput" placeholder="45" oninput="updateScorePreview()">
       </div>
       <span class="field-row-divider">/</span>
       <div class="field">
-        <label>🎯 Total marks</label>
+        <label for="testTotalInput">🎯 Total marks</label>
         <input type="number" id="testTotalInput" placeholder="50" oninput="updateScorePreview()">
       </div>
     </div>
     <div class="score-preview empty" id="scorePreview">Enter your marks to see the score</div>
     <div class="field" style="margin-top:15px;">
-      <label>📋 Questions asked (optional — for revision)</label>
+      <label for="testQuestionsInput">📋 Questions asked (optional — for revision)</label>
       <textarea id="testQuestionsInput" placeholder="Paste or type the questions from this test, one per line..." style="min-height:90px;"></textarea>
     </div>
     <div class="modal-actions">
@@ -579,7 +579,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       </div>
     </div>
     <div class="field">
-      <label>📋 One lecture per line — optionally add a link after a "|"</label>
+      <label for="bulkInput">📋 One lecture per line — optionally add a link after a "|"</label>
       <textarea id="bulkInput" style="min-height:160px;" placeholder="L1 - Introduction | https://youtube.com/watch?v=...
 L2 - ER Model
 L3 - Normalization | https://youtu.be/..."></textarea>
@@ -593,7 +593,7 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 
 <!-- Settings Modal -->
 <div class="slide-overlay" id="settingsOverlay">
-  <div class="slide-panel settings-drawer" aria-label="Settings">
+  <div class="slide-panel settings-drawer" role="group" aria-label="Settings">
     <button type="button" class="slide-close settings-drawer-close" onclick="closeModal('settingsOverlay')" title="Close settings">✕</button>
     <div class="modal-icon-header">
       <div class="modal-icon-badge">⚙️</div>
@@ -610,7 +610,7 @@ L3 - Normalization | https://youtu.be/..."></textarea>
       </p>
       <div class="field-row" style="align-items:flex-end;">
         <div class="field" style="flex:1; margin-bottom:0;">
-          <label>Your name</label>
+          <label for="settingsNameInput">Your name</label>
           <input type="text" id="settingsNameInput" placeholder="e.g. Alex">
         </div>
         <button type="button" class="btn primary" onclick="settingsSaveName()">Save</button>
@@ -635,11 +635,11 @@ L3 - Normalization | https://youtu.be/..."></textarea>
         Today, streaks, the calendar, and reminders follow this country's date &amp; time — handy when your device clock is set to a different region.
       </p>
       <div class="field">
-        <label>🌐 Country</label>
+        <label for="settingsCountrySelect">🌐 Country</label>
         <select id="settingsCountrySelect" onchange="settingsSetTimeZone(this.value)"></select>
       </div>
       <div class="field">
-        <label>📅 Week starts on</label>
+        <label for="settingsWeekStartSelect">📅 Week starts on</label>
         <select id="settingsWeekStartSelect" onchange="settingsSetWeekStart(this.value)">
           <option value="0">Sunday</option>
           <option value="1">Monday</option>
@@ -655,15 +655,15 @@ L3 - Normalization | https://youtu.be/..."></textarea>
       </p>
 
       <div class="field">
-        <label>📚 Subject</label>
+        <label for="settingsSubjectSelect">📚 Subject</label>
         <select id="settingsSubjectSelect" onchange="settingsPopulateUnits()"></select>
       </div>
       <div class="field">
-        <label>📁 Unit</label>
+        <label for="settingsUnitSelect">📁 Unit</label>
         <select id="settingsUnitSelect" onchange="settingsPopulateLectures()"></select>
       </div>
       <div class="field">
-        <label>🎬 Lecture</label>
+        <label for="settingsLectureSelect">🎬 Lecture</label>
         <select id="settingsLectureSelect" onchange="settingsSelectLecture()"></select>
       </div>
 
@@ -671,12 +671,12 @@ L3 - Normalization | https://youtu.be/..."></textarea>
         <div id="settingsTimeEditor">
           <div class="field-row">
             <div class="field">
-              <label>Hours</label>
+              <label for="settingsTimeHoursInput">Hours</label>
               <input type="number" id="settingsTimeHoursInput" min="0" placeholder="0">
             </div>
             <span class="field-row-divider" style="font-size:12px;">h</span>
             <div class="field">
-              <label>Minutes</label>
+              <label for="settingsTimeMinutesInput">Minutes</label>
               <input type="number" id="settingsTimeMinutesInput" min="0" max="59" placeholder="0">
             </div>
             <span class="field-row-divider" style="font-size:12px;">m</span>
@@ -710,7 +710,7 @@ L3 - Normalization | https://youtu.be/..."></textarea>
       </p>
       <div class="field-row" style="align-items:flex-end;">
         <div class="field" style="flex:1; margin-bottom:0;">
-          <label>Email</label>
+          <label for="settingsAccountEmail">Email</label>
           <input type="text" id="settingsAccountEmail" readonly style="width:100%; color:var(--ink-soft, #666);">
         </div>
         <button type="button" class="btn" onclick="signOutAndShowLogin()">Sign out</button>
@@ -728,7 +728,7 @@ L3 - Normalization | https://youtu.be/..."></textarea>
   <div class="modal">
     <h3>Exam Date</h3>
     <div class="field">
-      <label>EXAM DATE FOR THIS SUBJECT</label>
+      <label for="examDateInput">EXAM DATE FOR THIS SUBJECT</label>
       <input type="date" id="examDateInput">
     </div>
     <div class="modal-actions">
@@ -751,7 +751,7 @@ L3 - Normalization | https://youtu.be/..."></textarea>
         </div>
       </div>
       <div class="ac-header-actions">
-        <button class="slide-close" onclick="closeProgressSlide()">✕</button>
+        <button class="slide-close" onclick="closeProgressSlide()" title="Close" aria-label="Close progress report">✕</button>
       </div>
     </div>
 
@@ -920,7 +920,7 @@ L3 - Normalization | https://youtu.be/..."></textarea>
       <button type="button" onclick="notesFindNav(1)" title="Next (Enter)">↓</button>
       <button type="button" class="notes-find-close" onclick="notesToggleFind(true)" title="Close (Esc)">✕</button>
     </div>
-    <div class="notes-editor" id="notesEditor" contenteditable="true"
+    <div class="notes-editor" id="notesEditor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Lecture notes"
          placeholder="Paste or type your notes here — bold, underline, highlight and colors all work."
          onpaste="handleNotesPaste(event)" oninput="handleNotesInput()"
          onmouseup="notesSaveSelection()" onkeyup="notesSaveSelection()"
@@ -970,32 +970,32 @@ L3 - Normalization | https://youtu.be/..."></textarea>
 
 <button type="button" id="navBackBtn" onclick="navBack()" aria-label="Go back" title="Go back">←</button>
 
-<script src="js/data.js?v=99"></script>
-<script src="js/demo.js?v=99"></script>
-<script src="js/today-and-folders.js?v=99"></script>
-<script src="js/today-redesign.js?v=99"></script>
+<script src="js/data.js?v=115"></script>
+<script src="js/demo.js?v=115"></script>
+<script src="js/today-and-folders.js?v=115"></script>
+<script src="js/today-redesign.js?v=115"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="js/cloud-sync.js?v=99"></script>
-<script type="module" src="js/rei-gemini.js?v=99"></script>
-<script src="js/storage.js?v=99"></script>
-<script src="js/settings.js?v=99"></script>
-<script src="js/time-tracking.js?v=99"></script>
-<script src="js/exam-scores.js?v=99"></script>
-<script src="js/render.js?v=99"></script>
-<script src="js/dashboard.js?v=99"></script>
-<script src="js/calendar.js?v=99"></script>
-<script src="js/tooltip.js?v=99"></script>
-<script src="js/lecture-notes.js?v=111"></script>
-<script src="js/actions.js?v=99"></script>
-<script src="js/test-score-actions.js?v=99"></script>
-<script src="js/modals.js?v=104"></script>
-<script src="js/exam-date.js?v=99"></script>
-<script src="js/init.js?v=99"></script>
-<script src="js/mascot.js?v=99"></script>
-<script src="js/login.js?v=99"></script>
-<script src="js/back-nav.js?v=99"></script>
+<script src="js/cloud-sync.js?v=115"></script>
+<script type="module" src="js/rei-gemini.js?v=115"></script>
+<script src="js/storage.js?v=115"></script>
+<script src="js/settings.js?v=115"></script>
+<script src="js/time-tracking.js?v=115"></script>
+<script src="js/exam-scores.js?v=115"></script>
+<script src="js/render.js?v=115"></script>
+<script src="js/dashboard.js?v=115"></script>
+<script src="js/calendar.js?v=115"></script>
+<script src="js/tooltip.js?v=115"></script>
+<script src="js/lecture-notes.js?v=115"></script>
+<script src="js/actions.js?v=115"></script>
+<script src="js/test-score-actions.js?v=115"></script>
+<script src="js/modals.js?v=115"></script>
+<script src="js/exam-date.js?v=115"></script>
+<script src="js/init.js?v=115"></script>
+<script src="js/mascot.js?v=115"></script>
+<script src="js/login.js?v=115"></script>
+<script src="js/back-nav.js?v=115"></script>
 <script>
 // Micro-interactions: press states on quick tiles and course cards
 document.querySelectorAll('.dash-quick-tile, .dash-course-card, .dash-resume-btn').forEach(function(el){

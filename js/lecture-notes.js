@@ -7,6 +7,7 @@
 let notesEditorTarget = null;
 let notesSavedRange = null;
 let notesAutosaveTimer = null;
+let notesStatTimer = null;
 // ---- Multi-page notes ----
 // One lecture can hold many pages, each its own rich-text editor. We keep a
 // single live #notesEditor DOM element and swap its content on page change.
@@ -115,6 +116,8 @@ function notesCurrentHtml(){
 }
 function notesSyncCurrent(){
   notesPages[notesCurrentPage] = notesCurrentHtml();
+  // The active page's text just changed, so its memoised counts are stale.
+  if(notesPageStats) notesPageStats[notesCurrentPage] = null;
 }
 function notesRenderPageBar(){
   const bar = document.getElementById('notesPageBar');
@@ -361,7 +364,11 @@ function handleNotesInput(){
   }
   clearTimeout(notesAutosaveTimer);
   notesAutosaveTimer = setTimeout(()=> saveNotesEditor(true), 1200);
-  updateNotesStat();
+  // The stat still has to re-read and re-parse the page being edited, so it is
+  // coalesced rather than run on every keystroke — the number settles ~200ms
+  // after you stop typing instead of once per character.
+  clearTimeout(notesStatTimer);
+  notesStatTimer = setTimeout(updateNotesStat, 200);
 }
 // Clipboard content (e.g. copied from a book/PDF/webpage) can carry scripts,
 // event handlers, and styling we don't want persisted — strip it down to a
@@ -447,24 +454,37 @@ function sanitizeNotesPasteHtml(html){
 
 // ---------------- EXTRA NOTE FEATURES ----------------
 // Live word/char/reading-time stat, aggregated across the whole multi-page note.
-function notesAllPagesText(){
-  const parts = [];
-  notesPages.forEach((p, i) => {
-    // Build a temp node to read plain text from each page's HTML so the total
-    // stays correct without loading each page into the live editor.
-    const tmp = document.createElement('div');
-    tmp.innerHTML = p || '';
-    parts.push((tmp.innerText || ''));
-  });
-  return parts.join(' ');
+//
+// Reading a page's plain text means parsing its HTML into a detached node, which
+// is far too expensive to redo for every page on every keystroke. The counts are
+// memoised per page and only the page being edited is ever recomputed, because
+// notesSyncCurrent() is the single point where a page's HTML changes.
+let notesPageStats = null;
+function notesStatsForPage(i){
+  if(!notesPageStats || notesPageStats.length !== notesPages.length) notesPageStats = new Array(notesPages.length).fill(null);
+  let s = notesPageStats[i];
+  if(s) return s;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = notesPages[i] || '';
+  const text = tmp.innerText || '';
+  const trimmed = text.trim();
+  s = { chars: text.length, words: trimmed ? trimmed.split(/\s+/).length : 0 };
+  notesPageStats[i] = s;
+  return s;
 }
 function updateNotesStat(){
   const stat = document.getElementById('notesStat');
   if(!stat) return;
   notesSyncCurrent();
-  const text = notesAllPagesText();
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const chars = text.length;
+  let words = 0, chars = 0;
+  for(let i=0;i<notesPages.length;i++){
+    const s = notesStatsForPage(i);
+    words += s.words;
+    chars += s.chars;
+  }
+  // The total used to be measured on the pages joined with a single space, so
+  // keep the separator cost in the character count to stay byte-identical.
+  if(notesPages.length > 1) chars += (notesPages.length - 1);
   const mins = words ? Math.max(1, Math.ceil(words / 200)) : 0;
   const pages = Math.max(1, notesPages.length);
   stat.textContent = pages + ' page' + (pages===1?'':'s') + ' · ' + words + ' words · ' + chars.toLocaleString() + ' chars · ~' + mins + ' min read';
