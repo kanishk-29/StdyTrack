@@ -311,6 +311,16 @@ function sanitizeBackup(d){
           if(!l.notesPages.length) delete l.notesPages;
         }
         l.link = safeHref(l.link);
+        // An imported backup must not resurrect a live timer. `timerStart` is a
+        // wall-clock stamp whose pause we cannot know, and restoring it while
+        // runningRef is null would both credit the gap as study time and hide
+        // the time editor behind a Stop button that early-returns. Restore the
+        // lecture as stopped. `seconds` is coerced because a hand-edited backup
+        // can carry a string, and ("5" + 3) concatenates to "53".
+        l.timerStart = null;
+        const lsec = typeof l.seconds === 'number' ? l.seconds : parseFloat(l.seconds);
+        l.seconds = (isFinite(lsec) && lsec > 0) ? Math.floor(lsec) : 0;
+        l.completed = !!l.completed;
       });
       if(!Array.isArray(u.tests)) u.tests = [];
       u.tests.forEach(t=>{

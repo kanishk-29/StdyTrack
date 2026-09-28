@@ -1267,7 +1267,7 @@ function renderUsernameDisplay(){
 async function startApp(){
   await loadData();
   if(data.subjects.length) activeSubjectId = data.subjects[0].id;
-  runningRef = findRunningLecture();
+  runningRef = adoptRunningLecture(); // restamps the clock — see adoptRunningLecture()
   showView(currentView);
   try{ mascotMinimized = localStorage.getItem('studyMascotMinimized') === '1'; }catch(e){}
   mascotLastInteraction = Date.now(); // start the ignore-timer fresh on page load, not mid-ignore

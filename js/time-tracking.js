@@ -24,6 +24,30 @@ function findRunningLecture(){
   return null;
 }
 
+// Adopt a timer left running when the tab closed, and restart its clock.
+//
+// findRunningLecture() on its own is not enough. The persisted stamp predates
+// the close, and everything downstream measures against it: liveLectureSeconds()
+// adds (now - stamp) to the lecture, and the first checkpoint() after resume
+// banks that same gap into BOTH l.seconds and today's data.dailyLog. So a
+// laptop closed overnight would credit ~8h of "study" to the lecture the user
+// fell asleep on — shown live in every total, then made permanent 30s later.
+// Hitting Stop does the same thing deliberately, turning a display glitch into
+// baked-in corruption that no later reload can undo.
+//
+// Time with the app closed was never study time. checkpoint() already banked
+// everything up to the moment of the close, and the close instant is not
+// recorded, so the uncommitted remainder and the away time are inseparable.
+// Dropping the whole gap is the only honest reading: at most one <30s
+// checkpoint interval is lost, and no phantom hours are ever invented.
+function adoptRunningLecture(){
+  const ref = findRunningLecture();
+  if(!ref) return null;
+  const l = getLecture(ref.subjectId, ref.unitId, ref.lectureId);
+  if(l) l.timerStart = Date.now();
+  return ref;
+}
+
 // ---- App country / timezone (Settings → Country & time) ----
 // The whole app keys "today" off this: calendar highlight, streaks,
 // planner today/tomorrow, habits, and analytics all follow the selected
@@ -173,7 +197,12 @@ function focusContributionSec(){
 
 function liveLectureSeconds(l){
   if(!l || typeof l !== 'object') return 0;
-  let sec = (l.seconds||0) + (l.timerStart ? Math.floor((Date.now()-l.timerStart)/1000) : 0);
+  // Coerce defensively rather than relying on the load/import boundaries to have
+  // done it. This is the single choke point every aggregate reads through, so a
+  // non-numeric seconds from any source concatenates here ("5" + 0 -> "50") and
+  // then poisons every sum that walks unitSeconds/subjectSeconds.
+  const raw = typeof l.seconds === 'number' ? l.seconds : parseFloat(l.seconds);
+  let sec = (isFinite(raw) && raw > 0 ? raw : 0) + (l.timerStart ? Math.floor((Date.now()-l.timerStart)/1000) : 0);
   if(!l.timerStart && focusRef && focusRef.lectureId === l.id) sec += focusContributionSec();
   return sec;
 }

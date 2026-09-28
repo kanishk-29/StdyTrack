@@ -88,6 +88,19 @@ function normalizeLoadedData(parsed){
       if(!u || typeof u !== 'object') return;
       if(!Array.isArray(u.tests)) u.tests = [];
       if(!Array.isArray(u.lectures)) u.lectures = [];
+      u.lectures.forEach(l=>{
+        if(!l || typeof l !== 'object') return;
+        // timerStart is deliberately left alone here: startApp() adopts a
+        // genuinely-running timer via adoptRunningLecture(), which restamps it
+        // to now so the closed-tab gap is never counted as study time.
+        // seconds must be a real number though — a non-numeric one
+        // string-concatenates in liveLectureSeconds ("5" + 3 -> "53") and that
+        // corruption then cascades through every sum and formatHMS.
+        const sec = typeof l.seconds === 'number' ? l.seconds : parseFloat(l.seconds);
+        if(!isFinite(sec) || sec < 0) l.seconds = 0;
+        else if(l.seconds !== Math.floor(sec)) l.seconds = Math.floor(sec);
+        l.completed = !!l.completed;
+      });
     });
   });
   (data.folders||[]).forEach(f=>{
