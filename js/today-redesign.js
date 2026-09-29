@@ -850,7 +850,6 @@ if(typeof window === 'object'){
   window.nwFocusPause = nwFocusPause;
   window.nwFocusReset = nwFocusReset;
   window.nwFocusPick = nwFocusPick;
-  window.nwCloseModal = nwCloseModal;
 }
 
 document.addEventListener('keydown', function(e){

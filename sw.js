@@ -11,7 +11,7 @@
 // is available offline from then on. The icons stay in the shell because
 // index.html and manifest.json reference them unconditionally.
 
-const CACHE_NAME = 'study-tracker-shell-v116';
+const CACHE_NAME = 'study-tracker-shell-v117';
 const APP_SHELL = [
   './',
   './index.html',
