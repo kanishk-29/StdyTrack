@@ -67,6 +67,24 @@ async function storageSet(key, value){
   return idbOk || lsOk;
 }
 
+// Ids must be non-empty strings everywhere.
+//
+// Every id comparison in the app is a strict ===, and the id always reaches
+// that comparison as a STRING — it arrives from an HTML attribute
+// (onclick="deleteUnit('s','u')") or through jsq(), which String()s its
+// argument. So a stored id that is a number, or missing, can never match:
+// deleteUnit/rename/toggle hit their `if(!u) return;` guard and do nothing,
+// silently — no error, no dialog, nothing on screen. That reads to a user as a
+// dead button, and it is why "Delete week" could do nothing.
+//
+// sanitizeBackup() has always normalized these on the import path; this gives
+// the load path the same guarantee, which matters because load is the path that
+// runs on every boot and on every cloud restore.
+function normalizeId(v){
+  const s = String(v == null ? '' : v).replace(/['"<>&`]/g,'');
+  return s || (typeof uid === 'function' ? uid() : 'id-' + Math.random().toString(36).slice(2,10));
+}
+
 function normalizeLoadedData(parsed){
   data = parsed;
   if(!data || typeof data !== 'object') data = {};
@@ -81,15 +99,22 @@ function normalizeLoadedData(parsed){
   foldersEnsure();
   data.subjects.forEach(s=>{
     if(!s || typeof s !== 'object') return;
+    s.id = normalizeId(s.id);
     if(!Array.isArray(s.units)) s.units = [];
     const simg = String(s.image || '');
     s.image = /^(https?:\/\/|data:image\/)/i.test(simg) && simg.length <= 200000 ? simg : '';
     s.units.forEach(u=>{
       if(!u || typeof u !== 'object') return;
+      u.id = normalizeId(u.id);
       if(!Array.isArray(u.tests)) u.tests = [];
       if(!Array.isArray(u.lectures)) u.lectures = [];
+      u.tests.forEach(t=>{
+        if(!t || typeof t !== 'object') return;
+        t.id = normalizeId(t.id);
+      });
       u.lectures.forEach(l=>{
         if(!l || typeof l !== 'object') return;
+        l.id = normalizeId(l.id);
         // timerStart is deliberately left alone here: startApp() adopts a
         // genuinely-running timer via adoptRunningLecture(), which restamps it
         // to now so the closed-tab gap is never counted as study time.

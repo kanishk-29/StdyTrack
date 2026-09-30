@@ -24,8 +24,15 @@ function closeUnitSortMenus(){
 }
 function toggleUnitMenu(unitId){
   const menu = document.getElementById('unitMenu-'+unitId);
-  const unitEl = document.querySelector(`.unit[data-unit="${unitId}"]`);
   if(!menu) return;
+  // Find the owning card by walking up from the menu itself, not by querying
+  // `.unit[data-unit="..."]`. `.unit` sets overflow:hidden, and
+  // `.unit.menu-active` is the ONLY rule that lifts it — so if this lookup
+  // misses, the absolutely-positioned menu (top:30px) is clipped by its own
+  // card and "Delete week" cannot be clicked at all. The menu is a descendant
+  // of its `.unit` by construction, so closest() cannot miss.
+  const wrap = menu.closest ? menu.closest('.unit-kebab-wrap') : null;
+  const unitEl = wrap && wrap.closest ? wrap.closest('.unit') : null;
   const wasOpen = menu.classList.contains('show');
   closeUnitMenus();
   closeUnitSortMenus();
@@ -36,8 +43,9 @@ function toggleUnitMenu(unitId){
 }
 function toggleUnitSortMenu(unitId){
   const menu = document.getElementById('unitSortMenu-'+unitId);
-  const unitEl = document.querySelector(`.unit[data-unit="${unitId}"]`);
   if(!menu) return;
+  const wrap = menu.closest ? menu.closest('.unit-sort-wrap') : null;
+  const unitEl = wrap && wrap.closest ? wrap.closest('.unit') : null;
   const wasOpen = menu.classList.contains('show');
   closeUnitMenus();
   closeUnitSortMenus();
