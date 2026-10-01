@@ -2,17 +2,30 @@
 // ---------------- TEST SCORES ----------------
 function testPct(t){
   if(!t || typeof t !== 'object') return 0;
-  return t.total>0 ? (t.obtained/t.total*100) : 0;
+  // Both operands are coerced because a score can still arrive non-numeric on
+  // a path that skipped sanitizing: any of them being NaN makes the whole
+  // percentage NaN, and "NaN%" is what the user then reads on the card.
+  const got = Number(t.obtained), tot = Number(t.total);
+  if(!isFinite(got) || !isFinite(tot) || tot <= 0) return 0;
+  return got/tot*100;
 }
 function unitTestAvg(u){
   if(!u || !Array.isArray(u.tests) || !u.tests.length) return null;
-  const sum = u.tests.reduce((s,t)=>s+testPct(t),0);
-  return sum/u.tests.length;
+  // A null entry left in tests[] by an older/hand-edited data file must not be
+  // counted as a zero-scoring test — it would drag the average down forever.
+  const tests = u.tests.filter(t => t && typeof t === 'object');
+  if(!tests.length) return null;
+  const sum = tests.reduce((s,t)=>s+testPct(t),0);
+  return sum/tests.length;
 }
 function subjectTestAvg(s){
   if(!s || !Array.isArray(s.units)) return null;
   const all = [];
-  s.units.forEach(u=> (u && (u.tests||[])).forEach(t=>all.push(t)));
+  // `u && (u.tests||[])` short-circuits to null when u is null, and then the
+  // .forEach below dereferences that null. Both normalizeLoadedData() and
+  // sanitizeBackup() skip a falsy entry instead of removing it, so a null unit
+  // really does reach here from cloud restore or a hand-edited backup.
+  s.units.forEach(u=> ((u && u.tests) || []).forEach(t=>{ if(t && typeof t === 'object') all.push(t); }));
   if(!all.length) return null;
   const sum = all.reduce((s2,t)=>s2+testPct(t),0);
   return sum/all.length;
@@ -27,7 +40,12 @@ function examPacing(s){
   const now = zoneTodayDate();
   const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const exam = new Date(s.examDate + 'T00:00:00');
-  const daysLeft = Math.ceil((exam - today0) / 86400000);
+  // Round, not ceil. Both operands are local midnights, so when a DST change
+  // falls between them the real gap is 23h (clocks forward) or 25h (clocks
+  // back) instead of 24h. Ceil turns a 25h gap into "2 days", which left the
+  // countdown reading 1 day on exam day itself and only reaching 0 the day
+  // after. Round is exact for N days +/- the 1h that a transition can shift.
+  const daysLeft = Math.round((exam - today0) / 86400000);
   const c = countLectures(s);
   const remaining = c.total - c.done;
   let perWeek = null;

@@ -852,6 +852,12 @@ function renderMain(){
   const UNIT_ICONS = ['📘','💾','🧮','📗','🧠','📙'];
   subject.units.forEach((u, i)=>{
     const lectures = (u && Array.isArray(u.lectures)) ? u.lectures : [];
+    // A null unit would throw here, aborting the rest of the panel — and since
+    // renderAll() has no try/catch and every delete path is `renderAll();
+    // saveData();`, the throw would also skip the save. normalizeLoadedData()
+    // now drops non-object entries so this cannot arrive; the guard is here so
+    // a future path that skips that filter still cannot take the app down.
+    if(!u) return;
     const t = lectures.length, d = lectures.filter(l=>l && l.completed).length;
     const left = t - d;
     const pct = t ? (d/t)*100 : 0;

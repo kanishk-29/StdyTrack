@@ -282,8 +282,11 @@ function sanitizeId(id){
 function sanitizeBackup(d){
   if(!d || typeof d !== 'object' || !Array.isArray(d.subjects)) throw new Error('Not a valid backup file');
 
+  // Mirrors normalizeLoadedData(): non-object entries are dropped rather than
+  // skipped. Leaving one in the array hands every renderer a null to trip over
+  // (renderMain reads `u.open`, subjectTestAvg dereferenced its own guard).
+  d.subjects = d.subjects.filter(x => x && typeof x === 'object');
   d.subjects.forEach(s=>{
-    if(!s || typeof s !== 'object') return;
     s.id = sanitizeId(s.id);
     s.name = String(s.name || '').slice(0,200);
     s.icon = String(s.icon || '').slice(0,8).replace(/[<>&"'`]/g,'');
@@ -291,11 +294,12 @@ function sanitizeBackup(d){
     const simg = String(s.image || '');
     s.image = /^(https?:\/\/|data:image\/)/i.test(simg) && simg.length <= 200000 ? simg : '';
     if(!Array.isArray(s.units)) s.units = [];
+    s.units = s.units.filter(x => x && typeof x === 'object');
     s.units.forEach(u=>{
-      if(!u || typeof u !== 'object') return;
       u.id = sanitizeId(u.id);
       u.name = String(u.name || '').slice(0,200);
       if(!Array.isArray(u.lectures)) u.lectures = [];
+      u.lectures = u.lectures.filter(x => x && typeof x === 'object');
       u.lectures.forEach(l=>{
         if(!l || typeof l !== 'object') return;
         l.id = sanitizeId(l.id);
@@ -323,20 +327,20 @@ function sanitizeBackup(d){
         l.completed = !!l.completed;
       });
       if(!Array.isArray(u.tests)) u.tests = [];
+      u.tests = u.tests.filter(x => x && typeof x === 'object');
       u.tests.forEach(t=>{
-        if(!t || typeof t !== 'object') return;
         t.id = sanitizeId(t.id);
         t.name = String(t.name || '').slice(0,200);
-        if(typeof t.obtained !== 'number') t.obtained = Number(t.obtained ?? t.score ?? 0) || 0;
-        if(typeof t.total !== 'number') t.total = Number(t.total ?? t.outOf ?? 0) || 0;
+        if(typeof t.obtained !== 'number' || !isFinite(t.obtained)) t.obtained = Number(t.obtained ?? t.score ?? 0) || 0;
+        if(typeof t.total !== 'number' || !isFinite(t.total)) t.total = Number(t.total ?? t.outOf ?? 0) || 0;
         t.date = String(t.date || '').slice(0,32);
       });
     });
   });
 
   if(d.folders && Array.isArray(d.folders)){
+    d.folders = d.folders.filter(f => f && typeof f === 'object');
     d.folders.forEach(f=>{
-      if(!f || typeof f !== 'object') return;
       f.id = sanitizeId(f.id);
       f.name = String(f.name || '').slice(0,100);
       f.icon = String(f.icon || '').slice(0,8).replace(/[<>&"'`]/g,'');

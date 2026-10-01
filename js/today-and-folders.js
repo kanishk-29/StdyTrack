@@ -50,7 +50,7 @@ function foldersEnsure(){
   }
   // One-time rename for anyone who already had the earlier default names.
   const renameIfDefault = (id, oldName, newName)=>{
-    const f = data.folders.find(x=>x.id===id);
+    const f = data.folders.find(x=>x && x.id===id);
     if(f && f.name===oldName) f.name = newName;
   };
   renameIfDefault('fld-college', 'College', 'Semester');

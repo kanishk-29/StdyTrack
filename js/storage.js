@@ -95,22 +95,50 @@ function normalizeLoadedData(parsed){
   if(!data.priorityPlanner) data.priorityPlanner = { byDate: {} };
   if(!data.settings || typeof data.settings !== 'object') data.settings = {};
   if(!data.updatedAt) data.updatedAt = 0;
+  // Non-object entries are DROPPED here, FIRST, before ppEnsure()/foldersEnsure()
+  // walk the collections. The old code skipped them inside each forEach, which
+  // left the hole in the array for everything downstream to trip over:
+  // renderMain() reads `u.open` two lines after guarding `u && Array.isArray(
+  // u.lectures)`, subjectTestAvg() dereferenced its own guard's falsy result,
+  // and foldersEnsure()'s renameIfDefault() read `x.id` off a null folder. All
+  // three threw. Since renderAll() has no try/catch and every delete path is
+  // `renderAll(); saveData();`, a throw also skipped the save, so the mutation
+  // was applied in memory and never persisted. A null entry carries no
+  // information, so removing it is lossless.
+  const isObj = (x) => !!x && typeof x === 'object';
+  data.subjects = data.subjects.filter(isObj);
+  if(Array.isArray(data.folders)) data.folders = data.folders.filter(isObj);
+  data.subjects.forEach(s=>{
+    if(!Array.isArray(s.units)) s.units = [];
+    s.units = s.units.filter(isObj);
+    s.units.forEach(u=>{
+      if(!Array.isArray(u.tests)) u.tests = [];
+      if(!Array.isArray(u.lectures)) u.lectures = [];
+      u.tests = u.tests.filter(isObj);
+      u.lectures = u.lectures.filter(isObj);
+    });
+  });
   const ppMigrated = ppEnsure();
   foldersEnsure();
+  // Now that the shape is sound, the per-object normalization below can run.
   data.subjects.forEach(s=>{
-    if(!s || typeof s !== 'object') return;
     s.id = normalizeId(s.id);
-    if(!Array.isArray(s.units)) s.units = [];
     const simg = String(s.image || '');
     s.image = /^(https?:\/\/|data:image\/)/i.test(simg) && simg.length <= 200000 ? simg : '';
     s.units.forEach(u=>{
-      if(!u || typeof u !== 'object') return;
       u.id = normalizeId(u.id);
-      if(!Array.isArray(u.tests)) u.tests = [];
-      if(!Array.isArray(u.lectures)) u.lectures = [];
       u.tests.forEach(t=>{
         if(!t || typeof t !== 'object') return;
         t.id = normalizeId(t.id);
+        // Scores are coerced here for the same reason ids are: sanitizeBackup()
+        // has always done this on the import path, and load is the path that
+        // runs on every boot and every cloud restore. Left uncoerced, a string
+        // or legacy key makes testPct() divide by nonsense and the card prints
+        // "NaN%". isFinite is required because typeof NaN === 'number'.
+        const tob = parseFloat(t.obtained != null ? t.obtained : t.score);
+        const ttot = parseFloat(t.total != null ? t.total : t.outOf);
+        t.obtained = (isFinite(tob) && tob >= 0) ? tob : 0;
+        t.total = (isFinite(ttot) && ttot >= 0) ? ttot : 0;
       });
       u.lectures.forEach(l=>{
         if(!l || typeof l !== 'object') return;
