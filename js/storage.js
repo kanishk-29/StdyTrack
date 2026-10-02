@@ -85,11 +85,76 @@ function normalizeId(v){
   return s || (typeof uid === 'function' ? uid() : 'id-' + Math.random().toString(36).slice(2,10));
 }
 
+// A stored "seconds" value can be anything: a hand-edited backup, a cloud
+// restore from a device that ran a buggy build, or a value written by an older
+// version of this app. Every arithmetic site downstream assumes a number, and
+// the failure is silent and compounding -- ("600" + 30) is "60030", not 630.
+//
+// parseFloat first (so a numeric string keeps its real value instead of being
+// zeroed), then isFinite, then `> 0` (which also rejects negatives -- a negative
+// bySubject value would make addToDailyLog's clamp produce a POSITIVE delta and
+// inflate the day). typeof alone is not enough because typeof NaN === 'number'.
+function toSeconds(v){
+  const n = typeof v === 'number' ? v : parseFloat(v);
+  return (isFinite(n) && n > 0) ? Math.floor(n) : 0;
+}
+
+// The dailyLog sanitiser, shared by BOTH data boundaries so they cannot drift
+// apart again. That drift is the actual defect: sanitizeBackup() has always
+// walked dailyLog and normalizeLoadedData() never did, so anything that reached
+// storage by load (every boot, every cloud restore) skipped the check entirely
+// and reached ~30 read sites and the 30s checkpoint uncoerced.
+//
+// Repairs in place and returns the same object: a non-object day entry becomes
+// {total:0, bySubject:{}} (addToDailyLog's `if(!data.dailyLog[day])` guard only
+// catches FALSY values, so a truthy string day threw at `entry.bySubject[id]`),
+// and a non-object bySubject becomes {} rather than being spread by
+// `{...stored.bySubject}`, which would turn a string into {0:'a',1:'b',...} --
+// keys no subject id can ever match, so today's per-subject time reads 0.
+function sanitizeDailyLog(log){
+  if(!log || typeof log !== 'object' || Array.isArray(log)) return {};
+  for(const k in log){
+    const e = log[k];
+    if(!e || typeof e !== 'object' || Array.isArray(e)){ log[k] = { total:0, bySubject:{} }; continue; }
+    e.total = toSeconds(e.total);
+    if(!e.bySubject || typeof e.bySubject !== 'object' || Array.isArray(e.bySubject)) e.bySubject = {};
+    for(const sk in e.bySubject) e.bySubject[sk] = toSeconds(e.bySubject[sk]);
+  }
+  return log;
+}
+
+// An exam date must be a REAL calendar date, or nothing. The date input always
+// yields '' or a valid YYYY-MM-DD, so the UI cannot produce a bad one -- but a
+// hand-edited backup or a cloud restore can, and neither boundary checked.
+// examPacing() only guards falsiness, so any truthy value goes into
+// `new Date(s.examDate + 'T00:00:00')`: '2026-13-01', '2026' and 'next tuesday'
+// are all Invalid Date, daysLeft becomes NaN, and the subject header prints
+// "NaN" where the countdown should be.
+//
+// The regex alone is not enough for the impossible-day case -- '2026-02-30'
+// matches YYYY-MM-DD, and V8 parses it happily as a value ROLLED OVER to 2 March,
+// so a bare getTime() check passes and the countdown silently reads two days late
+// with nothing on screen to say the stored date was nonsense. Requiring the parsed
+// date to be the same calendar day that was written catches that.
+// Returns null, which is what saveExamDate()/clearExamDate() store for "no exam".
+function normalizeExamDate(v){
+  if(v == null || v === '') return null;
+  const s = String(v);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+  const d = new Date(s + 'T00:00:00');   // no timezone -> parsed as local, so the
+  if(!isFinite(d.getTime())) return null; // component read below is consistent
+  if(d.getFullYear()   !== Number(s.slice(0,4)) ||
+     d.getMonth() + 1  !== Number(s.slice(5,7)) ||
+     d.getDate()       !== Number(s.slice(8,10))) return null;
+  return s;
+}
+
 function normalizeLoadedData(parsed){
   data = parsed;
   if(!data || typeof data !== 'object') data = {};
   if(!data.subjects || !Array.isArray(data.subjects)) data.subjects = [];
   if(!data.dailyLog) data.dailyLog = {};
+  data.dailyLog = sanitizeDailyLog(data.dailyLog);
   if(!data.habits) data.habits = { entries: {} };
   if(!data.habits.entries) data.habits.entries = {};
   if(!data.priorityPlanner) data.priorityPlanner = { byDate: {} };
@@ -108,6 +173,13 @@ function normalizeLoadedData(parsed){
   const isObj = (x) => !!x && typeof x === 'object';
   data.subjects = data.subjects.filter(isObj);
   if(Array.isArray(data.folders)) data.folders = data.folders.filter(isObj);
+  // A truthy NON-ARRAY folders used to pass straight through this line, and
+  // foldersEnsure() below calls data.folders.find() unconditionally -- so a
+  // `folders:"..."` or `folders:7` from a hand-edited backup or a bad merge threw
+  // TypeError INSIDE load. That is a boot-time failure: the app could not start
+  // at all. Null is deliberate -- it is falsy, so foldersEnsure() creates the
+  // four default folders rather than leaving the user with none.
+  else data.folders = null;
   data.subjects.forEach(s=>{
     if(!Array.isArray(s.units)) s.units = [];
     s.units = s.units.filter(isObj);
@@ -123,10 +195,36 @@ function normalizeLoadedData(parsed){
   // Now that the shape is sound, the per-object normalization below can run.
   data.subjects.forEach(s=>{
     s.id = normalizeId(s.id);
+    // Names are coerced for the same reason ids and scores are: sanitizeBackup()
+    // has always done it on the import path, load had not. A non-string name is
+    // not merely ugly -- it reaches .charAt() (the subject icon letter),
+    // .toLowerCase()/.toUpperCase() (folder pill, mascot line, focus banner) and
+    // .localeCompare() (the folder A-Z sort, which sits OUTSIDE the try/catch
+    // that wraps drawerSubjectCardHtml, so it takes the whole folder view down).
+    // renderAll() has no try/catch and every mutation path is
+    // `renderAll(); saveData();`, so any of those throws also skips the save.
+    s.name = String(s.name || '').slice(0,200);
+    // icon IS interpolated unescaped into innerHTML (calendar.js:319 builds
+    // `${iconLetter}` from s.icon, calendar.js:252 from folder.icon,
+    // today-and-folders.js:88 and :139 likewise), so a hostile icon from a
+    // corrupt backup injects markup. sanitizeBackup has always stripped
+    // <>&"'` from it; closing that gap on load is what keeps load from being the
+    // weaker boundary. The strip runs BEFORE the slice(0,8) on purpose -- the
+    // other order would still admit "<img onerror=x>" in its first 8 characters.
+    s.icon = String(s.icon || '').slice(0,8).replace(/[<>&"'`]/g,'');
+    // colour is validated for PARITY with sanitizeBackup, not because this build
+    // renders it: every donut/legend/bar reads a colour off the hardcoded
+    // SUBJECT_GRAPH_COLORS palette by index, never off s.color, so nothing
+    // interpolates it today. It is cheap, it matches the import boundary, and it
+    // means a future reader of s.color inherits a validated value instead of
+    // having to remember to add validation.
+    s.color = /^#[0-9a-fA-F]{3,8}$/.test(s.color || '') ? s.color : '';
+    s.examDate = normalizeExamDate(s.examDate);
     const simg = String(s.image || '');
     s.image = /^(https?:\/\/|data:image\/)/i.test(simg) && simg.length <= 200000 ? simg : '';
     s.units.forEach(u=>{
       u.id = normalizeId(u.id);
+      u.name = String(u.name || '').slice(0,200);
       u.tests.forEach(t=>{
         if(!t || typeof t !== 'object') return;
         t.id = normalizeId(t.id);
@@ -143,6 +241,16 @@ function normalizeLoadedData(parsed){
       u.lectures.forEach(l=>{
         if(!l || typeof l !== 'object') return;
         l.id = normalizeId(l.id);
+        l.title = String(l.title || '').slice(0,300);
+        // richNotes is coerced to a STRING but deliberately NOT run through
+        // sanitizeNotesHtml() here, unlike the import path. That sanitizer's
+        // allowlist has no IMG and no SVG, and the pen tool stores every
+        // hand-drawn note as an inline <svg> -- sanitizing on load would delete
+        // all of them. Leaving it non-string instead means tooltip.js:123 calls
+        // .replace() on it and throws mid-render.
+        // The != null guard means an absent richNotes stays absent rather than
+        // gaining an empty key on every single load.
+        if(l.richNotes != null && typeof l.richNotes !== 'string') l.richNotes = String(l.richNotes);
         // timerStart is deliberately left alone here: startApp() adopts a
         // genuinely-running timer via adoptRunningLecture(), which restamps it
         // to now so the closed-tab gap is never counted as study time.
@@ -158,6 +266,18 @@ function normalizeLoadedData(parsed){
   });
   (data.folders||[]).forEach(f=>{
     if(!f || typeof f !== 'object') return;
+    // Same reason as s.name above: folder.name reaches .toLowerCase() and
+    // .toUpperCase() directly in the sidebar pill (calendar.js:313-314).
+    f.name = String(f.name || '').slice(0,100);
+    // An absent icon used to render the literal text "undefined" into the folder
+    // picker (today-and-folders.js:88) and the sidebar tile (:139). folder.icon
+    // is interpolated UNESCAPED in both, so the strip here is what keeps a
+    // corrupt backup from injecting markup through them.
+    // Folder ids get the same normalizeId() the import path already applies,
+    // which is what made the delete-week bug a dead button rather than a
+    // delete: an empty id makes getFolder() match the wrong folder or nothing.
+    f.id = normalizeId(f.id);
+    f.icon = String(f.icon || '').slice(0,8).replace(/[<>&"'`]/g,'');
     const fimg = String(f.image || '');
     f.image = /^(https?:\/\/|data:image\/)/i.test(fimg) && fimg.length <= 200000 ? fimg : '';
   });

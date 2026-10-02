@@ -338,7 +338,10 @@ function sanitizeBackup(d){
     });
   });
 
-  if(d.folders && Array.isArray(d.folders)){
+  // The else-branch matters for parity with the load path: a truthy non-array
+  // `folders` used to survive BOTH boundaries untouched, and then threw at
+  // data.folders.find() inside foldersEnsure() on the very next boot.
+  if(Array.isArray(d.folders)){
     d.folders = d.folders.filter(f => f && typeof f === 'object');
     d.folders.forEach(f=>{
       f.id = sanitizeId(f.id);
@@ -347,23 +350,19 @@ function sanitizeBackup(d){
       const img = String(f.image || '');
       f.image = /^(https?:\/\/|data:image\/)/i.test(img) && img.length <= 200000 ? img : '';
     });
-  }
+  } else d.folders = null;
 
   if(!d.settings || typeof d.settings !== 'object') d.settings = {};
   else {
     if(typeof d.settings.timeZone !== 'string') d.settings.timeZone = '';
     d.settings.weekStart = d.settings.weekStart === 1 ? 1 : 0;
   }
-  if(!d.dailyLog || typeof d.dailyLog !== 'object') d.dailyLog = {};
-  for(const k in d.dailyLog){
-    const e = d.dailyLog[k];
-    if(!e || typeof e !== 'object'){ d.dailyLog[k] = { total:0, bySubject:{} }; continue; }
-    if(typeof e.total !== 'number') e.total = 0;
-    if(!e.bySubject || typeof e.bySubject !== 'object') e.bySubject = {};
-    for(const sk in e.bySubject){
-      if(typeof e.bySubject[sk] !== 'number' || !isFinite(e.bySubject[sk])) e.bySubject[sk] = 0;
-    }
-  }
+  // Delegates to the sanitiser shared with normalizeLoadedData() (storage.js).
+  // These two functions used to carry SEPARATE hand-written copies of this walk,
+  // and they drifted: the import version coerced dailyLog while the load version
+  // did not touch it at all, so the copy that runs on every boot and every cloud
+  // restore was the weaker one. One implementation, both boundaries, no drift.
+  d.dailyLog = sanitizeDailyLog(d.dailyLog);
 
   if(!d.habits || typeof d.habits !== 'object') d.habits = { entries: {} };
   if(!d.habits.entries || typeof d.habits.entries !== 'object') d.habits.entries = {};

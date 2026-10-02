@@ -36,7 +36,7 @@ function formatPct(p){
 
 // ---------------- EXAM COUNTDOWN & PACING ----------------
 function examPacing(s){
-  if(!s.examDate) return null;
+  if(!s || !s.examDate) return null;
   const now = zoneTodayDate();
   const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const exam = new Date(s.examDate + 'T00:00:00');
@@ -46,6 +46,11 @@ function examPacing(s){
   // countdown reading 1 day on exam day itself and only reaching 0 the day
   // after. Round is exact for N days +/- the 1h that a transition can shift.
   const daysLeft = Math.round((exam - today0) / 86400000);
+  // An unparseable date yields NaN here, and every consumer prints it verbatim.
+  // Both boundaries now clear an unusable examDate at load, but this is the
+  // choke point that makes it unconditional: a value reaching the header through
+  // any route reads "no exam scheduled" instead of "NaN".
+  if(!isFinite(daysLeft)) return null;
   const c = countLectures(s);
   const remaining = c.total - c.done;
   let perWeek = null;
@@ -58,20 +63,31 @@ function examPacing(s){
 
 function getTodaySnapshot(){
   const day = todayKey();
-  const stored = (data.dailyLog && data.dailyLog[day]) ? data.dailyLog[day] : {total:0, bySubject:{}};
-  const snap = { total: stored.total, bySubject: {...stored.bySubject} };
+  const stored = (data.dailyLog && data.dailyLog[day] && typeof data.dailyLog[day] === 'object'
+                  && !Array.isArray(data.dailyLog[day])) ? data.dailyLog[day] : {total:0, bySubject:{}};
+  // toSeconds on the stored values, because the `+=` below is the exact place a
+  // non-numeric total blows up: snap.total was copied verbatim from storage, so
+  // a stored "600" plus a 30s live delta reads "60030" -- 16h 40m of "study" from
+  // a 10-minute session. And `{...stored.bySubject}` on a string or array yields
+  // {0:'a',1:'b',...}, keys no subject id can match, so today's per-subject split
+  // silently reads 0. Coerce here as well as at load so the guarantee does not
+  // depend on which code path produced the value.
+  const snap = { total: toSeconds(stored.total),
+                 bySubject: (stored.bySubject && typeof stored.bySubject === 'object'
+                             && !Array.isArray(stored.bySubject)) ? { ...stored.bySubject } : {} };
+  for(const k in snap.bySubject) snap.bySubject[k] = toSeconds(snap.bySubject[k]);
   if(runningRef){
     const l = getLecture(runningRef.subjectId, runningRef.unitId, runningRef.lectureId);
     if(l && l.timerStart){
       const delta = Math.floor((Date.now()-l.timerStart)/1000);
       snap.total += delta;
-      snap.bySubject[runningRef.subjectId] = (snap.bySubject[runningRef.subjectId]||0) + delta;
+      snap.bySubject[runningRef.subjectId] = toSeconds(snap.bySubject[runningRef.subjectId]) + delta;
     }
   }
   const focusAdd = focusContributionSec();
   if(focusAdd > 0){
     snap.total += focusAdd;
-    snap.bySubject[focusRef.subjectId] = (snap.bySubject[focusRef.subjectId]||0) + focusAdd;
+    snap.bySubject[focusRef.subjectId] = toSeconds(snap.bySubject[focusRef.subjectId]) + focusAdd;
   }
   return snap;
 }

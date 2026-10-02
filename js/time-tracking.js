@@ -150,10 +150,25 @@ function todayKey(d){
 
 function addToDailyLog(subjectId, seconds, dateKey){
   const day = dateKey || todayKey();
-  if(!data.dailyLog) data.dailyLog = {};
-  if(!data.dailyLog[day]) data.dailyLog[day] = {total:0, bySubject:{}};
+  if(!data.dailyLog || typeof data.dailyLog !== 'object' || Array.isArray(data.dailyLog)) data.dailyLog = {};
+  // The guard below used to be `if(!data.dailyLog[day])`, which only catches a
+  // FALSY day entry -- a truthy string or number sailed through and then threw at
+  // `entry.bySubject[subjectId]`. This is called by the 30s checkpoint, so the
+  // throw silently stopped study time being banked AND aborted the rest of the
+  // checkpoint body. Check the shape, not just truthiness.
+  if(!data.dailyLog[day] || typeof data.dailyLog[day] !== 'object' || Array.isArray(data.dailyLog[day])){
+    data.dailyLog[day] = { total:0, bySubject:{} };
+  }
   const entry = data.dailyLog[day];
-  const currentSubjectSec = entry.bySubject[subjectId] || 0;
+  if(!entry.bySubject || typeof entry.bySubject !== 'object' || Array.isArray(entry.bySubject)) entry.bySubject = {};
+  // Coerce the STORED value, not just the incoming delta. Both boundaries now
+  // sanitise dailyLog, but this is the choke point that guarantees it: with a
+  // stored "600" here, `currentSubjectSec + clampedDelta` concatenates to "60030"
+  // and `Math.max(0, "600" + 30)` then coerces that string into the NUMBER 60030,
+  // which is saved and survives every reboot. A 100x inflation of the whole day,
+  // compounding with each later session.
+  const currentSubjectSec = toSeconds(entry.bySubject[subjectId]);
+  entry.total = toSeconds(entry.total);
   // Clamp the delta so this subject's own contribution can't go negative,
   // then apply that *same* clamped delta to the day's total — clamping
   // them independently could wipe out other subjects' legitimately-logged
