@@ -531,13 +531,23 @@ function folderStatsHeaderHtml(subjects){
     `<span style="animation-delay:${0.5+i*0.08}s;"></span>`
   ).join('');
 
-  // Sparkline for "Total Studied"
-  const sparklineHtml = `<svg class="sd-sparkline" viewBox="0 0 120 34"><path d="M2,24 Q15,6 28,20 T54,16 T80,22 T118,10"/></svg>`;
+  // Real study curve across every subject in the folder (same builder as the
+  // single-subject header, so both stop showing the hardcoded squiggle).
+  const fshSeries = sdDailySeries(subjects.map(s => s.id), SD_CURVE_DAYS);
+  const fshCeil = sdCurveCeiling(sdDailySeries(subjects.map(s => s.id), SD_CURVE_DAYS, { live:false }));
+  const fshCurve = sdCurvePaths(fshSeries, SD_CURVE_W, SD_CURVE_H, fshCeil);
+  const sparklineHtml = `
+    <svg class="sd-sparkline" viewBox="0 0 ${SD_CURVE_W} ${SD_CURVE_H}" preserveAspectRatio="none"
+         role="img" aria-label="Study time across this folder over the last ${SD_CURVE_DAYS} days">
+      <path class="sd-spark-area" d="${fshCurve.area}"/>
+      <path class="sd-spark-line" d="${fshCurve.line}"/>
+      <line class="sd-spark-now" x1="${fshCurve.lastX}" y1="${fshCurve.base}" x2="${fshCurve.lastX}" y2="${fshCurve.lastY}"/>
+    </svg>`;
 
-  // Mini bar chart for "Topics Done"
-  const barsHtml = `<div class="sd-bars">${Array.from({length:12}).map((_,i)=>
-    `<i style="height:${20+Math.random()*80}%; animation-delay:${i*0.05}s;"></i>`
-  ).join('')}</div>`;
+  // Topics-covered graph, width per topic count.
+  const fshUnits = [];
+  subjects.forEach(s => { if(s && Array.isArray(s.units)) fshUnits.push(...s.units); });
+  const barsHtml = sdTopicsGraph(fshUnits).html;
 
   return `
     <div class="fsh-wrap">
@@ -785,16 +795,25 @@ function renderMain(){
     `<span style="animation-delay:${0.5+i*0.08}s;"></span>`
   ).join('');
 
-  // ---- Sparkline SVG for "Total Studied" card ----
+  // ---- Real study curve for "Total Studied" ----
+  // Built from this subject's actual daily log (last SD_CURVE_DAYS days, plus
+  // the in-flight timer on today). updateLiveTick() rewrites the two paths in
+  // place every second while this subject's timer runs, so the curve actually
+  // moves instead of showing a fixed decorative squiggle.
+  const sdSeries = sdDailySeries(subject.id, SD_CURVE_DAYS);
+  const sdCeil = sdCurveCeiling(sdDailySeries(subject.id, SD_CURVE_DAYS, { live:false }));
+  const sdCurve = sdCurvePaths(sdSeries, SD_CURVE_W, SD_CURVE_H, sdCeil);
   const sparklineHtml = `
-    <svg class="sd-sparkline" viewBox="0 0 120 34">
-      <path d="M2,24 Q15,6 28,20 T54,16 T80,22 T118,10"/>
+    <svg class="sd-sparkline" viewBox="0 0 ${SD_CURVE_W} ${SD_CURVE_H}" preserveAspectRatio="none"
+         role="img" aria-label="Study time for this subject over the last ${SD_CURVE_DAYS} days">
+      <path class="sd-spark-area" d="${sdCurve.area}"/>
+      <path id="sdCurveLine" class="sd-spark-line" d="${sdCurve.line}"/>
+      <line id="sdCurveNow" class="sd-spark-now" x1="${sdCurve.lastX}" y1="${sdCurve.base}" x2="${sdCurve.lastX}" y2="${sdCurve.lastY}"/>
     </svg>`;
 
-  // ---- Mini bar chart for "Topics Done" card ----
-  const barsHtml = `<div class="sd-bars">${Array.from({length:12}).map((_,i)=>
-    `<i style="height:${20+Math.random()*80}%; animation-delay:${i*0.05}s;"></i>`
-  ).join('')}</div>`;
+  // ---- Topics-covered graph: width per topic count, height per completion ----
+  const topicsGraph = sdTopicsGraph(subject.units);
+  const barsHtml = topicsGraph.html;
 
   let html = `
     <div class="sd-header">
@@ -824,7 +843,7 @@ function renderMain(){
     <div class="sd-stat-grid">
       <div class="sd-stat-card">
         <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#ece8ff;">⏱️</span>Total Studied</div>
-        <div class="sd-stat-value">${formatHuman(subjectSeconds(subject))}</div>
+        <div class="sd-stat-value" id="sdTotalStudied">${formatHuman(subjectSeconds(subject))}</div>
         <div class="sd-stat-sub">This semester</div>
         ${sparklineHtml}
       </div>

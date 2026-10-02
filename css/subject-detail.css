@@ -167,22 +167,46 @@ body.subject-page-active .subject-page-inner{
 .sd-stat-sub{ font-size:11px; color:#8b8fa3; }
 .sd-stat-value{ font-size:1.5rem; font-weight:700; color:#1f2333; }
 
-/* Sparkline (for "Total Studied" card) */
-.sd-sparkline{ width:100%; height:34px; }
-.sd-sparkline path{
+/* Study curve (for "Total Studied" card).
+   The path data is generated per-render from the subject's real daily log
+   (js/time-tracking.js sdCurvePaths) and rewritten in place each second while a
+   timer runs, so nothing here may depend on a fixed length: the old
+   `stroke-dasharray:220` was sized for a hardcoded path and would draw a real
+   curve only partially. */
+.sd-sparkline{ width:100%; height:34px; display:block; }
+.sd-sparkline .sd-spark-line{
   fill:none; stroke:#a78bfa; stroke-width:2.5; stroke-linecap:round;
-  stroke-dasharray:220; stroke-dashoffset:220;
+  stroke-linejoin:round; vector-effect:non-scaling-stroke;
+  stroke-dasharray:1000; stroke-dashoffset:1000;
   animation:sparkDraw 1.6s ease .4s forwards;
+}
+.sd-sparkline .sd-spark-area{
+  fill:#a78bfa; fill-opacity:.16; stroke:none; animation:none;
+}
+/* "Today" tick at the live end of the curve. A vertical line, not a dot:
+   the svg uses preserveAspectRatio="none" to fill the card, and non-uniform
+   scaling would squash a circle into an ellipse. It grows taller as the
+   in-flight timer runs, which is the clearest read of live progress. */
+.sd-sparkline .sd-spark-now{
+  stroke:#7c5cff; stroke-width:2; stroke-linecap:round;
+  vector-effect:non-scaling-stroke; animation:none;
 }
 @keyframes sparkDraw{ to{ stroke-dashoffset:0; } }
 
-/* Mini bar chart (for "Topics Completed" card) */
+/* Topics-covered graph. Width is set inline via flex-grow (proportional to the
+   number of topics in the unit), height to that unit's completion ratio. */
 .sd-bars{ display:flex; align-items:flex-end; gap:3px; height:34px; width:100%; }
 .sd-bars i{
   flex:1; background:linear-gradient(180deg, #34c78f, #9ee8c9);
   border-radius:3px 3px 0 0; transform:scaleY(0); transform-origin:bottom;
   animation:sdGrowBar .6s ease forwards;
 }
+/* flex-basis:0 so flex-grow alone decides the width -- otherwise each bar also
+   contributes its own base width and the topic-count ratio is washed out. */
+.sd-bars--prop i{ flex:1 1 0; min-width:4px; }
+.sd-bars--prop i.full{ background:linear-gradient(180deg, #1fa971, #34c78f); }
+.sd-bars--empty{ align-items:center; justify-content:center; }
+.sd-bars--empty span{ font-size:.75rem; color:#8b8fa3; }
 @keyframes sdGrowBar{ to{ transform:scaleY(1); } }
 
 /* Streak dots */

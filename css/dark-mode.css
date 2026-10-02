@@ -402,6 +402,21 @@
 [data-theme="dark"] body.subject-page-active .sd-bars i{
   background:linear-gradient(180deg, #34c78f, #1a7a52);
 }
+/* Needs the same attribute+class chain as the rule above: the generic
+   `.sd-bars--prop i.full` in subject-detail.css is (0,2,1) and loses to this
+   file's (0,3,3), so a fully-covered unit would never get its stronger fill. */
+[data-theme="dark"] body.subject-page-active .sd-bars--prop i.full{
+  background:linear-gradient(180deg, #2ee39b, #23a877);
+}
+[data-theme="dark"] body.subject-page-active .sd-sparkline .sd-spark-line{
+  stroke:#b9a5ff;
+}
+[data-theme="dark"] body.subject-page-active .sd-sparkline .sd-spark-area{
+  fill:#b9a5ff; fill-opacity:.22;
+}
+[data-theme="dark"] body.subject-page-active .sd-sparkline .sd-spark-now{
+  stroke:#9d7dff;
+}
 [data-theme="dark"] body.subject-page-active .sd-streak-dots span{
   background:linear-gradient(135deg, #ff9a52, #ff5d7a);
 }

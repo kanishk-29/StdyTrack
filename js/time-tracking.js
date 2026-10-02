@@ -214,3 +214,139 @@ function subjectSeconds(s){
   if(!s || !Array.isArray(s.units)) return 0;
   return s.units.reduce((sum,u)=> sum + unitSeconds(u), 0);
 }
+
+// ---------------- subject/folder header graphs ----------------
+// The subject-detail header's "Total Studied" curve and its topics-covered
+// graph used to be decoration, not data: a hardcoded SVG path
+// (`M2,24 Q15,6 28,20 ...`) and twelve bars at `20+Math.random()*80%`. They
+// looked like measurements while showing nothing real -- the curve could never
+// move and the bars reshuffled on every render. Everything below builds both
+// from stored study time instead, and is cheap enough to repaint while a timer
+// runs.
+
+// Window shown by the curve. 30 days reads well at 120px wide; a whole
+// semester of daily points flattens into a single meaningless line.
+const SD_CURVE_DAYS = 30;
+const SD_CURVE_W = 120;
+const SD_CURVE_H = 34;
+// Floor for the curve's vertical axis, so an all-zero (or brand-new) history
+// still has a scale to grow into instead of dividing by zero.
+const SD_CURVE_MIN_CEIL = 900;   // 15 minutes
+
+// Seconds studied per day for the last `days` days, oldest first.
+// Pass one subject id, or an array to total a folder.
+// The final entry adds the currently-running timer, because addToDailyLog only
+// commits every 30s -- without this the newest point sits flat until the next
+// checkpoint and the curve looks frozen while the user is studying.
+function sdDailySeries(subjectIds, days, opts){
+  days = Math.max(2, Math.min(120, days || SD_CURVE_DAYS));
+  const withLive = !(opts && opts.live === false);
+  const ids = Array.isArray(subjectIds) ? subjectIds : (subjectIds ? [subjectIds] : []);
+  const now = zoneTodayDate();
+  const keys = [];
+  for(let i=0; i<days; i++){
+    const day = new Date(now);
+    day.setDate(day.getDate() - (days-1-i));
+    keys.push(todayKey(day));
+  }
+  const out = new Array(days).fill(0);
+  for(const id of ids){
+    if(!id) continue;
+    const pending = withLive ? sdPendingSec(id) : 0;
+    for(let i=0; i<days; i++){
+      const entry = data.dailyLog && data.dailyLog[keys[i]];
+      let sec = (entry && entry.bySubject) ? (entry.bySubject[id] || 0) : 0;
+      if(i === days-1) sec += pending;
+      out[i] += Math.max(0, Math.floor(sec) || 0);
+    }
+  }
+  return out;
+}
+
+// Running-timer seconds for a subject that are not in dailyLog yet.
+function sdPendingSec(subjectId){
+  if(!runningRef || runningRef.subjectId !== subjectId) return 0;
+  const l = getLecture(runningRef.subjectId, runningRef.unitId, runningRef.lectureId);
+  if(!l || !l.timerStart) return 0;
+  return Math.max(0, Math.floor((Date.now()-l.timerStart)/1000));
+}
+
+// Smooth curve through a series, scaled to the box. Returns both the stroke
+// path and a closed area path so the fill tracks the line exactly.
+function sdCurveCeiling(committed){
+  const arr = Array.isArray(committed) ? committed : [];
+  let m = 0;
+  for(let i=0; i<arr.length; i++){
+    const v = parseFloat(arr[i]);
+    if(isFinite(v) && v > m) m = v;
+  }
+  return Math.max(SD_CURVE_MIN_CEIL, m);
+}
+function sdCurvePaths(series, w, h, ceiling){
+  const pts = (Array.isArray(series) ? series : []).map(v => {
+    const n = parseFloat(v);
+    return (isFinite(n) && n > 0) ? n : 0;
+  });
+  const n = pts.length;
+  if(!n) return { line:'', area:'', max:0, base:'0', lastX:'0', lastY:'0' };
+  // `ceiling` is the axis top, and it is measured from COMMITTED time only --
+  // see sdCurveCeiling. Deriving it from the series instead would make the
+  // chart scale-invariant, and today is the sample that grows while a timer
+  // runs, so the axis would grow with it and the line would never move.
+  const max = (isFinite(ceiling) && ceiling > 0) ? ceiling : Math.max(SD_CURVE_MIN_CEIL, Math.max.apply(null, pts));
+  const pad = 3;
+  const innerW = Math.max(1, w - pad*2), innerH = Math.max(1, h - pad*2);
+  const X = (i) => (n === 1) ? pad + innerW/2 : pad + (i/(n-1))*innerW;
+  // Clamped: a day that beats every committed day saturates at the top instead
+  // of pushing the rest of the curve off the box.
+  const Y = (v) => pad + innerH - Math.max(0, Math.min(1, v/max))*innerH;
+  // Quadratic through segment midpoints: smooth, passes through every sample,
+  // and lands exactly on the last one (which is the point the live timer grows).
+  let d = 'M' + X(0).toFixed(1) + ',' + Y(pts[0]).toFixed(1);
+  for(let i=1; i<n; i++){
+    const mx = ((X(i-1) + X(i)) / 2).toFixed(1);
+    const my = ((Y(pts[i-1]) + Y(pts[i])) / 2).toFixed(1);
+    d += ' Q' + X(i-1).toFixed(1) + ',' + Y(pts[i-1]).toFixed(1) + ' ' + mx + ',' + my;
+  }
+  const base = (pad + innerH).toFixed(1);
+  // The stroke stops on the last sample; only the area closes down to the
+  // baseline, otherwise the line ends in a visible vertical spike.
+  const line = d + ' L' + X(n-1).toFixed(1) + ',' + Y(pts[n-1]).toFixed(1);
+  const area = line + ' L' + X(n-1).toFixed(1) + ',' + base +
+               ' L' + X(0).toFixed(1) + ',' + base + ' Z';
+  return { line, area, max, base,
+           lastX: X(n-1).toFixed(1), lastY: Y(pts[n-1]).toFixed(1) };
+}
+
+// Topics covered across a set of units, one segment per unit. Each segment's
+// WIDTH is proportional to how many topics that unit holds, and its HEIGHT to
+// how many of them are done -- so a 12-lecture week reads as roughly four times
+// the weight of a 3-lecture one, which the old fixed-width random bars never
+// could. Returns the markup plus the totals for the accessible label.
+function sdTopicsGraph(units){
+  const rows = (Array.isArray(units) ? units : []).map(u=>{
+    const lectures = (u && Array.isArray(u.lectures)) ? u.lectures.filter(l => l) : [];
+    return { name: (u && u.name) ? String(u.name) : '', total: lectures.length,
+             done: lectures.filter(l => l.completed).length };
+  }).filter(r => r.total > 0);
+  const total = rows.reduce((a,r)=> a + r.total, 0);
+  const done = rows.reduce((a,r)=> a + r.done, 0);
+  if(!rows.length){
+    return { html: '<div class="sd-bars sd-bars--empty"><span>No topics yet</span></div>', done, total };
+  }
+  const bars = rows.map((r, i) => {
+    const pct = (r.total > 0) ? Math.round((r.done/r.total)*100) : 0;
+    // flex-grow carries the topic count; flex-basis 0 keeps the bar from adding
+    // its own content width. Height is this unit's own completion ratio, so a
+    // unit that is fully read but small still shows as a short, full bar.
+    const grow = Math.max(1, r.total);
+    const h = r.done > 0 ? Math.max(14, pct) : 0;
+    const label = escapeHtml(r.name) + ': ' + r.done + ' of ' + r.total + ' topics' + (pct ? ' (' + pct + '%)' : '');
+    return '<i class="' + (r.done >= r.total ? 'full' : '') + '" style="flex-grow:' + grow +
+           '; height:' + h + '%; animation-delay:' + (i*0.05) + 's;" title="' + label +
+           '" aria-label="' + label + '"></i>';
+  }).join('');
+  return { html: '<div class="sd-bars sd-bars--prop" role="img" aria-label="Topics covered: ' +
+           done + ' of ' + total + ' across ' + rows.length + ' unit' + (rows.length===1?'':'s') +
+           ', bar width scaled by topics per unit">' + bars + '</div>', done, total };
+}

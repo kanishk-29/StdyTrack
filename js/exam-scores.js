@@ -181,5 +181,32 @@ function updateLiveTick(){
   }
   const todayEl = document.getElementById('todayTotal');
   if(todayEl) todayEl.textContent = formatHuman(getTodaySnapshot().total);
+  updateSubjectHeaderLive();
   renderRunningBanner();
+}
+
+// Keep the subject-detail header moving while this subject's timer runs. The
+// total and the study curve used to be painted once per render, so they froze
+// at whatever the last render was -- the curve could never move even with a
+// timer going. Rewritten in place (attribute + textContent only, no innerHTML)
+// so the curve's draw-in animation isn't restarted every second.
+function updateSubjectHeaderLive(){
+  if(!runningRef) return;
+  const totalEl = document.getElementById('sdTotalStudied');
+  const lineEl = document.getElementById('sdCurveLine');
+  if(!totalEl && !lineEl) return;          // header not on screen
+  if(activeSubjectId !== runningRef.subjectId) return;  // wrong subject shown
+  const s = data.subjects.find(x => x && x.id === runningRef.subjectId);
+  if(!s) return;
+  if(totalEl) totalEl.textContent = formatHuman(subjectSeconds(s));
+  if(lineEl){
+    const ceil = sdCurveCeiling(sdDailySeries(s.id, SD_CURVE_DAYS, { live:false }));
+    const c = sdCurvePaths(sdDailySeries(s.id, SD_CURVE_DAYS), SD_CURVE_W, SD_CURVE_H, ceil);
+    lineEl.setAttribute('d', c.line);
+    const svg = lineEl.parentNode;
+    const area = svg && svg.querySelector('.sd-spark-area');
+    if(area) area.setAttribute('d', c.area);
+    const dot = document.getElementById('sdCurveNow');
+    if(dot){ dot.setAttribute('y2', c.lastY); }
+  }
 }
