@@ -165,7 +165,11 @@ body.subject-page-active .subject-page-inner{
    (.violet/.green/.orange/.blue), but calendar.js paints each stat icon with an
    inline background instead, so the classes were never applied. Removed. */
 .sd-stat-sub{ font-size:11px; color:#8b8fa3; }
-.sd-stat-value{ font-size:1.5rem; font-weight:700; color:#1f2333; }
+.sd-stat-value{ font-size:1.5rem; font-weight:700; color:#1f2333;
+        /* "Total Studied" is a live H:MM:SS clock (formatHMS) that repaints every
+           second while a timer runs. Proportional digits make it jitter sideways
+           on every tick as 1/0 swap widths; tabular digits pin each column. */
+        font-variant-numeric:tabular-nums; }
 
 /* Study curve (for "Total Studied" card).
    The path data is generated per-render from the subject's real daily log

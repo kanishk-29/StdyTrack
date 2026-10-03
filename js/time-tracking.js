@@ -179,7 +179,11 @@ function addToDailyLog(subjectId, seconds, dateKey){
 }
 
 function formatHMS(sec){
-  sec = Math.max(0, Math.floor(sec));
+  // Math.max(0, NaN) is NaN, so a non-finite input used to print "NaN:NaN:NaN"
+  // straight into the header. formatHuman() degrades to "0m" on the same input;
+  // a clock should degrade to zero, not to NaN.
+  const v = parseFloat(sec);
+  sec = (isFinite(v) && v > 0) ? Math.floor(v) : 0;
   const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
   return [h,m,s].map((v,i)=> i===0 ? String(v) : String(v).padStart(2,'0')).join(':');
 }
@@ -208,6 +212,19 @@ function focusContributionSec(){
   const l = getLecture(focusRef.subjectId, focusRef.unitId, focusRef.lectureId);
   if(!l || l.timerStart) return 0;
   return Math.max(0, (s.totalSec||0) - (s.remainingSec||0));
+}
+
+// Which subject is accruing study time right now, or null. Covers BOTH timers:
+// a manual start/stop timer (runningRef) and a focus-mode session (focusRef).
+// updateSubjectHeaderLive() used to gate on runningRef alone, so the subject
+// header's total and curve sat frozen for the entire time the user was in focus
+// mode -- the one timer where studying is the whole point of the screen. The
+// focus guards mirror focusContributionSec() exactly so the two can't drift.
+function liveAccumulatingSubjectId(){
+  if(runningRef && runningRef.subjectId) return runningRef.subjectId;
+  const s = focusSession;
+  if(!focusRef || !s || s.mode !== 'running' || s.paused || s.committed) return null;
+  return focusRef.subjectId || null;
 }
 
 function liveLectureSeconds(l){
@@ -280,10 +297,16 @@ function sdDailySeries(subjectIds, days, opts){
 
 // Running-timer seconds for a subject that are not in dailyLog yet.
 function sdPendingSec(subjectId){
-  if(!runningRef || runningRef.subjectId !== subjectId) return 0;
-  const l = getLecture(runningRef.subjectId, runningRef.unitId, runningRef.lectureId);
-  if(!l || !l.timerStart) return 0;
-  return Math.max(0, Math.floor((Date.now()-l.timerStart)/1000));
+  if(runningRef && runningRef.subjectId === subjectId){
+    const l = getLecture(runningRef.subjectId, runningRef.unitId, runningRef.lectureId);
+    if(l && l.timerStart) return Math.max(0, Math.floor((Date.now()-l.timerStart)/1000));
+  }
+  // Focus mode only banks when the session ends, so its uncommitted seconds are
+  // the countdown already elapsed. focusContributionSec() already returns 0 when
+  // no session is live, when it is paused, or when a manual timer is covering
+  // the same lecture -- so this cannot double-count the manual branch above.
+  if(focusRef && focusRef.subjectId === subjectId) return focusContributionSec();
+  return 0;
 }
 
 // Smooth curve through a series, scaled to the box. Returns both the stroke

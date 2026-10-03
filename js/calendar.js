@@ -843,7 +843,7 @@ function renderMain(){
     <div class="sd-stat-grid">
       <div class="sd-stat-card">
         <div class="sd-stat-label"><span class="sd-stat-icon" style="background:#ece8ff;">⏱️</span>Total Studied</div>
-        <div class="sd-stat-value" id="sdTotalStudied">${formatHuman(subjectSeconds(subject))}</div>
+        <div class="sd-stat-value" id="sdTotalStudied">${formatHMS(subjectSeconds(subject))}</div>
         <div class="sd-stat-sub">This semester</div>
         ${sparklineHtml}
       </div>

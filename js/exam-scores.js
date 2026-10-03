@@ -207,14 +207,20 @@ function updateLiveTick(){
 // timer going. Rewritten in place (attribute + textContent only, no innerHTML)
 // so the curve's draw-in animation isn't restarted every second.
 function updateSubjectHeaderLive(){
-  if(!runningRef) return;
   const totalEl = document.getElementById('sdTotalStudied');
   const lineEl = document.getElementById('sdCurveLine');
-  if(!totalEl && !lineEl) return;          // header not on screen
-  if(activeSubjectId !== runningRef.subjectId) return;  // wrong subject shown
-  const s = data.subjects.find(x => x && x.id === runningRef.subjectId);
+  if(!totalEl && !lineEl) return;              // header not on screen
+  const liveId = liveAccumulatingSubjectId();  // manual timer OR focus session
+  if(!liveId) return;                          // nothing is accruing time
+  if(activeSubjectId !== liveId) return;       // wrong subject shown
+  const s = data.subjects.find(x => x && x.id === liveId);
   if(!s) return;
-  if(totalEl) totalEl.textContent = formatHuman(subjectSeconds(s));
+  // H:MM:SS, not formatHuman()'s "7h 36m". formatHuman() drops the seconds
+  // entirely as soon as there is an hour on the clock, so a running total sat
+  // unchanged for a minute at a time and read as frozen even though it was
+  // being repainted every second. subjectSeconds() already folds in the
+  // in-flight timer, so the seconds shown here tick and then persist.
+  if(totalEl) totalEl.textContent = formatHMS(subjectSeconds(s));
   if(lineEl){
     const ceil = sdCurveCeiling(sdDailySeries(s.id, SD_CURVE_DAYS, { live:false }));
     const c = sdCurvePaths(sdDailySeries(s.id, SD_CURVE_DAYS), SD_CURVE_W, SD_CURVE_H, ceil);

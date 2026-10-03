@@ -1151,6 +1151,11 @@ function focusSessionTick(){
     return;
   }
   updateFocusRing();
+  // The subject header's "Total Studied" is a live H:MM:SS clock, so it has to
+  // be repainted from this tick too -- updateLiveTick() (which used to be the
+  // only caller) only runs for a manual timer, and focus mode is a separate
+  // 1s interval with no runningRef.
+  updateSubjectHeaderLive();
 }
 function focusSessionReset(){
   focusSessionStop();
