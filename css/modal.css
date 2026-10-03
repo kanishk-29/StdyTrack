@@ -52,7 +52,12 @@
       -webkit-overflow-scrolling:touch;
       overscroll-behavior-y:contain;
     }
-    #lectureOverlay .modal{ overflow-y:auto; }
+    /* NOTE: there used to be a `#lectureOverlay .modal{overflow-y:auto}` in this
+       media query as well. It never did anything: the `overflow` shorthand in
+       the unconditional `#lectureOverlay .modal` rule below has the same
+       specificity, comes later, and reset overflow-y back to hidden on every
+       viewport. The lecture modal now declares both longhands below, so this
+       block needs no per-overlay override at any width. */
   }
   #testOverlay .modal{ --modal-accent: var(--rose); --modal-accent-soft: var(--rose-soft); }
   #unitOverlay .modal{ --modal-accent: var(--violet); --modal-accent-soft: var(--violet-soft); }
@@ -60,7 +65,18 @@
   #lectureOverlay .modal{
     --modal-accent: #7b5fe0;
     --modal-accent-soft: #eef0ff;
-    overflow:hidden;
+    /* BOTH longhands, deliberately not the `overflow` shorthand.
+       The banner is flush with the top edge and bleeds 24px past each side
+       padding, so the box still has to clip horizontally and honour its 20px
+       border-radius. But this modal is the tallest one: edit mode reveals the
+       Time-logged field (exam-date.js openEditLecture), which pushes the
+       action row below `.modal`'s max-height. An `overflow` shorthand here
+       resets overflow-y to `hidden` and beats `.modal{overflow-y:auto}` on
+       specificity, so the Save button became unreachable and unscrollable. */
+    overflow-x:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-y:contain;
     padding-top:0;
   }
   .modal-banner{
@@ -70,6 +86,10 @@
     height:100px;
     object-fit:cover;
     object-position:center 60%;
+    /* 20px modal border-radius less the 1px border = the padding-box radius the
+       banner was previously clipped to. Stated explicitly so the rounded top
+       corners survive on the Y axis now that it is a scroll container. */
+    border-radius:19px 19px 0 0;
   }
   #lectureOverlay .modal-icon-header{ margin-top:0; }
   #lectureOverlay .modal-icon-badge{

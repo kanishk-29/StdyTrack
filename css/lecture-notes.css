@@ -2,7 +2,19 @@
    warm-paper design language: soft card, serif display header, violet →
    teal gradient accents, and a notebook-grade editor area. */
   #notesOverlay .modal{
-    max-width:860px; width:100%; padding:0; overflow:hidden;
+    max-width:860px; width:100%; padding:0;
+    /* BOTH longhands, not the `overflow` shorthand: the shorthand reset
+       overflow-y to hidden, and at >640px (where the media query below no
+       longer applies) the modal was capped at 90vh and clipped with no way to
+       scroll. The fixed chrome alone -- accent strip + header + toolbar +
+       pagebar + footer -- plus .notes-editor's min-height:320px is ~548px, so
+       on any window shorter than ~610px the "Save Notes" footer was clipped
+       off-screen and unreachable. The toolbar's dropdowns are position:absolute
+       inside this box, so keeping overflow-x:hidden preserves their clipping. */
+    overflow-x:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-y:contain;
     display:flex; flex-direction:column; max-height:90vh;
     border-radius:20px; position:relative; animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);
     background:var(--card);
