@@ -11,7 +11,7 @@
 // is available offline from then on. The icons stay in the shell because
 // index.html and manifest.json reference them unconditionally.
 
-const CACHE_NAME = 'study-tracker-shell-v123';
+const CACHE_NAME = 'study-tracker-shell-v124';
 const APP_SHELL = [
   './',
   './index.html',
@@ -21,6 +21,7 @@ const APP_SHELL = [
   './study-tips.html',
   './exam-prep.html',
   './why-study-tracker.html',
+  './about.html',
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png',

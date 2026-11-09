@@ -8,29 +8,57 @@
 <meta name="keywords" content="study tracker, free study app, organize study time, lecture notes, exam scores, study timer, study planner, student productivity, study organization, daily study goals, PWA study app">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://stdytrack.vercel.app/">
+<meta name="author" content="Kanishk Kumar">
+<!-- Identity signals. rel="me" is the standard link that ties this site to the
+     person's own profiles; Google uses it (and the sameAs list in the Person
+     schema below) to decide WHICH Kanishk this site belongs to. "Kanishk" alone
+     is a very common name, so without these it guessed other people's profiles. -->
+<link rel="me" href="https://github.com/kanishk-29">
+<link rel="me" href="https://www.linkedin.com/in/kanishk2005/">
+<link rel="author" href="https://stdytrack.vercel.app/about">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Study Tracker",
-  "alternateName": "Stdytrack",
-  "url": "https://stdytrack.vercel.app/",
-  "description": "Free study tracker app that organizes subjects, units, lectures, rich-text notes, exam scores, study time, and daily goals. Installable PWA, works offline, no account required.",
-  "applicationCategory": "EducationalApplication",
-  "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "inLanguage": "en"
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Study Tracker",
-  "alternateName": "Stdytrack",
-  "url": "https://stdytrack.vercel.app/",
-  "description": "Free study tracker app that organizes subjects, units, lectures, notes, exam scores, and daily goals. PWA, works offline.",
-  "inLanguage": "en"
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://stdytrack.vercel.app/#kanishk",
+      "name": "Kanishk Kumar",
+      "alternateName": ["Kanishk", "kanishk-29"],
+      "url": "https://stdytrack.vercel.app/about",
+      "sameAs": [
+        "https://github.com/kanishk-29",
+        "https://www.linkedin.com/in/kanishk2005/"
+      ],
+      "jobTitle": "Software Developer",
+      "description": "Kanishk Kumar is the developer of Study Tracker, a free offline-capable study tracker web app."
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://stdytrack.vercel.app/#website",
+      "name": "Study Tracker",
+      "alternateName": "Stdytrack",
+      "url": "https://stdytrack.vercel.app/",
+      "description": "Free study tracker app that organizes subjects, units, lectures, notes, exam scores, and daily goals. PWA, works offline.",
+      "inLanguage": "en",
+      "author": { "@id": "https://stdytrack.vercel.app/#kanishk" },
+      "publisher": { "@id": "https://stdytrack.vercel.app/#kanishk" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://stdytrack.vercel.app/#app",
+      "name": "Study Tracker",
+      "alternateName": "Stdytrack",
+      "url": "https://stdytrack.vercel.app/",
+      "description": "Free study tracker app that organizes subjects, units, lectures, rich-text notes, exam scores, study time, and daily goals. Installable PWA, works offline, no account required.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "inLanguage": "en",
+      "author": { "@id": "https://stdytrack.vercel.app/#kanishk" },
+      "creator": { "@id": "https://stdytrack.vercel.app/#kanishk" }
+    }
+  ]
 }
 </script>
 <meta property="og:type" content="website">
@@ -126,6 +154,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
       <li><a href="https://stdytrack.vercel.app/why-study-tracker">Why use a study tracker</a></li>
       <li><a href="https://stdytrack.vercel.app/study-tips">How to study effectively: 15 proven techniques</a></li>
       <li><a href="https://stdytrack.vercel.app/exam-prep">How to prepare for exams, step by step</a></li>
+      <li><a href="https://stdytrack.vercel.app/about">About the creator, Kanishk Kumar</a></li>
     </ul>
   </div>
 </noscript>
@@ -191,7 +220,7 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
           <div>Guides: <a href="https://stdytrack.vercel.app/why-study-tracker" style="color:#85a8ff">Why Study Tracker</a> · <a href="https://stdytrack.vercel.app/study-tips" style="color:#85a8ff">Study Tips</a> · <a href="https://stdytrack.vercel.app/exam-prep" style="color:#85a8ff">Exam Prep</a></div>
         </div>
 
-        <div class="login-credit" style="margin-top:14px;font-size:12px;color:#6f7598;text-align:center;letter-spacing:.02em">Developed by Kanishk</div>
+        <div class="login-credit" style="margin-top:14px;font-size:12px;color:#6f7598;text-align:center;letter-spacing:.02em">Developed by <a href="/about" style="color:inherit;">Kanishk Kumar</a></div>
       </section>
     </main>
   </div>
@@ -422,10 +451,12 @@ window.va = window.va || function () { (window.vaq = window.vaq || []).push(argu
   <div id="priorityView" class="view-page hidden"></div>
 </div>
 
-<footer class="site-credit">Developed by <b>Kanishk</b> · 
+<footer class="site-credit">Developed by <a href="/about" style="color:inherit;"><b>Kanishk Kumar</b></a> · 
 <a href="/why-study-tracker" style="color:inherit;">Why Study Tracker</a> · 
 <a href="/study-tips" style="color:inherit;">Study Tips</a> · 
-<a href="/exam-prep" style="color:inherit;">Exam Prep Guide</a>
+<a href="/exam-prep" style="color:inherit;">Exam Prep Guide</a> · 
+<a href="https://github.com/kanishk-29" rel="me" target="_blank" style="color:inherit;">GitHub</a> · 
+<a href="https://www.linkedin.com/in/kanishk2005/" rel="me" target="_blank" style="color:inherit;">LinkedIn</a>
 </footer>
 
 <div class="lecture-date-tip" id="lectureDateTip"></div>
